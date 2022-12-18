@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'com.example'
+group = 'com.github.drednote'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
@@ -14,8 +14,33 @@ configurations {
     }
 }
 
+ext {
+    nexusRepo = System.getProperty("NEXUS_REPO") ?: NEXUS_REPO
+    nexusRepoSnap = System.getProperty("NEXUS_REPO_SNAPSHOTS") ?: NEXUS_REPO_SNAPSHOTS
+    nexusUser = System.getProperty("NEXUS_USER") ?: NEXUS_USER
+    nexusPassword = System.getProperty("NEXUS_PASSWORD") ?: NEXUS_PASSWORD
+}
+
 repositories {
     mavenCentral()
+    maven {
+        name "nexus"
+        url nexusRepo
+        allowInsecureProtocol true
+        credentials {
+            username nexusUser
+            password nexusPassword
+        }
+    }
+    maven {
+        name "nexus-snap"
+        url nexusRepoSnap
+        allowInsecureProtocol true
+        credentials {
+            username nexusUser
+            password nexusPassword
+        }
+    }
 }
 
 dependencies {
@@ -27,6 +52,16 @@ dependencies {
 
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.4"
+    }
+    resolutionStrategy {
+        cacheDynamicVersionsFor 50, 'minutes'
+        cacheChangingModulesFor 0, 'minutes'
+    }
 }
 
 test {
