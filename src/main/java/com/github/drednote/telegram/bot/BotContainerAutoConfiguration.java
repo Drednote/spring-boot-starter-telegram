@@ -2,6 +2,7 @@ package com.github.drednote.telegram.bot;
 
 import com.github.drednote.telegram.TelegramProperties;
 import com.github.drednote.telegram.session.SessionProperties.UpdateStrategy;
+import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -13,7 +14,7 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @AutoConfiguration
-public class TelegramBotAutoConfiguration {
+public class BotContainerAutoConfiguration {
 
   private static final String TELEGRAM_BOT = "TelegramBot";
 
@@ -25,7 +26,9 @@ public class TelegramBotAutoConfiguration {
       matchIfMissing = true
   )
   @ConditionalOnMissingBean(TelegramBot.class)
-  public TelegramLongPollingBot telegramLongPollingBot(TelegramProperties properties) {
+  public TelegramLongPollingBot telegramLongPollingBot(
+      TelegramProperties properties, UpdateHandler updateHandler
+  ) {
     if (StringUtils.isBlank(properties.getToken())) {
       throw new BeanCreationException(TELEGRAM_BOT,
           "Consider specify drednote.telegram-bot.token");
@@ -35,7 +38,7 @@ public class TelegramBotAutoConfiguration {
           "Consider specify drednote.telegram-bot.name");
     }
     if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
-      return new LongPollingBotContainer(properties);
+      return new LongPollingBotContainer(properties, updateHandler);
     } else {
       throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
     }

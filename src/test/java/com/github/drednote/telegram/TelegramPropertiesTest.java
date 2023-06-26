@@ -2,8 +2,8 @@ package com.github.drednote.telegram;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.drednote.telegram.session.SessionProperties;
 import com.github.drednote.telegram.session.FixedBackoff;
+import com.github.drednote.telegram.session.SessionProperties;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

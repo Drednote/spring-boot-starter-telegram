@@ -1,0 +1,4 @@
+drednote:
+  telegram-bot:
+    update-handler:
+      type: mvc
