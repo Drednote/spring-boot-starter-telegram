@@ -1,4 +1,4 @@
-package com.github.drednote.telegrambot.session.backoff;
+package com.github.drednote.telegram.session;
 
 import org.telegram.telegrambots.meta.generics.BackOff;
 

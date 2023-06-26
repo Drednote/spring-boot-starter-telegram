@@ -1,4 +1,4 @@
-package com.github.drednote.telegrambot.session;
+package com.github.drednote.telegram.session;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -1,9 +1,9 @@
-package com.github.drednote.telegrambot;
+package com.github.drednote.telegram;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.drednote.telegrambot.session.SessionProperties;
-import com.github.drednote.telegrambot.session.backoff.FixedBackoff;
+import com.github.drednote.telegram.session.SessionProperties;
+import com.github.drednote.telegram.session.FixedBackoff;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.DefaultBotOptions.ProxyType;
 
-@SpringBootTest(classes = TelegramBotProperties.class)
-class TelegramBotPropertiesTest {
+@SpringBootTest(classes = TelegramProperties.class)
+class TelegramPropertiesTest {
 
   @Autowired
-  private TelegramBotProperties properties;
+  private TelegramProperties properties;
 
   @Test
   void shouldHaveCorrectProperties() {

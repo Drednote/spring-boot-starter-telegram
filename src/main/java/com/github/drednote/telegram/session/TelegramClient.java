@@ -1,4 +1,4 @@
-package com.github.drednote.telegrambot.session;
+package com.github.drednote.telegram.session;
 
 import java.util.List;
 import lombok.Data;

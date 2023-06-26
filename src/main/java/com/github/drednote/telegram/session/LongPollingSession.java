@@ -1,6 +1,6 @@
-package com.github.drednote.telegrambot.session;
+package com.github.drednote.telegram.session;
 
-import com.github.drednote.telegrambot.session.TelegramClient.Response;
+import com.github.drednote.telegram.session.TelegramClient.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -77,7 +77,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
   }
 
   protected void processUpdates(List<Update> updates) {
-    executorService.submit(() -> callback.onUpdatesReceived(updates));
+    updates.forEach(update -> executorService.submit(() -> callback.onUpdateReceived(update)));
   }
 
   private List<Update> getUpdatesFromServer() {

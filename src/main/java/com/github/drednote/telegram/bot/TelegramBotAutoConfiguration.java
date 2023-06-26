@@ -1,7 +1,7 @@
-package com.github.drednote.telegrambot.bot;
+package com.github.drednote.telegram.bot;
 
-import com.github.drednote.telegrambot.TelegramBotProperties;
-import com.github.drednote.telegrambot.session.SessionProperties.UpdateStrategy;
+import com.github.drednote.telegram.TelegramProperties;
+import com.github.drednote.telegram.session.SessionProperties.UpdateStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -13,7 +13,9 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @AutoConfiguration
-public class BotAutoConfiguration {
+public class TelegramBotAutoConfiguration {
+
+  private static final String TELEGRAM_BOT = "TelegramBot";
 
   @Bean(destroyMethod = "onClosing")
   @ConditionalOnProperty(
@@ -23,19 +25,19 @@ public class BotAutoConfiguration {
       matchIfMissing = true
   )
   @ConditionalOnMissingBean(TelegramBot.class)
-  public TelegramLongPollingBot telegramLongPollingBot(TelegramBotProperties properties) {
+  public TelegramLongPollingBot telegramLongPollingBot(TelegramProperties properties) {
     if (StringUtils.isBlank(properties.getToken())) {
-      throw new BeanCreationException("TelegramBot",
+      throw new BeanCreationException(TELEGRAM_BOT,
           "Consider specify drednote.telegram-bot.token");
     }
     if (StringUtils.isBlank(properties.getName())) {
-      throw new BeanCreationException("TelegramBot",
+      throw new BeanCreationException(TELEGRAM_BOT,
           "Consider specify drednote.telegram-bot.name");
     }
     if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
       return new LongPollingBotContainer(properties);
     } else {
-      throw new UnsupportedOperationException("Webhooks not implemented yet");
+      throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
     }
   }
 
@@ -47,6 +49,6 @@ public class BotAutoConfiguration {
   )
   @ConditionalOnMissingBean(TelegramBot.class)
   public TelegramWebhookBot telegramWebhookBot() {
-    throw new UnsupportedOperationException("Webhooks not implemented yet");
+    throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
   }
 }
