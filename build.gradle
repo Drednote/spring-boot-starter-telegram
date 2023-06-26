@@ -1,12 +1,15 @@
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.0.0'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.github.drednote'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
+
+bootJar.enabled = false
 
 configurations {
     compileOnly {
@@ -45,22 +48,56 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
+    api 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+    api "org.springframework.cloud:spring-cloud-starter-openfeign"
+
+    api 'org.telegram:telegrambots:6.5.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2021.0.4"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.3"
     }
     resolutionStrategy {
-        cacheDynamicVersionsFor 50, 'minutes'
+        cacheDynamicVersionsFor 5, 'minutes'
         cacheChangingModulesFor 0, 'minutes'
+    }
+}
+
+tasks.register('sourceJar', Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    repositories {
+        maven {
+            url System.getProperty("NEXUS_UPLOAD_REPO") ?: NEXUS_UPLOAD_REPO
+            allowInsecureProtocol true
+            credentials {
+                username System.getProperty("NEXUS_USER") ?: NEXUS_USER
+                password System.getProperty("NEXUS_PASSWORD") ?: NEXUS_PASSWORD
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId group
+            artifactId archivesBaseName
+            version System.getProperty("generatedVersion") ?: "local"
+
+            from components.java
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
     }
 }
 

@@ -1,0 +1,13 @@
+drednote:
+  telegram-bot:
+    token: abc
+    name: simple
+    session:
+      update-strategy: long_polling
+      update-handler-thread-count: 10
+      update-limit: 90
+      update-timeout: 40
+      back-off-strategy: com.github.drednote.telegrambot.session.backoff.FixedBackoff
+      proxy-type: socks4
+      proxy-host: hostProxy
+      proxy-port: 8080

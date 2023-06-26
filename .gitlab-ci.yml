@@ -1,4 +1,4 @@
-image: gradle:jdk17
+image: gradle:7.6-jdk17-focal
 
 stages:
   - build
