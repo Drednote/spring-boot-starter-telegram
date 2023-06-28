@@ -1,7 +1,12 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
+import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.updatehandler.mvc.annotation.BotController;
+import com.github.drednote.telegram.updatehandler.mvc.annotation.BotRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -26,20 +31,55 @@ public class BotControllerBeanPostProcessor implements BeanPostProcessor {
       if (!annotatedMethods.isEmpty()) {
         annotatedMethods.forEach((method, mappingInfo) -> {
           Method invocableMethod = AopUtils.selectInvocableMethod(method, targetClass);
-          registrar.register(bean, invocableMethod, mappingInfo);
+          mappingInfo.forEach(
+              (pattern, type) -> registrar.register(bean, invocableMethod,
+                  new BotRequestMappingInfo(pattern, type)
+              ));
         });
       }
     }
     return bean;
   }
 
-  private Map<Method, BotRequestMappingInfo> findAnnotatedMethodsBotRequest(Class<?> targetClass) {
+  private Map<Method, BotRequestInfo> findAnnotatedMethodsBotRequest(Class<?> targetClass) {
     return MethodIntrospector.selectMethods(targetClass,
-        (MethodIntrospector.MetadataLookup<BotRequestMappingInfo>) method -> {
+        (MethodIntrospector.MetadataLookup<BotRequestInfo>) method -> {
           var botRequest = AnnotatedElementUtils.findMergedAnnotation(method, BotRequest.class);
-          return botRequest != null ? BotRequestMappingInfo.newBuilder()
-              .path(botRequest.path())
-              .build() : null;
+          if (botRequest != null) {
+            String[] path = botRequest.path();
+            return new BotRequestInfo(arrayOrEmpty(path), arrayOrEmpty(botRequest.type()));
+          } else {
+            return null;
+          }
         });
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> T[] arrayOrEmpty(T[] array) {
+    return array == null ? (T[]) new Object[0] : array;
+  }
+
+  @EqualsAndHashCode
+  static final class BotRequestInfo {
+
+    private final String[] patterns;
+    private final RequestType[] types;
+
+    BotRequestInfo(String[] patterns, RequestType[] types) {
+      this.patterns = patterns;
+      this.types = types;
+    }
+
+    public void forEach(BiConsumer<String, RequestType> biConsumer) {
+      for (RequestType type : types) {
+        if (patterns.length > 0) {
+          for (String pattern : patterns) {
+            biConsumer.accept(pattern, type);
+          }
+        } else {
+          biConsumer.accept(type == RequestType.COMMAND ? "/**" : "**", type);
+        }
+      }
+    }
   }
 }

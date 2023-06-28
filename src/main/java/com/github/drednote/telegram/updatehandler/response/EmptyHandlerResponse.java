@@ -1,19 +1,17 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.updatehandler.UpdateHandlerResponse;
+import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @RequiredArgsConstructor
-public class EmptyUpdateHandlerResponse implements UpdateHandlerResponse {
-
-  private final Update update;
+public class EmptyHandlerResponse implements HandlerResponse {
 
   @Override
   public Update getUpdate() {
-    return update;
+    return null;
   }
 
   @Override

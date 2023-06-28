@@ -2,8 +2,8 @@ package com.github.drednote.telegram.updatehandler;
 
 import com.github.drednote.telegram.updatehandler.mvc.BotControllerBeanPostProcessor;
 import com.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
-import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodContainer;
-import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodLookup;
+import com.github.drednote.telegram.updatehandler.mvc.BotControllerContainer;
+import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -35,8 +35,8 @@ public class UpdateHandlerAutoConfiguration {
   public static class Mvc {
 
     @Bean
-    public HandlerMethodContainer handlerMethodContainer() {
-      return new HandlerMethodContainer();
+    public BotControllerContainer handlerMethodContainer() {
+      return new BotControllerContainer();
     }
 
     @Bean
@@ -47,7 +47,7 @@ public class UpdateHandlerAutoConfiguration {
     }
 
     @Bean
-    public UpdateHandler updateHandler(HandlerMethodLookup handlerMethodLookup) {
+    public UpdateHandler updateHandler(HandlerMethodPopular handlerMethodLookup) {
       return new MvcUpdateHandler(handlerMethodLookup);
     }
   }

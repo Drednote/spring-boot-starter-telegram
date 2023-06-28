@@ -1,38 +1,41 @@
 package com.github.drednote.telegram.updatehandler;
 
+import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.mvc.DefaultHandlerMethodInvoker;
 import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodInvoker;
-import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodLookup;
-import com.github.drednote.telegram.updatehandler.response.EmptyUpdateHandlerResponse;
-import com.github.drednote.telegram.updatehandler.response.GenericUpdateHandlerResponse;
-import com.github.drednote.telegram.updatehandler.response.NotHandledUpdateHandlerResponse;
+import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
+import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;
+import com.github.drednote.telegram.updatehandler.response.GenericHandlerResponse;
+import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.method.HandlerMethod;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @RequiredArgsConstructor
 public class MvcUpdateHandler implements UpdateHandler {
 
-  private final HandlerMethodLookup handlerMethodLookup;
+  private final HandlerMethodPopular handlerMethodPopular;
   private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
 
   @Override
-  public UpdateHandlerResponse onUpdate(Update update) {
-    HandlerMethod handlerMethod = handlerMethodLookup.lookup(update);
-    if (handlerMethod != null) {
-      Object invoked = handlerMethodInvoker.invoke(handlerMethod, update);
-      Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
-      if (Void.TYPE.isAssignableFrom(parameterType)) {
-        return new EmptyUpdateHandlerResponse(update);
-      }
-      if (invoked == null) {
-        return new NotHandledUpdateHandlerResponse(update);
-      }
-      if (UpdateHandlerResponse.class.isAssignableFrom(parameterType)) {
-        return ((UpdateHandlerResponse) invoked);
-      }
-      return new GenericUpdateHandlerResponse(update, invoked);
+  public void onUpdate(UpdateRequest request) {
+    handlerMethodPopular.populate(request);
+    if (request.getHandlerMethod() != null) {
+      Object invoked = handlerMethodInvoker.invoke(request);
+      Class<?> parameterType = request.getHandlerMethod().getReturnType().getParameterType();
+      setResponse(request, invoked, parameterType);
     }
-    return new EmptyUpdateHandlerResponse(update);
+    request.setResponse(new NotHandledHandlerResponse(null));
+  }
+
+  private static void setResponse(UpdateRequest request, Object invoked, Class<?> parameterType) {
+    if (Void.TYPE.isAssignableFrom(parameterType)) {
+      request.setResponse(new EmptyHandlerResponse());
+    }
+    if (invoked == null) {
+      request.setResponse(new NotHandledHandlerResponse(null));
+    }
+    if (HandlerResponse.class.isAssignableFrom(parameterType)) {
+      request.setResponse((HandlerResponse) invoked);
+    }
+    request.setResponse(new GenericHandlerResponse(null, invoked));
   }
 }

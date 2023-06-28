@@ -1,6 +1,7 @@
 package com.github.drednote.telegram.bot;
 
 import com.github.drednote.telegram.TelegramProperties;
+import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -21,7 +22,8 @@ public class LongPollingBotContainer extends TelegramLongPollingBot {
   @Override
   public void onUpdateReceived(Update update) {
     try {
-      updateHandler.onUpdate(update);
+      UpdateRequest request = new UpdateRequest(update, this);
+      updateHandler.onUpdate(request);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }

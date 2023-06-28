@@ -1,5 +1,6 @@
-package com.github.drednote.telegram.updatehandler.mvc;
+package com.github.drednote.telegram.updatehandler.mvc.annotation;
 
+import com.github.drednote.telegram.core.RequestType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +16,12 @@ public @interface BotRequest {
   @AliasFor("path")
   String[] value() default {};
 
+  /**
+   * applies only if update has text
+   */
   @AliasFor("value")
   String[] path() default {};
+
+  RequestType[] type() default {RequestType.ALL};
 
 }
