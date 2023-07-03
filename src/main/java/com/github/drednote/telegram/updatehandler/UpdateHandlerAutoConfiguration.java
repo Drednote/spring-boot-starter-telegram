@@ -9,10 +9,10 @@ import com.github.drednote.telegram.updatehandler.scenario.Scenario;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
 import java.util.Collection;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @AutoConfiguration
 @EnableConfigurationProperties(UpdateHandlerProperties.class)
@@ -21,22 +21,27 @@ public class UpdateHandlerAutoConfiguration {
   @Bean
   @ConditionalOnProperty(
       prefix = "drednote.telegram-bot.update-handler",
-      name = "type",
-      havingValue = "logging",
+      name = "scenario-enabled",
+      havingValue = "true",
       matchIfMissing = true
   )
-  @ConditionalOnMissingBean
-  public UpdateHandler loggingUpdateHandler() {
-    return new LoggingUpdateHandler();
+  public UpdateHandler scenarioUpdateHandler(Collection<Scenario> scenarios) {
+    return new ScenarioUpdateHandler(scenarios);
   }
 
+  @Configuration
   @ConditionalOnProperty(
       prefix = "drednote.telegram-bot.update-handler",
-      name = "type",
-      havingValue = "mvc"
+      name = "mvc-enabled",
+      havingValue = "true",
+      matchIfMissing = true
   )
-  @AutoConfiguration
-  public static class Mvc {
+  public static class MvcAutoConfiguration {
+
+    @Bean
+    public UpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
+      return new MvcUpdateHandler(handlerMethodLookup);
+    }
 
     @Bean
     public BotControllerContainer handlerMethodContainer() {
@@ -48,25 +53,6 @@ public class UpdateHandlerAutoConfiguration {
         ControllerRegistrar registrar
     ) {
       return new BotControllerBeanPostProcessor(registrar);
-    }
-
-    @Bean
-    public UpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
-      return new MvcUpdateHandler(handlerMethodLookup);
-    }
-  }
-
-  @ConditionalOnProperty(
-      prefix = "drednote.telegram-bot.update-handler",
-      name = "type",
-      havingValue = "scenario"
-  )
-  @AutoConfiguration
-  public static class ScenarioConfig {
-
-    @Bean
-    public UpdateHandler scenarioUpdateHandler(Collection<Scenario> scenarios) {
-      return new ScenarioUpdateHandler(scenarios);
     }
   }
 }

@@ -4,9 +4,12 @@ import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.method.HandlerMethod;
 
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE + 100)
 public class MvcUpdateHandler implements UpdateHandler {
 
   private final HandlerMethodPopular handlerMethodPopular;
@@ -20,7 +23,8 @@ public class MvcUpdateHandler implements UpdateHandler {
       Object invoked = handlerMethodInvoker.invoke(request);
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
       setResponse(request, invoked, () -> parameterType);
+    } else {
+      request.setResponse(new NotHandledHandlerResponse(request.getOrigin()));
     }
-    request.setResponse(new NotHandledHandlerResponse(request.getOrigin()));
   }
 }

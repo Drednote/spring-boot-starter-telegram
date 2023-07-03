@@ -9,10 +9,13 @@ import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE + 101)
 public class ScenarioUpdateHandler implements UpdateHandler {
 
   private final Collection<Scenario> scenarios;

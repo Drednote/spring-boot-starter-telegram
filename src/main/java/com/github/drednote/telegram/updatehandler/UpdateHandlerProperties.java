@@ -1,5 +1,7 @@
 package com.github.drednote.telegram.updatehandler;
 
+import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
+import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -9,13 +11,12 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class UpdateHandlerProperties {
 
-  private Type type = Type.LOGGING;
-
-  public enum Type {
-    MVC, STATE_MACHINE, SCENARIO,
-    /**
-     * just mock type, used until not changed. Can be used for debug
-     */
-    LOGGING
-  }
+  /**
+   * Enabled {@link MvcUpdateHandler}
+   */
+  private boolean mvcEnabled = true;
+  /**
+   * Enabled {@link ScenarioUpdateHandler}
+   */
+  private boolean scenarioEnabled = true;
 }
