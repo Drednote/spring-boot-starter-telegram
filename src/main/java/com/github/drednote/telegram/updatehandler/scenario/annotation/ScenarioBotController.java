@@ -16,5 +16,5 @@ public @interface ScenarioBotController {
 
   String[] value() default {};
 
-  RequestType[] type() default {RequestType.ALL};
+  RequestType[] type() default {};
 }

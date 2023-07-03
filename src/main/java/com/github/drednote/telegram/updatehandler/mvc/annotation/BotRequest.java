@@ -22,6 +22,6 @@ public @interface BotRequest {
   @AliasFor("value")
   String[] path() default {};
 
-  RequestType[] type() default {RequestType.ALL};
+  RequestType[] type() default {};
 
 }

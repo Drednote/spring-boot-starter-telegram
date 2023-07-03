@@ -41,6 +41,6 @@ public class BotRequestMappingInfo {
   }
 
   public String toString() {
-    return "{%s %s}".formatted(type, pattern);
+    return "{%s %s}".formatted(type != null ? type : "ALL", pattern);
   }
 }

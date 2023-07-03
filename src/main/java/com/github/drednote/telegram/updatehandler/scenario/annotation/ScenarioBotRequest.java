@@ -19,5 +19,5 @@ public @interface ScenarioBotRequest {
   @AliasFor("value")
   int position() default Integer.MIN_VALUE;
 
-  RequestType[] type() default {RequestType.ALL};
+  RequestType[] type() default {};
 }

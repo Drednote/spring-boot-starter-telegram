@@ -70,35 +70,59 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
       } else {
         this.messageType = RequestType.MESSAGE;
       }
-    } else {
-//      InlineQuery inlineQuery = update.getInlineQuery();
-//      if (inlineQuery != null) {
-//        this.user = inlineQuery.getFrom();
-//        this.text = inlineQuery.getQuery();
-//        this.chat = null;
-//        this.messageType = RequestType.INLINE_QUERY;
-//      } else {
-//        this.chat = null;
-//        ChosenInlineQuery chosenInlineResult = update.getChosenInlineQuery();
-//        if (chosenInlineResult != null) {
-//          this.user = chosenInlineResult.getFrom();
-//          this.text = chosenInlineResult.getQuery();
-//          this.messageType = RequestType.INLINE_CHOSEN;
-//        } else {
-//          CallbackQuery callbackQuery = update.getCallbackQuery();
-//          if (callbackQuery != null) {
-//            this.user = callbackQuery.getFrom();
-//            this.text = callbackQuery.getData();
-//            this.messageType = RequestType.INLINE_CALLBACK;
-//          } else {
-      this.messageType = RequestType.MESSAGE;
+    } else if (update.getInlineQuery() != null) {
+      this.user = update.getInlineQuery().getFrom();
+      this.text = update.getInlineQuery().getQuery();
+      this.chat = null;
+      this.messageType = RequestType.INLINE_QUERY;
+    } else if (update.getChosenInlineQuery() != null) {
+      this.user = update.getInlineQuery().getFrom();
+      this.text = update.getInlineQuery().getQuery();
+      this.chat = null;
+      this.messageType = RequestType.CHOSEN_INLINE_QUERY;
+    } else if (update.getCallbackQuery() != null) {
+      this.user = update.getCallbackQuery().getFrom();
+      this.text = update.getCallbackQuery().getData();
+      this.chat = null;
+      this.messageType = RequestType.CALLBACK_QUERY;
+    } else if (update.getShippingQuery() != null) {
+      this.user = update.getShippingQuery().getFrom();
+      this.text = update.getShippingQuery().getInvoicePayload();
+      this.chat = null;
+      this.messageType = RequestType.SHIPPING_QUERY;
+    } else if (update.getPreCheckoutQuery() != null) {
+      this.user = update.getPreCheckoutQuery().getFrom();
+      this.text = update.getPreCheckoutQuery().getInvoicePayload();
+      this.chat = null;
+      this.messageType = RequestType.PRE_CHECKOUT_QUERY;
+    } else if (update.getPoll() != null) {
+      this.user = null;
+      this.text = update.getPoll().getQuestion();
+      this.chat = null;
+      this.messageType = RequestType.POLL;
+    } else if (update.getPollAnswer() != null) {
+      this.user = update.getPollAnswer().getUser();
+      this.text = null;
+      this.chat = null;
+      this.messageType = RequestType.POLL_ANSWER;
+    } else if (update.getChatMember() != null) {
+      this.user = null;
+      this.text = null;
+      this.chat = update.getChatMember().getChat();
+      this.messageType = RequestType.CHAT_MEMBER_UPDATED;
+    } else if (update.getChatJoinRequest() != null) {
+      this.user = update.getChatJoinRequest().getUser();
+      this.text = null;
+      this.chat = update.getChatJoinRequest().getChat();
+      this.messageType = RequestType.CHAT_JOIN_REQUEST;
+    }
+    // this condition is unreachable
+    else {
+      this.messageType = null;
       this.user = null;
       this.text = null;
       this.chat = null;
     }
-//        }
-//      }
-//    }
     if (chat != null) {
       chatId = chat.getId();
     } else if (user != null) {

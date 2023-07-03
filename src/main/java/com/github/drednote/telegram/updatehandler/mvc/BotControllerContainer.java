@@ -16,7 +16,8 @@ public class BotControllerContainer implements HandlerMethodPopular, ControllerR
     for (Entry<BotRequestMappingInfo, HandlerMethod> entry : mappingLookup.entrySet()) {
       BotRequestMappingInfo requestMappingInfo = entry.getKey();
       HandlerMethod handlerMethod = entry.getValue();
-      if (requestMappingInfo.getType() != updateRequest.getMessageType()) {
+      if (requestMappingInfo.getType() != null
+          && requestMappingInfo.getType() != updateRequest.getMessageType()) {
         continue;
       }
       String text = updateRequest.getText();
