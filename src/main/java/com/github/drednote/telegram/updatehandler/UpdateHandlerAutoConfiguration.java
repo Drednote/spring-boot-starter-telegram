@@ -1,9 +1,13 @@
 package com.github.drednote.telegram.updatehandler;
 
 import com.github.drednote.telegram.updatehandler.mvc.BotControllerBeanPostProcessor;
-import com.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
 import com.github.drednote.telegram.updatehandler.mvc.BotControllerContainer;
+import com.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
 import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
+import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
+import com.github.drednote.telegram.updatehandler.scenario.Scenario;
+import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
+import java.util.Collection;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,8 +51,22 @@ public class UpdateHandlerAutoConfiguration {
     }
 
     @Bean
-    public UpdateHandler updateHandler(HandlerMethodPopular handlerMethodLookup) {
+    public UpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
       return new MvcUpdateHandler(handlerMethodLookup);
+    }
+  }
+
+  @ConditionalOnProperty(
+      prefix = "drednote.telegram-bot.update-handler",
+      name = "type",
+      havingValue = "scenario"
+  )
+  @AutoConfiguration
+  public static class ScenarioConfig {
+
+    @Bean
+    public UpdateHandler scenarioUpdateHandler(Collection<Scenario> scenarios) {
+      return new ScenarioUpdateHandler(scenarios);
     }
   }
 }

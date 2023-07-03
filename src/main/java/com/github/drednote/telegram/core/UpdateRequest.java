@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @Getter
-public class UpdateRequest {
+public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   private final Update origin;
   private final TelegramBot bot;
@@ -42,6 +42,10 @@ public class UpdateRequest {
   @Setter
   @Nullable
   private String basePattern;
+
+  // scenario
+  @Setter
+  private Object state;
 
   // response
   @Setter
@@ -104,4 +108,19 @@ public class UpdateRequest {
     }
   }
 
+  protected UpdateRequest(UpdateRequest request) {
+    this.origin = request.getOrigin();
+    this.bot = request.getBot();
+    this.chatId = request.getChatId();
+    this.messageType = request.getMessageType();
+    this.message = request.getMessage();
+    this.chat = request.getChat();
+    this.user = request.getUser();
+    this.text = request.getText();
+    this.handlerMethod = request.getHandlerMethod();
+    this.templateVariables = request.getTemplateVariables();
+    this.basePattern = request.getBasePattern();
+    this.state = request.getState();
+    this.response = request.getResponse();
+  }
 }

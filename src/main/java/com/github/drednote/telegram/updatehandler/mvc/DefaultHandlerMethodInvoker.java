@@ -1,5 +1,7 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
+import com.github.drednote.telegram.core.DefaultHandlerMethodArgumentResolver;
+import com.github.drednote.telegram.core.HandlerMethodArgumentResolver;
 import com.github.drednote.telegram.core.UpdateRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;

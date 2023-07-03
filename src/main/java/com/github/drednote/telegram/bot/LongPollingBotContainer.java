@@ -24,6 +24,7 @@ public class LongPollingBotContainer extends TelegramLongPollingBot {
     try {
       UpdateRequest request = new UpdateRequest(update, this);
       updateHandler.onUpdate(request);
+      request.getResponse().process(this);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }

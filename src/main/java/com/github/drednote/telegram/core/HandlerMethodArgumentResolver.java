@@ -1,6 +1,5 @@
-package com.github.drednote.telegram.updatehandler.mvc;
+package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.UpdateRequest;
 import org.springframework.core.MethodParameter;
 
 public interface HandlerMethodArgumentResolver {

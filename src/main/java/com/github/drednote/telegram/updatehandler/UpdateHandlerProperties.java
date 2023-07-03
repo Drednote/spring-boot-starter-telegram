@@ -12,7 +12,7 @@ public class UpdateHandlerProperties {
   private Type type = Type.LOGGING;
 
   public enum Type {
-    MVC, STATE_MACHINE,
+    MVC, STATE_MACHINE, SCENARIO,
     /**
      * just mock type, used until not changed. Can be used for debug
      */

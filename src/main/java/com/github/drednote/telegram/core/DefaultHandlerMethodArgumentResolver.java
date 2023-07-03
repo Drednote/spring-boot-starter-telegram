@@ -1,6 +1,5 @@
-package com.github.drednote.telegram.updatehandler.mvc;
+package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.UpdateRequest;
 import org.springframework.core.MethodParameter;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -16,7 +15,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
   public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
     Class<?> paramType = parameter.getParameterType();
     if (UpdateRequest.class.isAssignableFrom(paramType)) {
-      return request;
+      return new ImmutableUpdateRequest(request);
     } else if (Update.class.isAssignableFrom(paramType)) {
       return request.getOrigin();
     } else if (Message.class.isAssignableFrom(paramType)) {
