@@ -3,7 +3,6 @@ package com.github.drednote.telegram.updatehandler.scenario;
 import com.github.drednote.telegram.core.ImmutableUpdateRequest;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
-import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import com.github.drednote.telegram.updatehandler.scenario.Scenario.Step;
 import java.util.Collection;
 import java.util.List;
@@ -31,9 +30,6 @@ public class ScenarioUpdateHandler implements UpdateHandler {
           doCancel(scenario, request);
         }
       }
-    }
-    if (request.getResponse() == null) {
-      request.setResponse(new NotHandledHandlerResponse(request.getOrigin()));
     }
   }
 

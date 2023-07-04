@@ -15,7 +15,7 @@ public class BotInvocableHandlerMethod extends HandlerMethod {
    * Invoke the handler method with the given argument values.
    */
   @Nullable
-  protected Object invoke(Object... args) throws Exception {
+  public Object invoke(Object... args) throws Exception {
     Method method = getBridgedMethod();
     try {
       return method.invoke(getBean(), args);

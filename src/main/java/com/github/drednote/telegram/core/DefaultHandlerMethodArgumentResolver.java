@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.payments.PreCheckoutQuery;
 import org.telegram.telegrambots.meta.api.objects.payments.ShippingQuery;
-import org.telegram.telegrambots.meta.generics.TelegramBot;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -26,8 +26,8 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
       return request.getChat();
     } else if (String.class.isAssignableFrom(paramType)) {
       return request.getText();
-    } else if (TelegramBot.class.isAssignableFrom(paramType)) {
-      return request.getBot();
+    } else if (AbsSender.class.isAssignableFrom(paramType)) {
+      return request.getAbsSender();
     } else if (Long.class.isAssignableFrom(paramType)) {
       return request.getChatId();
     } else if (ShippingQuery.class.isAssignableFrom(paramType)) {
@@ -43,16 +43,12 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
   public boolean supportsParameter(MethodParameter parameter) {
     Class<?> paramType = parameter.getParameterType();
     return UpdateRequest.class.isAssignableFrom(paramType) ||
-        TelegramBot.class.isAssignableFrom(paramType) ||
+        AbsSender.class.isAssignableFrom(paramType) ||
         Long.class.isAssignableFrom(paramType) ||
-        String.class.isAssignableFrom(paramType) ||
         Update.class.isAssignableFrom(paramType) ||
         Message.class.isAssignableFrom(paramType) ||
-//        InlineQuery.class.isAssignableFrom(paramType) ||
-//        ChosenInlineResult.class.isAssignableFrom(paramType) ||
-//        CallbackQuery.class.isAssignableFrom(paramType) ||
-//        ShippingQuery.class.isAssignableFrom(paramType) ||
-//        PreCheckoutQuery.class.isAssignableFrom(paramType) ||
+        ShippingQuery.class.isAssignableFrom(paramType) ||
+        PreCheckoutQuery.class.isAssignableFrom(paramType) ||
         Chat.class.isAssignableFrom(paramType) ||
         User.class.isAssignableFrom(paramType);
   }

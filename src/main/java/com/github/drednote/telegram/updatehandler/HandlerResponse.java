@@ -1,19 +1,17 @@
 package com.github.drednote.telegram.updatehandler;
 
+import com.github.drednote.telegram.core.UpdateRequest;
+import java.io.IOException;
 import org.springframework.core.Ordered;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public interface HandlerResponse extends Ordered {
 
-  Update getUpdate();
-
   /**
-   * Метод отправки
+   * Sending method
    *
-   * @param absSender отправитель
-   * @throws TelegramApiException если не получилось отправить
+   * @throws TelegramApiException if sending failed
+   * @throws IOException          if error occurred while mapping
    */
-  void process(AbsSender absSender) throws TelegramApiException;
+  void process(UpdateRequest updateRequest) throws TelegramApiException, IOException;
 }

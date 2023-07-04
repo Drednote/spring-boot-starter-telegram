@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public interface UpdateHandler {
 
-  void onUpdate(UpdateRequest request);
+  void onUpdate(UpdateRequest request) throws Exception;
 
   /**
    * @param request       base request
@@ -30,7 +30,7 @@ public interface UpdateHandler {
         && elementsIsHandlerResponses((Collection<?>) invoked)) {
       request.setResponse(new CompositeHandlerResponse((List<HandlerResponse>) invoked));
     } else {
-      request.setResponse(new GenericHandlerResponse(request.getOrigin(), invoked));
+      request.setResponse(new GenericHandlerResponse(invoked));
     }
   }
 

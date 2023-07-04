@@ -1,8 +1,6 @@
-package com.github.drednote.telegram.updatehandler.mvc;
+package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.DefaultHandlerMethodArgumentResolver;
-import com.github.drednote.telegram.core.HandlerMethodArgumentResolver;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.updatehandler.mvc.BotInvocableHandlerMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
@@ -22,15 +20,10 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 
   @Override
   @Nullable
-  public Object invoke(UpdateRequest updateRequest) {
-    try {
-      HandlerMethod handlerMethod = updateRequest.getHandlerMethod();
-      Object[] argumentValues = getMethodArgumentValues(updateRequest);
-      return new BotInvocableHandlerMethod(handlerMethod).invoke(argumentValues);
-    } catch (Exception e) {
-      log.error("Cannot initiate BotRequest method {}", updateRequest, e);
-      return null;
-    }
+  public Object invoke(UpdateRequest updateRequest) throws Exception {
+    HandlerMethod handlerMethod = updateRequest.getHandlerMethod();
+    Object[] argumentValues = getMethodArgumentValues(updateRequest);
+    return new BotInvocableHandlerMethod(handlerMethod).invoke(argumentValues);
   }
 
   private Object[] getMethodArgumentValues(UpdateRequest request, Object... providedArgs) {

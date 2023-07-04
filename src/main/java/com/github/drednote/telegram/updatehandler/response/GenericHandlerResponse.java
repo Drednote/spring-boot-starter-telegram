@@ -1,25 +1,26 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.updatehandler.HandlerResponse;
+import com.github.drednote.telegram.core.UpdateRequest;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @RequiredArgsConstructor
-public class GenericHandlerResponse implements HandlerResponse {
+public class GenericHandlerResponse extends AbstractHandlerResponse {
 
-  private final Update update;
   private final Object response;
 
   @Override
-  public Update getUpdate() {
-    return update;
-  }
-
-  @Override
-  public void process(AbsSender absSender) throws TelegramApiException {
-    // do nothing
+  public void process(UpdateRequest updateRequest) throws TelegramApiException, IOException {
+    if (response instanceof String str) {
+      sendString(str, updateRequest);
+    } else if (response instanceof byte[] bytes) {
+      sendString(new String(bytes, StandardCharsets.UTF_16), updateRequest);
+    } else {
+      String stringResponse = updateRequest.getObjectMapper().writeValueAsString(response);
+      sendString(stringResponse, updateRequest);
+    }
   }
 
   @Override

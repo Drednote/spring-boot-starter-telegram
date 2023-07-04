@@ -2,6 +2,7 @@ package com.github.drednote.telegram.core;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Map;
 import lombok.Getter;
@@ -13,13 +14,14 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @Getter
 public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   private final Update origin;
-  private final TelegramBot bot;
+  private final AbsSender absSender;
   private final Long chatId;
   private final RequestType messageType;
 
@@ -50,10 +52,12 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
   // response
   @Setter
   private HandlerResponse response;
+  @Setter
+  private ObjectMapper objectMapper;
 
-  public UpdateRequest(@NonNull Update update, TelegramBot bot) {
+  public UpdateRequest(@NonNull Update update, AbsSender absSender) {
     this.origin = update;
-    this.bot = bot;
+    this.absSender = absSender;
 
     this.message = firstNonNull(update.getMessage(),
         update.getEditedMessage(),
@@ -134,7 +138,7 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   protected UpdateRequest(UpdateRequest request) {
     this.origin = request.getOrigin();
-    this.bot = request.getBot();
+    this.absSender = request.getAbsSender();
     this.chatId = request.getChatId();
     this.messageType = request.getMessageType();
     this.message = request.getMessage();
@@ -146,5 +150,6 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
     this.basePattern = request.getBasePattern();
     this.state = request.getState();
     this.response = request.getResponse();
+    this.objectMapper = request.getObjectMapper();
   }
 }
