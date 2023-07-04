@@ -4,7 +4,7 @@ import org.springframework.core.MethodParameter;
 
 public interface HandlerMethodArgumentResolver {
 
-  Object resolveArgument(MethodParameter parameter, UpdateRequest request);
+  Object resolveArgument(MethodParameter parameter, UpdateRequest request) throws Exception;
 
   boolean supportsParameter(MethodParameter parameter);
 }

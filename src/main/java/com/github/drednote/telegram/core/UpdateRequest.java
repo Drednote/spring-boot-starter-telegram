@@ -2,8 +2,11 @@ package com.github.drednote.telegram.core;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
+import java.beans.Transient;
+import java.io.Serializable;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +23,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   private final Update origin;
+  @JsonIgnore
   private final AbsSender absSender;
   private final Long chatId;
   private final RequestType messageType;
@@ -36,23 +40,29 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
   // mvc
   @Setter
   @Nullable
+  @JsonIgnore
   private HandlerMethod handlerMethod;
   @Setter
   @Nullable
+  @JsonIgnore
   private Map<String, String> templateVariables;
   @Setter
   @Nullable
+  @JsonIgnore
   private String basePattern;
 
   // scenario
   @Setter
+  @JsonIgnore
   private Object state;
 
   // response
   @Setter
   @Nullable
+  @JsonIgnore
   private HandlerResponse response;
   @Setter
+  @JsonIgnore
   private ObjectMapper objectMapper;
 
   /**

@@ -1,6 +1,7 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
 import com.github.drednote.telegram.core.RequestType;
+import java.util.Comparator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.util.AntPathMatcher;
@@ -38,6 +39,10 @@ public class BotRequestMappingInfo {
       return pattern;
     }
     return null;
+  }
+
+  public Comparator<String> getComparator() {
+    return pathMatcher.getPatternComparator(pattern);
   }
 
   public String toString() {

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.drednote.telegram.core.UpdateRequest;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @RequiredArgsConstructor
 public class GenericHandlerResponse extends AbstractHandlerResponse {
 
+  @NonNull
   private final Object response;
 
   @Override

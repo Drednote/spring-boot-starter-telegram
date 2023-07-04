@@ -2,9 +2,10 @@ package com.github.drednote.telegram.updatehandler.mvc;
 
 import com.github.drednote.telegram.core.UpdateRequest;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.springframework.web.method.HandlerMethod;
 
 public class BotControllerContainer implements HandlerMethodPopular, ControllerRegistrar {
@@ -13,26 +14,28 @@ public class BotControllerContainer implements HandlerMethodPopular, ControllerR
 
   @Override
   public void populate(UpdateRequest updateRequest) {
-    for (Entry<BotRequestMappingInfo, HandlerMethod> entry : mappingLookup.entrySet()) {
-      BotRequestMappingInfo requestMappingInfo = entry.getKey();
-      HandlerMethod handlerMethod = entry.getValue();
+    List<BotRequestMappingInfo> mappings = new ArrayList<>(1);
+    String text = updateRequest.getText() == null ? "" : updateRequest.getText();
+    for (BotRequestMappingInfo requestMappingInfo : mappingLookup.keySet()) {
       if (requestMappingInfo.getType() != null
           && requestMappingInfo.getType() != updateRequest.getMessageType()) {
         continue;
       }
-      String text = updateRequest.getText();
-      if (text != null) {
-        BotRequestMappingInfo matchingCondition = requestMappingInfo.getMatchingCondition(text);
-        if (matchingCondition != null) {
-          String pattern = matchingCondition.getPattern();
-          Map<String, String> templateVariables =
-              matchingCondition.getPathMatcher().extractUriTemplateVariables(pattern, text);
-          updateRequest.setBasePattern(pattern);
-          updateRequest.setTemplateVariables(templateVariables);
-          updateRequest.setHandlerMethod(handlerMethod);
-        }
+      BotRequestMappingInfo matchingCondition = requestMappingInfo.getMatchingCondition(text);
+      if (matchingCondition != null) {
+        mappings.add(matchingCondition);
       }
     }
+    mappings.stream()
+        .min((f, s) -> f.getComparator().compare(f.getPattern(), s.getPattern()))
+        .ifPresent(mappingInfo -> {
+          String pattern = mappingInfo.getPattern();
+          Map<String, String> templateVariables =
+              mappingInfo.getPathMatcher().extractUriTemplateVariables(pattern, text);
+          updateRequest.setBasePattern(pattern);
+          updateRequest.setTemplateVariables(templateVariables);
+          updateRequest.setHandlerMethod(mappingLookup.get(mappingInfo));
+        });
   }
 
   @Override

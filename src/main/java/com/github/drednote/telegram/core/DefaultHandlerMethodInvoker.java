@@ -1,6 +1,5 @@
 package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.updatehandler.mvc.BotInvocableHandlerMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
@@ -30,7 +29,7 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 
   private Object[] getMethodArgumentValues(
       UpdateRequest request, HandlerMethod handlerMethod, Object... providedArgs
-  ) {
+  ) throws Exception {
     MethodParameter[] parameters = handlerMethod.getMethodParameters();
     if (ObjectUtils.isEmpty(parameters)) {
       return EMPTY_ARGS;

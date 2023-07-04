@@ -16,9 +16,6 @@ public @interface BotRequest {
   @AliasFor("path")
   String[] value() default {};
 
-  /**
-   * applies only if update has text
-   */
   @AliasFor("value")
   String[] path() default {};
 

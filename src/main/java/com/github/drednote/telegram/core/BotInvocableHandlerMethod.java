@@ -1,4 +1,4 @@
-package com.github.drednote.telegram.updatehandler.mvc;
+package com.github.drednote.telegram.core;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
