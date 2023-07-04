@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @Getter
 public sealed class UpdateRequest permits ImmutableUpdateRequest {
@@ -51,9 +50,17 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   // response
   @Setter
+  @Nullable
   private HandlerResponse response;
   @Setter
   private ObjectMapper objectMapper;
+
+  /**
+   * If error occurred during update handling
+   */
+  @Nullable
+  @Setter
+  private Throwable error;
 
   public UpdateRequest(@NonNull Update update, AbsSender absSender) {
     this.origin = update;
@@ -151,5 +158,11 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
     this.state = request.getState();
     this.response = request.getResponse();
     this.objectMapper = request.getObjectMapper();
+    this.error = request.getError();
+  }
+
+  @Override
+  public String toString() {
+    return "Update = %s".formatted(this.origin);
   }
 }

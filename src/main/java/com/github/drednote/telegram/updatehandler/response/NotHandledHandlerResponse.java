@@ -18,9 +18,4 @@ public class NotHandledHandlerResponse extends AbstractHandlerResponse {
     sendMessage.setText("Неизвестная команда или текст, попробуйте что нибудь другое");
     absSender.execute(sendMessage);
   }
-
-  @Override
-  public int getOrder() {
-    return 0;
-  }
 }

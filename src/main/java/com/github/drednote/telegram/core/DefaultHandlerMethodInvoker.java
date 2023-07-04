@@ -20,14 +20,17 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 
   @Override
   @Nullable
-  public Object invoke(UpdateRequest updateRequest) throws Exception {
-    HandlerMethod handlerMethod = updateRequest.getHandlerMethod();
-    Object[] argumentValues = getMethodArgumentValues(updateRequest);
+  public Object invoke(UpdateRequest updateRequest, HandlerMethod handlerMethod) throws Exception {
+    Object[] argumentValues = getMethodArgumentValues(updateRequest, handlerMethod);
+    if (handlerMethod instanceof BotInvocableHandlerMethod botInvocableHandlerMethod) {
+      return botInvocableHandlerMethod.invoke(argumentValues);
+    }
     return new BotInvocableHandlerMethod(handlerMethod).invoke(argumentValues);
   }
 
-  private Object[] getMethodArgumentValues(UpdateRequest request, Object... providedArgs) {
-    HandlerMethod handlerMethod = request.getHandlerMethod();
+  private Object[] getMethodArgumentValues(
+      UpdateRequest request, HandlerMethod handlerMethod, Object... providedArgs
+  ) {
     MethodParameter[] parameters = handlerMethod.getMethodParameters();
     if (ObjectUtils.isEmpty(parameters)) {
       return EMPTY_ARGS;

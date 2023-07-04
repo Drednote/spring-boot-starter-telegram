@@ -36,7 +36,7 @@ class MvcUpdateHandlerTest {
   }
 
   @Test
-  void shouldCallRegister() {
+  void shouldCallRegister() throws Exception {
     Update update = new Update();
     Message message = new Message();
     message.setText("/register");
@@ -50,7 +50,7 @@ class MvcUpdateHandlerTest {
   }
 
   @Test
-  void shouldCallText() {
+  void shouldCallText() throws Exception {
     Update update = new Update();
     Message message = new Message();
     message.setText("hello");

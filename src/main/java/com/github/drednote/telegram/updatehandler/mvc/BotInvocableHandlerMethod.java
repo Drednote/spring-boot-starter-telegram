@@ -2,6 +2,7 @@ package com.github.drednote.telegram.updatehandler.mvc;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
@@ -19,7 +20,7 @@ public class BotInvocableHandlerMethod extends HandlerMethod {
     Method method = getBridgedMethod();
     try {
       return method.invoke(getBean(), args);
-    } catch (IllegalArgumentException ex) {
+    } catch (IllegalArgumentException | IllegalAccessException ex) {
       assertTargetBean(method, getBean(), args);
       String text = (ex.getMessage() == null || ex.getCause() instanceof NullPointerException) ?
           "Illegal argument" : ex.getMessage();
@@ -38,5 +39,24 @@ public class BotInvocableHandlerMethod extends HandlerMethod {
             targetException);
       }
     }
+  }
+
+  @Override
+  protected void assertTargetBean(Method method, Object targetBean, @NonNull Object[] args) {
+    Class<?> methodDeclaringClass = method.getDeclaringClass();
+    Class<?> targetBeanClass = targetBean.getClass();
+    if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
+      String text = "The mapped handler method class '" + methodDeclaringClass.getName() +
+          "' is not an instance of the actual botController bean class '" +
+          targetBeanClass.getName() + "'. If the botController requires proxying " +
+          "(e.g. due to @Transactional), please use class-based proxying.";
+      throw new IllegalStateException(formatInvokeError(text, args));
+    }
+  }
+
+  @NonNull
+  @Override
+  protected String formatInvokeError(@NonNull String text, @NonNull Object[] args) {
+    return super.formatInvokeError(text, args).replace("Controller", "BotController");
   }
 }

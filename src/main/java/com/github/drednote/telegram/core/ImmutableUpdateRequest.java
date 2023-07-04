@@ -1,5 +1,6 @@
 package com.github.drednote.telegram.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Map;
 import org.springframework.lang.Nullable;
@@ -34,6 +35,11 @@ public final class ImmutableUpdateRequest extends UpdateRequest {
   @Override
   public void setResponse(HandlerResponse response) {
     throwImmutableException("response");
+  }
+
+  @Override
+  public void setObjectMapper(ObjectMapper objectMapper) {
+    throwImmutableException("objectMapper");
   }
 
   private static void throwImmutableException(String parameter) {

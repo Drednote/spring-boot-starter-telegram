@@ -16,6 +16,8 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     Class<?> paramType = parameter.getParameterType();
     if (UpdateRequest.class.isAssignableFrom(paramType)) {
       return new ImmutableUpdateRequest(request);
+    } else if (Throwable.class.isAssignableFrom(paramType)) {
+      return request.getError();
     } else if (Update.class.isAssignableFrom(paramType)) {
       return request.getOrigin();
     } else if (Message.class.isAssignableFrom(paramType)) {
@@ -50,6 +52,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
         ShippingQuery.class.isAssignableFrom(paramType) ||
         PreCheckoutQuery.class.isAssignableFrom(paramType) ||
         Chat.class.isAssignableFrom(paramType) ||
+        Throwable.class.isAssignableFrom(paramType) ||
         User.class.isAssignableFrom(paramType);
   }
 }

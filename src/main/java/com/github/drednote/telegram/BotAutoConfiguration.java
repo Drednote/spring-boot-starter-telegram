@@ -1,7 +1,8 @@
-package com.github.drednote.telegram.bot;
+package com.github.drednote.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.drednote.telegram.TelegramProperties;
+import com.github.drednote.telegram.core.LongPollingBot;
+import com.github.drednote.telegram.exception.ExceptionHandler;
 import com.github.drednote.telegram.session.SessionProperties.UpdateStrategy;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @AutoConfiguration
-public class BotContainerAutoConfiguration {
+public class BotAutoConfiguration {
 
   private static final String TELEGRAM_BOT = "TelegramBot";
 
@@ -22,7 +23,7 @@ public class BotContainerAutoConfiguration {
   @ConditionalOnMissingBean(TelegramBot.class)
   public TelegramLongPollingBot telegramLongPollingBot(
       TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
-      ObjectMapper objectMapper
+      ObjectMapper objectMapper, ExceptionHandler exceptionHandler
   ) {
     if (StringUtils.isBlank(properties.getToken())) {
       throw new BeanCreationException(TELEGRAM_BOT,
@@ -33,7 +34,8 @@ public class BotContainerAutoConfiguration {
           "Consider specify drednote.telegram-bot.name");
     }
     if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
-      return new LongPollingBotContainer(properties, updateHandlers, objectMapper);
+      return new LongPollingBot(properties, updateHandlers, objectMapper,
+          exceptionHandler);
     } else {
       throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
     }

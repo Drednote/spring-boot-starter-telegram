@@ -7,9 +7,11 @@ import java.util.Collection;
 import java.util.List;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.annotation.Order;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class CompositeHandlerResponse implements HandlerResponse {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class CompositeHandlerResponse extends AbstractHandlerResponse {
 
   private final List<HandlerResponse> invoked;
 
@@ -21,14 +23,9 @@ public class CompositeHandlerResponse implements HandlerResponse {
   }
 
   @Override
-  public void process(UpdateRequest request) throws TelegramApiException, IOException {
+  public void process(UpdateRequest request) throws TelegramApiException {
     for (HandlerResponse response : invoked) {
       response.process(request);
     }
-  }
-
-  @Override
-  public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
   }
 }

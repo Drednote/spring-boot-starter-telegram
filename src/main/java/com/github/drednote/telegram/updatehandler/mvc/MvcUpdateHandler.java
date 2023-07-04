@@ -4,6 +4,7 @@ import com.github.drednote.telegram.core.DefaultHandlerMethodInvoker;
 import com.github.drednote.telegram.core.HandlerMethodInvoker;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
+import com.github.drednote.telegram.utils.ResponseSetter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -24,8 +25,8 @@ public class MvcUpdateHandler implements UpdateHandler {
     HandlerMethod handlerMethod = request.getHandlerMethod();
     if (handlerMethod != null) {
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
-      Object invoked = handlerMethodInvoker.invoke(request);
-      setResponse(request, invoked, () -> parameterType);
+      Object invoked = handlerMethodInvoker.invoke(request, request.getHandlerMethod());
+      ResponseSetter.setResponse(request, invoked, () -> parameterType);
     }
   }
 }

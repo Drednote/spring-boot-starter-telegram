@@ -4,6 +4,7 @@ import com.github.drednote.telegram.core.ImmutableUpdateRequest;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.scenario.Scenario.Step;
+import com.github.drednote.telegram.utils.ResponseSetter;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +39,12 @@ public class ScenarioUpdateHandler implements UpdateHandler {
     if (!CollectionUtils.isEmpty(steps)) {
       log.info("Execute 0 scenario for {}", scenario);
       Object apply = steps.get(0).getRequest().apply(new ImmutableUpdateRequest(request));
-      setResponse(request, apply);
+      ResponseSetter.setResponse(request, apply);
     }
   }
 
   private void doCancel(Scenario scenario, UpdateRequest request) {
     Object apply = scenario.getCancel().getAction().apply(new ImmutableUpdateRequest(request));
-    setResponse(request, apply);
+    ResponseSetter.setResponse(request, apply);
   }
 }
