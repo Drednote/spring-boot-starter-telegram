@@ -1,12 +1,13 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.github.drednote'
-version = '0.0.1-SNAPSHOT'
+version = ''
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -105,4 +106,14 @@ publishing {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.outputLocation = layout.buildDirectory.dir('reports/jacoco/test/html')
+        }
+    }
 }
