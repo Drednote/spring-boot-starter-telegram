@@ -10,27 +10,8 @@ variables:
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
-build:
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: "tcp://dind:2375"
-    GRADLE_VARS: >
-      -DNEXUS_USER=${NEXUS_USER}
-      -DNEXUS_PASSWORD=${NEXUS_PASSWORD}
-      -DNEXUS_UPLOAD_REPO=${NEXUS_UPLOAD_REPO}
-      -DNEXUS_REPO=${NEXUS_REPO}
-  stage: build
-  script:
-    - gradle --build-cache $GRADLE_VARS build --info
-    - cat build/reports/jacoco/test/html/index.html | grep -o 'Total[^%]*%'
-  coverage: '/Total.*?([0-9]{1,3})%/'
-  artifacts:
-    paths:
-      - build/libs/*.jar
-      - build/reports/jacoco/test/*
-    expire_in: 1d
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - build
-      - .gradle
+include:
+  - project: 'mr_drednote/gitlab-ci/v1'
+    file:
+      - 'stages/build.yml'
+      - 'stages/versioning.yml'
