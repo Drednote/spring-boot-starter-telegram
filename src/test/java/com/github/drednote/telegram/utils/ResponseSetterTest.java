@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class ResponseSetterTest {
 
   private final UpdateRequest updateRequest = new UpdateRequest(UpdateUtils.createCommandUpdate(""),
-      null);
+      null, null);
 
   @BeforeEach
   void setUp() {

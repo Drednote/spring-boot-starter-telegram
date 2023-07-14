@@ -2,7 +2,6 @@ package com.github.drednote.telegram.updatehandler.response;
 
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.core.Ordered;

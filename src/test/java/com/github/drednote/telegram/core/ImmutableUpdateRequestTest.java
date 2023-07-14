@@ -13,7 +13,7 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 class ImmutableUpdateRequestTest {
 
   final ImmutableUpdateRequest request = new ImmutableUpdateRequest(
-      new UpdateRequest(UpdateUtils.createEmpty(), null));
+      new UpdateRequest(UpdateUtils.createEmpty(), null, null));
 
   @Test
   void shouldBeImmutableOnSetters() {

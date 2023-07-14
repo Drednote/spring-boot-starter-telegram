@@ -41,8 +41,8 @@ class ScenarioBotControllerTest {
 
   @Test
   void name() throws Exception {
-    updateHandler.onUpdate(new UpdateRequest(UpdateUtils.createCommandUpdate("/start"), null));
-    updateHandler.onUpdate(new UpdateRequest(UpdateUtils.createCommandUpdate("/cancel"), null));
+    updateHandler.onUpdate(new UpdateRequest(UpdateUtils.createCommandUpdate("/start"), null, null));
+    updateHandler.onUpdate(new UpdateRequest(UpdateUtils.createCommandUpdate("/cancel"), null, null));
 
   }
 }

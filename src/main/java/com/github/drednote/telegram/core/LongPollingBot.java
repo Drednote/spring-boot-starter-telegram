@@ -35,22 +35,23 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
-    UpdateRequest request = new UpdateRequest(update, this);
+    UpdateRequest request = new UpdateRequest(update, this, telegramProperties);
     try {
       for (UpdateHandler updateHandler : updateHandlers) {
         if (request.getResponse() == null) {
           updateHandler.onUpdate(request);
         }
       }
-      if (telegramProperties.getUpdateHandler().isSetDefaultAnswer()
-          && request.getResponse() == null) {
+      if (request.getResponse() == null
+          && request.getProperties().getUpdateHandler().isSetDefaultAnswer()) {
         request.setResponse(new NotHandledHandlerResponse());
       }
       processResponse(request);
     } catch (Exception e) {
       try {
+        request.setError(e);
         request.setResponse(null);
-        exceptionHandler.handle(request, e);
+        exceptionHandler.handle(request);
         processResponse(request);
       } catch (Exception ex) {  // todo add resolver
         log.error("Internal error", e);

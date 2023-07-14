@@ -44,7 +44,7 @@ class MvcUpdateHandlerTest {
     update.setMessage(message);
     update.setUpdateId(1);
 
-    updateHandler.onUpdate(new UpdateRequest(update, null));
+    updateHandler.onUpdate(new UpdateRequest(update, null, null));
 
     assertThat(testController.getRegisterCount()).isEqualTo(1);
   }
@@ -56,7 +56,7 @@ class MvcUpdateHandlerTest {
     message.setText("hello");
     update.setMessage(message);
     update.setUpdateId(1);
-    updateHandler.onUpdate(new UpdateRequest(update, null));
+    updateHandler.onUpdate(new UpdateRequest(update, null, null));
 
     assertThat(testController.getTextCount()).isEqualTo(1);
   }

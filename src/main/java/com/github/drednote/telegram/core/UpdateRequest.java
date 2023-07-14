@@ -4,9 +4,8 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.drednote.telegram.TelegramProperties;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
-import java.beans.Transient;
-import java.io.Serializable;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,11 +21,13 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Getter
 public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
+  private final Integer id;
   private final Update origin;
   @JsonIgnore
   private final AbsSender absSender;
   private final Long chatId;
   private final RequestType messageType;
+  private final TelegramProperties properties;
 
   @Nullable
   private final Message message;
@@ -72,9 +73,11 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
   @Setter
   private Throwable error;
 
-  public UpdateRequest(@NonNull Update update, AbsSender absSender) {
+  public UpdateRequest(@NonNull Update update, AbsSender absSender, TelegramProperties properties) {
     this.origin = update;
     this.absSender = absSender;
+    this.id = update.getUpdateId();
+    this.properties = properties;
 
     this.message = firstNonNull(update.getMessage(),
         update.getEditedMessage(),
@@ -155,6 +158,8 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   protected UpdateRequest(UpdateRequest request) {
     this.origin = request.getOrigin();
+    this.properties = request.getProperties();
+    this.id = request.getId();
     this.absSender = request.getAbsSender();
     this.chatId = request.getChatId();
     this.messageType = request.getMessageType();

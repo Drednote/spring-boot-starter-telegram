@@ -1,6 +1,7 @@
 package com.github.drednote.telegram.updatehandler;
 
 import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
+import com.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
 import lombok.Data;
@@ -25,4 +26,8 @@ public class UpdateHandlerProperties {
    * response
    */
   private boolean setDefaultAnswer = true;
+  /**
+   * If exception is occurred and no handler, set {@link InternalErrorHandlerResponse} as response
+   */
+  private boolean setDefaultErrorAnswer = true;
 }

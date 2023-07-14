@@ -20,7 +20,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new UpdateRequest(update, null),
+      invoker.invoke(new UpdateRequest(update, null, null),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNull();
@@ -34,7 +34,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new UpdateRequest(update, null),
+      invoker.invoke(new UpdateRequest(update, null, null),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNotNull().isInstanceOf(IllegalStateException.class);
