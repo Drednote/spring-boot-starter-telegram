@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.core;
 
 public enum RequestType {
-  MESSAGE,
   COMMAND,
+  MESSAGE,
   INLINE_QUERY,
   CHOSEN_INLINE_QUERY,
   CALLBACK_QUERY,

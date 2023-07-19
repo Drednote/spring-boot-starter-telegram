@@ -4,13 +4,15 @@ import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
 import com.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties("drednote.telegram-bot.update-handler")
-@Data
+@Getter
+@Setter
 public class UpdateHandlerProperties {
 
   /**

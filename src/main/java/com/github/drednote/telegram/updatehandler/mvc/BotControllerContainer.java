@@ -11,6 +11,7 @@ import org.springframework.web.method.HandlerMethod;
 public class BotControllerContainer implements HandlerMethodPopular, ControllerRegistrar {
 
   private final Map<BotRequestMappingInfo, HandlerMethod> mappingLookup = new HashMap<>();
+  private final CompositeMappingInfoComparator comparator = new CompositeMappingInfoComparator();
 
   @Override
   public void populate(UpdateRequest updateRequest) {
@@ -27,7 +28,7 @@ public class BotControllerContainer implements HandlerMethodPopular, ControllerR
       }
     }
     mappings.stream()
-        .min((f, s) -> f.getComparator().compare(f.getPattern(), s.getPattern()))
+        .min(comparator)
         .ifPresent(mappingInfo -> {
           String pattern = mappingInfo.getPattern();
           Map<String, String> templateVariables =

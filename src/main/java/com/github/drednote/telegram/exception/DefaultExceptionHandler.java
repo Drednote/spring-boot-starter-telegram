@@ -18,24 +18,29 @@ public class DefaultExceptionHandler implements ExceptionHandler {
   private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
 
   @Override
-  public void handle(UpdateRequest request) throws Exception {
+  public void handle(UpdateRequest request) {
     Throwable throwable = request.getError();
     HandlerMethod handlerMethod = exceptionHandlerResolver.resolve(throwable);
     if (handlerMethod != null) {
-      Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
-      ResponseSetter.setResponse(request, invoked,
-          () -> handlerMethod.getReturnType().getParameterType());
+      try {
+        Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
+        ResponseSetter.setResponse(request, invoked,
+            () -> handlerMethod.getReturnType().getParameterType());
+      } catch (Exception e) {
+        processInternal(e, request);
+      }
     } else {
-      processNotHandled(throwable, request);
+      processInternal(throwable, request);
     }
   }
 
-  private void processNotHandled(Throwable throwable, UpdateRequest request) {
+  private void processInternal(Throwable throwable, UpdateRequest request) {
     if (throwable instanceof TelegramApiException telegramApiException) {
-      log.error("Cannot send response for request '{}' to telegram, cause: ", request.getId(),
-          telegramApiException);
+      log.error("Cannot send response {} for request '{}' to telegram, cause: ",
+          request.getResponse(), request.getId(), telegramApiException);
     } else {
-      if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()) {
+      if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
+          && request.getResponse() == null) {
         request.setResponse(new InternalErrorHandlerResponse());
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);

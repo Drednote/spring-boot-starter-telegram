@@ -3,7 +3,8 @@ package com.github.drednote.telegram.session;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +13,8 @@ import org.telegram.telegrambots.bots.DefaultBotOptions.ProxyType;
 import org.telegram.telegrambots.meta.generics.BackOff;
 import org.telegram.telegrambots.updatesreceivers.ExponentialBackOff;
 
-@Data
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties("drednote.telegram-bot.session")
 public class SessionProperties {

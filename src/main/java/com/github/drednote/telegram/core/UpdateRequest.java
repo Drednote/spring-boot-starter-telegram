@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.TelegramProperties;
+import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Map;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
   private final AbsSender absSender;
   private final Long chatId;
   private final RequestType messageType;
+  @JsonIgnore
   private final TelegramProperties properties;
 
   @Nullable
@@ -37,6 +39,10 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
   private final User user;
   @Nullable
   private final String text;
+
+  @Setter
+  @NonNull
+  private Permission permission;
 
   // mvc
   @Setter
@@ -100,8 +106,8 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
       this.chat = null;
       this.messageType = RequestType.INLINE_QUERY;
     } else if (update.getChosenInlineQuery() != null) {
-      this.user = update.getInlineQuery().getFrom();
-      this.text = update.getInlineQuery().getQuery();
+      this.user = update.getChosenInlineQuery().getFrom();
+      this.text = update.getChosenInlineQuery().getQuery();
       this.chat = null;
       this.messageType = RequestType.CHOSEN_INLINE_QUERY;
     } else if (update.getCallbackQuery() != null) {
@@ -130,7 +136,7 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
       this.chat = null;
       this.messageType = RequestType.POLL_ANSWER;
     } else if (update.getChatMember() != null) {
-      this.user = null;
+      this.user = update.getChatMember().getFrom();
       this.text = null;
       this.chat = update.getChatMember().getChat();
       this.messageType = RequestType.CHAT_MEMBER_UPDATED;
@@ -174,6 +180,7 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
     this.response = request.getResponse();
     this.objectMapper = request.getObjectMapper();
     this.error = request.getError();
+    this.permission = request.getPermission();
   }
 
   @Override

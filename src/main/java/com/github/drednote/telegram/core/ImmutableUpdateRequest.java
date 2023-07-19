@@ -1,8 +1,10 @@
 package com.github.drednote.telegram.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Map;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
@@ -40,6 +42,16 @@ public final class ImmutableUpdateRequest extends UpdateRequest {
   @Override
   public void setObjectMapper(ObjectMapper objectMapper) {
     throwImmutableException("objectMapper");
+  }
+
+  @Override
+  public void setPermission(@NonNull Permission permission) {
+    throwImmutableException("permission");
+  }
+
+  @Override
+  public void setError(@Nullable Throwable error) {
+    throwImmutableException("error");
   }
 
   private static void throwImmutableException(String parameter) {

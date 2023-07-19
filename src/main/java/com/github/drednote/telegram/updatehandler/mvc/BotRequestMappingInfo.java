@@ -1,5 +1,6 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.drednote.telegram.core.RequestType;
 import java.util.Comparator;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ public class BotRequestMappingInfo {
   private final RequestType type;
 
   @EqualsAndHashCode.Exclude
+  @JsonIgnore
   private final PathMatcher pathMatcher = new AntPathMatcher();
 
   public BotRequestMappingInfo(String pattern, RequestType type) {
