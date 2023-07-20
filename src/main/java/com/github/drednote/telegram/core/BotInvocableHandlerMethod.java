@@ -13,7 +13,7 @@ public class BotInvocableHandlerMethod extends HandlerMethod {
   }
 
   /**
-   * Invoke the handler method with the given argument values.
+   * Invoke the handler method with the given argument commands.
    */
   @Nullable
   public Object invoke(Object... args) throws Exception {

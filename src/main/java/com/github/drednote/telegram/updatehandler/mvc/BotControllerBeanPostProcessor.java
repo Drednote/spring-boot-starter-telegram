@@ -83,11 +83,20 @@ public class BotControllerBeanPostProcessor implements BeanPostProcessor {
     private void executeForEach(BiConsumer<String, RequestType> biConsumer, RequestType type) {
       if (patterns.length > 0) {
         for (String pattern : patterns) {
-          biConsumer.accept(pattern, type);
+          doAccept(biConsumer, type, pattern);
         }
       } else {
-        biConsumer.accept(type == RequestType.COMMAND ? "/**" : "**", type);
+        doAccept(biConsumer, type, type == RequestType.COMMAND ? "/**" : "**");
       }
+    }
+
+    private void doAccept(
+        BiConsumer<String, RequestType> biConsumer, RequestType type, String pattern
+    ) {
+      if (type == null && "**".equals(pattern)) {
+        biConsumer.accept("/**", RequestType.COMMAND);
+      }
+      biConsumer.accept(pattern, pattern.startsWith("/") ? RequestType.COMMAND : type);
     }
   }
 }
