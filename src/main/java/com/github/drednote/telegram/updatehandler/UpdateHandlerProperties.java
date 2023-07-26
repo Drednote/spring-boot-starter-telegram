@@ -24,7 +24,7 @@ public class UpdateHandlerProperties {
    */
   private boolean scenarioEnabled = true;
   /**
-   * If in the end of update handling the response is null, set {@link NotHandledHandlerResponse} as
+   * If at the end of update handling the response is null, set {@link NotHandledHandlerResponse} as
    * response
    */
   private boolean setDefaultAnswer = true;
@@ -32,4 +32,8 @@ public class UpdateHandlerProperties {
    * If exception is occurred and no handler, set {@link InternalErrorHandlerResponse} as response
    */
   private boolean setDefaultErrorAnswer = true;
+  /**
+   * A time that scenario executor will wait if a concurrent interaction was performed
+   */
+  private long scenarioLockMs = 5000L;
 }

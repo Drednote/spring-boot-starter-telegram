@@ -27,12 +27,21 @@ public class UpdateUtils {
     return update;
   }
 
-  public Update createCommandUpdate(String command) {
+  public Update createCommand(String command) {
     Update update = createEmpty();
 
     Message message = update.getMessage();
     message.setText(command);
     message.setEntities(List.of(new MessageEntity(EntityType.BOTCOMMAND, 0, command.length())));
+
+    return update;
+  }
+
+  public Update createMessage(String text) {
+    Update update = createEmpty();
+
+    Message message = update.getMessage();
+    message.setText(text);
 
     return update;
   }

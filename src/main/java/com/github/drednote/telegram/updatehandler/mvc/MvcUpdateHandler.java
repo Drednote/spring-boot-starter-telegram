@@ -13,7 +13,7 @@ import org.springframework.web.method.HandlerMethod;
 
 @Slf4j
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 100)
+@Order(Ordered.HIGHEST_PRECEDENCE + 200)
 public class MvcUpdateHandler implements UpdateHandler {
 
   private final HandlerMethodPopular handlerMethodPopular;

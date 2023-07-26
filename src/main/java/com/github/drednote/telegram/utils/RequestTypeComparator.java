@@ -31,6 +31,6 @@ public class RequestTypeComparator implements Comparator<RequestType> {
     if (o2 == null) {
       return -1;
     }
-    return priority.get(o1) - priority.get(o2);
+    return priority.get(o2) - priority.get(o1);
   }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.TelegramProperties;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
+import com.github.drednote.telegram.updatehandler.scenario.Scenario;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +23,16 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Getter
 public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
+  /**
+   * updateId
+   */
   private final Integer id;
   private final Update origin;
   @JsonIgnore
   private final AbsSender absSender;
+  /**
+   * chatId == userId
+   */
   private final Long chatId;
   private final RequestType messageType;
   @JsonIgnore
@@ -60,8 +67,8 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
 
   // scenario
   @Setter
-  @JsonIgnore
-  private Object state;
+  @Nullable
+  private Scenario scenario;
 
   // response
   @Setter
@@ -176,7 +183,7 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
     this.handlerMethod = request.getHandlerMethod();
     this.templateVariables = request.getTemplateVariables();
     this.basePattern = request.getBasePattern();
-    this.state = request.getState();
+    this.scenario = request.getScenario();
     this.response = request.getResponse();
     this.objectMapper = request.getObjectMapper();
     this.error = request.getError();

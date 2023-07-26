@@ -1,53 +1,39 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.UpdateRequest;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 
-@RequiredArgsConstructor
-public class Scenario {
+public sealed interface Scenario permits ScenarioImpl {
 
-  private final String startCommand;
-  @Getter
-  private final List<Step> steps;
-  @Getter
-  private final Cancel cancel;
+  /**
+   * ID of a scenario, commonly id of user
+   */
+  Long getId();
 
-  public boolean isMatch(UpdateRequest request) {
-    return Optional.ofNullable(startCommand)
-        .map(c -> c.equals(request.getText()))
-        .orElse(false);
-  }
+  /**
+   * Unique name of Scenario
+   *
+   * @return null if no scenario initiated
+   */
+  @Nullable
+  String getName();
 
-  public boolean isCancel(UpdateRequest request) {
-    return Optional.ofNullable(cancel)
-        .map(Cancel::getCommand)
-        .map(c -> c.equals(request.getText()))
-        .orElse(false);
-  }
+  /**
+   * @return current step or {@link EmptyStep#INSTANCE} if no step exists for the scenario
+   * @apiNote If you call {@link Scenario#makeStep(UpdateRequest)}, a result of this method will be
+   * changed
+   */
+  Step getCurrentStep();
 
-  @Override
-  public String toString() {
-    return "Scenario(startCommand = %s)".formatted(startCommand);
-  }
+  /**
+   * Search for the next step and if it exists, make the step
+   *
+   * @return result of performed action
+   */
+  Result makeStep(UpdateRequest updateRequest) throws ScenarioTransitionException;
 
-  @RequiredArgsConstructor
-  public static class Step {
-
-    @Getter
-    private final Function<UpdateRequest, ?> request;
-  }
-
-  @Getter(AccessLevel.PACKAGE)
-  @RequiredArgsConstructor
-  public static class Cancel {
-
-    private final String command;
-    private final Function<UpdateRequest, ?> action;
-
-  }
+  /**
+   * @return true if a scenario has no more steps, false if a step can be made
+   */
+  boolean isFinished();
 }

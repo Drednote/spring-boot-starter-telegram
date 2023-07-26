@@ -1,5 +1,6 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
+import com.github.drednote.telegram.core.RequestMappingInfo;
 import com.github.drednote.telegram.core.RequestType;
 import com.github.drednote.telegram.updatehandler.mvc.annotation.BotController;
 import com.github.drednote.telegram.updatehandler.mvc.annotation.BotRequest;
@@ -33,7 +34,7 @@ public class BotControllerBeanPostProcessor implements BeanPostProcessor {
           Method invocableMethod = AopUtils.selectInvocableMethod(method, targetClass);
           mappingInfo.forEach(
               (pattern, type) -> registrar.register(bean, invocableMethod,
-                  new BotRequestMappingInfo(pattern, type)
+                  new RequestMappingInfo(pattern, type)
               ));
         });
       }

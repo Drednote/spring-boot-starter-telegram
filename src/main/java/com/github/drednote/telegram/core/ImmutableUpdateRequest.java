@@ -3,6 +3,8 @@ package com.github.drednote.telegram.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
+import com.github.drednote.telegram.updatehandler.scenario.Scenario;
+import com.github.drednote.telegram.updatehandler.scenario.Step;
 import java.util.Map;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -30,8 +32,8 @@ public final class ImmutableUpdateRequest extends UpdateRequest {
   }
 
   @Override
-  public void setState(Object state) {
-    throwImmutableException("state");
+  public void setScenario(Scenario scenario) {
+    throwImmutableException("scenario");
   }
 
   @Override

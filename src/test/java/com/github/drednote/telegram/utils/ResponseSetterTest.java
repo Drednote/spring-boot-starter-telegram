@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class ResponseSetterTest {
 
-  private final UpdateRequest updateRequest = new UpdateRequest(UpdateUtils.createCommandUpdate(""),
+  private final UpdateRequest updateRequest = new UpdateRequest(UpdateUtils.createCommand(""),
       null, null);
 
   @BeforeEach

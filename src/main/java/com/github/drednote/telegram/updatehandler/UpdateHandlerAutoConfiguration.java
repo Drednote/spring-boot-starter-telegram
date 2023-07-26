@@ -5,10 +5,13 @@ import com.github.drednote.telegram.updatehandler.mvc.BotControllerContainer;
 import com.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
 import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
 import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
-import com.github.drednote.telegram.updatehandler.scenario.Scenario;
+import com.github.drednote.telegram.updatehandler.scenario.ScenarioAdapter;
+import com.github.drednote.telegram.updatehandler.scenario.ScenarioMachineContainer;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
-import java.util.Collection;
+import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioMachineConfigurerImpl;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -17,15 +20,25 @@ import org.springframework.context.annotation.Bean;
 @EnableConfigurationProperties(UpdateHandlerProperties.class)
 public class UpdateHandlerAutoConfiguration {
 
-  @Bean
+  @AutoConfiguration
   @ConditionalOnProperty(
       prefix = "drednote.telegram-bot.update-handler",
       name = "scenario-enabled",
       havingValue = "true",
       matchIfMissing = true
   )
-  public UpdateHandler scenarioUpdateHandler(Collection<Scenario> scenarios) {
-    return new ScenarioUpdateHandler(scenarios);
+  public static class ScenarioAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ScenarioUpdateHandler scenarioUpdateHandler(
+        ObjectProvider<ScenarioAdapter> adapters, UpdateHandlerProperties properties
+    ) {
+      ScenarioMachineConfigurerImpl configurer = new ScenarioMachineConfigurerImpl();
+      adapters.forEach(scenarioAdapter -> scenarioAdapter.onConfigure(configurer));
+      ScenarioMachineContainer container = new ScenarioMachineContainer(configurer, properties);
+      return new ScenarioUpdateHandler(container);
+    }
   }
 
   @AutoConfiguration
@@ -38,7 +51,8 @@ public class UpdateHandlerAutoConfiguration {
   public static class MvcAutoConfiguration {
 
     @Bean
-    public UpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
+    @ConditionalOnMissingBean
+    public MvcUpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
       return new MvcUpdateHandler(handlerMethodLookup);
     }
 

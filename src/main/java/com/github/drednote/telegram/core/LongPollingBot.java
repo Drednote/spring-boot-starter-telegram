@@ -10,6 +10,7 @@ import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import java.util.Collection;
 import java.util.Iterator;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -29,8 +30,10 @@ public class LongPollingBot extends TelegramLongPollingBot {
       UpdateFilterProvider updateFilterProvider
   ) {
     super(properties.getSession().toBotOptions(), properties.getToken());
+
     this.name = properties.getName();
-    this.updateHandlers = updateHandlers;
+    this.updateHandlers = updateHandlers.stream()
+        .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
     this.objectMapper = objectMapper;
     this.exceptionHandler = exceptionHandler;
     this.telegramProperties = properties;

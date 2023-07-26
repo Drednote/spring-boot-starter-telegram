@@ -1,50 +1,33 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.ImmutableUpdateRequest;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
-import com.github.drednote.telegram.updatehandler.scenario.Scenario.Step;
 import com.github.drednote.telegram.utils.ResponseSetter;
-import java.util.Collection;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.util.CollectionUtils;
 
 @Slf4j
-@RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE + 101)
+@Order(Ordered.HIGHEST_PRECEDENCE + 100)
 public class ScenarioUpdateHandler implements UpdateHandler {
 
-  private final Collection<Scenario> scenarios;
+  private final ScenarioPersister persister;
+  private final ScenarioFactory scenarioFactory;
+
+  public ScenarioUpdateHandler(ScenarioMachineContainer container) {
+    this.persister = container.getScenarioPersister();
+    this.scenarioFactory = container;
+  }
 
   @Override
-  public void onUpdate(UpdateRequest request) {
-    if (request.getUser() != null) { // because need status of current user
-      for (Scenario scenario : scenarios) {
-        if (scenario.isMatch(request)) {
-          doHandle(scenario, request);
-        }
-        if (scenario.isCancel(request)) {
-          doCancel(scenario, request);
-        }
-      }
+  public void onUpdate(UpdateRequest request) throws Exception {
+    Long chatId = request.getChatId();
+    Scenario scenario = scenarioFactory.createInitial(chatId);
+    persister.restore(scenario);
+    Result result = scenario.makeStep(request);
+    if (result.made()) {
+      ResponseSetter.setResponse(request, result.response());
+      persister.persist(scenario);
     }
-  }
-
-  private void doHandle(Scenario scenario, UpdateRequest request) {
-    List<Step> steps = scenario.getSteps();
-    if (!CollectionUtils.isEmpty(steps)) {
-      log.info("Execute 0 scenario for {}", scenario);
-      Object apply = steps.get(0).getRequest().apply(new ImmutableUpdateRequest(request));
-      ResponseSetter.setResponse(request, apply);
-    }
-  }
-
-  private void doCancel(Scenario scenario, UpdateRequest request) {
-    Object apply = scenario.getCancel().getAction().apply(new ImmutableUpdateRequest(request));
-    ResponseSetter.setResponse(request, apply);
   }
 }
