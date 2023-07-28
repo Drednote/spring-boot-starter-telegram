@@ -35,5 +35,9 @@ public class UpdateHandlerProperties {
   /**
    * A time that scenario executor will wait if a concurrent interaction was performed
    */
-  private long scenarioLockMs = 5000L;
+  private long scenarioLockMs = 0L;
+  /**
+   * If it needs to autoconfigure scenarioPersister if no one provided
+   */
+  private boolean autoConfigureScenarioPersister = true;
 }

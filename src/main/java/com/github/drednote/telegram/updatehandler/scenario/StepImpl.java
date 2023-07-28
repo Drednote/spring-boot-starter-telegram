@@ -9,11 +9,11 @@ import org.springframework.lang.NonNull;
 public class StepImpl implements Step {
 
   @NonNull
-  private final Scenario root;
+  final Scenario root;
   @NonNull
-  private final ActionExecutor actionExecutor;
+  final ActionExecutor actionExecutor;
   @NonNull
-  private final String name;
+  final String name;
 
   @Override
   public Object onAction(UpdateRequest updateRequest) throws Exception {
@@ -30,5 +30,10 @@ public class StepImpl implements Step {
   @Override
   public Scenario getRoot() {
     return root;
+  }
+
+  @Override
+  public String toString() {
+    return "'%s'".formatted(name);
   }
 }

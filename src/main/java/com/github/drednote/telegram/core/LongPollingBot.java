@@ -91,7 +91,9 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   private void handleException(UpdateRequest request, Exception e) {
     request.setError(e);
-    request.setResponse(null);
+    if (!(e instanceof TelegramApiException)) {
+      request.setResponse(null);
+    }
     exceptionHandler.handle(request);
   }
 

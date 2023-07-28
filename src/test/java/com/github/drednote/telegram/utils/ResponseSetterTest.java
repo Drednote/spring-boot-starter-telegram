@@ -2,7 +2,7 @@ package com.github.drednote.telegram.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.drednote.telegram.UpdateUtils;
+import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.response.CompositeHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;

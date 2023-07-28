@@ -1,8 +1,12 @@
 package com.github.drednote.telegram.datasource;
 
+import com.github.drednote.telegram.datasource.jpa.JpaPermissionRepository;
+import com.github.drednote.telegram.datasource.jpa.JpaScenarioRepository;
 import com.github.drednote.telegram.datasource.jpa.PermissionEntity;
-import com.github.drednote.telegram.datasource.jpa.PermissionRepository;
+import com.github.drednote.telegram.datasource.jpa.ScenarioEntity;
 import com.github.drednote.telegram.datasource.mongo.MongoPermissionRepository;
+import com.github.drednote.telegram.datasource.mongo.MongoScenarioRepository;
+import com.github.drednote.telegram.datasource.mongo.ScenarioDocument;
 import jakarta.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.Set;
@@ -12,6 +16,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,19 +28,27 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @AutoConfiguration
 @EnableConfigurationProperties(DataSourceProperties.class)
+@ConditionalOnProperty(
+    prefix = "drednote.telegram-bot.datasource",
+    value = "disable-data-source-auto-configuration",
+    havingValue = "false",
+    matchIfMissing = true
+)
 public class DataSourceAutoConfiguration {
 
   @ConditionalOnClass(JpaRepository.class)
-  @EntityScan(basePackageClasses = PermissionRepository.class)
-  @EnableJpaRepositories(basePackageClasses = PermissionRepository.class)
+  @EntityScan(basePackageClasses = JpaPermissionRepository.class)
+  @EnableJpaRepositories(basePackageClasses = JpaPermissionRepository.class)
   @AutoConfiguration
   @Order(0)
   static class Jpa {
 
     @Bean
     @ConditionalOnMissingBean
-    public DataSourceAdapter dataSourceAdapter(PermissionRepository repository) {
-      return new DataSourceAdapterImpl(repository);
+    public DataSourceAdapter dataSourceAdapter(
+        JpaPermissionRepository repository, JpaScenarioRepository scenarioRepository
+    ) {
+      return new DataSourceAdapterImpl(repository, scenarioRepository, ScenarioEntity.class);
     }
 
     @ConditionalOnClass(Hibernate.class)
@@ -48,7 +61,7 @@ public class DataSourceAutoConfiguration {
         if (!properties.isDisableAutoGenerateTables()) {
           try {
             new SchemaGenerator(entityManager, dataSource)
-                .generate(Set.of(PermissionEntity.class));
+                .generate(Set.of(PermissionEntity.class, ScenarioEntity.class));
           } catch (SQLException e) {
             throw new BeanCreationException("Cannot create tables", e);
           }
@@ -66,8 +79,10 @@ public class DataSourceAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DataSourceAdapter dataSourceAdapter(MongoPermissionRepository repository) {
-      return new DataSourceAdapterImpl(repository);
+    public DataSourceAdapter dataSourceAdapter(
+        MongoPermissionRepository repository, MongoScenarioRepository scenarioRepository
+    ) {
+      return new DataSourceAdapterImpl(repository, scenarioRepository, ScenarioDocument.class);
     }
   }
 }

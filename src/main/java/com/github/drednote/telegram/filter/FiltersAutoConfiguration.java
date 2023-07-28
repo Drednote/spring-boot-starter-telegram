@@ -2,6 +2,7 @@ package com.github.drednote.telegram.filter;
 
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import java.util.Collection;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,7 +16,7 @@ public class FiltersAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public UpdateFilterProvider updateFilterProvider(
-      @Autowired(required = false) DataSourceAdapter adapter, PermissionProperties permissionProperties,
+      ObjectProvider<DataSourceAdapter> adapter, PermissionProperties permissionProperties,
       Collection<UpdateFilter> filters
   ) {
     return new DefaultUpdateFilterProvider(adapter, permissionProperties, filters);

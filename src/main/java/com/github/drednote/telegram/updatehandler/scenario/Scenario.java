@@ -30,10 +30,10 @@ public sealed interface Scenario permits ScenarioImpl {
    *
    * @return result of performed action
    */
-  Result makeStep(UpdateRequest updateRequest) throws ScenarioTransitionException;
+  Result makeStep(UpdateRequest updateRequest) throws ScenarioException;
 
   /**
-   * @return true if a scenario has no more steps, false if a step can be made
+   * @return true if a scenario has no more steps, false if a step can be isMade
    */
   boolean isFinished();
 }

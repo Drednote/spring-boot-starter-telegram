@@ -3,57 +3,71 @@ package com.github.drednote.telegram.updatehandler.scenario;
 import com.github.drednote.telegram.core.ActionExecutor;
 import com.github.drednote.telegram.core.RequestMappingInfo;
 import com.github.drednote.telegram.core.UpdateRequest;
-import com.github.drednote.telegram.utils.Assert;
+import com.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.function.ThrowingSupplier;
 
 @Slf4j
 public final class ScenarioImpl implements Scenario {
 
   private static final EmptyStep EMPTY_STEP = EmptyStep.INSTANCE;
   private static final ResultImpl EMPTY_RESULT = new ResultImpl(false, null);
-  private final Long chatId;
-  private final List<Node> starts;
-  private final Map<String, Node> nodes;
-  private final long lockMs;
+  private static final String EXCEPTION_MESSAGE = "During performing an scenario action error occurred";
+
+  final Long chatId;
+  final List<Node> starts;
+  final Map<String, Node> nodes;
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
+  @Setter
+  long lockMs = 0L;
   /**
    * null if no scenario initiated
    */
   @Nullable
-  String name;
+  volatile String name;
   /**
    * null if no scenario initiated
    */
   @Nullable
-  Step step;
+  StepImpl step;
 
   /**
    * if a scenario finished
    */
   boolean finished;
+  /**
+   * history of isMade steps
+   */
+  List<Node> stepsMade;
 
-  ScenarioImpl(Long chatId, List<Node> starts, Map<String, Node> nodes, long lockMs) {
+  // optional fields
+  private final FieldProvider<ScenarioMonitor> scenarioMonitor = FieldProvider.empty();
+
+  ScenarioImpl(Long chatId, List<Node> starts, Map<String, Node> nodes) {
     this.chatId = chatId;
     this.starts = starts;
     this.nodes = nodes;
 
     this.finished = false;
-    this.lockMs = lockMs;
+    this.stepsMade = new LinkedList<>();
   }
 
   @Override
@@ -64,18 +78,12 @@ public final class ScenarioImpl implements Scenario {
   @Nullable
   @Override
   public String getName() {
-    readWriteLock.readLock().lock();
-    String localName = name;
-    readWriteLock.readLock().unlock();
-    return localName;
+    return name;
   }
 
   @Override
   public Step getCurrentStep() {
-    readWriteLock.readLock().lock();
-    Step localStep = step == null ? EMPTY_STEP : step;
-    readWriteLock.readLock().unlock();
-    return localStep;
+    return step == null ? EMPTY_STEP : step;
   }
 
   @Override
@@ -84,30 +92,48 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Override
-  public Result makeStep(UpdateRequest request) throws ScenarioTransitionException {
+  public Result makeStep(UpdateRequest request) throws ScenarioException {
     if (this.finished) {
       return EMPTY_RESULT;
     }
     try {
-      if (readWriteLock.writeLock().tryLock(lockMs, TimeUnit.MILLISECONDS)) {
+      return withLock(readWriteLock.writeLock(), () -> {
         Node nextNode = findNextNode(request);
         if (nextNode != null) {
           return doMakeStep(request, nextNode);
+        } else {
+          return EMPTY_RESULT;
         }
-      } else {
-        throw new ScenarioTransitionException("Timeout while waiting for lock",
-            new TimeoutException());
-      }
+      });
+    } catch (WrappingException e) {
+      throw new ScenarioException(EXCEPTION_MESSAGE, e.getCause());
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      throw new ScenarioTransitionException("Interrupt", e);
+      throw new ScenarioException("Interrupt", e);
     } catch (Exception e) {
-      throw new ScenarioTransitionException(
-          "During performing an scenario action error occurred", e);
-    } finally {
-      readWriteLock.writeLock().unlock();
+      throw new ScenarioException(EXCEPTION_MESSAGE, e);
     }
-    return EMPTY_RESULT;
+  }
+
+  private <T> T withLock(Lock localLock, ThrowingSupplier<T> supplier)
+      throws InterruptedException, TimeoutException {
+    try {
+      if (lockMs > 0L) {
+        if (!localLock.tryLock(lockMs, TimeUnit.MILLISECONDS)) {
+          throw new TimeoutException("Timeout while waiting for lock %s ms".formatted(lockMs));
+        }
+      } else {
+        localLock.lock();
+      }
+      T result = supplier.get(WrappingException::new);
+      localLock.unlock();
+      return result;
+    } catch (TimeoutException e) {
+      throw e;
+    } catch (Exception e) {
+      localLock.unlock();
+      throw e;
+    }
   }
 
   @NonNull
@@ -135,14 +161,18 @@ public final class ScenarioImpl implements Scenario {
       this.name = nextNode.name;
     }
     this.finished = CollectionUtils.isEmpty(nextNode.children);
-    this.step = new StepImpl(this, nextNode.action, nextNode.name);
+
+    StepImpl nextStep = new StepImpl(this, nextNode.action, nextNode.name);
+    scenarioMonitor.ifExists(m -> m.madeStep(step, nextStep));
+
+    this.step = nextStep;
+    this.stepsMade.add(nextNode);
   }
 
   private Node findNextNode(UpdateRequest request) {
     if (step == null) {
       return findMatchingNode(request, starts);
     } else {
-      Assert.notNull(step, "step");
       String stepName = step.getName();
       Node node = nodes.get(stepName);
       checkNextStep(node, stepName, "saved");
@@ -158,7 +188,7 @@ public final class ScenarioImpl implements Scenario {
         .orElse(null);
   }
 
-  private void checkNextStep(Node nextNode, String nextStepName, String qualifier) {
+  void checkNextStep(Node nextNode, String nextStepName, String qualifier) {
     if (nextNode == null) {
       throw new IllegalStateException(
           "Cannot find %s step with the name '%s'. Maybe you delete it from configuration?"
@@ -169,6 +199,10 @@ public final class ScenarioImpl implements Scenario {
   @Override
   public String toString() {
     return "Scenario %s".formatted(getName());
+  }
+
+  public void setScenarioMonitor(ScenarioMonitor scenarioMonitor) {
+    this.scenarioMonitor.setField(scenarioMonitor);
   }
 
   @RequiredArgsConstructor

@@ -49,10 +49,9 @@ repositories {
 
 dependencies {
     api 'org.springframework.boot:spring-boot-starter-web'
-
     api "org.springframework.cloud:spring-cloud-starter-openfeign"
-
     api 'org.telegram:telegrambots:6.5.0'
+    api 'com.esotericsoftware:kryo:4.0.3'
 
     // data
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -64,6 +63,7 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }

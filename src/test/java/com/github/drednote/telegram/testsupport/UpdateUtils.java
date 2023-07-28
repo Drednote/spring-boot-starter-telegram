@@ -1,4 +1,4 @@
-package com.github.drednote.telegram;
+package com.github.drednote.telegram.testsupport;
 
 import java.util.List;
 import lombok.experimental.UtilityClass;

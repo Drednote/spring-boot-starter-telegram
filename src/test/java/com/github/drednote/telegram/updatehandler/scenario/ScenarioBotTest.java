@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.UpdateUtils;
+import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;

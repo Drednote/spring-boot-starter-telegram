@@ -3,7 +3,7 @@ package com.github.drednote.telegram.updatehandler.scenario;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.github.drednote.telegram.UpdateUtils;
+import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.ActionExecutor;
 import com.github.drednote.telegram.core.RequestMappingInfo;
 import com.github.drednote.telegram.core.UpdateRequest;
@@ -11,6 +11,8 @@ import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 class ScenarioImplTest {
@@ -22,11 +24,10 @@ class ScenarioImplTest {
     ScenarioImpl scenario = getScenario();
 
     try {
-      Result result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createCommand("/start"), null, null));
+      Result result = makeStep(scenario, "/start");
 
       // result asserts
-      assertThat(result.made()).isTrue();
+      assertThat(result.isMade()).isTrue();
       assertThat(result.response()).isEqualTo(mockResponse);
 
       // scenario asserts
@@ -39,7 +40,7 @@ class ScenarioImplTest {
           new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
-      assertThat(result.made()).isTrue();
+      assertThat(result.isMade()).isTrue();
       assertThat(result.response()).isEqualTo(mockResponse);
 
       // scenario asserts
@@ -47,7 +48,7 @@ class ScenarioImplTest {
       assertThat(scenario.step).isNotNull().hasFieldOrPropertyWithValue("name", "child");
       assertThat(scenario.getCurrentStep()).isInstanceOf(StepImpl.class);
       assertThat(scenario.isFinished()).isFalse();
-    } catch (ScenarioTransitionException e) {
+    } catch (ScenarioException e) {
       assertThat(e).isNull();
     }
   }
@@ -57,11 +58,10 @@ class ScenarioImplTest {
     ScenarioImpl scenario = getScenario();
 
     try {
-      Result result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createCommand("/register"), null, null));
+      Result result = makeStep(scenario, "/register");
 
       // result asserts
-      assertThat(result.made()).isTrue();
+      assertThat(result.isMade()).isTrue();
       assertThat(result.response()).isEqualTo(mockResponse);
 
       // scenario asserts
@@ -74,7 +74,7 @@ class ScenarioImplTest {
           new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
-      assertThat(result.made()).isFalse();
+      assertThat(result.isMade()).isFalse();
       assertThat(result.response()).isNull();
 
       // scenario asserts
@@ -82,7 +82,7 @@ class ScenarioImplTest {
       assertThat(scenario.step).isNotNull().hasFieldOrPropertyWithValue("name", "root2");
       assertThat(scenario.getCurrentStep()).isInstanceOf(StepImpl.class);
       assertThat(scenario.isFinished()).isTrue();
-    } catch (ScenarioTransitionException e) {
+    } catch (ScenarioException e) {
       assertThat(e).isNull();
     }
   }
@@ -92,14 +92,13 @@ class ScenarioImplTest {
     ScenarioImpl scenario = getScenario();
 
     try {
-      scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createCommand("/start"), null, null));
+      makeStep(scenario, "/start");
 
       Result result = scenario.makeStep(
           new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
-      assertThat(result.made()).isTrue();
+      assertThat(result.isMade()).isTrue();
       assertThat(result.response()).isEqualTo(mockResponse);
 
       // scenario asserts
@@ -112,7 +111,7 @@ class ScenarioImplTest {
           new UpdateRequest(UpdateUtils.createMessage("cancel"), null, null));
 
       // result asserts
-      assertThat(result.made()).isTrue();
+      assertThat(result.isMade()).isTrue();
       assertThat(result.response()).isEqualTo(mockResponse);
 
       // scenario asserts
@@ -120,7 +119,7 @@ class ScenarioImplTest {
       assertThat(scenario.step).isNotNull().hasFieldOrPropertyWithValue("name", "root");
       assertThat(scenario.getCurrentStep()).isInstanceOf(StepImpl.class);
       assertThat(scenario.isFinished()).isFalse();
-    } catch (ScenarioTransitionException e) {
+    } catch (ScenarioException e) {
       assertThat(e).isNull();
     }
   }
@@ -132,11 +131,10 @@ class ScenarioImplTest {
     List<Node> generated = generateNodes(flat, it -> {
       throw new RuntimeException();
     });
-    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat, 1000L);
+    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat);
 
-    assertThatThrownBy(() -> scenario.makeStep(
-        new UpdateRequest(UpdateUtils.createCommand("/start"), null, null)))
-        .isInstanceOf(ScenarioTransitionException.class)
+    assertThatThrownBy(() -> makeStep(scenario, "/start"))
+        .isInstanceOf(ScenarioException.class)
         .cause().isInstanceOf(RuntimeException.class);
   }
 
@@ -145,30 +143,45 @@ class ScenarioImplTest {
     long id = 1;
     Map<String, Node> flat = new HashMap<>();
     List<Node> generated = generateNodes(flat);
-    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat, 1000L);
+    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat);
 
     try {
-      scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createCommand("/start"), null, null));
+      makeStep(scenario, "/start");
 
       scenario.makeStep(
           new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
-    } catch (ScenarioTransitionException e) {
+    } catch (ScenarioException e) {
       assertThat(e).isNull();
     }
 
     flat.remove("root");
     assertThatThrownBy(() -> scenario.makeStep(
         new UpdateRequest(UpdateUtils.createMessage("cancel"), null, null)))
-        .isInstanceOf(ScenarioTransitionException.class)
+        .isInstanceOf(ScenarioException.class)
         .cause().isInstanceOf(IllegalStateException.class);
+  }
+
+  @Test
+  void shouldMadeOnlyOneStep() {
+    ScenarioImpl scenario = getScenario();
+    var first = CompletableFuture.supplyAsync(() -> makeStep(scenario, "/start"));
+    var second = CompletableFuture.supplyAsync(() -> makeStep(scenario, "/register"));
+
+    CompletableFuture.allOf(first, second).join();
+    assertThat(scenario.stepsMade).hasSize(1);
+  }
+
+  @SneakyThrows
+  private static Result makeStep(ScenarioImpl scenario, String step) {
+    return scenario.makeStep(
+        new UpdateRequest(UpdateUtils.createCommand(step), null, null));
   }
 
   private ScenarioImpl getScenario() {
     long id = 1;
     Map<String, Node> flat = new HashMap<>();
     List<Node> generated = generateNodes(flat);
-    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat, 1000L);
+    ScenarioImpl scenario = new ScenarioImpl(id, generated, flat);
 
     // initial asserts
     assertThat(scenario.getId()).isEqualTo(id);

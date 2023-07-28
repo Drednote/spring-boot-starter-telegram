@@ -4,7 +4,7 @@ import org.springframework.lang.Nullable;
 
 public interface Result {
 
-  boolean made();
+  boolean isMade();
 
   @Nullable
   Object response();

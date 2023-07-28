@@ -8,16 +8,15 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @RequiredArgsConstructor
 public class RoleUpdateFilter implements UpdateFilter {
 
-  @Nullable
-  private final DataSourceAdapter adapter;
+  private final ObjectProvider<DataSourceAdapter> adapterProvider;
   private final PermissionProperties permissionProperties;
 
   @Override
@@ -26,10 +25,10 @@ public class RoleUpdateFilter implements UpdateFilter {
     Set<String> roles = new HashSet<>();
     if (user != null) {
       Long id = user.getId();
-      if (adapter != null) {
-        CrudRepository<? extends Permission, Long> repository = adapter.getPermissionRepository();
+      adapterProvider.ifAvailable(adapter -> {
+        CrudRepository<? extends Permission, Long> repository = adapter.permissionRepository();
         repository.findById(id).ifPresent(permission -> roles.addAll(permission.getRoles()));
-      }
+      });
       Optional.ofNullable(permissionProperties.getAssignRole().get(id)).ifPresent(roles::addAll);
     }
 

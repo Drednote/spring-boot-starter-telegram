@@ -2,7 +2,7 @@ package com.github.drednote.telegram.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.drednote.telegram.UpdateUtils;
+import com.github.drednote.telegram.testsupport.UpdateUtils;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;

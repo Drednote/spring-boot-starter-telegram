@@ -4,6 +4,7 @@ import com.github.drednote.telegram.core.DefaultHandlerMethodInvoker;
 import com.github.drednote.telegram.core.HandlerMethodInvoker;
 import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
+import com.github.drednote.telegram.updatehandler.scenario.ScenarioException;
 import com.github.drednote.telegram.utils.ResponseSetter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,8 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     if (throwable instanceof TelegramApiException telegramApiException) {
       log.error("Cannot send response {} for request '{}' to telegram, cause: ",
           request.getResponse(), request.getId(), telegramApiException);
+    } else if (throwable instanceof ScenarioException scenarioException) {
+      // do something
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {

@@ -19,11 +19,12 @@ public class InMemoryScenarioPersister implements ScenarioPersister {
   @Override
   public void restore(Scenario scenario) {
     Scenario saved = map.get(scenario.getId());
-    if (saved != null) {
+    if (saved != null && !saved.isFinished()) {
+      ScenarioImpl savedImpl = (ScenarioImpl) saved;
       ScenarioImpl impl = (ScenarioImpl) scenario;
-      impl.finished = saved.isFinished();
-      impl.name = saved.getName();
-      impl.step = saved.getCurrentStep();
+      impl.finished = savedImpl.finished;
+      impl.name = savedImpl.name;
+      impl.step = savedImpl.step;
     }
   }
 }

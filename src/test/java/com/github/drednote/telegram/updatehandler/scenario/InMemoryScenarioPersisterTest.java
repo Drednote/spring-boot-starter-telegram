@@ -10,7 +10,7 @@ class InMemoryScenarioPersisterTest {
 
   @Test
   void shouldRemoveAfterFinished() {
-    ScenarioImpl scenario = new ScenarioImpl(1L, null, null, 1000);
+    ScenarioImpl scenario = new ScenarioImpl(1L, null, null);
     scenario.finished = false;
     persister.persist(scenario);
     assertThat(persister.map).containsKey(1L);
@@ -23,11 +23,11 @@ class InMemoryScenarioPersisterTest {
 
   @Test
   void shouldCorrectRestore() {
-    ScenarioImpl scenario = new ScenarioImpl(1L, null, null, 1000);
-    scenario.step = EmptyStep.INSTANCE;
+    ScenarioImpl scenario = new ScenarioImpl(1L, null, null);
+    scenario.step = null;
     scenario.name = "testName";
     persister.persist(scenario);
-    ScenarioImpl restoringScenario = new ScenarioImpl(1L, null, null, 1000);
+    ScenarioImpl restoringScenario = new ScenarioImpl(1L, null, null);
     persister.restore(restoringScenario);
     assertThat(restoringScenario.name).isEqualTo(scenario.name);
     assertThat(restoringScenario.step).isEqualTo(scenario.step);

@@ -1,6 +1,8 @@
 package com.github.drednote.telegram.menu;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class MenuProperties {
+
+  private static final Pattern PATTERN = Pattern.compile("[^a-z\\s/]");
 
   /**
    * Create bean {@link BotMenu} with this commands
@@ -38,7 +42,21 @@ public class MenuProperties {
 
     public void setCommand(String command) {
       if (command != null) {
+        validate(command);
         this.command = (command.startsWith("/") ? "" : "/") + command;
+      }
+    }
+
+    /**
+     * Valid only lower case and '/' symbol
+     *
+     * @param command command
+     */
+    void validate(String command) {
+      Matcher matcher = PATTERN.matcher(command);
+      if (matcher.find() || command.lastIndexOf('/') > 0) {
+        throw new IllegalArgumentException(
+            "Bot command must contain only lower case letters and '/' symbol as first symbol");
       }
     }
   }

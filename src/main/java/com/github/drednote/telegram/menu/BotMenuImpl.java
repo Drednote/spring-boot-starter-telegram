@@ -13,9 +13,13 @@ public final class BotMenuImpl implements BotMenu {
   private final Map<String, BotCommand> commands;
 
   public BotMenuImpl(Map<String, CommandCls> commands) {
-    this.commands = commands.entrySet().stream()
-        .collect(Collectors.toMap(Entry::getKey,
-            it -> new BotCommand(it.getValue().getCommand(), it.getValue().getText())));
+    if (commands == null) {
+      this.commands = Map.of();
+    } else {
+      this.commands = commands.entrySet().stream()
+          .collect(Collectors.toMap(Entry::getKey,
+              it -> new BotCommand(it.getValue().getCommand(), it.getValue().getText())));
+    }
   }
 
   @Override

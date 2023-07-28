@@ -9,7 +9,16 @@ public interface Assert {
 
   static void notNull(Object object, String paramName) {
     if (object == null) {
-      throw new IllegalArgumentException("'%s' must not be null".formatted(paramName));
+      throw new IllegalArgumentException("'%s' cannot be null".formatted(paramName));
+    }
+  }
+
+  /**
+   * Not null with a custom message
+   */
+  static void notNullC(Object object, String message) {
+    if (object == null) {
+      throw new IllegalArgumentException(message);
     }
   }
 
@@ -21,7 +30,7 @@ public interface Assert {
 
   static void notEmpty(String string, String paramName) {
     if (StringUtils.isBlank(string)) {
-      throw new IllegalArgumentException("'%s' must not be empty".formatted(paramName));
+      throw new IllegalArgumentException("'%s' cannot be empty".formatted(paramName));
     }
   }
 

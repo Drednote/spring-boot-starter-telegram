@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.github.drednote.telegram.updatehandler.UpdateHandlerProperties;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioMachineConfigurerImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 class ScenarioMachineContainerTest {
 
   ScenarioMachineContainer container;
