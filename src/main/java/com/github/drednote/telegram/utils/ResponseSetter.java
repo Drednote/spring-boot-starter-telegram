@@ -24,7 +24,7 @@ public class ResponseSetter {
       UpdateRequest request, Object invoked, Supplier<Class<?>> parameterType
   ) {
     if (invoked == null || Void.TYPE.isAssignableFrom(parameterType.get())) {
-      request.setResponse(new EmptyHandlerResponse());
+      request.setResponse(EmptyHandlerResponse.INSTANCE);
     } else if (HandlerResponse.class.isAssignableFrom(parameterType.get())) {
       request.setResponse((HandlerResponse) invoked);
     } else if (Collection.class.isAssignableFrom(parameterType.get())

@@ -15,6 +15,7 @@ public class CompositeHandlerResponse extends AbstractHandlerResponse {
   private final List<HandlerResponse> invoked;
 
   public CompositeHandlerResponse(Collection<HandlerResponse> invoked) {
+    super(null, null);
     this.invoked = invoked == null ? null
         : invoked.stream()
             .filter(handlerResponse -> handlerResponse != this)

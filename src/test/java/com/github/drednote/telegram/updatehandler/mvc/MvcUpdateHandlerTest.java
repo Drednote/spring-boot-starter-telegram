@@ -73,7 +73,7 @@ class MvcUpdateHandlerTest {
     @BotRequest(value = "/register", type = RequestType.COMMAND)
     public HandlerResponse register(Update update) {
       registerCount++;
-      return new EmptyHandlerResponse();
+      return EmptyHandlerResponse.INSTANCE;
     }
 
     @BotRequest(type = RequestType.MESSAGE)

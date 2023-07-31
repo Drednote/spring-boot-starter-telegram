@@ -44,7 +44,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {
-        request.setResponse(new InternalErrorHandlerResponse());
+        request.setResponse(InternalErrorHandlerResponse.INSTANCE);
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);
     }

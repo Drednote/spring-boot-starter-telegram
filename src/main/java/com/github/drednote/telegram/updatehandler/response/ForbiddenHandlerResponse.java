@@ -1,15 +1,19 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.github.drednote.telegram.core.UpdateRequest;
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@RequiredArgsConstructor
-public class ForbiddenHandlerResponse extends AbstractHandlerResponse {
+public final class ForbiddenHandlerResponse extends AbstractHandlerResponse {
+
+  public static final ForbiddenHandlerResponse INSTANCE = new ForbiddenHandlerResponse();
+
+  private ForbiddenHandlerResponse() {
+    super("response.forbidden", "You do not have access to this bot!");
+  }
 
   @Override
   public void process(UpdateRequest updateRequest) throws TelegramApiException {
-    String text = "У вас нет доступа к этому боту";
+    String text = getMessageForLocale(updateRequest);
     sendString(text, updateRequest);
   }
 }

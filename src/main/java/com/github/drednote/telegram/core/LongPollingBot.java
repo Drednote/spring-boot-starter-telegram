@@ -7,6 +7,7 @@ import com.github.drednote.telegram.filter.UpdateFilter;
 import com.github.drednote.telegram.filter.UpdateFilterProvider;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
+import com.github.drednote.telegram.updatehandler.response.AbstractHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,12 +24,13 @@ public class LongPollingBot extends TelegramLongPollingBot {
   private final ExceptionHandler exceptionHandler;
   private final TelegramProperties telegramProperties;
   private final UpdateFilterProvider updateFilterProvider;
+  private final BotMessageSource messageSource;
 
   public LongPollingBot(
       TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
       ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-      UpdateFilterProvider updateFilterProvider
-  ) {
+      UpdateFilterProvider updateFilterProvider,
+      BotMessageSource messageSource) {
     super(properties.getSession().toBotOptions(), properties.getToken());
 
     this.name = properties.getName();
@@ -38,6 +40,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     this.exceptionHandler = exceptionHandler;
     this.telegramProperties = properties;
     this.updateFilterProvider = updateFilterProvider;
+    this.messageSource = messageSource;
   }
 
   @Override
@@ -77,7 +80,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
     if (request.getResponse() == null
         && request.getProperties().getUpdateHandler().isSetDefaultAnswer()) {
-      request.setResponse(new NotHandledHandlerResponse());
+      request.setResponse(NotHandledHandlerResponse.INSTANCE);
     }
   }
 
@@ -85,6 +88,9 @@ public class LongPollingBot extends TelegramLongPollingBot {
     HandlerResponse response = request.getResponse();
     if (response != null) {
       request.setObjectMapper(objectMapper);
+      if (response instanceof AbstractHandlerResponse abstractHandlerResponse) {
+        abstractHandlerResponse.setMessageSource(messageSource);
+      }
       response.process(new ImmutableUpdateRequest(request));
     }
   }

@@ -28,7 +28,7 @@ class ResponseSetterTest {
         .isNotNull()
         .isInstanceOf(EmptyHandlerResponse.class);
 
-    EmptyHandlerResponse invoked = new EmptyHandlerResponse();
+    EmptyHandlerResponse invoked = EmptyHandlerResponse.INSTANCE;
     ResponseSetter.setResponse(updateRequest, invoked);
     assertThat(updateRequest.getResponse())
         .isNotNull()
@@ -42,12 +42,12 @@ class ResponseSetterTest {
 
   @Test
   void shouldCorrectHandleList() {
-    ResponseSetter.setResponse(updateRequest, List.of(new EmptyHandlerResponse()));
+    ResponseSetter.setResponse(updateRequest, List.of(EmptyHandlerResponse.INSTANCE));
     assertThat(updateRequest.getResponse())
         .isNotNull()
         .isInstanceOf(CompositeHandlerResponse.class);
 
-    ResponseSetter.setResponse(updateRequest, List.of(new EmptyHandlerResponse(), new Object()));
+    ResponseSetter.setResponse(updateRequest, List.of(EmptyHandlerResponse.INSTANCE, new Object()));
     assertThat(updateRequest.getResponse())
         .isNotNull()
         .isInstanceOf(GenericHandlerResponse.class);

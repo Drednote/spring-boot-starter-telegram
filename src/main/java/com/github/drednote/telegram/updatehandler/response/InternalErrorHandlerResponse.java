@@ -1,15 +1,19 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.github.drednote.telegram.core.UpdateRequest;
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@RequiredArgsConstructor
-public class InternalErrorHandlerResponse extends AbstractHandlerResponse {
+public final class InternalErrorHandlerResponse extends AbstractHandlerResponse {
+
+  public static final InternalErrorHandlerResponse INSTANCE = new InternalErrorHandlerResponse();
+
+  private InternalErrorHandlerResponse() {
+    super("response.internalError", "Oops, something went wrong, please try again later.");
+  }
 
   @Override
   public void process(UpdateRequest updateRequest) throws TelegramApiException {
-    String text = "Упс, что-то пошло не так, попробуйте позже";
+    String text = getMessageForLocale(updateRequest);
     sendString(text, updateRequest);
   }
 }

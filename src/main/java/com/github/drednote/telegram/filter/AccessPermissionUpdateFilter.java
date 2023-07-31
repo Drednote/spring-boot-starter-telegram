@@ -23,7 +23,7 @@ public class AccessPermissionUpdateFilter implements UpdateFilter {
               .map(Role::isCanRead)
               .orElse(false));
       if (!canRead) {
-        request.setResponse(new ForbiddenHandlerResponse());
+        request.setResponse(ForbiddenHandlerResponse.INSTANCE);
       }
     }
   }

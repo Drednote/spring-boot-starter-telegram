@@ -24,6 +24,7 @@ public class TelegramProperties {
 
   private String name;
   private String token;
+  private String defaultLocale;
   private SessionProperties session = new SessionProperties();
   private UpdateHandlerProperties updateHandler = new UpdateHandlerProperties();
   private DataSourceProperties dataSource = new DataSourceProperties();
