@@ -1,11 +1,11 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.utils.FieldProvider;
 import com.github.drednote.telegram.utils.ResponseSetter;
-import com.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
 import com.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
+import com.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -24,7 +24,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
   }
 
   @Override
-  public void onUpdate(UpdateRequest request) throws Exception {
+  public void onUpdate(ExtendedBotRequest request) throws Exception {
     Long chatId = request.getChatId();
     try {
       lock.write().lock(chatId);

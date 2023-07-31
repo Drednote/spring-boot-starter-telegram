@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 
@@ -16,8 +16,8 @@ public class StepImpl implements Step {
   final String name;
 
   @Override
-  public Object onAction(UpdateRequest updateRequest) throws Exception {
-    return actionExecutor.onAction(updateRequest);
+  public Object onAction(BotRequest request) throws Exception {
+    return actionExecutor.onAction(request);
   }
 
   @NonNull

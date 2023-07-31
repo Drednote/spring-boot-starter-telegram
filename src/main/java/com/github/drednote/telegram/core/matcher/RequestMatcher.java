@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 
 public interface RequestMatcher {
 
-  boolean matches(UpdateRequest request);
+  boolean matches(BotRequest request);
 }

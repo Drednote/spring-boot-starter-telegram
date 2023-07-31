@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
+import com.github.drednote.telegram.core.ExtendedBotRequest;
 import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.UpdateRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,19 +12,18 @@ public class BotControllerContainer implements HandlerMethodPopular, ControllerR
   private final Map<RequestMappingInfo, HandlerMethod> mappingLookup = new HashMap<>();
 
   @Override
-  public void populate(UpdateRequest updateRequest) {
-    String text = updateRequest.getText() == null ? "" : updateRequest.getText();
+  public void populate(ExtendedBotRequest request) {
+    String text = request.getText() == null ? "" : request.getText();
 
     mappingLookup.keySet().stream()
-        .filter(requestMappingInfo -> requestMappingInfo.matches(updateRequest))
+        .filter(requestMappingInfo -> requestMappingInfo.matches(request))
         .min(RequestMappingInfo::compareTo)
         .ifPresent(mappingInfo -> {
           String pattern = mappingInfo.getPattern();
           Map<String, String> templateVariables =
               mappingInfo.getPathMatcher().extractUriTemplateVariables(pattern, text);
-          updateRequest.setBasePattern(pattern);
-          updateRequest.setTemplateVariables(templateVariables);
-          updateRequest.setHandlerMethod(mappingLookup.get(mappingInfo));
+          request.setRequestHandler(
+              new RequestHandler(mappingLookup.get(mappingInfo), templateVariables, pattern));
         });
   }
 

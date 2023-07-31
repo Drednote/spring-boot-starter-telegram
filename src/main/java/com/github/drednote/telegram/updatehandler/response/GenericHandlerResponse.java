@@ -1,12 +1,15 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
 import java.nio.charset.StandardCharsets;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@Slf4j
 public class GenericHandlerResponse extends AbstractHandlerResponse {
 
   @NonNull
@@ -18,20 +21,22 @@ public class GenericHandlerResponse extends AbstractHandlerResponse {
   }
 
   @Override
-  public void process(UpdateRequest updateRequest) throws TelegramApiException {
+  public void process(BotRequest request) throws TelegramApiException {
     if (response instanceof String str) {
-      sendString(str, updateRequest);
+      sendString(str, request);
     } else if (response instanceof byte[] bytes) {
-      sendString(new String(bytes, StandardCharsets.UTF_16), updateRequest);
+      sendString(new String(bytes, StandardCharsets.UTF_16), request);
     } else if (response instanceof BotApiMethod<?> botApiMethod) {
-      updateRequest.getAbsSender().execute(botApiMethod);
-    } else {
+      request.getAbsSender().execute(botApiMethod);
+    } else if (request instanceof ExtendedBotRequest extendedBotRequest) {
       try {
-        String stringResponse = updateRequest.getObjectMapper().writeValueAsString(response);
-        sendString(stringResponse, updateRequest);
+        String stringResponse = extendedBotRequest.getObjectMapper().writeValueAsString(response);
+        sendString(stringResponse, request);
       } catch (JsonProcessingException e) {
         throw new IllegalStateException("Cannot serialize response", e);
       }
+    } else {
+      log.error("Cannot process response {}", response);
     }
   }
 }

@@ -3,7 +3,7 @@ package com.github.drednote.telegram.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.drednote.telegram.testsupport.UpdateUtils;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.DefaultBotRequest;
 import com.github.drednote.telegram.updatehandler.response.CompositeHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.GenericHandlerResponse;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 class ResponseSetterTest {
 
-  private final UpdateRequest updateRequest = new UpdateRequest(UpdateUtils.createCommand(""),
+  private final DefaultBotRequest updateRequest = new DefaultBotRequest(UpdateUtils.createCommand(""),
       null, null);
 
   @BeforeEach

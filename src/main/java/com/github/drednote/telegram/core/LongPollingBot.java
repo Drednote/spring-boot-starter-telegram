@@ -45,7 +45,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
-    UpdateRequest request = new UpdateRequest(update, this, telegramProperties);
+    DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
+    request.setObjectMapper(objectMapper);
     try {
       doFilter(request);
       if (request.getResponse() == null) {
@@ -64,7 +65,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
   }
 
-  private void doFilter(UpdateRequest request) throws Exception {
+  private void doFilter(DefaultBotRequest request) throws Exception {
     Collection<UpdateFilter> filters = updateFilterProvider.resolve(request);
     Iterator<UpdateFilter> iterator = filters.iterator();
     do {
@@ -72,7 +73,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     } while (request.getResponse() == null && iterator.hasNext());
   }
 
-  private void doHandle(UpdateRequest request) throws Exception {
+  private void doHandle(DefaultBotRequest request) throws Exception {
     for (UpdateHandler updateHandler : updateHandlers) {
       if (request.getResponse() == null) {
         updateHandler.onUpdate(request);
@@ -84,18 +85,17 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
   }
 
-  private void doAnswer(UpdateRequest request) throws TelegramApiException {
+  private void doAnswer(DefaultBotRequest request) throws TelegramApiException {
     HandlerResponse response = request.getResponse();
     if (response != null) {
-      request.setObjectMapper(objectMapper);
       if (response instanceof AbstractHandlerResponse abstractHandlerResponse) {
         abstractHandlerResponse.setMessageSource(messageSource);
       }
-      response.process(new ImmutableUpdateRequest(request));
+      response.process(new DefaultBotRequest(request));
     }
   }
 
-  private void handleException(UpdateRequest request, Exception e) {
+  private void handleException(DefaultBotRequest request, Exception e) {
     request.setError(e);
     if (!(e instanceof TelegramApiException)) {
       request.setResponse(null);

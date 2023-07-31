@@ -2,95 +2,49 @@ package com.github.drednote.telegram.core;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.drednote.telegram.TelegramProperties;
-import com.github.drednote.telegram.datasource.Permission;
-import com.github.drednote.telegram.updatehandler.HandlerResponse;
-import com.github.drednote.telegram.updatehandler.scenario.Scenario;
-import java.util.Map;
+import com.github.drednote.telegram.utils.Assert;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.web.method.HandlerMethod;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 
-@Getter
-public sealed class UpdateRequest permits ImmutableUpdateRequest {
+public abstract class AbstractBotRequest implements ExtendedBotRequest {
 
   /**
    * updateId
    */
-  private final Integer id;
-  private final Update origin;
-  @JsonIgnore
-  private final AbsSender absSender;
+  @Getter
+  protected final Integer id;
+  @Getter
+  protected final Update origin;
   /**
    * chatId == userId
    */
-  private final Long chatId;
-  private final RequestType messageType;
-  @JsonIgnore
-  private final TelegramProperties properties;
+  @Getter
+  protected final Long chatId;
+  @Getter
+  protected final RequestType messageType;
 
+  @Getter
   @Nullable
-  private final Message message;
+  protected final Message message;
+  @Getter
   @Nullable
-  private final Chat chat;
+  protected final Chat chat;
+  @Getter
   @Nullable
-  private final User user;
+  protected final User user;
+  @Getter
   @Nullable
-  private final String text;
+  protected final String text;
 
-  @Setter
-  @NonNull
-  private Permission permission;
-
-  // mvc
-  @Setter
-  @Nullable
-  @JsonIgnore
-  private HandlerMethod handlerMethod;
-  @Setter
-  @Nullable
-  @JsonIgnore
-  private Map<String, String> templateVariables;
-  @Setter
-  @Nullable
-  @JsonIgnore
-  private String basePattern;
-
-  // scenario
-  @Setter
-  @Nullable
-  private Scenario scenario;
-
-  // response
-  @Setter
-  @Nullable
-  @JsonIgnore
-  private HandlerResponse response;
-  @Setter
-  @JsonIgnore
-  private ObjectMapper objectMapper;
-
-  /**
-   * If error occurred during update handling
-   */
-  @Nullable
-  @Setter
-  private Throwable error;
-
-  public UpdateRequest(@NonNull Update update, AbsSender absSender, TelegramProperties properties) {
+  protected AbstractBotRequest(@NonNull Update update) {
+    Assert.notNull(update, "update");
     this.origin = update;
-    this.absSender = absSender;
     this.id = update.getUpdateId();
-    this.properties = properties;
 
     this.message = firstNonNull(update.getMessage(),
         update.getEditedMessage(),
@@ -155,43 +109,30 @@ public sealed class UpdateRequest permits ImmutableUpdateRequest {
     }
     // this condition is unreachable
     else {
-      this.messageType = null;
-      this.user = null;
-      this.text = null;
-      this.chat = null;
+      throw new UnsupportedOperationException(
+          "Cannot parse Update. One of optional parameters of Update must be present");
     }
+    this.chatId = resolveChatId();
+  }
+
+  protected AbstractBotRequest(AbstractBotRequest request) {
+    this.id = request.id;
+    this.origin = request.origin;
+    this.chatId = request.chatId;
+    this.messageType = request.messageType;
+    this.message = request.message;
+    this.chat = request.chat;
+    this.user = request.user;
+    this.text = request.text;
+  }
+
+  private Long resolveChatId() {
     if (chat != null) {
-      chatId = chat.getId();
+      return chat.getId();
     } else if (user != null) {
-      chatId = user.getId();
+      return user.getId();
     } else {
-      chatId = Long.valueOf(update.getUpdateId());
+      return Long.valueOf(id);
     }
-  }
-
-  protected UpdateRequest(UpdateRequest request) {
-    this.origin = request.getOrigin();
-    this.properties = request.getProperties();
-    this.id = request.getId();
-    this.absSender = request.getAbsSender();
-    this.chatId = request.getChatId();
-    this.messageType = request.getMessageType();
-    this.message = request.getMessage();
-    this.chat = request.getChat();
-    this.user = request.getUser();
-    this.text = request.getText();
-    this.handlerMethod = request.getHandlerMethod();
-    this.templateVariables = request.getTemplateVariables();
-    this.basePattern = request.getBasePattern();
-    this.scenario = request.getScenario();
-    this.response = request.getResponse();
-    this.objectMapper = request.getObjectMapper();
-    this.error = request.getError();
-    this.permission = request.getPermission();
-  }
-
-  @Override
-  public String toString() {
-    return "Update = %s".formatted(this.origin);
   }
 }

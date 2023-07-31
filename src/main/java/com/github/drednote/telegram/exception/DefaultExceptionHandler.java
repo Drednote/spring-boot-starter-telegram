@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.exception;
 
-import com.github.drednote.telegram.core.DefaultHandlerMethodInvoker;
-import com.github.drednote.telegram.core.HandlerMethodInvoker;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
+import com.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import com.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioException;
 import com.github.drednote.telegram.utils.ResponseSetter;
@@ -19,7 +19,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
   private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
 
   @Override
-  public void handle(UpdateRequest request) {
+  public void handle(ExtendedBotRequest request) {
     Throwable throwable = request.getError();
     HandlerMethod handlerMethod = exceptionHandlerResolver.resolve(throwable);
     if (handlerMethod != null) {
@@ -35,7 +35,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     }
   }
 
-  private void processInternal(Throwable throwable, UpdateRequest request) {
+  private void processInternal(Throwable throwable, ExtendedBotRequest request) {
     if (throwable instanceof TelegramApiException telegramApiException) {
       log.error("Cannot send response {} for request '{}' to telegram, cause: ",
           request.getResponse(), request.getId(), telegramApiException);

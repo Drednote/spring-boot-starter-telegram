@@ -1,9 +1,9 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import org.springframework.core.Ordered;
 
 public interface UpdateFilter extends Ordered {
 
-  void filter(UpdateRequest request) throws Exception;
+  void filter(BotRequest request) throws Exception;
 }

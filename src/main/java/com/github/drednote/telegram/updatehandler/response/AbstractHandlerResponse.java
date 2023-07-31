@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.github.drednote.telegram.core.BotMessageSource;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Locale;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public abstract class AbstractHandlerResponse implements HandlerResponse {
   }
 
   @Nullable
-  protected String getMessageForLocale(UpdateRequest request) {
+  protected String getMessageForLocale(BotRequest request) {
     if (code != null && messageSource != null) {
       User user = request.getUser();
       Locale locale = Optional.ofNullable(user)
@@ -37,7 +37,7 @@ public abstract class AbstractHandlerResponse implements HandlerResponse {
     return defaultMessage;
   }
 
-  protected void sendString(String string, UpdateRequest request) throws TelegramApiException {
+  protected void sendString(String string, BotRequest request) throws TelegramApiException {
     AbsSender absSender = request.getAbsSender();
     Long chatId = request.getChatId();
     SendMessage sendMessage = new SendMessage();

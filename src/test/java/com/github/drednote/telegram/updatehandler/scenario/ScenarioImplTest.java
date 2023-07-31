@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.ActionExecutor;
 import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.DefaultBotRequest;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isFalse();
 
       result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
+          new DefaultBotRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
       assertThat(result.isMade()).isTrue();
@@ -71,7 +71,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isTrue();
 
       result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
+          new DefaultBotRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
       assertThat(result.isMade()).isFalse();
@@ -95,7 +95,7 @@ class ScenarioImplTest {
       makeStep(scenario, "/start");
 
       Result result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
+          new DefaultBotRequest(UpdateUtils.createMessage("abc"), null, null));
 
       // result asserts
       assertThat(result.isMade()).isTrue();
@@ -108,7 +108,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isFalse();
 
       result = scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createMessage("cancel"), null, null));
+          new DefaultBotRequest(UpdateUtils.createMessage("cancel"), null, null));
 
       // result asserts
       assertThat(result.isMade()).isTrue();
@@ -149,14 +149,14 @@ class ScenarioImplTest {
       makeStep(scenario, "/start");
 
       scenario.makeStep(
-          new UpdateRequest(UpdateUtils.createMessage("abc"), null, null));
+          new DefaultBotRequest(UpdateUtils.createMessage("abc"), null, null));
     } catch (ScenarioException e) {
       assertThat(e).isNull();
     }
 
     flat.remove("root");
     assertThatThrownBy(() -> scenario.makeStep(
-        new UpdateRequest(UpdateUtils.createMessage("cancel"), null, null)))
+        new DefaultBotRequest(UpdateUtils.createMessage("cancel"), null, null)))
         .isInstanceOf(ScenarioException.class)
         .cause().isInstanceOf(IllegalStateException.class);
   }
@@ -174,7 +174,7 @@ class ScenarioImplTest {
   @SneakyThrows
   private static Result makeStep(ScenarioImpl scenario, String step) {
     return scenario.makeStep(
-        new UpdateRequest(UpdateUtils.createCommand(step), null, null));
+        new DefaultBotRequest(UpdateUtils.createCommand(step), null, null));
   }
 
   private ScenarioImpl getScenario() {

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   }
 
   @Override
-  public Collection<UpdateFilter> resolve(UpdateRequest request) {
+  public Collection<UpdateFilter> resolve(BotRequest request) {
     return new ArrayList<>(filters);
   }
 }

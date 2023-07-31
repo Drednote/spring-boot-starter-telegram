@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.datasource.Permission.DefaultPermission;
@@ -14,13 +14,13 @@ import org.springframework.data.repository.CrudRepository;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @RequiredArgsConstructor
-public class RoleUpdateFilter implements UpdateFilter {
+public class RoleUpdateFilter extends DefaultUpdateFilter {
 
   private final ObjectProvider<DataSourceAdapter> adapterProvider;
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void filter(UpdateRequest request) {
+  public void doFilter(ExtendedBotRequest request) {
     User user = request.getUser();
     Set<String> roles = new HashSet<>();
     if (user != null) {

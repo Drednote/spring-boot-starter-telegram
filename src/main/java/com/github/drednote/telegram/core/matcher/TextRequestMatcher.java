@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.RequestType;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.RequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -14,9 +14,9 @@ public class TextRequestMatcher implements RequestMatcher {
   private final RequestMappingInfo mapping;
 
   @Override
-  public boolean matches(UpdateRequest updateRequest) {
-    String text = updateRequest.getText();
-    RequestType messageType = updateRequest.getMessageType();
+  public boolean matches(BotRequest request) {
+    String text = request.getText();
+    RequestType messageType = request.getMessageType();
     if (mapping.getType() != null && messageType != mapping.getType()) {
       return false;
     }

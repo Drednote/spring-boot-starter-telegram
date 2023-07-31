@@ -1,8 +1,9 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
+import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
 import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.UpdateRequest;
 import com.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,7 +36,9 @@ public final class ScenarioImpl implements Scenario {
   final List<Node> starts;
   final Map<String, Node> nodes;
   private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+  private final FieldProvider<ScenarioMonitor> scenarioMonitor = FieldProvider.empty();
 
+  // optional fields
   @Setter
   long lockMs = 0L;
   /**
@@ -48,7 +51,6 @@ public final class ScenarioImpl implements Scenario {
    */
   @Nullable
   StepImpl step;
-
   /**
    * if a scenario finished
    */
@@ -57,9 +59,6 @@ public final class ScenarioImpl implements Scenario {
    * history of isMade steps
    */
   List<Node> stepsMade;
-
-  // optional fields
-  private final FieldProvider<ScenarioMonitor> scenarioMonitor = FieldProvider.empty();
 
   ScenarioImpl(Long chatId, List<Node> starts, Map<String, Node> nodes) {
     this.chatId = chatId;
@@ -92,7 +91,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Override
-  public Result makeStep(UpdateRequest request) throws ScenarioException {
+  public Result makeStep(BotRequest request) throws ScenarioException {
     if (this.finished) {
       return EMPTY_RESULT;
     }
@@ -137,8 +136,10 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @NonNull
-  private ResultImpl doMakeStep(UpdateRequest request, Node nextNode) throws Exception {
-    request.setScenario(this);
+  private ResultImpl doMakeStep(BotRequest request, Node nextNode) throws Exception {
+    if (request instanceof ExtendedBotRequest setter) {
+      setter.setScenario(this);
+    }
     Object result = nextNode.action.onAction(request);
     nextNode = tryToGoToRef(nextNode);
     mutate(nextNode);
@@ -169,7 +170,7 @@ public final class ScenarioImpl implements Scenario {
     this.stepsMade.add(nextNode);
   }
 
-  private Node findNextNode(UpdateRequest request) {
+  private Node findNextNode(BotRequest request) {
     if (step == null) {
       return findMatchingNode(request, starts);
     } else {
@@ -181,7 +182,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Nullable
-  private Node findMatchingNode(UpdateRequest request, List<Node> nodes) {
+  private Node findMatchingNode(BotRequest request, List<Node> nodes) {
     return nodes.stream()
         .filter(node -> node.pattern.matches(request))
         .min(Comparator.comparing(f -> f.pattern))

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.BotRequest;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public final class InternalErrorHandlerResponse extends AbstractHandlerResponse {
@@ -12,8 +12,8 @@ public final class InternalErrorHandlerResponse extends AbstractHandlerResponse 
   }
 
   @Override
-  public void process(UpdateRequest updateRequest) throws TelegramApiException {
-    String text = getMessageForLocale(updateRequest);
-    sendString(text, updateRequest);
+  public void process(BotRequest request) throws TelegramApiException {
+    String text = getMessageForLocale(request);
+    sendString(text, request);
   }
 }

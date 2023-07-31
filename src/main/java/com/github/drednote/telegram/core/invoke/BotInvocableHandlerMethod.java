@@ -1,4 +1,4 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.invoke;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

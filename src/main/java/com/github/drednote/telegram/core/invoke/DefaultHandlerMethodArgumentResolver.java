@@ -1,6 +1,9 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.invoke;
 
+import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.DefaultBotRequest;
 import org.springframework.core.MethodParameter;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatJoinRequest;
@@ -19,13 +22,28 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
 public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, BotRequest request) {
     Class<?> paramType = parameter.getParameterType();
-    if (UpdateRequest.class.isAssignableFrom(paramType)) {
-      return new ImmutableUpdateRequest(request);
-    } else if (Throwable.class.isAssignableFrom(paramType)) {
-      return request.getError();
-    } else if (Update.class.isAssignableFrom(paramType)) {
+    Object result = resolveUpdateAccessors(paramType, request);
+    if (result == null) {
+      if (BotRequest.class.isAssignableFrom(paramType)) {
+        return resolveBotRequest(request);
+      } else if (TelegramBot.class.isAssignableFrom(paramType)) {
+        return request.getAbsSender();
+      } else if (Throwable.class.isAssignableFrom(paramType)) {
+        return request.getError();
+      } else if (String.class.isAssignableFrom(paramType)) {
+        return request.getText();
+      } else if (Long.class.isAssignableFrom(paramType)) {
+        return request.getChatId();
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private Object resolveUpdateAccessors(Class<?> paramType, BotRequest request) {
+    if (Update.class.isAssignableFrom(paramType)) {
       return request.getOrigin();
     } else if (Message.class.isAssignableFrom(paramType)) {
       return request.getMessage();
@@ -33,12 +51,6 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
       return request.getUser();
     } else if (Chat.class.isAssignableFrom(paramType)) {
       return request.getChat();
-    } else if (String.class.isAssignableFrom(paramType)) {
-      return request.getText();
-    } else if (TelegramBot.class.isAssignableFrom(paramType)) {
-      return request.getAbsSender();
-    } else if (Long.class.isAssignableFrom(paramType)) {
-      return request.getChatId();
     } else if (InlineQuery.class.isAssignableFrom(paramType)) {
       return request.getOrigin().getInlineQuery();
     } else if (ChosenInlineQuery.class.isAssignableFrom(paramType)) {
@@ -62,10 +74,18 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     }
   }
 
+  @Nullable
+  private DefaultBotRequest resolveBotRequest(BotRequest request) {
+    if (request instanceof DefaultBotRequest defaultBotRequest) {
+      return new DefaultBotRequest(defaultBotRequest);
+    }
+    return null;
+  }
+
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     Class<?> paramType = parameter.getParameterType();
-    return UpdateRequest.class.isAssignableFrom(paramType) ||
+    return BotRequest.class.isAssignableFrom(paramType) ||
         TelegramBot.class.isAssignableFrom(paramType) ||
         Long.class.isAssignableFrom(paramType) ||
         String.class.isAssignableFrom(paramType) ||

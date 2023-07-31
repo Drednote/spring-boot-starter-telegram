@@ -2,6 +2,7 @@ package com.github.drednote.telegram.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import com.github.drednote.telegram.testsupport.UpdateUtils;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new UpdateRequest(update, null, null),
+      invoker.invoke(new DefaultBotRequest(update, null, null),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNull();
@@ -34,7 +35,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new UpdateRequest(update, null, null),
+      invoker.invoke(new DefaultBotRequest(update, null, null),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNotNull().isInstanceOf(IllegalStateException.class);

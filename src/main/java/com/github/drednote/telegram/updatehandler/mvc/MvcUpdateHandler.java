@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
-import com.github.drednote.telegram.core.DefaultHandlerMethodInvoker;
-import com.github.drednote.telegram.core.HandlerMethodInvoker;
-import com.github.drednote.telegram.core.UpdateRequest;
+import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
+import com.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.utils.ResponseSetter;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class MvcUpdateHandler implements UpdateHandler {
   private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
 
   @Override
-  public void onUpdate(UpdateRequest request) throws Exception {
+  public void onUpdate(ExtendedBotRequest request) throws Exception {
     handlerMethodPopular.populate(request);
-    HandlerMethod handlerMethod = request.getHandlerMethod();
+    HandlerMethod handlerMethod = request.getRequestHandler().handlerMethod();
     if (handlerMethod != null) {
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
       Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);

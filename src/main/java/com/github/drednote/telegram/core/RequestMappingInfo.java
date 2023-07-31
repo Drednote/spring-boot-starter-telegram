@@ -56,7 +56,7 @@ public class RequestMappingInfo implements Comparable<RequestMappingInfo>, Reque
   }
 
   @Override
-  public boolean matches(UpdateRequest request) {
+  public boolean matches(BotRequest request) {
     return requestMatcher.matches(request);
   }
 
