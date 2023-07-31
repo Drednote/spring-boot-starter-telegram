@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.mvc.annotation;
 
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.RequestType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

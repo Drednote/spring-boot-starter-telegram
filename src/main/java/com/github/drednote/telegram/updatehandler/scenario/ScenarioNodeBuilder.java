@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioDefinition;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.StepDefinition;

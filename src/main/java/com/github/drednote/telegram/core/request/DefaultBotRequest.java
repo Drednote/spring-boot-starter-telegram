@@ -1,4 +1,4 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;

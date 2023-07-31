@@ -3,7 +3,7 @@ package com.github.drednote.telegram.updatehandler.scenario;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioDefinition;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioMachineConfigurer;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioMachineConfigurerImpl;

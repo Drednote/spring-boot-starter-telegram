@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import org.springframework.lang.Nullable;
 
 public sealed interface Scenario permits ScenarioImpl {

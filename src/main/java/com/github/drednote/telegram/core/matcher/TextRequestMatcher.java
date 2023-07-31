@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.BotRequest;
-import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

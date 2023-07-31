@@ -1,10 +1,10 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import com.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import com.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
-import com.github.drednote.telegram.utils.ResponseSetter;
+import com.github.drednote.telegram.core.ResponseSetter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;

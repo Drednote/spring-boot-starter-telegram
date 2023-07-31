@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.experimental.UtilityClass;

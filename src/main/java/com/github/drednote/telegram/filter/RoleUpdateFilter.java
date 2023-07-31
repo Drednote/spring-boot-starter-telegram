@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.datasource.Permission.DefaultPermission;

@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.scenario.configurer;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
 import com.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.LinkedList;

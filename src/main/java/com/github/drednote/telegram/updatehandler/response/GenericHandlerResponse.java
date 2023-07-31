@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.drednote.telegram.core.BotRequest;
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Collection;
 import java.util.List;

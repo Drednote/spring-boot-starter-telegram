@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.core.invoke;
 
-import com.github.drednote.telegram.core.BotRequest;
-import com.github.drednote.telegram.core.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.DefaultBotRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;

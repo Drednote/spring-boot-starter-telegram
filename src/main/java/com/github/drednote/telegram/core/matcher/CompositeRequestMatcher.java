@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;

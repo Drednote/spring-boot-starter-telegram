@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 
 public interface RequestMatcher {
 

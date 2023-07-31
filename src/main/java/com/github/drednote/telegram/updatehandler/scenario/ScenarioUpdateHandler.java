@@ -1,9 +1,9 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.utils.FieldProvider;
-import com.github.drednote.telegram.utils.ResponseSetter;
+import com.github.drednote.telegram.core.ResponseSetter;
 import com.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
 import com.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
 import lombok.extern.slf4j.Slf4j;

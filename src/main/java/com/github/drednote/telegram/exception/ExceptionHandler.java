@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.exception;
 
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 
 public interface ExceptionHandler {
 

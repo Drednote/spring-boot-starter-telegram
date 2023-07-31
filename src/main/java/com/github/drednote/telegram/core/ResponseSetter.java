@@ -1,6 +1,6 @@
-package com.github.drednote.telegram.utils;
+package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.CompositeHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;

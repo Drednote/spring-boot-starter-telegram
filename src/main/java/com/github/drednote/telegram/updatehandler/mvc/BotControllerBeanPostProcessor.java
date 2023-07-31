@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
-import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestType;
 import com.github.drednote.telegram.updatehandler.mvc.annotation.BotController;
 import com.github.drednote.telegram.updatehandler.mvc.annotation.BotRequest;
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
-package com.github.drednote.telegram.utils;
+package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.RequestType;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;

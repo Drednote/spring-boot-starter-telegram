@@ -1,8 +1,8 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.request;
 
 import com.github.drednote.telegram.core.matcher.RequestMatcher;
 import com.github.drednote.telegram.core.matcher.RequestMatcherFactory;
-import com.github.drednote.telegram.utils.RequestTypeComparator;
+import com.github.drednote.telegram.core.RequestTypeComparator;
 import java.util.Objects;
 import lombok.Getter;
 import org.springframework.util.AntPathMatcher;

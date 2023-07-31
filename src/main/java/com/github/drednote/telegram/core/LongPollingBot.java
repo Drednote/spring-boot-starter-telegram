@@ -2,6 +2,7 @@ package com.github.drednote.telegram.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.TelegramProperties;
+import com.github.drednote.telegram.core.request.DefaultBotRequest;
 import com.github.drednote.telegram.exception.ExceptionHandler;
 import com.github.drednote.telegram.filter.UpdateFilter;
 import com.github.drednote.telegram.filter.UpdateFilterProvider;

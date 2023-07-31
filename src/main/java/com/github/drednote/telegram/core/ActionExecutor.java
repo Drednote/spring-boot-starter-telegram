@@ -1,5 +1,7 @@
 package com.github.drednote.telegram.core;
 
+import com.github.drednote.telegram.core.request.BotRequest;
+
 @FunctionalInterface
 public interface ActionExecutor {
 

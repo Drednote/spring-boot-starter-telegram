@@ -3,8 +3,8 @@ package com.github.drednote.telegram.updatehandler.mvc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.drednote.telegram.testsupport.UpdateUtils;
-import com.github.drednote.telegram.core.RequestType;
-import com.github.drednote.telegram.core.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.RequestType;
+import com.github.drednote.telegram.core.request.DefaultBotRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;

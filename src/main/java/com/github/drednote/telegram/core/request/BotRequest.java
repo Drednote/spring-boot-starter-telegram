@@ -1,4 +1,4 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.request;
 
 import com.github.drednote.telegram.TelegramProperties;
 import com.github.drednote.telegram.datasource.Permission;

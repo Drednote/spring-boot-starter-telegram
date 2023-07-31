@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public final class InternalErrorHandlerResponse extends AbstractHandlerResponse {

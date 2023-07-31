@@ -3,8 +3,8 @@ package com.github.drednote.telegram.core;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestType;
 import org.junit.jupiter.api.Test;
 
 class RequestMappingInfoTest {

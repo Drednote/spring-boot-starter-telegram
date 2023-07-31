@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.BotRequest;
-import com.github.drednote.telegram.core.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 
 public abstract class DefaultUpdateFilter implements UpdateFilter {
 

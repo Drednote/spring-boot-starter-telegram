@@ -1,9 +1,9 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.BotRequest;
-import com.github.drednote.telegram.core.ExtendedBotRequest;
-import com.github.drednote.telegram.core.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
 import com.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;

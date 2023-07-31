@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.RequestType;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioDefinition;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.StepDefinition;

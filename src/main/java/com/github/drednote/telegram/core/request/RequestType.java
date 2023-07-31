@@ -1,4 +1,4 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.request;
 
 public enum RequestType {
   COMMAND,

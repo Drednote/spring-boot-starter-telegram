@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.invoke;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 

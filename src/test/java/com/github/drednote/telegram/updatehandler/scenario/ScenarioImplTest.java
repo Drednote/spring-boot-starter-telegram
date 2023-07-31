@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.RequestMappingInfo;
-import com.github.drednote.telegram.core.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.DefaultBotRequest;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import java.util.HashMap;
 import java.util.List;

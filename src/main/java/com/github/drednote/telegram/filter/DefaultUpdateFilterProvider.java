@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.BotRequest;
+import com.github.drednote.telegram.core.request.BotRequest;
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import java.util.ArrayList;
 import java.util.Collection;

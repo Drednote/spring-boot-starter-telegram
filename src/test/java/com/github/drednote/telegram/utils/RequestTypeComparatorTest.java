@@ -2,7 +2,8 @@ package com.github.drednote.telegram.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.github.drednote.telegram.core.RequestType;
+import com.github.drednote.telegram.core.RequestTypeComparator;
+import com.github.drednote.telegram.core.request.RequestType;
 import org.junit.jupiter.api.Test;
 
 class RequestTypeComparatorTest {
