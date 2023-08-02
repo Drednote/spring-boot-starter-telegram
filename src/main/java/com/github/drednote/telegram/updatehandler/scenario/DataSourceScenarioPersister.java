@@ -29,9 +29,10 @@ public class DataSourceScenarioPersister implements ScenarioPersister {
     if (scenario.isFinished()) {
       repository.deleteById(scenario.getId());
       // todo add history
+    } else {
+      byte[] bytes = serializationService.serialize(ScenarioContext.from(scenario));
+      repository.save(createEntityInstance(scenario, bytes));
     }
-    byte[] bytes = serializationService.serialize(ScenarioContext.from(scenario));
-    repository.save(createEntityInstance(scenario, bytes));
   }
 
   @Override

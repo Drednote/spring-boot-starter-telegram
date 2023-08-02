@@ -6,6 +6,7 @@ import com.github.drednote.telegram.core.request.DefaultBotRequest;
 import com.github.drednote.telegram.exception.ExceptionHandler;
 import com.github.drednote.telegram.filter.UpdateFilter;
 import com.github.drednote.telegram.filter.UpdateFilterProvider;
+import com.github.drednote.telegram.session.BotSessionContext;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.response.AbstractHandlerResponse;
@@ -46,10 +47,24 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
-    DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
-    request.setObjectMapper(objectMapper);
     try {
-      doFilter(request);
+      DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
+      request.setObjectMapper(objectMapper);
+      BotSessionContext.saveRequest(request);
+      try {
+        doReceive(request);
+      } catch (Exception ex) {
+        handleException(request, ex);
+      }
+      doPostFilter(request);
+    } finally {
+      BotSessionContext.removeRequest();
+    }
+  }
+
+  private void doReceive(DefaultBotRequest request) throws Exception {
+    try {
+      doPreFilter(request);
       if (request.getResponse() == null) {
         doHandle(request);
       }
@@ -58,21 +73,26 @@ public class LongPollingBot extends TelegramLongPollingBot {
       handleException(request, e);
     } catch (Exception e) {
       handleException(request, e);
-      try {
-        doAnswer(request);
-      } catch (Exception ex) {
-        handleException(request, ex);
-      }
+      doAnswer(request);
     }
   }
 
-  private void doFilter(DefaultBotRequest request) throws Exception {
-    Collection<UpdateFilter> filters = updateFilterProvider.resolve(request);
+  private void doPreFilter(DefaultBotRequest request) {
+    Collection<UpdateFilter> filters = updateFilterProvider.getPreFilters(request);
     Iterator<UpdateFilter> iterator = filters.iterator();
     do {
-      iterator.next().filter(request);
+      iterator.next().preFilter(request);
     } while (request.getResponse() == null && iterator.hasNext());
   }
+
+  private void doPostFilter(DefaultBotRequest request) {
+    Collection<UpdateFilter> filters = updateFilterProvider.getPostFilters(request);
+    Iterator<UpdateFilter> iterator = filters.iterator();
+    do {
+      iterator.next().postFilter(request);
+    } while (iterator.hasNext());
+  }
+
 
   private void doHandle(DefaultBotRequest request) throws Exception {
     for (UpdateHandler updateHandler : updateHandlers) {

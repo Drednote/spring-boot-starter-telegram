@@ -41,6 +41,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
           request.getResponse(), request.getId(), telegramApiException);
     } else if (throwable instanceof ScenarioException scenarioException) {
       // do something
+      log.error("For UpdateRequest {} error occurred during update handling", request, scenarioException);
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {

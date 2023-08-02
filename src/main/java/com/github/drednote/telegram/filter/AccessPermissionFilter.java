@@ -8,14 +8,15 @@ import com.github.drednote.telegram.updatehandler.response.ForbiddenHandlerRespo
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
+import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
-public class AccessPermissionUpdateFilter extends DefaultUpdateFilter {
+public non-sealed class AccessPermissionFilter implements PriorityUpdateFilter {
 
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void doFilter(ExtendedBotRequest request) {
+  public void preFilter(@NonNull ExtendedBotRequest request) {
     if (permissionProperties.getAccess() == Access.BY_ROLE) {
       Permission permission = request.getPermission();
       boolean canRead = permission.getRoles().stream()
@@ -29,7 +30,7 @@ public class AccessPermissionUpdateFilter extends DefaultUpdateFilter {
   }
 
   @Override
-  public int getOrder() {
+  public int getPreOrder() {
     return Ordered.HIGHEST_PRECEDENCE + 101;
   }
 }
