@@ -11,16 +11,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @RequiredArgsConstructor
-public class RoleUpdateFilter extends DefaultUpdateFilter {
+public non-sealed class RoleFilter implements PriorityUpdateFilter {
 
   private final ObjectProvider<DataSourceAdapter> adapterProvider;
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void doFilter(ExtendedBotRequest request) {
+  public void preFilter(@NonNull ExtendedBotRequest request) {
     User user = request.getUser();
     Set<String> roles = new HashSet<>();
     if (user != null) {
@@ -40,7 +41,7 @@ public class RoleUpdateFilter extends DefaultUpdateFilter {
   }
 
   @Override
-  public int getOrder() {
+  public int getPreOrder() {
     return Ordered.HIGHEST_PRECEDENCE + 100;
   }
 }

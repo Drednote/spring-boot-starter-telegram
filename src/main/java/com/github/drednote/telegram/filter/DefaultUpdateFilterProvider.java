@@ -1,32 +1,26 @@
 package com.github.drednote.telegram.filter;
 
 import com.github.drednote.telegram.core.request.BotRequest;
-import com.github.drednote.telegram.datasource.DataSourceAdapter;
+import com.github.drednote.telegram.utils.FilterOrderComparator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.core.OrderComparator;
 
 public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
 
-  private final List<UpdateFilter> filters;
+  private final ObjectProvider<UpdateFilter> filters;
 
-  public DefaultUpdateFilterProvider(
-      ObjectProvider<DataSourceAdapter> dataSourceAdapter,
-      PermissionProperties permissionProperties,
-      Collection<UpdateFilter> filters
-  ) {
-    this.filters = new ArrayList<>(filters);
-
-    this.filters.add(new RoleUpdateFilter(dataSourceAdapter, permissionProperties));
-    this.filters.add(new AccessPermissionUpdateFilter(permissionProperties));
-
-    this.filters.sort(OrderComparator.INSTANCE);
+  public DefaultUpdateFilterProvider(ObjectProvider<UpdateFilter> filters) {
+    this.filters = filters;
   }
 
   @Override
-  public Collection<UpdateFilter> resolve(BotRequest request) {
-    return new ArrayList<>(filters);
+  public List<UpdateFilter> getPreFilters(BotRequest request) {
+    return new ArrayList<>(filters.stream().sorted(FilterOrderComparator.PRE_INSTANCE).toList());
+  }
+
+  @Override
+  public List<UpdateFilter> getPostFilters(BotRequest request) {
+    return new ArrayList<>(filters.stream().sorted(FilterOrderComparator.POST_INSTANCE).toList());
   }
 }

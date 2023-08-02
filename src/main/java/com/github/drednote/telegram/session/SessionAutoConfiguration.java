@@ -1,5 +1,6 @@
 package com.github.drednote.telegram.session;
 
+import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,5 +42,12 @@ public class SessionAutoConfiguration {
   @ConditionalOnMissingBean
   public TelegramBotSession webhooksTelegramBotSession() {
     throw new UnsupportedOperationException("Webhooks not implemented yet");
+  }
+
+  @Bean
+  public CustomScopeConfigurer customScopeConfigurer() {
+    CustomScopeConfigurer configurer = new CustomScopeConfigurer();
+    configurer.addScope(BotSessionScope.BOT_SCOPE_NAME, new BotSessionScope());
+    return configurer;
   }
 }
