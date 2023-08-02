@@ -22,8 +22,9 @@ public class MvcUpdateHandler implements UpdateHandler {
   @Override
   public void onUpdate(ExtendedBotRequest request) throws Exception {
     handlerMethodPopular.populate(request);
-    HandlerMethod handlerMethod = request.getRequestHandler().handlerMethod();
-    if (handlerMethod != null) {
+    RequestHandler requestHandler = request.getRequestHandler();
+    if (requestHandler != null) {
+      HandlerMethod handlerMethod = requestHandler.handlerMethod();
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
       Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
       ResponseSetter.setResponse(request, invoked, () -> parameterType);

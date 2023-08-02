@@ -27,18 +27,18 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
     Object result = resolveUpdateAccessors(paramType, request);
     if (result == null) {
       if (BotRequest.class.isAssignableFrom(paramType)) {
-        return resolveBotRequest(request);
+        result = resolveBotRequest(request);
       } else if (TelegramBot.class.isAssignableFrom(paramType)) {
-        return request.getAbsSender();
+        result = request.getAbsSender();
       } else if (Throwable.class.isAssignableFrom(paramType)) {
-        return request.getError();
+        result = request.getError();
       } else if (String.class.isAssignableFrom(paramType)) {
-        return request.getText();
+        result = request.getText();
       } else if (Long.class.isAssignableFrom(paramType)) {
-        return request.getChatId();
+        result = request.getChatId();
       }
     }
-    return null;
+    return result;
   }
 
   @Nullable
