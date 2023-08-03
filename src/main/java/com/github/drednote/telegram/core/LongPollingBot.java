@@ -31,8 +31,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
   public LongPollingBot(
       TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
       ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-      UpdateFilterProvider updateFilterProvider,
-      BotMessageSource messageSource) {
+      UpdateFilterProvider updateFilterProvider, BotMessageSource messageSource
+  ) {
     super(properties.getSession().toBotOptions(), properties.getToken());
 
     this.name = properties.getName();
@@ -58,7 +58,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
       }
       doPostFilter(request);
     } finally {
-      BotSessionContext.removeRequest();
+      destroyScopedBeans();
+      BotSessionContext.removeRequest(true);
     }
   }
 
@@ -93,7 +94,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
     } while (iterator.hasNext());
   }
 
-
   private void doHandle(DefaultBotRequest request) throws Exception {
     for (UpdateHandler updateHandler : updateHandlers) {
       if (request.getResponse() == null) {
@@ -122,6 +122,10 @@ public class LongPollingBot extends TelegramLongPollingBot {
       request.setResponse(null);
     }
     exceptionHandler.handle(request);
+  }
+
+  private void destroyScopedBeans() {
+
   }
 
   @Override

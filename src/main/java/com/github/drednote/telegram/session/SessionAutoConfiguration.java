@@ -50,4 +50,9 @@ public class SessionAutoConfiguration {
     configurer.addScope(BotSessionScope.BOT_SCOPE_NAME, new BotSessionScope());
     return configurer;
   }
+
+  @Bean
+  public BotSessionContext botSessionContext() {
+    return new BotSessionContext() {};
+  }
 }

@@ -2,6 +2,7 @@ package com.github.drednote.telegram.session;
 
 import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
@@ -17,17 +18,19 @@ public class BotSessionScope implements Scope {
   @NonNull
   @Override
   public Object get(@NonNull String name, @NonNull ObjectFactory<?> objectFactory) {
-    BeanKey beanKey = createBeanKey(name);
-    return scopedObjects.computeIfAbsent(beanKey,
-        key -> objectFactory.getObject());
+    BeanKey key = createBeanKey(name);
+    return scopedObjects.computeIfAbsent(key, it -> {
+      BotSessionContext.saveBeanName(name);
+      return objectFactory.getObject();
+    });
   }
 
   @Nullable
   @Override
   public Object remove(@NonNull String name) {
-    BeanKey beanKey = createBeanKey(name);
-    destructionCallbacks.remove(beanKey).run();
-    return scopedObjects.remove(beanKey);
+    BeanKey key = createBeanKey(name);
+    Optional.ofNullable(destructionCallbacks.remove(key)).ifPresent(Runnable::run);
+    return scopedObjects.remove(key);
   }
 
   @Override

@@ -2,37 +2,72 @@ package com.github.drednote.telegram.session;
 
 import com.github.drednote.telegram.core.request.ExtendedBotRequest;
 import com.github.drednote.telegram.utils.Assert;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.experimental.UtilityClass;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.NonNull;
 
-@UtilityClass
-public class BotSessionContext {
+public abstract class BotSessionContext implements ApplicationContextAware {
 
-  private static final Map<Integer, ExtendedBotRequest> byUpdateId = new ConcurrentHashMap<>();
-  private static final Map<Long, Integer> pairs = new ConcurrentHashMap<>();
+  /**
+   * key = thread id
+   */
+  private static final Map<Long, ExtendedBotRequest> requests = new ConcurrentHashMap<>();
+  /**
+   * key = update id
+   */
+  private static final Map<Integer, List<String>> beanNames = new ConcurrentHashMap<>();
+  private static ConfigurableBeanFactory factory;
 
-  public void saveRequest(ExtendedBotRequest request) {
+  BotSessionContext() {}
+
+  public static void saveRequest(ExtendedBotRequest request) {
     Assert.notNull(request, "request");
-    Integer id = request.getId();
-    byUpdateId.put(id, request);
-    pairs.put(Thread.currentThread().getId(), id);
+    requests.put(Thread.currentThread().getId(), request);
   }
 
   @NonNull
-  public ExtendedBotRequest getRequest() {
+  public static ExtendedBotRequest getRequest() {
     return Optional.of(Thread.currentThread().getId())
-        .map(pairs::get)
-        .map(byUpdateId::get)
+        .map(requests::get)
         .orElseThrow(() -> new IllegalStateException("No thread-bound bot request found: " +
             "Are you referring to request outside of an actual bot request, " +
             "or processing a request outside of the originally receiving thread?"));
   }
 
-  public void removeRequest() {
-    Integer updateId = pairs.get(Thread.currentThread().getId());
-    byUpdateId.remove(updateId);
+  public static void removeRequest(boolean destroyBeans) {
+    if (destroyBeans) {
+      ExtendedBotRequest request = getRequest();
+      synchronized (request) {
+        List<String> names = beanNames.remove(request.getId());
+        for (String name : names) {
+          factory.destroyScopedBean(name);
+        }
+      }
+    }
+    requests.remove(Thread.currentThread().getId());
+  }
+
+  static void saveBeanName(@NonNull String name) {
+    Assert.notEmpty(name, "name");
+
+    ExtendedBotRequest request = getRequest();
+    synchronized (request) {
+      List<String> names = beanNames.computeIfAbsent(request.getId(), key -> new ArrayList<>());
+      names.add(name);
+    }
+  }
+
+  @Override
+  public void setApplicationContext(@NonNull ApplicationContext applicationContext)
+      throws BeansException {
+    this.factory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
   }
 }
