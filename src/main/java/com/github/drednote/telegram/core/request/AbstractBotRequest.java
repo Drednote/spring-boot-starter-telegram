@@ -11,33 +11,26 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+@Getter
 public abstract class AbstractBotRequest implements ExtendedBotRequest {
 
   /**
    * updateId
    */
-  @Getter
   protected final Integer id;
-  @Getter
   protected final Update origin;
   /**
    * chatId == userId
    */
-  @Getter
   protected final Long chatId;
-  @Getter
   protected final RequestType messageType;
 
-  @Getter
   @Nullable
   protected final Message message;
-  @Getter
   @Nullable
   protected final Chat chat;
-  @Getter
   @Nullable
   protected final User user;
-  @Getter
   @Nullable
   protected final String text;
 

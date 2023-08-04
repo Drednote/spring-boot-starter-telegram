@@ -47,34 +47,31 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
+    DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
+    request.setObjectMapper(objectMapper);
     try {
-      DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
-      request.setObjectMapper(objectMapper);
       BotSessionContext.saveRequest(request);
-      try {
-        doReceive(request);
-      } catch (Exception ex) {
-        handleException(request, ex);
-      }
-      doPostFilter(request);
+      doReceive(request);
+    } catch (Exception ex) {
+      handleException(request, ex);
     } finally {
-      destroyScopedBeans();
       BotSessionContext.removeRequest(true);
     }
   }
 
-  private void doReceive(DefaultBotRequest request) throws Exception {
+  private void doReceive(DefaultBotRequest request) {
     try {
       doPreFilter(request);
-      if (request.getResponse() == null) {
-        doHandle(request);
-      }
-      doAnswer(request);
-    } catch (TelegramApiException e) {
-      handleException(request, e);
+      doHandle(request);
     } catch (Exception e) {
       handleException(request, e);
+    }
+    try {
       doAnswer(request);
+    } catch (Exception e) {
+      handleException(request, e);
+    } finally {
+      doPostFilter(request);
     }
   }
 
@@ -122,10 +119,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
       request.setResponse(null);
     }
     exceptionHandler.handle(request);
-  }
-
-  private void destroyScopedBeans() {
-
   }
 
   @Override

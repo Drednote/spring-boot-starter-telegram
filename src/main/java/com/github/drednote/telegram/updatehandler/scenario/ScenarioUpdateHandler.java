@@ -27,7 +27,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
   public void onUpdate(ExtendedBotRequest request) throws Exception {
     Long chatId = request.getChatId();
     try {
-      lock.write().lock(chatId);
+      lock.writeLock().lock(chatId);
       Scenario scenario = scenarioFactory.createInitial(chatId);
       persister.ifExists(p -> p.restore(scenario));
       Result result = scenario.makeStep(request);
@@ -39,7 +39,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
       Thread.currentThread().interrupt();
       throw new ScenarioException("Interrupt", e);
     } finally {
-      lock.write().unlock(chatId);
+      lock.writeLock().unlock(chatId);
     }
   }
 }

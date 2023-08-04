@@ -17,7 +17,7 @@ class SynchronizedReadWriteKeyLockTest {
 
   @Test
   void shouldNotLockOnDifferentKeys() throws InterruptedException {
-    var writeLock = lock.write();
+    var writeLock = lock.writeLock();
     final var key1 = UUID.randomUUID();
     final var key2 = UUID.randomUUID();
     writeLock.lock(key1);
@@ -35,7 +35,7 @@ class SynchronizedReadWriteKeyLockTest {
   @Test
   void shouldLockOnSameKeys() throws InterruptedException {
     final var key = UUID.randomUUID();
-    var writeLock = lock.write();
+    var writeLock = lock.writeLock();
     writeLock.lock(key);
     var anotherThreadWasExecuted = new AtomicBoolean(false);
     try {
@@ -50,7 +50,7 @@ class SynchronizedReadWriteKeyLockTest {
   @Test
   void shouldUnlockOnlyHead() throws InterruptedException {
     final var key = UUID.randomUUID();
-    var writeLock = lock.write();
+    var writeLock = lock.writeLock();
     writeLock.lock(key);
     var first = new AtomicBoolean(false);
     var second = new AtomicBoolean(false);
@@ -78,7 +78,7 @@ class SynchronizedReadWriteKeyLockTest {
   @Test
   void name() throws InterruptedException, ExecutionException {
     final var key = UUID.randomUUID();
-    var writeLock = lock.write();
+    var writeLock = lock.writeLock();
     var aBoolean = new AtomicBoolean(false);
     CompletableFuture[] futures = Stream.iterate(0, it -> it + 1)
         .limit(100)
@@ -106,8 +106,6 @@ class SynchronizedReadWriteKeyLockTest {
       try {
         lock.lock(key);
         executed.set(true);
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
       } finally {
         if (autoUnlock) {
           lock.unlock(key);

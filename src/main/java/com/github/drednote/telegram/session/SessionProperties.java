@@ -1,8 +1,10 @@
 package com.github.drednote.telegram.session;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.BeanCreationException;
@@ -22,9 +24,14 @@ public class SessionProperties {
   private int updateLimit = 100;
   private int updateTimeout = 50;
   private int updateHandlerThreadCount = 1;
+  /**
+   * how often the user can perform requests. 0 = no rules
+   */
+  private long userConcurrency = 0L;
+  private ChronoUnit userConcurrencyUnit = ChronoUnit.SECONDS;
   private List<String> allowedUpdates = new ArrayList<>();
   /**
-   * @apiNote type WebHooks not implements yet
+   * @apiNote type WebHooks don't implement yet
    */
   private UpdateStrategy updateStrategy = UpdateStrategy.LONG_POLLING;
   private Class<? extends BackOff> backOffStrategy = ExponentialBackOff.class;
