@@ -6,12 +6,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
 @AutoConfiguration
-@EnableFeignClients(clients = TelegramClient.class)
 @EnableConfigurationProperties(SessionProperties.class)
 public class SessionAutoConfiguration {
 
@@ -49,6 +48,11 @@ public class SessionAutoConfiguration {
     CustomScopeConfigurer configurer = new CustomScopeConfigurer();
     configurer.addScope(BotSessionScope.BOT_SCOPE_NAME, new BotSessionScope());
     return configurer;
+  }
+
+  @Bean
+  public TelegramClient telegramClient() {
+    return new TelegramClientImpl(new RestTemplate());
   }
 
   @Bean
