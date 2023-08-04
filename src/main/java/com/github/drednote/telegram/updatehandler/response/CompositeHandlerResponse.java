@@ -9,13 +9,16 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.Order;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+/**
+ * You should not use this class directly. If you need to execute many {@code HandlerResponse}, just
+ * return {@code Collection} of {@code HandlerResponse}
+ */
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CompositeHandlerResponse extends AbstractHandlerResponse {
+public class CompositeHandlerResponse implements HandlerResponse {
 
   private final List<HandlerResponse> invoked;
 
   public CompositeHandlerResponse(Collection<HandlerResponse> invoked) {
-    super(null, null);
     this.invoked = invoked == null ? null
         : invoked.stream()
             .filter(handlerResponse -> handlerResponse != this)

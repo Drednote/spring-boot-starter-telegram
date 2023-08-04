@@ -8,6 +8,7 @@ import java.util.Optional;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -32,17 +33,18 @@ public abstract class AbstractHandlerResponse implements HandlerResponse {
           .map(User::getLanguageCode)
           .map(Locale::forLanguageTag)
           .orElse(messageSource.getDefaultLocale());
-      return messageSource.getMessage(code, null, defaultMessage, locale);
+      String message = messageSource.getMessage(code, null, defaultMessage, locale);
+      return message != null ? message : defaultMessage;
     }
     return defaultMessage;
   }
 
-  protected void sendString(String string, BotRequest request) throws TelegramApiException {
+  protected Message sendString(String string, BotRequest request) throws TelegramApiException {
     AbsSender absSender = request.getAbsSender();
     Long chatId = request.getChatId();
     SendMessage sendMessage = new SendMessage();
     sendMessage.setChatId(chatId);
     sendMessage.setText(string);
-    absSender.execute(sendMessage);
+    return absSender.execute(sendMessage);
   }
 }
