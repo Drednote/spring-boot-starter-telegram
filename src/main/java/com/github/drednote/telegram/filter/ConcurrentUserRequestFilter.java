@@ -31,7 +31,7 @@ public non-sealed class ConcurrentUserRequestFilter implements PriorityUpdateFil
     this.sessionProperties = sessionProperties;
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
     executor.scheduleWithFixedDelay(new Cleaner(60_000, sessionProperties, lock, pool),
-        10, 30, TimeUnit.SECONDS);
+        30, 30, TimeUnit.SECONDS);
   }
 
   @Override
@@ -57,13 +57,16 @@ public non-sealed class ConcurrentUserRequestFilter implements PriorityUpdateFil
   }
 
   @Override
-  public int getPreOrder() {
+  public final int getPreOrder() {
     return Ordered.HIGHEST_PRECEDENCE + 102;
   }
 
   @RequiredArgsConstructor
   static class Cleaner implements Runnable {
 
+    /**
+     * in ms
+     */
     private final long staleFactor;
     private final SessionProperties sessionProperties;
     private final ReadWriteLock lock;

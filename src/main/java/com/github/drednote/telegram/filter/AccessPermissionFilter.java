@@ -30,7 +30,7 @@ public non-sealed class AccessPermissionFilter implements PriorityUpdateFilter {
   }
 
   @Override
-  public int getPreOrder() {
+  public final int getPreOrder() {
     return Ordered.HIGHEST_PRECEDENCE + 101;
   }
 }

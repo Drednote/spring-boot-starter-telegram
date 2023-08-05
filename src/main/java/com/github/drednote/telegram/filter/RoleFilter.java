@@ -41,7 +41,7 @@ public non-sealed class RoleFilter implements PriorityUpdateFilter {
   }
 
   @Override
-  public int getPreOrder() {
+  public final int getPreOrder() {
     return Ordered.HIGHEST_PRECEDENCE + 100;
   }
 }
