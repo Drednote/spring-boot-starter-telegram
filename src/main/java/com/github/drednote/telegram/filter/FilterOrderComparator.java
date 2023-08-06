@@ -1,7 +1,5 @@
-package com.github.drednote.telegram.utils;
+package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.filter.PriorityUpdateFilter;
-import com.github.drednote.telegram.filter.UpdateFilter;
 import org.springframework.core.OrderComparator;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

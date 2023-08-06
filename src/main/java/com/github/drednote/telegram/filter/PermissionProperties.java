@@ -20,7 +20,7 @@ public class PermissionProperties {
    */
   private Access access = Access.ALL;
   /**
-   * If user has no role, this will be set by default
+   * If a user has no role, this will be set by default
    */
   private String defaultRole = DEFAULT_ROLE;
   /**

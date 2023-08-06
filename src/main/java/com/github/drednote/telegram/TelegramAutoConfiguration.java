@@ -15,7 +15,6 @@ import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
 import java.util.Collection;
 import java.util.Locale;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -67,13 +66,12 @@ public class TelegramAutoConfiguration {
 
   @AutoConfiguration
   @AutoConfigureBefore(BotConfig.class)
-  @Slf4j
   public static class LocaleConfig {
 
     @Bean
     public BotMessageSource botMessageSource(TelegramProperties properties) {
       var messageSource = new BotMessageSource();
-      messageSource.setBasename("classpath:bot-messages");
+      messageSource.setBasename("classpath:telegram-bot-messages");
       messageSource.setDefaultEncoding("UTF-8");
       if (properties.getDefaultLocale() != null) {
         messageSource.setDefaultLocale(Locale.forLanguageTag(properties.getDefaultLocale()));

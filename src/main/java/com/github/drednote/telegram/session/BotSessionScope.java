@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.session;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,7 +41,7 @@ public class BotSessionScope implements Scope {
 
   @NonNull
   private BeanKey createBeanKey(@NonNull String name) {
-    ExtendedBotRequest botRequest = BotSessionContext.getRequest();
+    ExtendedTelegramUpdateRequest botRequest = BotSessionContext.getRequest();
     return new BeanKey(botRequest.getId(), name);
   }
 

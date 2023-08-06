@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.github.drednote.telegram.core.BotMessageSource;
-import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +18,14 @@ import org.telegram.telegrambots.meta.api.objects.User;
 class AbstractHandlerResponseTest {
 
   private AbstractHandlerResponse handlerResponse;
-  private BotRequest botRequest;
+  private TelegramUpdateRequest telegramUpdateRequest;
   private User user;
   private BotMessageSource messageSource;
 
   @BeforeEach
   void setUp() {
     // Create a mock BotRequest object
-    botRequest = mock(BotRequest.class);
+    telegramUpdateRequest = mock(TelegramUpdateRequest.class);
 
     // Create a mock User object
     user = mock(User.class);
@@ -36,7 +36,7 @@ class AbstractHandlerResponseTest {
     // Create an instance of AbstractHandlerResponse with a code and default message
     handlerResponse = new AbstractHandlerResponse("CODE", "Default Message") {
       @Override
-      public void process(BotRequest request) {
+      public void process(TelegramUpdateRequest request) {
 
       }
     };
@@ -48,7 +48,7 @@ class AbstractHandlerResponseTest {
   @Test
   void withCodeAndMessageSourceReturnsMessageForLocale() {
     // Set up the mock objects
-    when(botRequest.getUser()).thenReturn(user);
+    when(telegramUpdateRequest.getUser()).thenReturn(user);
     when(user.getLanguageCode()).thenReturn("en-US");
 
     // Set up the messageSource mock to return a specific message
@@ -56,7 +56,7 @@ class AbstractHandlerResponseTest {
         .thenReturn("Localized Message");
 
     // Call the method under test
-    String message = handlerResponse.getMessageForLocale(botRequest);
+    String message = handlerResponse.getMessageForLocale(telegramUpdateRequest);
 
     // Verify the interactions and assertions
     verify(messageSource).getMessage(eq("CODE"), eq(null), eq("Default Message"),
@@ -67,11 +67,11 @@ class AbstractHandlerResponseTest {
   @Test
   void withoutCodeOrMessageSourceReturnsDefaultMessage() {
     // Set up the mock objects
-    when(botRequest.getUser()).thenReturn(user);
+    when(telegramUpdateRequest.getUser()).thenReturn(user);
     handlerResponse.setMessageSource(null);
 
     // Call the method under test
-    String message = handlerResponse.getMessageForLocale(botRequest);
+    String message = handlerResponse.getMessageForLocale(telegramUpdateRequest);
 
     // Verify the interactions and assertions
     verifyZeroInteractions(messageSource);
@@ -81,7 +81,7 @@ class AbstractHandlerResponseTest {
   @Test
   void withoutUserReturnsDefaultMessage() {
     // Call the method under test
-    String message = handlerResponse.getMessageForLocale(botRequest);
+    String message = handlerResponse.getMessageForLocale(telegramUpdateRequest);
 
     // Verify the interactions and assertions
     verifyZeroInteractions(messageSource);
@@ -90,9 +90,9 @@ class AbstractHandlerResponseTest {
 
   @Test
   void ifMessageSourceReturnNullThenReturnDefaultMessage() {
-    when(botRequest.getUser()).thenReturn(user);
+    when(telegramUpdateRequest.getUser()).thenReturn(user);
     // Call the method under test
-    String message = handlerResponse.getMessageForLocale(botRequest);
+    String message = handlerResponse.getMessageForLocale(telegramUpdateRequest);
 
     // Verify the interactions and assertions
     verifyOneInteractions(messageSource);

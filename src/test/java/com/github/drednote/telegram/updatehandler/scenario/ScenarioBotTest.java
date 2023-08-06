@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.testsupport.UpdateUtils;
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +26,9 @@ class ScenarioBotTest {
   @Test
   void name() throws Exception {
     updateHandler.onUpdate(
-        new DefaultBotRequest(UpdateUtils.createCommand("/start"), null, null));
+        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/start"), null, null));
     updateHandler.onUpdate(
-        new DefaultBotRequest(UpdateUtils.createCommand("/cancel"), null, null));
+        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/cancel"), null, null));
 
   }
 

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.CompositeHandlerResponse;
 import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;
@@ -21,7 +21,7 @@ public class ResponseSetter {
    */
   @SuppressWarnings("unchecked")
   public void setResponse(
-      ExtendedBotRequest request, Object invoked, Supplier<Class<?>> parameterType
+      ExtendedTelegramUpdateRequest request, Object invoked, Supplier<Class<?>> parameterType
   ) {
     if (invoked == null || Void.TYPE.isAssignableFrom(parameterType.get())) {
       request.setResponse(EmptyHandlerResponse.INSTANCE);
@@ -36,7 +36,7 @@ public class ResponseSetter {
   }
 
   @SuppressWarnings({"Convert2MethodRef", "java:S1612"})
-  public void setResponse(ExtendedBotRequest request, Object invoked) {
+  public void setResponse(ExtendedTelegramUpdateRequest request, Object invoked) {
     setResponse(request, invoked, () -> invoked.getClass());
   }
 

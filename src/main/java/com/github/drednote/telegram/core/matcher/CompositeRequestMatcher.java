@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -14,7 +14,7 @@ public class CompositeRequestMatcher implements RequestMatcher {
   }
 
   @Override
-  public boolean matches(BotRequest request) {
+  public boolean matches(TelegramUpdateRequest request) {
     return matchers.stream().anyMatch(requestMatcher -> requestMatcher.matches(request));
   }
 }

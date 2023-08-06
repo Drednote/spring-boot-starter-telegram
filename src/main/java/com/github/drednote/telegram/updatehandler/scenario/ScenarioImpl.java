@@ -1,9 +1,9 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.request.BotRequest;
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
-import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import com.github.drednote.telegram.core.request.TelegramRequestMapping;
 import com.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -91,7 +91,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Override
-  public Result makeStep(BotRequest request) throws ScenarioException {
+  public Result makeStep(TelegramUpdateRequest request) throws ScenarioException {
     if (this.finished) {
       return EMPTY_RESULT;
     }
@@ -136,8 +136,8 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @NonNull
-  private ResultImpl doMakeStep(BotRequest request, Node nextNode) throws Exception {
-    if (request instanceof ExtendedBotRequest setter) {
+  private ResultImpl doMakeStep(TelegramUpdateRequest request, Node nextNode) throws Exception {
+    if (request instanceof ExtendedTelegramUpdateRequest setter) {
       setter.setScenario(this);
     }
     Object result = nextNode.action.onAction(request);
@@ -170,7 +170,7 @@ public final class ScenarioImpl implements Scenario {
     this.stepsMade.add(nextNode);
   }
 
-  private Node findNextNode(BotRequest request) {
+  private Node findNextNode(TelegramUpdateRequest request) {
     if (step == null) {
       return findMatchingNode(request, starts);
     } else {
@@ -182,7 +182,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Nullable
-  private Node findMatchingNode(BotRequest request, List<Node> nodes) {
+  private Node findMatchingNode(TelegramUpdateRequest request, List<Node> nodes) {
     return nodes.stream()
         .filter(node -> node.pattern.matches(request))
         .min(Comparator.comparing(f -> f.pattern))
@@ -210,7 +210,7 @@ public final class ScenarioImpl implements Scenario {
   static class Node {
 
     final String name;
-    final RequestMappingInfo pattern;
+    final TelegramRequestMapping pattern;
     final List<Node> children = new ArrayList<>();
     final ActionExecutor action;
     @Nullable

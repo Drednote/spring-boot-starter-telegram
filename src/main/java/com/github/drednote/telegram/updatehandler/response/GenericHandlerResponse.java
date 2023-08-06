@@ -1,8 +1,8 @@
 package com.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.drednote.telegram.core.request.BotRequest;
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class GenericHandlerResponse extends AbstractHandlerResponse {
   }
 
   @Override
-  public void process(BotRequest request) throws TelegramApiException {
+  public void process(TelegramUpdateRequest request) throws TelegramApiException {
     Serializable responseMessage;
     if (response instanceof String str) {
       responseMessage = sendString(str, request);
@@ -42,7 +42,7 @@ public class GenericHandlerResponse extends AbstractHandlerResponse {
       responseMessage = request.getAbsSender().execute(botApiMethod);
     } else if (response instanceof SendMediaBotMethod<?>) {
       responseMessage = tryToSendMedia(request);
-    } else if (request instanceof ExtendedBotRequest extendedBotRequest) {
+    } else if (request instanceof ExtendedTelegramUpdateRequest extendedBotRequest) {
       try {
         String stringResponse = extendedBotRequest.getObjectMapper().writeValueAsString(response);
         String truncated = truncateQuotes(stringResponse);
@@ -66,7 +66,7 @@ public class GenericHandlerResponse extends AbstractHandlerResponse {
     return stringResponse;
   }
 
-  private Serializable tryToSendMedia(BotRequest request) throws TelegramApiException {
+  private Serializable tryToSendMedia(TelegramUpdateRequest request) throws TelegramApiException {
     if (response instanceof SendAnimation sendAnimation) {
       return request.getAbsSender().execute(sendAnimation);
     }

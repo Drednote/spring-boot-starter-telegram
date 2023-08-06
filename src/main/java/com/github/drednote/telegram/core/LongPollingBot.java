@@ -2,7 +2,7 @@ package com.github.drednote.telegram.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.drednote.telegram.TelegramProperties;
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import com.github.drednote.telegram.exception.ExceptionHandler;
 import com.github.drednote.telegram.filter.UpdateFilter;
 import com.github.drednote.telegram.filter.UpdateFilterProvider;
@@ -47,7 +47,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
-    DefaultBotRequest request = new DefaultBotRequest(update, this, telegramProperties);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, this, telegramProperties);
     request.setObjectMapper(objectMapper);
     try {
       BotSessionContext.saveRequest(request);
@@ -59,7 +59,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
   }
 
-  private void doReceive(DefaultBotRequest request) {
+  private void doReceive(DefaultTelegramUpdateRequest request) {
     try {
       doPreFilter(request);
       doHandle(request);
@@ -75,7 +75,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
   }
 
-  private void doPreFilter(DefaultBotRequest request) {
+  private void doPreFilter(DefaultTelegramUpdateRequest request) {
     Collection<UpdateFilter> filters = updateFilterProvider.getPreFilters(request);
     Iterator<UpdateFilter> iterator = filters.iterator();
     do {
@@ -83,7 +83,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     } while (request.getResponse() == null && iterator.hasNext());
   }
 
-  private void doPostFilter(DefaultBotRequest request) {
+  private void doPostFilter(DefaultTelegramUpdateRequest request) {
     Collection<UpdateFilter> filters = updateFilterProvider.getPostFilters(request);
     Iterator<UpdateFilter> iterator = filters.iterator();
     do {
@@ -91,7 +91,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
     } while (iterator.hasNext());
   }
 
-  private void doHandle(DefaultBotRequest request) throws Exception {
+  private void doHandle(DefaultTelegramUpdateRequest request) throws Exception {
     for (UpdateHandler updateHandler : updateHandlers) {
       if (request.getResponse() == null) {
         updateHandler.onUpdate(request);
@@ -103,17 +103,17 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
   }
 
-  private void doAnswer(DefaultBotRequest request) throws TelegramApiException {
+  private void doAnswer(DefaultTelegramUpdateRequest request) throws TelegramApiException {
     HandlerResponse response = request.getResponse();
     if (response != null) {
       if (response instanceof AbstractHandlerResponse abstractHandlerResponse) {
         abstractHandlerResponse.setMessageSource(messageSource);
       }
-      response.process(new DefaultBotRequest(request));
+      response.process(new DefaultTelegramUpdateRequest(request));
     }
   }
 
-  private void handleException(DefaultBotRequest request, Exception e) {
+  private void handleException(DefaultTelegramUpdateRequest request, Exception e) {
     request.setError(e);
     if (!(e instanceof TelegramApiException)) {
       request.setResponse(null);

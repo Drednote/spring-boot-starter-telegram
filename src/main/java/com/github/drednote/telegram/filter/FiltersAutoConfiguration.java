@@ -1,6 +1,7 @@
 package com.github.drednote.telegram.filter;
 
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
+import com.github.drednote.telegram.session.SessionProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,5 +32,11 @@ public class FiltersAutoConfiguration {
   @ConditionalOnMissingBean
   public AccessPermissionFilter accessPermissionFilter(PermissionProperties permissionProperties) {
     return new AccessPermissionFilter(permissionProperties);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ConcurrentUserRequestFilter concurrentUserRequestFilter(SessionProperties properties) {
+    return new ConcurrentUserRequestFilter(properties);
   }
 }

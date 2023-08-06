@@ -3,7 +3,7 @@ package com.github.drednote.telegram.updatehandler.response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import com.github.drednote.telegram.testsupport.UpdateUtils;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class GenericHandlerResponseTest {
     Update update = UpdateUtils.createMessage("2");
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultBotRequest(update, absSender, null));
+    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
     Mockito.verify(absSender)
         .execute(new SendMessage(update.getMessage().getChatId().toString(), text));
   }
@@ -37,7 +37,7 @@ class GenericHandlerResponseTest {
     Update update = UpdateUtils.createMessage("2");
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultBotRequest(update, absSender, null));
+    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
     Mockito.verify(absSender)
         .execute(new SendMessage(update.getMessage().getChatId().toString(),
             new String(text, StandardCharsets.UTF_8)));
@@ -50,7 +50,7 @@ class GenericHandlerResponseTest {
     GenericHandlerResponse response = new GenericHandlerResponse(sendContact);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultBotRequest(update, absSender, null));
+    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
     Mockito.verify(absSender).execute(sendContact);
   }
 
@@ -62,7 +62,7 @@ class GenericHandlerResponseTest {
     GenericHandlerResponse response = new GenericHandlerResponse(animation);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultBotRequest(update, absSender, null));
+    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
     Mockito.verify(absSender).execute(animation);
   }
 
@@ -73,7 +73,7 @@ class GenericHandlerResponseTest {
     GenericHandlerResponse response = new GenericHandlerResponse(object);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    DefaultBotRequest request = new DefaultBotRequest(update, absSender, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, absSender, null);
     request.setObjectMapper(new ObjectMapper());
     response.process(request);
     Mockito.verify(absSender)

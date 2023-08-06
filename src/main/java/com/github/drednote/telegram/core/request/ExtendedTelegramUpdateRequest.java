@@ -8,7 +8,7 @@ import com.github.drednote.telegram.updatehandler.scenario.Scenario;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public interface ExtendedBotRequest extends BotRequest {
+public interface ExtendedTelegramUpdateRequest extends TelegramUpdateRequest {
 
   void setScenario(Scenario scenario);
 

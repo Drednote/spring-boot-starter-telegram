@@ -1,5 +1,6 @@
 package com.github.drednote.telegram.updatehandler.mvc.annotation;
 
+import com.github.drednote.telegram.core.request.MessageType;
 import com.github.drednote.telegram.core.request.RequestType;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,14 +12,18 @@ import org.springframework.core.annotation.AliasFor;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface BotRequest {
+@TelegramRequest(requestType = RequestType.MESSAGE, messageType = MessageType.COMMAND)
+public @interface TelegramCommand {
 
-  @AliasFor("path")
+  /**
+   * @see TelegramRequest#value
+   */
+  @AliasFor(value = "value", annotation = TelegramRequest.class)
   String[] value() default {};
 
-  @AliasFor("value")
+  /**
+   * @see TelegramRequest#path
+   */
+  @AliasFor(value = "path", annotation = TelegramRequest.class)
   String[] path() default {};
-
-  RequestType[] type() default {};
-
 }

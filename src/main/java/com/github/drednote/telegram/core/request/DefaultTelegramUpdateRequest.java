@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 @Getter
-public class DefaultBotRequest extends AbstractBotRequest {
+public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest {
 
   @JsonIgnore
   private final AbsSender absSender;
@@ -54,7 +54,7 @@ public class DefaultBotRequest extends AbstractBotRequest {
   @Nullable
   private Throwable error;
 
-  public DefaultBotRequest(
+  public DefaultTelegramUpdateRequest(
       @NonNull Update update, AbsSender absSender, TelegramProperties properties
   ) {
     super(update);
@@ -63,7 +63,7 @@ public class DefaultBotRequest extends AbstractBotRequest {
     this.permission = new DefaultPermission(new HashSet<>());
   }
 
-  public DefaultBotRequest(DefaultBotRequest request) {
+  public DefaultTelegramUpdateRequest(DefaultTelegramUpdateRequest request) {
     super(request);
     this.properties = request.properties;
     this.absSender = request.absSender;

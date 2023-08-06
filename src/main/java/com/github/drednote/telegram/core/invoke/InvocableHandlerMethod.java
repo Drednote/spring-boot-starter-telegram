@@ -6,9 +6,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
-public class BotInvocableHandlerMethod extends HandlerMethod {
+public class InvocableHandlerMethod extends HandlerMethod {
 
-  public BotInvocableHandlerMethod(HandlerMethod handlerMethod) {
+  public InvocableHandlerMethod(HandlerMethod handlerMethod) {
     super(handlerMethod);
   }
 

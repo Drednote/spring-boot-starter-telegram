@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.session.SessionProperties;
 import com.github.drednote.telegram.updatehandler.response.TooManyRequestsHandlerResponse;
 import com.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
-public non-sealed class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
+public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
 
   private final SessionProperties sessionProperties;
   private final Map<Long, Instant> pool = new ConcurrentHashMap<>();
@@ -35,7 +35,7 @@ public non-sealed class ConcurrentUserRequestFilter implements PriorityUpdateFil
   }
 
   @Override
-  public void preFilter(@NonNull ExtendedBotRequest request) {
+  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
     Long chatId = request.getChatId();
     ChronoUnit unit = sessionProperties.getUserConcurrencyUnit();
     long duration = sessionProperties.getUserConcurrency();

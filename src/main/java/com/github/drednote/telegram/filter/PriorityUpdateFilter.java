@@ -1,5 +1,4 @@
 package com.github.drednote.telegram.filter;
 
-public sealed interface PriorityUpdateFilter extends UpdateFilter
-    permits AccessPermissionFilter, ConcurrentUserRequestFilter, RoleFilter {
+public interface PriorityUpdateFilter extends UpdateFilter {
 }

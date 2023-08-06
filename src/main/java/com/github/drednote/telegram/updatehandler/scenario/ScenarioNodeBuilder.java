@@ -1,16 +1,20 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
 import com.github.drednote.telegram.core.ActionExecutor;
-import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.MessageType;
+import com.github.drednote.telegram.core.request.TelegramRequestMapping;
+import com.github.drednote.telegram.core.request.RequestType;
 import com.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioDefinition;
 import com.github.drednote.telegram.updatehandler.scenario.configurer.StepDefinition;
 import com.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
@@ -39,7 +43,7 @@ final class ScenarioNodeBuilder {
           ? truncateSlash(startCommand)
           : scenario.name();
       Node scenarioNode = new Node(
-          id, new RequestMappingInfo(startCommand, null), action, null, null);
+          id, new TelegramRequestMapping(startCommand, RequestType.MESSAGE, Set.of(MessageType.COMMAND)), action, null, null);
       addToFlat(scenarioNode);
       addChildren(steps, scenarioNode);
       this.scenarios.add(scenarioNode);
@@ -54,8 +58,8 @@ final class ScenarioNodeBuilder {
   private void addChildren(LinkedList<StepDefinition> steps, Node parentNode) {
     int i = 0;
     for (StepDefinition step : steps) {
-      List<RequestMappingInfo> patterns = createEmptyIfNeed(step.pattern());
-      for (RequestMappingInfo mappingInfo : patterns) {
+      List<TelegramRequestMapping> patterns = createEmptyIfNeed(step.pattern());
+      for (TelegramRequestMapping mappingInfo : patterns) {
         ActionExecutor action = step.action();
         Assert.notNull(action, "Scenario action");
 
@@ -73,13 +77,13 @@ final class ScenarioNodeBuilder {
   }
 
   @NonNull
-  private List<RequestMappingInfo> createEmptyIfNeed(
-      List<RequestMappingInfo> patterns) {
+  private List<TelegramRequestMapping> createEmptyIfNeed(
+      List<TelegramRequestMapping> patterns) {
     if (patterns == null) {
       patterns = new ArrayList<>();
     }
     if (patterns.isEmpty()) {
-      patterns.add(new RequestMappingInfo("**", null));
+      patterns.add(new TelegramRequestMapping("**", null, Collections.emptySet()));
     }
     return patterns;
   }

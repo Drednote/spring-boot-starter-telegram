@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface BotAdvice {
+public @interface TelegramAdvice {
 }

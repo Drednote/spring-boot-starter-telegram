@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.datasource.Permission.DefaultPermission;
@@ -15,13 +15,14 @@ import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @RequiredArgsConstructor
-public non-sealed class RoleFilter implements PriorityUpdateFilter {
+public class RoleFilter implements PriorityUpdateFilter {
 
   private final ObjectProvider<DataSourceAdapter> adapterProvider;
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void preFilter(@NonNull ExtendedBotRequest request) {
+  @SuppressWarnings({"java:S1874", "deprecation"})
+  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
     User user = request.getUser();
     Set<String> roles = new HashSet<>();
     if (user != null) {
@@ -38,6 +39,11 @@ public non-sealed class RoleFilter implements PriorityUpdateFilter {
     }
 
     request.setPermission(new DefaultPermission(roles));
+  }
+
+  @Override
+  public boolean matches(ExtendedTelegramUpdateRequest request) {
+    return request.getChat() != null;
   }
 
   @Override

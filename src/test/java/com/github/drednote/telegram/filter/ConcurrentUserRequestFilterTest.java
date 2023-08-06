@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import com.github.drednote.telegram.filter.ConcurrentUserRequestFilter.Cleaner;
 import com.github.drednote.telegram.session.SessionProperties;
 import com.github.drednote.telegram.testsupport.UpdateUtils;
@@ -29,7 +29,7 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultBotRequest request = new DefaultBotRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
 
@@ -44,7 +44,7 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultBotRequest request = new DefaultBotRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
     Thread.sleep(50);
@@ -61,7 +61,7 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultBotRequest request = new DefaultBotRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
     Thread.sleep(50);

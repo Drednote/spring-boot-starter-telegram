@@ -1,0 +1,43 @@
+{
+  "origin": {
+    "update_id": 0,
+    "message": {
+      "message_id": 0,
+      "from": {
+        "id": 0,
+        "first_name": "first_name",
+        "is_bot": false,
+        "last_name": "last_name",
+        "username": "username",
+        "language_code": "ru"
+      },
+      "date": 1691222949,
+      "chat": {
+        "id": 0,
+        "type": "private",
+        "first_name": "first_name",
+        "last_name": "last_name",
+        "username": "username"
+      },
+      "poll": {
+        "id": "<id>",
+        "question": "1",
+        "options": [
+          {
+            "text": "2",
+            "voter_count": 0
+          },
+          {
+            "text": "1",
+            "voter_count": 0
+          }
+        ],
+        "total_voter_count": 0,
+        "is_closed": false,
+        "is_anonymous": true,
+        "type": "regular",
+        "allows_multiple_answers": false
+      }
+    }
+  }
+}

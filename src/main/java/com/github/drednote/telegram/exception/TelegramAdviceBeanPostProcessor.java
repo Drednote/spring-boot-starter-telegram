@@ -8,7 +8,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
-public class BotAdviceBeanPostProcessor implements BeanPostProcessor {
+public class TelegramAdviceBeanPostProcessor implements BeanPostProcessor {
 
   private final ExceptionHandlerRegistrar registrar;
 
@@ -16,8 +16,8 @@ public class BotAdviceBeanPostProcessor implements BeanPostProcessor {
   public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
       throws BeansException {
     Class<?> targetClass = AopUtils.getTargetClass(bean);
-    BotAdvice botAdvice = AnnotationUtils.findAnnotation(targetClass, BotAdvice.class);
-    if (botAdvice != null) {
+    TelegramAdvice telegramAdvice = AnnotationUtils.findAnnotation(targetClass, TelegramAdvice.class);
+    if (telegramAdvice != null) {
       registrar.register(bean, targetClass);
     }
     return bean;

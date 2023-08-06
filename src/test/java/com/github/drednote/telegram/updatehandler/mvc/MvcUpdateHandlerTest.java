@@ -2,15 +2,16 @@ package com.github.drednote.telegram.updatehandler.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.drednote.telegram.core.request.MessageType;
 import com.github.drednote.telegram.testsupport.UpdateUtils;
 import com.github.drednote.telegram.core.request.RequestType;
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
 import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestController;
-import com.github.drednote.telegram.updatehandler.mvc.annotation.BotController;
-import com.github.drednote.telegram.updatehandler.mvc.annotation.BotRequest;
+import com.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
+import com.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
 import com.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 class MvcUpdateHandlerTest {
 
   @Autowired
-  BotControllerContainer container;
+  TelegramControllerContainer container;
   @Autowired
   TestController testController;
   UpdateHandler updateHandler;
@@ -45,7 +46,7 @@ class MvcUpdateHandlerTest {
     Update update = UpdateUtils.createCommand("/register");
     update.setUpdateId(1);
 
-    updateHandler.onUpdate(new DefaultBotRequest(update, null, null));
+    updateHandler.onUpdate(new DefaultTelegramUpdateRequest(update, null, null));
 
     assertThat(testController.registerCount).isEqualTo(1);
   }
@@ -57,26 +58,26 @@ class MvcUpdateHandlerTest {
     message.setText("hello");
     update.setMessage(message);
     update.setUpdateId(1);
-    updateHandler.onUpdate(new DefaultBotRequest(update, null, null));
+    updateHandler.onUpdate(new DefaultTelegramUpdateRequest(update, null, null));
 
     assertThat(testController.textCount).isEqualTo(1);
   }
 
   @Slf4j
-  @BotController
+  @TelegramController
   static class TestController {
 
     int registerCount = 0;
     int textCount = 0;
 
 
-    @BotRequest(value = "/register", type = RequestType.COMMAND)
+    @TelegramRequest(value = "/register", messageType = MessageType.COMMAND)
     public HandlerResponse register(Update update) {
       registerCount++;
       return EmptyHandlerResponse.INSTANCE;
     }
 
-    @BotRequest(type = RequestType.MESSAGE)
+    @TelegramRequest(requestType = RequestType.MESSAGE)
     public void text(
         Update update, Message message, User user
     ) {

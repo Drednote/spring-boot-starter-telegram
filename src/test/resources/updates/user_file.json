@@ -1,0 +1,32 @@
+{
+  "origin": {
+    "update_id": 0,
+    "message": {
+      "message_id": 0,
+      "from": {
+        "id": 0,
+        "first_name": "first_name",
+        "is_bot": false,
+        "last_name": "last_name",
+        "username": "username",
+        "language_code": "ru"
+      },
+      "date": 1691222949,
+      "chat": {
+        "id": 0,
+        "type": "private",
+        "first_name": "first_name",
+        "last_name": "last_name",
+        "username": "username"
+      },
+      "document": {
+        "file_id": "<file id>",
+        "file_unique_id": "<short file id>",
+        "file_name": "name",
+        "mime_type": "text/plain",
+        "file_size": 1821
+      },
+      "caption": "asd"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.datasource.Permission;
 import com.github.drednote.telegram.filter.PermissionProperties.Access;
 import com.github.drednote.telegram.filter.PermissionProperties.Role;
@@ -11,12 +11,12 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
-public non-sealed class AccessPermissionFilter implements PriorityUpdateFilter {
+public class AccessPermissionFilter implements PriorityUpdateFilter {
 
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void preFilter(@NonNull ExtendedBotRequest request) {
+  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
     if (permissionProperties.getAccess() == Access.BY_ROLE) {
       Permission permission = request.getPermission();
       boolean canRead = permission.getRoles().stream()
@@ -27,6 +27,11 @@ public non-sealed class AccessPermissionFilter implements PriorityUpdateFilter {
         request.setResponse(ForbiddenHandlerResponse.INSTANCE);
       }
     }
+  }
+
+  @Override
+  public boolean matches(ExtendedTelegramUpdateRequest request) {
+    return request.getChat() != null;
   }
 
   @Override

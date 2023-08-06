@@ -1,23 +1,23 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
-import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import com.github.drednote.telegram.core.request.TelegramRequestMapping;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.web.method.HandlerMethod;
 
-public class BotControllerContainer implements HandlerMethodPopular, ControllerRegistrar {
+public class TelegramControllerContainer implements HandlerMethodPopular, ControllerRegistrar {
 
-  private final Map<RequestMappingInfo, HandlerMethod> mappingLookup = new HashMap<>();
+  private final Map<TelegramRequestMapping, HandlerMethod> mappingLookup = new HashMap<>();
 
   @Override
-  public void populate(ExtendedBotRequest request) {
+  public void populate(ExtendedTelegramUpdateRequest request) {
     String text = request.getText() == null ? "" : request.getText();
 
     mappingLookup.keySet().stream()
         .filter(requestMappingInfo -> requestMappingInfo.matches(request))
-        .min(RequestMappingInfo::compareTo)
+        .min(TelegramRequestMapping::compareTo)
         .ifPresent(mappingInfo -> {
           String pattern = mappingInfo.getPattern();
           Map<String, String> templateVariables =
@@ -28,12 +28,12 @@ public class BotControllerContainer implements HandlerMethodPopular, ControllerR
   }
 
   @Override
-  public void register(Object bean, Method method, RequestMappingInfo mapping) {
+  public void register(Object bean, Method method, TelegramRequestMapping mapping) {
     HandlerMethod handlerMethod = new HandlerMethod(bean, method);
     HandlerMethod existingHandler = mappingLookup.get(mapping);
     if (existingHandler != null) {
       throw new IllegalStateException(
-          "Ambiguous mapping. Cannot map '" + handlerMethod.getBean() + "' method \n" +
+          "\nAmbiguous mapping. Cannot map '" + handlerMethod.getBean() + "' method \n" +
               handlerMethod + "\nto " + mapping + ": There is already '" +
               existingHandler.getBean() + "' bean method\n" + existingHandler + " mapped.");
     }

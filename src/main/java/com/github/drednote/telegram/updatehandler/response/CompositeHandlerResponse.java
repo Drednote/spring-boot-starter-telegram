@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.response;
 
-import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import com.github.drednote.telegram.updatehandler.HandlerResponse;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CompositeHandlerResponse implements HandlerResponse {
   }
 
   @Override
-  public void process(BotRequest request) throws TelegramApiException {
+  public void process(TelegramUpdateRequest request) throws TelegramApiException {
     for (HandlerResponse response : invoked) {
       response.process(request);
     }

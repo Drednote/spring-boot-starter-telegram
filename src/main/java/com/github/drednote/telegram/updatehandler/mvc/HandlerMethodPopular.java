@@ -1,9 +1,9 @@
 package com.github.drednote.telegram.updatehandler.mvc;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 
 @FunctionalInterface
 public interface HandlerMethodPopular {
 
-  void populate(ExtendedBotRequest descriptor);
+  void populate(ExtendedTelegramUpdateRequest descriptor);
 }

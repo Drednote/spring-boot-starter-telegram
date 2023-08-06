@@ -1,7 +1,7 @@
 package com.github.drednote.telegram.core.invoke;
 
-import com.github.drednote.telegram.core.request.BotRequest;
-import com.github.drednote.telegram.core.request.DefaultBotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import com.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -22,11 +22,11 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
 public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(MethodParameter parameter, BotRequest request) {
+  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
     Class<?> paramType = parameter.getParameterType();
     Object result = resolveUpdateAccessors(paramType, request);
     if (result == null) {
-      if (BotRequest.class.isAssignableFrom(paramType)) {
+      if (TelegramUpdateRequest.class.isAssignableFrom(paramType)) {
         result = resolveBotRequest(request);
       } else if (TelegramBot.class.isAssignableFrom(paramType)) {
         result = request.getAbsSender();
@@ -42,7 +42,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
   }
 
   @Nullable
-  private Object resolveUpdateAccessors(Class<?> paramType, BotRequest request) {
+  private Object resolveUpdateAccessors(Class<?> paramType, TelegramUpdateRequest request) {
     if (Update.class.isAssignableFrom(paramType)) {
       return request.getOrigin();
     } else if (Message.class.isAssignableFrom(paramType)) {
@@ -75,9 +75,9 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
   }
 
   @Nullable
-  private DefaultBotRequest resolveBotRequest(BotRequest request) {
-    if (request instanceof DefaultBotRequest defaultBotRequest) {
-      return new DefaultBotRequest(defaultBotRequest);
+  private DefaultTelegramUpdateRequest resolveBotRequest(TelegramUpdateRequest request) {
+    if (request instanceof DefaultTelegramUpdateRequest defaultBotRequest) {
+      return new DefaultTelegramUpdateRequest(defaultBotRequest);
     }
     return null;
   }
@@ -85,7 +85,7 @@ public class DefaultHandlerMethodArgumentResolver implements HandlerMethodArgume
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     Class<?> paramType = parameter.getParameterType();
-    return BotRequest.class.isAssignableFrom(paramType) ||
+    return TelegramUpdateRequest.class.isAssignableFrom(paramType) ||
         TelegramBot.class.isAssignableFrom(paramType) ||
         Long.class.isAssignableFrom(paramType) ||
         String.class.isAssignableFrom(paramType) ||

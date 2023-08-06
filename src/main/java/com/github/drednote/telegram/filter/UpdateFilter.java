@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
@@ -9,12 +9,16 @@ import org.springframework.lang.NonNull;
  */
 public interface UpdateFilter {
 
-  default void preFilter(@NonNull ExtendedBotRequest request) {
+  default void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
     // do nothing
   }
 
-  default void postFilter(@NonNull ExtendedBotRequest request) {
+  default void postFilter(@NonNull ExtendedTelegramUpdateRequest request) {
     // do nothing
+  }
+
+  default boolean matches(ExtendedTelegramUpdateRequest request) {
+    return true;
   }
 
   default int getPreOrder() {

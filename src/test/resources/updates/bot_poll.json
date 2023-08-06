@@ -1,0 +1,24 @@
+{
+  "origin": {
+    "update_id": 0,
+    "poll": {
+      "id": "<id>",
+      "question": "1",
+      "options": [
+        {
+          "text": "1",
+          "voter_count": 0
+        },
+        {
+          "text": "2",
+          "voter_count": 0
+        }
+      ],
+      "total_voter_count": 0,
+      "is_closed": true,
+      "is_anonymous": true,
+      "type": "regular",
+      "allows_multiple_answers": false
+    }
+  }
+}

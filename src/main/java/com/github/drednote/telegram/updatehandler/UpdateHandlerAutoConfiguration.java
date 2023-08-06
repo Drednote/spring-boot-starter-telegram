@@ -2,8 +2,8 @@ package com.github.drednote.telegram.updatehandler;
 
 import com.github.drednote.telegram.datasource.DataSourceAdapter;
 import com.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
-import com.github.drednote.telegram.updatehandler.mvc.BotControllerBeanPostProcessor;
-import com.github.drednote.telegram.updatehandler.mvc.BotControllerContainer;
+import com.github.drednote.telegram.updatehandler.mvc.TelegramControllerBeanPostProcessor;
+import com.github.drednote.telegram.updatehandler.mvc.TelegramControllerContainer;
 import com.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
 import com.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
 import com.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
@@ -79,15 +79,15 @@ public class UpdateHandlerAutoConfiguration {
     }
 
     @Bean
-    public BotControllerContainer handlerMethodContainer() {
-      return new BotControllerContainer();
+    public TelegramControllerContainer handlerMethodContainer() {
+      return new TelegramControllerContainer();
     }
 
     @Bean
-    public BotControllerBeanPostProcessor botControllerBeanPostProcessor(
+    public TelegramControllerBeanPostProcessor botControllerBeanPostProcessor(
         ControllerRegistrar registrar
     ) {
-      return new BotControllerBeanPostProcessor(registrar);
+      return new TelegramControllerBeanPostProcessor(registrar);
     }
   }
 }

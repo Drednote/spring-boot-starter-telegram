@@ -1,17 +1,18 @@
-package com.github.drednote.telegram.core;
+package com.github.drednote.telegram.core.comparator;
 
 import com.github.drednote.telegram.core.request.RequestType;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class RequestTypeComparator implements Comparator<RequestType> {
+public final class RequestTypeComparator extends DefaultComparator<RequestType> {
 
   private final Map<RequestType, Integer> priority = new EnumMap<>(RequestType.class);
 
-  public RequestTypeComparator() {
-    priority.put(RequestType.COMMAND, 11);
-    priority.put(RequestType.MESSAGE, 10);
+  public static final RequestTypeComparator INSTANCE = new RequestTypeComparator();
+
+  private RequestTypeComparator() {
+    // maybe need to delete
+    priority.put(RequestType.MESSAGE, 2);
     priority.put(RequestType.INLINE_QUERY, 1);
     priority.put(RequestType.CHOSEN_INLINE_QUERY, 1);
     priority.put(RequestType.CALLBACK_QUERY, 1);
@@ -24,13 +25,7 @@ public class RequestTypeComparator implements Comparator<RequestType> {
   }
 
   @Override
-  public int compare(RequestType o1, RequestType o2) {
-    if (o1 == null) {
-      return 1;
-    }
-    if (o2 == null) {
-      return -1;
-    }
+  public int doCompare(RequestType o1, RequestType o2) {
     return priority.get(o2) - priority.get(o1);
   }
 }

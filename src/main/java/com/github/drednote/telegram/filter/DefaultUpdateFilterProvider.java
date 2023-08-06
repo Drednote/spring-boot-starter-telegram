@@ -1,7 +1,6 @@
 package com.github.drednote.telegram.filter;
 
-import com.github.drednote.telegram.core.request.BotRequest;
-import com.github.drednote.telegram.utils.FilterOrderComparator;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
@@ -15,12 +14,18 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   }
 
   @Override
-  public List<UpdateFilter> getPreFilters(BotRequest request) {
-    return new ArrayList<>(filters.stream().sorted(FilterOrderComparator.PRE_INSTANCE).toList());
+  public List<UpdateFilter> getPreFilters(ExtendedTelegramUpdateRequest request) {
+    return new ArrayList<>(filters.stream()
+        .filter(updateFilter -> updateFilter.matches(request))
+        .sorted(FilterOrderComparator.PRE_INSTANCE)
+        .toList());
   }
 
   @Override
-  public List<UpdateFilter> getPostFilters(BotRequest request) {
-    return new ArrayList<>(filters.stream().sorted(FilterOrderComparator.POST_INSTANCE).toList());
+  public List<UpdateFilter> getPostFilters(ExtendedTelegramUpdateRequest request) {
+    return new ArrayList<>(filters.stream()
+        .filter(updateFilter -> updateFilter.matches(request))
+        .sorted(FilterOrderComparator.POST_INSTANCE)
+        .toList());
   }
 }

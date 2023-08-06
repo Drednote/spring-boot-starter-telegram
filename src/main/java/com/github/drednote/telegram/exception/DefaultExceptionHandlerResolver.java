@@ -21,7 +21,7 @@ public class DefaultExceptionHandlerResolver
   private final Map<Class<? extends Throwable>, HandlerMethod> exceptionLookup = new HashMap<>();
   private final Map<Class<? extends Throwable>, HandlerMethod> cacheExceptionLookup = new HashMap<>();
   public static final MethodFilter EXCEPTION_HANDLER_METHODS = method ->
-      AnnotatedElementUtils.hasAnnotation(method, BotExceptionHandler.class);
+      AnnotatedElementUtils.hasAnnotation(method, TelegramExceptionHandler.class);
 
   @Override
   @Nullable
@@ -84,8 +84,8 @@ public class DefaultExceptionHandlerResolver
 
   private void detectAnnotationExceptionMappings(Method method,
       List<Class<? extends Throwable>> result) {
-    BotExceptionHandler ann = AnnotatedElementUtils.findMergedAnnotation(method,
-        BotExceptionHandler.class);
+    TelegramExceptionHandler ann = AnnotatedElementUtils.findMergedAnnotation(method,
+        TelegramExceptionHandler.class);
     Assert.state(ann != null, "No BotExceptionHandler annotation");
     result.addAll(Arrays.asList(ann.value()));
   }

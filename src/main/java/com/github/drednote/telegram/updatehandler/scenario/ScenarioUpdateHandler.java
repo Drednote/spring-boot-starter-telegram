@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.updatehandler.UpdateHandler;
 import com.github.drednote.telegram.utils.FieldProvider;
 import com.github.drednote.telegram.core.ResponseSetter;
@@ -24,7 +24,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
   }
 
   @Override
-  public void onUpdate(ExtendedBotRequest request) throws Exception {
+  public void onUpdate(ExtendedTelegramUpdateRequest request) throws Exception {
     Long chatId = request.getChatId();
     try {
       lock.writeLock().lock(chatId);

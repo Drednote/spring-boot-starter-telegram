@@ -1,0 +1,43 @@
+{
+  "origin": {
+    "update_id": 0,
+    "message": {
+      "message_id": 0,
+      "from": {
+        "id": 0,
+        "first_name": "first_name",
+        "is_bot": false,
+        "last_name": "last_name",
+        "username": "username",
+        "language_code": "ru"
+      },
+      "date": 1691222949,
+      "chat": {
+        "id": 0,
+        "type": "private",
+        "first_name": "first_name",
+        "last_name": "last_name",
+        "username": "username"
+      },
+      "sticker": {
+        "file_id": "<file id>",
+        "file_unique_id": "<short file id>",
+        "type": "regular",
+        "width": 512,
+        "height": 512,
+        "thumb": {
+          "file_id": "<another file id>",
+          "file_unique_id": "<another short file id>",
+          "width": 128,
+          "height": 128,
+          "file_size": 5900
+        },
+        "file_size": 23441,
+        "emoji": "😏",
+        "set_name": "Peepo_Pepe",
+        "is_animated": true,
+        "is_video": false
+      }
+    }
+  }
+}

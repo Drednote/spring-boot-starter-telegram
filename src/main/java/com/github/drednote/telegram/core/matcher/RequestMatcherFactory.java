@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.core.matcher;
 
-import com.github.drednote.telegram.core.request.RequestMappingInfo;
+import com.github.drednote.telegram.core.request.TelegramRequestMapping;
 import java.util.ArrayList;
 import java.util.Collection;
 import lombok.experimental.UtilityClass;
@@ -8,14 +8,15 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class RequestMatcherFactory {
 
-  public RequestMatcher create(RequestMappingInfo mapping) {
+  public RequestMatcher create(TelegramRequestMapping mapping) {
     return new CompositeRequestMatcher(getMatchers(mapping));
   }
 
-  public Collection<RequestMatcher> getMatchers(RequestMappingInfo info) {
+  public Collection<RequestMatcher> getMatchers(TelegramRequestMapping info) {
     Collection<RequestMatcher> matchers = new ArrayList<>();
 
-    matchers.add(new TextRequestMatcher(info));
+    RequestTypeMatcher base = new RequestTypeMatcher(info);
+    matchers.add(base.thenMatching(new TextRequestMatcher(info)));
 
     return matchers;
   }

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler.scenario;
 
-import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +10,7 @@ public final class EmptyStep implements Step {
   public static final EmptyStep INSTANCE = new EmptyStep();
 
   @Override
-  public Object onAction(BotRequest request) throws Exception {
+  public Object onAction(TelegramUpdateRequest request) throws Exception {
     throw new UnsupportedOperationException("Cannot execute action on empty step");
   }
 

@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.session;
 
-import com.github.drednote.telegram.core.request.ExtendedBotRequest;
+import com.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import com.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public abstract class BotSessionContext implements ApplicationContextAware {
   /**
    * key = thread id
    */
-  private static final Map<Long, ExtendedBotRequest> requests = new ConcurrentHashMap<>();
+  private static final Map<Long, ExtendedTelegramUpdateRequest> requests = new ConcurrentHashMap<>();
   /**
    * key = update id
    */
@@ -28,13 +28,13 @@ public abstract class BotSessionContext implements ApplicationContextAware {
 
   BotSessionContext() {}
 
-  public static void saveRequest(ExtendedBotRequest request) {
+  public static void saveRequest(ExtendedTelegramUpdateRequest request) {
     Assert.notNull(request, "request");
     requests.put(Thread.currentThread().getId(), request);
   }
 
   @NonNull
-  public static ExtendedBotRequest getRequest() {
+  public static ExtendedTelegramUpdateRequest getRequest() {
     return Optional.of(Thread.currentThread().getId())
         .map(requests::get)
         .orElseThrow(() -> new IllegalStateException("No thread-bound bot request found: " +
@@ -44,7 +44,7 @@ public abstract class BotSessionContext implements ApplicationContextAware {
 
   public static void removeRequest(boolean destroyBeans) {
     if (destroyBeans) {
-      ExtendedBotRequest request = getRequest();
+      ExtendedTelegramUpdateRequest request = getRequest();
       synchronized (request) {
         List<String> names = beanNames.remove(request.getId());
         for (String name : names) {
@@ -58,7 +58,7 @@ public abstract class BotSessionContext implements ApplicationContextAware {
   static void saveBeanName(@NonNull String name) {
     Assert.notEmpty(name, "name");
 
-    ExtendedBotRequest request = getRequest();
+    ExtendedTelegramUpdateRequest request = getRequest();
     synchronized (request) {
       List<String> names = beanNames.computeIfAbsent(request.getId(), key -> new ArrayList<>());
       names.add(name);

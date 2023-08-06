@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface BotExceptionHandler {
+public @interface TelegramExceptionHandler {
 
   Class<? extends Throwable>[] value() default {};
 }

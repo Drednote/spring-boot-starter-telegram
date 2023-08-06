@@ -1,6 +1,6 @@
 package com.github.drednote.telegram.updatehandler;
 
-import com.github.drednote.telegram.core.request.BotRequest;
+import com.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @FunctionalInterface
@@ -11,5 +11,5 @@ public interface HandlerResponse {
    *
    * @throws TelegramApiException if sending failed
    */
-  void process(BotRequest request) throws TelegramApiException;
+  void process(TelegramUpdateRequest request) throws TelegramApiException;
 }

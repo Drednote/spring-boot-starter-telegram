@@ -64,6 +64,7 @@ public class DataSourceScenarioPersister implements ScenarioPersister {
     scenario.step = new StepImpl(scenario, node.action, stepName);
   }
 
+  @SuppressWarnings("unchecked")
   private <K extends ScenarioDB> K createEntityInstance(Scenario scenario, byte[] bytes) {
     try {
       ScenarioDB scenarioDB = clazz.getDeclaredConstructor().newInstance();

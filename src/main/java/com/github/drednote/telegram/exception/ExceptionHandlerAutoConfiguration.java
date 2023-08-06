@@ -19,9 +19,9 @@ public class ExceptionHandlerAutoConfiguration {
   }
 
   @Bean
-  public BotAdviceBeanPostProcessor botAdviceBeanPostProcessor(
+  public TelegramAdviceBeanPostProcessor telegramAdviceBeanPostProcessor(
       ExceptionHandlerRegistrar registrar
   ) {
-    return new BotAdviceBeanPostProcessor(registrar);
+    return new TelegramAdviceBeanPostProcessor(registrar);
   }
 }
