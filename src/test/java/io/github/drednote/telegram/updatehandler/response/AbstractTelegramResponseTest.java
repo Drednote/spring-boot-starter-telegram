@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import io.github.drednote.telegram.core.BotMessageSource;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +15,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-class AbstractHandlerResponseTest {
+class AbstractTelegramResponseTest {
 
-  private AbstractHandlerResponse handlerResponse;
+  private AbstractTelegramResponse handlerResponse;
   private TelegramUpdateRequest telegramUpdateRequest;
   private User user;
-  private BotMessageSource messageSource;
+  private TelegramMessageSource messageSource;
 
   @BeforeEach
   void setUp() {
@@ -31,10 +31,10 @@ class AbstractHandlerResponseTest {
     user = mock(User.class);
 
     // Create a mock BotMessageSource object
-    messageSource = mock(BotMessageSource.class);
+    messageSource = mock(TelegramMessageSource.class);
 
     // Create an instance of AbstractHandlerResponse with a code and default message
-    handlerResponse = new AbstractHandlerResponse("CODE", "Default Message") {
+    handlerResponse = new AbstractTelegramResponse("CODE", "Default Message") {
       @Override
       public void process(TelegramUpdateRequest request) {
 
@@ -99,12 +99,12 @@ class AbstractHandlerResponseTest {
     assertEquals("Default Message", message);
   }
 
-  private void verifyZeroInteractions(BotMessageSource messageSource) {
+  private void verifyZeroInteractions(TelegramMessageSource messageSource) {
     verify(messageSource, Mockito.never())
         .getMessage(eq("CODE"), eq(null), eq("Default Message"), any(Locale.class));
   }
 
-  private void verifyOneInteractions(BotMessageSource messageSource) {
+  private void verifyOneInteractions(TelegramMessageSource messageSource) {
     verify(messageSource, Mockito.atMostOnce())
         .getMessage(eq("CODE"), eq(null), eq("Default Message"), any(Locale.class));
   }

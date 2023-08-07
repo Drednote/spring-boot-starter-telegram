@@ -16,7 +16,7 @@ public class SessionAutoConfiguration {
 
   @Bean(destroyMethod = "stop")
   @ConditionalOnProperty(
-      prefix = "drednote.telegram-bot.session",
+      prefix = "drednote.telegram.session",
       name = "type",
       havingValue = "LONG_POLLING",
       matchIfMissing = true
@@ -34,7 +34,7 @@ public class SessionAutoConfiguration {
 
   @Bean(destroyMethod = "stop")
   @ConditionalOnProperty(
-      prefix = "drednote.telegram-bot.session",
+      prefix = "drednote.telegram.session",
       name = "type",
       havingValue = "WEBHOOKS"
   )

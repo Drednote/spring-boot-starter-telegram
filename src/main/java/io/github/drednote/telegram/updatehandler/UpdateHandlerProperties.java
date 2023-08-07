@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.updatehandler;
 
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
-import io.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
-import io.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.update-handler")
+@ConfigurationProperties("drednote.telegram.update-handler")
 @Getter
 @Setter
 public class UpdateHandlerProperties {
@@ -24,12 +24,12 @@ public class UpdateHandlerProperties {
    */
   private boolean scenarioEnabled = true;
   /**
-   * If at the end of update handling the response is null, set {@link NotHandledHandlerResponse} as
+   * If at the end of update handling the response is null, set {@link NotHandledTelegramResponse} as
    * response
    */
   private boolean setDefaultAnswer = true;
   /**
-   * If exception is occurred and no handler, set {@link InternalErrorHandlerResponse} as response
+   * If exception is occurred and no handler, set {@link InternalErrorTelegramResponse} as response
    */
   private boolean setDefaultErrorAnswer = true;
   /**

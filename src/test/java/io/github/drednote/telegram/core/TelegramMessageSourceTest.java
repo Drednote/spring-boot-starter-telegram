@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 
-class BotMessageSourceTest {
+class TelegramMessageSourceTest {
 
   @Test
   void shouldReturnDefaultLocaleIfSet() {
-    BotMessageSource source = new BotMessageSource();
+    TelegramMessageSource source = new TelegramMessageSource();
     Locale defaultLocale = Locale.forLanguageTag("ca");
     source.setDefaultLocale(defaultLocale);
     assertEquals(source.getDefaultLocale(), defaultLocale);

@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.permission")
+@ConfigurationProperties("drednote.telegram.permission")
 @Getter
 @Setter
 public class PermissionProperties {

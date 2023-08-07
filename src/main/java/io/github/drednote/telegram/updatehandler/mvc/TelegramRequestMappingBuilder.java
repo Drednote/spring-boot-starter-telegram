@@ -33,7 +33,7 @@ public class TelegramRequestMappingBuilder {
   }
 
   public TelegramRequestMappingBuilder(TelegramRequestMappingMetaData metaData) {
-    Assert.notNull(metaData, "BotRequestMappingMetaData");
+    Assert.notNull(metaData, "TelegramRequestMappingMetaData");
     this.patterns = createList(metaData.patterns);
     this.requestTypes = createList(metaData.requestTypes);
     this.messageTypes = createEnumSet(metaData.messageTypes, MessageType.class);
@@ -126,7 +126,7 @@ public class TelegramRequestMappingBuilder {
     private final boolean exclusiveMessageType;
 
     public TelegramRequestMappingMetaData(TelegramRequest requestMapping) {
-      Assert.notNull(requestMapping, "BotRequestMapping annotation");
+      Assert.notNull(requestMapping, "TelegramRequest annotation");
       this.patterns = requestMapping.value();
       this.requestTypes = requestMapping.requestType();
       this.messageTypes = requestMapping.messageType();

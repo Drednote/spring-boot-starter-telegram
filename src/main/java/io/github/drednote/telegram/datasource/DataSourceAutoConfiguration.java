@@ -29,7 +29,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @AutoConfiguration
 @EnableConfigurationProperties(DataSourceProperties.class)
 @ConditionalOnProperty(
-    prefix = "drednote.telegram-bot.datasource",
+    prefix = "drednote.telegram.datasource",
     value = "disable-data-source-auto-configuration",
     havingValue = "false",
     matchIfMissing = true

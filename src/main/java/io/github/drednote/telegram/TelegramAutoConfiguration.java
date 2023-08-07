@@ -1,7 +1,7 @@
 package io.github.drednote.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.core.BotMessageSource;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.core.LongPollingBot;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
 import io.github.drednote.telegram.exception.ExceptionHandler;
@@ -45,15 +45,15 @@ public class TelegramAutoConfiguration {
     public TelegramLongPollingBot telegramLongPollingBot(
         TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
         ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-        UpdateFilterProvider updateFilterProvider, BotMessageSource messageSource
+        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
     ) {
       if (StringUtils.isBlank(properties.getToken())) {
         throw new BeanCreationException(TELEGRAM_BOT,
-            "Consider specify drednote.telegram-bot.token");
+            "Consider specify drednote.telegram.token");
       }
       if (StringUtils.isBlank(properties.getName())) {
         throw new BeanCreationException(TELEGRAM_BOT,
-            "Consider specify drednote.telegram-bot.name");
+            "Consider specify drednote.telegram.name");
       }
       if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
         return new LongPollingBot(properties, updateHandlers, objectMapper,
@@ -69,9 +69,9 @@ public class TelegramAutoConfiguration {
   public static class LocaleConfig {
 
     @Bean
-    public BotMessageSource botMessageSource(TelegramProperties properties) {
-      var messageSource = new BotMessageSource();
-      messageSource.setBasename("classpath:telegram-bot-messages");
+    public TelegramMessageSource botMessageSource(TelegramProperties properties) {
+      var messageSource = new TelegramMessageSource();
+      messageSource.setBasename("classpath:telegram-messages");
       messageSource.setDefaultEncoding("UTF-8");
       if (properties.getDefaultLocale() != null) {
         messageSource.setDefaultLocale(Locale.forLanguageTag(properties.getDefaultLocale()));

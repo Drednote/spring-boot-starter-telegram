@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.updatehandler.response;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.core.Ordered;
@@ -14,11 +14,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * return {@code Collection} of {@code HandlerResponse}
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class CompositeHandlerResponse implements HandlerResponse {
+public class CompositeTelegramResponse implements TelegramResponse {
 
-  private final List<HandlerResponse> invoked;
+  private final List<TelegramResponse> invoked;
 
-  public CompositeHandlerResponse(Collection<HandlerResponse> invoked) {
+  public CompositeTelegramResponse(Collection<TelegramResponse> invoked) {
     this.invoked = invoked == null ? null
         : invoked.stream()
             .filter(handlerResponse -> handlerResponse != this)
@@ -27,7 +27,7 @@ public class CompositeHandlerResponse implements HandlerResponse {
 
   @Override
   public void process(TelegramUpdateRequest request) throws TelegramApiException {
-    for (HandlerResponse response : invoked) {
+    for (TelegramResponse response : invoked) {
       response.process(request);
     }
   }

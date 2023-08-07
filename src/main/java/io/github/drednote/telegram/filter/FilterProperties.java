@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.filters")
+@ConfigurationProperties("drednote.telegram.filters")
 @Getter
 @Setter
 public class FilterProperties {

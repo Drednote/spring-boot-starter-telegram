@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.datasource")
+@ConfigurationProperties("drednote.telegram.datasource")
 @Getter
 @Setter
 public class DataSourceProperties {

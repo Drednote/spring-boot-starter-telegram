@@ -28,7 +28,7 @@ public class UpdateHandlerAutoConfiguration {
 
   @AutoConfiguration
   @ConditionalOnProperty(
-      prefix = "drednote.telegram-bot.update-handler",
+      prefix = "drednote.telegram.update-handler",
       name = "scenario-enabled",
       havingValue = "true",
       matchIfMissing = true
@@ -65,7 +65,7 @@ public class UpdateHandlerAutoConfiguration {
 
   @AutoConfiguration
   @ConditionalOnProperty(
-      prefix = "drednote.telegram-bot.update-handler",
+      prefix = "drednote.telegram.update-handler",
       name = "mvc-enabled",
       havingValue = "true",
       matchIfMissing = true

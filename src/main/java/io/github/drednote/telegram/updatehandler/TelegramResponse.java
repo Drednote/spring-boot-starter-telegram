@@ -4,7 +4,7 @@ import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @FunctionalInterface
-public interface HandlerResponse {
+public interface TelegramResponse {
 
   /**
    * Sending method

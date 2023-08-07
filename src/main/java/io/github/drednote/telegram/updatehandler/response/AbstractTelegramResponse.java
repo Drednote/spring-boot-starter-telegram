@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.updatehandler.response;
 
-import io.github.drednote.telegram.core.BotMessageSource;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import java.util.Locale;
 import java.util.Optional;
 import lombok.Setter;
@@ -13,14 +13,14 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public abstract class AbstractHandlerResponse implements HandlerResponse {
+public abstract class AbstractTelegramResponse implements TelegramResponse {
 
   private final String defaultMessage;
   private final String code;
   @Setter
-  private BotMessageSource messageSource;
+  private TelegramMessageSource messageSource;
 
-  protected AbstractHandlerResponse(String code, String defaultMessage) {
+  protected AbstractTelegramResponse(String code, String defaultMessage) {
     this.code = code;
     this.defaultMessage = defaultMessage;
   }

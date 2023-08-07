@@ -10,7 +10,7 @@ import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.filter.ConcurrentUserRequestFilter.Cleaner;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.testsupport.UpdateUtils;
-import io.github.drednote.telegram.updatehandler.response.TooManyRequestsHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -50,7 +50,7 @@ class ConcurrentUserRequestFilterTest {
     Thread.sleep(50);
     filter.preFilter(request);
 
-    assertSame(TooManyRequestsHandlerResponse.INSTANCE, request.getResponse());
+    assertSame(TooManyRequestsTelegramResponse.INSTANCE, request.getResponse());
   }
 
   @Test

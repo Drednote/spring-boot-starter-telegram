@@ -6,13 +6,13 @@ import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.testsupport.UpdateUtils;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestController;
 import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
 import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
-import io.github.drednote.telegram.updatehandler.response.EmptyHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,9 +72,9 @@ class MvcUpdateHandlerTest {
 
 
     @TelegramRequest(value = "/register", messageType = MessageType.COMMAND)
-    public HandlerResponse register(Update update) {
+    public TelegramResponse register(Update update) {
       registerCount++;
-      return EmptyHandlerResponse.INSTANCE;
+      return EmptyTelegramResponse.INSTANCE;
     }
 
     @TelegramRequest(requestType = RequestType.MESSAGE)

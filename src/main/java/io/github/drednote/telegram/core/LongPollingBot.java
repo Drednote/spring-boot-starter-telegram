@@ -7,10 +7,10 @@ import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilter;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.session.BotSessionContext;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
-import io.github.drednote.telegram.updatehandler.response.AbstractHandlerResponse;
-import io.github.drednote.telegram.updatehandler.response.NotHandledHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.AbstractTelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
 import java.util.Collection;
 import java.util.Iterator;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -26,12 +26,12 @@ public class LongPollingBot extends TelegramLongPollingBot {
   private final ExceptionHandler exceptionHandler;
   private final TelegramProperties telegramProperties;
   private final UpdateFilterProvider updateFilterProvider;
-  private final BotMessageSource messageSource;
+  private final TelegramMessageSource messageSource;
 
   public LongPollingBot(
       TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
       ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-      UpdateFilterProvider updateFilterProvider, BotMessageSource messageSource
+      UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
   ) {
     super(properties.getSession().toBotOptions(), properties.getToken());
 
@@ -99,14 +99,14 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
     if (request.getResponse() == null
         && request.getProperties().getUpdateHandler().isSetDefaultAnswer()) {
-      request.setResponse(NotHandledHandlerResponse.INSTANCE);
+      request.setResponse(NotHandledTelegramResponse.INSTANCE);
     }
   }
 
   private void doAnswer(DefaultTelegramUpdateRequest request) throws TelegramApiException {
-    HandlerResponse response = request.getResponse();
+    TelegramResponse response = request.getResponse();
     if (response != null) {
-      if (response instanceof AbstractHandlerResponse abstractHandlerResponse) {
+      if (response instanceof AbstractTelegramResponse abstractHandlerResponse) {
         abstractHandlerResponse.setMessageSource(messageSource);
       }
       response.process(new DefaultTelegramUpdateRequest(request));

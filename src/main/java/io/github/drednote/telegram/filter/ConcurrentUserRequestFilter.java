@@ -2,7 +2,7 @@ package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import io.github.drednote.telegram.session.SessionProperties;
-import io.github.drednote.telegram.updatehandler.response.TooManyRequestsHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
 import io.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
 import java.time.Duration;
@@ -45,7 +45,7 @@ public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
         keyLock.writeLock().lock(chatId);
         Instant lastCall = pool.get(chatId);
         if (lastCall != null && unit.between(lastCall, Instant.now()) < duration) {
-          request.setResponse(TooManyRequestsHandlerResponse.INSTANCE);
+          request.setResponse(TooManyRequestsTelegramResponse.INSTANCE);
         } else {
           pool.put(chatId, Instant.now());
         }

@@ -47,8 +47,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
     Class<?> targetBeanClass = targetBean.getClass();
     if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
       String text = "The mapped handler method class '" + methodDeclaringClass.getName() +
-          "' is not an instance of the actual botController bean class '" +
-          targetBeanClass.getName() + "'. If the botController requires proxying " +
+          "' is not an instance of the actual TelegramController bean class '" +
+          targetBeanClass.getName() + "'. If the TelegramController requires proxying " +
           "(e.g. due to @Transactional), please use class-based proxying.";
       throw new IllegalStateException(formatInvokeError(text, args));
     }
@@ -57,6 +57,6 @@ public class InvocableHandlerMethod extends HandlerMethod {
   @NonNull
   @Override
   protected String formatInvokeError(@NonNull String text, @NonNull Object[] args) {
-    return super.formatInvokeError(text, args).replace("Controller", "BotController");
+    return super.formatInvokeError(text, args).replace("Controller", "TelegramController");
   }
 }

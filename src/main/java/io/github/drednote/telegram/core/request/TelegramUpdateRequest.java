@@ -2,7 +2,7 @@ package io.github.drednote.telegram.core.request;
 
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.Permission;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
 import java.util.Set;
 import org.springframework.lang.NonNull;
@@ -71,7 +71,7 @@ public interface TelegramUpdateRequest {
   Scenario getScenario();
 
   @Nullable
-  HandlerResponse getResponse();
+  TelegramResponse getResponse();
 
   @Nullable
   Throwable getError();

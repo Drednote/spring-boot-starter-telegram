@@ -3,9 +3,9 @@ package io.github.drednote.telegram.updatehandler.response;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public abstract class SimpleMessageHandlerResponse extends AbstractHandlerResponse {
+public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResponse {
 
-  protected SimpleMessageHandlerResponse(String code, String defaultMessage) {
+  protected SimpleMessageTelegramResponse(String code, String defaultMessage) {
     super(code, defaultMessage);
   }
 

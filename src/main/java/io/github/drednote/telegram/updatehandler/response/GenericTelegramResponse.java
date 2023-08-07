@@ -21,12 +21,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVoice;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
-public class GenericHandlerResponse extends AbstractHandlerResponse {
+public class GenericTelegramResponse extends AbstractTelegramResponse {
 
   @NonNull
   private final Object response;
 
-  public GenericHandlerResponse(@NonNull Object response) {
+  public GenericTelegramResponse(@NonNull Object response) {
     super(null, null);
     this.response = response;
   }

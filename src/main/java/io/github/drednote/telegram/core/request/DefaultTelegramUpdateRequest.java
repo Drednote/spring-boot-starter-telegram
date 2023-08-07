@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.datasource.Permission.DefaultPermission;
-import io.github.drednote.telegram.updatehandler.HandlerResponse;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
   @Setter
   @Nullable
   @JsonIgnore
-  private HandlerResponse response;
+  private TelegramResponse response;
   @Setter
   @JsonIgnore
   private ObjectMapper objectMapper;

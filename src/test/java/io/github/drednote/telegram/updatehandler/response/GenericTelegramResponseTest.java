@@ -16,12 +16,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-class GenericHandlerResponseTest {
+class GenericTelegramResponseTest {
 
   @Test
   void shouldCorrectSendString() throws TelegramApiException {
     String text = "1";
-    GenericHandlerResponse response = new GenericHandlerResponse(text);
+    GenericTelegramResponse response = new GenericTelegramResponse(text);
     Update update = UpdateUtils.createMessage("2");
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
@@ -33,7 +33,7 @@ class GenericHandlerResponseTest {
   @Test
   void shouldCorrectSendBytes() throws TelegramApiException {
     byte[] text = "1".getBytes(StandardCharsets.UTF_8);
-    GenericHandlerResponse response = new GenericHandlerResponse(text);
+    GenericTelegramResponse response = new GenericTelegramResponse(text);
     Update update = UpdateUtils.createMessage("2");
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
@@ -47,7 +47,7 @@ class GenericHandlerResponseTest {
   void shouldCorrectSendBotType() throws TelegramApiException {
     Update update = UpdateUtils.createMessage("2");
     SendContact sendContact = new SendContact(update.getMessage().getChatId().toString(), "", "");
-    GenericHandlerResponse response = new GenericHandlerResponse(sendContact);
+    GenericTelegramResponse response = new GenericTelegramResponse(sendContact);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
     response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
@@ -59,7 +59,7 @@ class GenericHandlerResponseTest {
     Update update = UpdateUtils.createMessage("2");
     SendAnimation animation = new SendAnimation(update.getMessage().getChatId().toString(),
         new InputFile("1"));
-    GenericHandlerResponse response = new GenericHandlerResponse(animation);
+    GenericTelegramResponse response = new GenericTelegramResponse(animation);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
     response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
@@ -70,7 +70,7 @@ class GenericHandlerResponseTest {
   void shouldCorrectSendGeneric() throws TelegramApiException {
     Update update = UpdateUtils.createMessage("2");
     DataClass object = new DataClass("1");
-    GenericHandlerResponse response = new GenericHandlerResponse(object);
+    GenericTelegramResponse response = new GenericTelegramResponse(object);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
     DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, absSender, null);

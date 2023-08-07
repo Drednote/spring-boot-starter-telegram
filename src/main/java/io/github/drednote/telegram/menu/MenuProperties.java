@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.menu")
+@ConfigurationProperties("drednote.telegram.menu")
 @Getter
 @Setter
 public class MenuProperties {

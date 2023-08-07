@@ -24,7 +24,7 @@ public class TelegramControllerBeanPostProcessor implements BeanPostProcessor {
     Class<?> targetClass = AopUtils.getTargetClass(bean);
     TelegramController telegramController = AnnotationUtils.findAnnotation(targetClass, TelegramController.class);
     if (telegramController != null) {
-      var annotatedMethods = findAnnotatedMethodsBotRequest(targetClass);
+      var annotatedMethods = findAnnotatedMethodsTelegramRequest(targetClass);
       if (!annotatedMethods.isEmpty()) {
         annotatedMethods.forEach((method, mappingInfoBuilder) -> {
           Method invocableMethod = AopUtils.selectInvocableMethod(method, targetClass);
@@ -36,14 +36,14 @@ public class TelegramControllerBeanPostProcessor implements BeanPostProcessor {
     return bean;
   }
 
-  private Map<Method, TelegramRequestMappingBuilder> findAnnotatedMethodsBotRequest(
+  private Map<Method, TelegramRequestMappingBuilder> findAnnotatedMethodsTelegramRequest(
       Class<?> targetClass) {
     return MethodIntrospector.selectMethods(targetClass,
         (MethodIntrospector.MetadataLookup<TelegramRequestMappingBuilder>) method -> {
-          var botRequest = AnnotatedElementUtils.findMergedAnnotation(method,
+          var telegramRequest = AnnotatedElementUtils.findMergedAnnotation(method,
               TelegramRequest.class);
-          if (botRequest != null) {
-            return new TelegramRequestMappingBuilder(botRequest);
+          if (telegramRequest != null) {
+            return new TelegramRequestMappingBuilder(telegramRequest);
           } else {
             return null;
           }

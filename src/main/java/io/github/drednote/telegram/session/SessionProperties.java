@@ -18,7 +18,7 @@ import org.telegram.telegrambots.updatesreceivers.ExponentialBackOff;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot.session")
+@ConfigurationProperties("drednote.telegram.session")
 public class SessionProperties {
 
   private int updateLimit = 100;

@@ -60,7 +60,7 @@ public class DefaultExceptionHandlerResolver
     HandlerMethod oldMethod = this.exceptionLookup.put(exceptionType,
         new HandlerMethod(bean, method));
     if (oldMethod != null && !oldMethod.getMethod().equals(method)) {
-      throw new IllegalStateException("Ambiguous @BotExceptionHandler method mapped for [" +
+      throw new IllegalStateException("Ambiguous @TelegramExceptionHandler method mapped for [" +
           exceptionType + "]: {" + oldMethod + ", " + method + "}");
     }
   }
@@ -86,7 +86,7 @@ public class DefaultExceptionHandlerResolver
       List<Class<? extends Throwable>> result) {
     TelegramExceptionHandler ann = AnnotatedElementUtils.findMergedAnnotation(method,
         TelegramExceptionHandler.class);
-    Assert.state(ann != null, "No BotExceptionHandler annotation");
+    Assert.state(ann != null, "No TelegramExceptionHandler annotation");
     result.addAll(Arrays.asList(ann.value()));
   }
 }

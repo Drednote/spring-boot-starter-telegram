@@ -4,7 +4,7 @@ import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
-import io.github.drednote.telegram.updatehandler.response.ForbiddenHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.ForbiddenTelegramResponse;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
@@ -24,7 +24,7 @@ public class AccessPermissionFilter implements PriorityUpdateFilter {
               .map(Role::isCanRead)
               .orElse(false));
       if (!canRead) {
-        request.setResponse(ForbiddenHandlerResponse.INSTANCE);
+        request.setResponse(ForbiddenTelegramResponse.INSTANCE);
       }
     }
   }

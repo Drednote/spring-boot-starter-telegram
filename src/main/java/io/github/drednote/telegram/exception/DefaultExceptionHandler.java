@@ -3,7 +3,7 @@ package io.github.drednote.telegram.exception;
 import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
-import io.github.drednote.telegram.updatehandler.response.InternalErrorHandlerResponse;
+import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioException;
 import io.github.drednote.telegram.core.ResponseSetter;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {
-        request.setResponse(InternalErrorHandlerResponse.INSTANCE);
+        request.setResponse(InternalErrorTelegramResponse.INSTANCE);
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);
     }

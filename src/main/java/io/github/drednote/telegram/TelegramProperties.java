@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram-bot")
+@ConfigurationProperties("drednote.telegram")
 @EnableConfigurationProperties({
     SessionProperties.class, UpdateHandlerProperties.class, DataSourceProperties.class,
     FilterProperties.class, PermissionProperties.class, MenuProperties.class
