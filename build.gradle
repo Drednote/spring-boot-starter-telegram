@@ -6,8 +6,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'com.github.drednote'
-version = ''
+group = 'io.github.drednote'
+version = '0.1.0.Beta1'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -27,24 +27,6 @@ ext {
 
 repositories {
     mavenCentral()
-    maven {
-        name "nexus"
-        url nexusRepo
-        allowInsecureProtocol true
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
-    }
-    maven {
-        name "nexus-snap"
-        url nexusRepoSnap
-        allowInsecureProtocol true
-        credentials {
-            username nexusUser
-            password nexusPassword
-        }
-    }
 }
 
 dependencies {
@@ -86,7 +68,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId group
             artifactId archivesBaseName
-            version System.getProperty("generatedVersion") ?: "local"
+            version System.getProperty("generatedVersion") ?: version
 
             from components.java
             artifact sourceJar {

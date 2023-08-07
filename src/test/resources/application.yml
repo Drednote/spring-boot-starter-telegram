@@ -7,7 +7,7 @@ drednote:
       update-handler-thread-count: 10
       update-limit: 90
       update-timeout: 40
-      back-off-strategy: com.github.drednote.telegram.session.FixedBackoff
+      back-off-strategy: io.github.drednote.telegram.session.FixedBackoff
       proxy-type: socks4
       proxy-host: hostProxy
       proxy-port: 8080
