@@ -1,13 +1,14 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
     id 'jacoco'
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'io.github.drednote'
-version = '0.1.0.Beta1'
+version = '0.1.0.Beta1.SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -16,13 +17,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-}
-
-ext {
-    nexusRepo = System.getProperty("NEXUS_REPO") ?: NEXUS_REPO
-    nexusRepoSnap = System.getProperty("NEXUS_REPO_SNAPSHOTS") ?: NEXUS_REPO_SNAPSHOTS
-    nexusUser = System.getProperty("NEXUS_USER") ?: NEXUS_USER
-    nexusPassword = System.getProperty("NEXUS_PASSWORD") ?: NEXUS_PASSWORD
 }
 
 repositories {
@@ -53,19 +47,27 @@ tasks.register('sourceJar', Jar) {
     from sourceSets.main.allJava
 }
 
+signing {
+    if (!version.endsWith('SNAPSHOT')) {
+        useGpgCmd()
+        sign publishing.publications.mavenJava
+    }
+}
+
 publishing {
     repositories {
         maven {
-            url System.getProperty("NEXUS_UPLOAD_REPO") ?: NEXUS_UPLOAD_REPO
-            allowInsecureProtocol true
+            def releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            def snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = (version.toString().endsWith("SNAPSHOT")) ? snapshotsUrl : releasesUrl
             credentials {
-                username System.getProperty("NEXUS_USER") ?: NEXUS_USER
-                password System.getProperty("NEXUS_PASSWORD") ?: NEXUS_PASSWORD
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
             }
         }
     }
     publications {
-        mavenJava(MavenPublication) {
+        register('mavenJava', MavenPublication) {
             groupId group
             artifactId archivesBaseName
             version System.getProperty("generatedVersion") ?: version
@@ -73,6 +75,27 @@ publishing {
             from components.java
             artifact sourceJar {
                 classifier "sources"
+            }
+            pom {
+                packaging = jar
+                name = "Spring Boot Starter Telegram"
+                url = "https://github.com/drednote/spring-boot-starter-telegram"
+                description = "A library designed to simplify the setup of Telegram bots using " +
+                        "`Spring Boot` and `org.telegram:telegrambots` as the core dependency"
+
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://github.com/drednote/spring-boot-starter-telegram/LICENSE"
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = "Galushko Ivan"
+                        email = "galushko.ivan8@gmail.com"
+                    }
+                }
             }
         }
     }
