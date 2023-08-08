@@ -31,7 +31,7 @@ features to facilitate the bot development process
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [QuikStart](#quik-start)
+    - [QuikStart](#quik-start)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -45,11 +45,10 @@ based on Spring Boot 3. Spring Boot 3 requires Java 17 or higher.
 
 ## Installation
 
-**Sorry, for now it is not available to download the library from Maven Central. Use Releases for
-adding library with code in your project manually**
+To use the **Spring Boot Starter Telegram** library in your project, follow the instructions below
+based on your preferred build tool.
 
-~~To use the **Spring Boot Starter Telegram** library in your project, follow the instructions below
-based on your preferred build tool.~~
+The Latest version you can check in **Releases** tab
 
 ### Maven
 
@@ -62,6 +61,12 @@ Add the repository for the library in your to your `pom.xml` file to fetch the a
     <id>central</id>
     <name>Maven Central</name>
     <url>https://repo.maven.apache.org/maven2</url>
+  </repository>
+  <!--if you want to download snapshots-->
+  <repository>
+    <id>snapshots</id>
+    <name>Maven Snapshots</name>
+    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
   </repository>
 </repositories>
 ```
@@ -84,6 +89,8 @@ Add the following repository to your `build.gradle` file to fetch the artifact f
 ```groovy
 repositories {
     mavenCentral()
+    // if you want to download snapshots
+    maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
 }
 ```
 

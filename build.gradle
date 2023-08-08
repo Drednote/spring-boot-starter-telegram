@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'io.github.drednote'
-version = '0.1.0.Beta1.SNAPSHOT'
+version = '0.1.0.Beta1-SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -48,10 +48,8 @@ tasks.register('sourceJar', Jar) {
 }
 
 signing {
-    if (!version.endsWith('SNAPSHOT')) {
-        useGpgCmd()
-        sign publishing.publications.mavenJava
-    }
+    useGpgCmd()
+    sign publishing.publications
 }
 
 publishing {
@@ -61,8 +59,8 @@ publishing {
             def snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             url = (version.toString().endsWith("SNAPSHOT")) ? snapshotsUrl : releasesUrl
             credentials {
-                username = project.properties["ossrhUsername"].toString()
-                password = project.properties["ossrhPassword"].toString()
+                username = findProperty("OSSRH_USERNAME")
+                password = findProperty("OSSRH_PASSWORD")
             }
         }
     }
