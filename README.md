@@ -1,9 +1,10 @@
 # Spring Boot Starter Telegram
 
+[![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
-`Spring Boot 3` and `org.telegram:telegrambots` as the core dependency. It provides several key
+`Spring Boot` and `org.telegram:telegrambots` as the core dependency. It provides several key
 features to facilitate the bot development process
 
 ## Main Features
@@ -30,6 +31,7 @@ features to facilitate the bot development process
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [QuikStart](#quik-start)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -43,8 +45,11 @@ based on Spring Boot 3. Spring Boot 3 requires Java 17 or higher.
 
 ## Installation
 
-To use the **Spring Boot Starter Telegram** library in your project, follow the instructions below
-based on your preferred build tool.
+**Sorry, for now it is not available to download the library from Maven Central. Use Releases for
+adding library with code in your project manually**
+
+~~To use the **Spring Boot Starter Telegram** library in your project, follow the instructions below
+based on your preferred build tool.~~
 
 ### Maven
 
