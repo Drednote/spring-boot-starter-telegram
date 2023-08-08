@@ -141,7 +141,7 @@ public class MainController {
 
   @TelegramRequest
   public TelegramResponse onAll(TelegramUpdateRequest request) {
-    return new GenericTelegramResponse("Неизвестная команда");
+    return new GenericTelegramResponse("Unsupported command");
   }
 
 }
