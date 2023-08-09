@@ -29,7 +29,6 @@ jobs:
           echo "export OSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}" >> $GITHUB_ENV
           echo "export OSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}" >> $GITHUB_ENV
       - name: Publish to Maven Central
-        shell: bash
         env:
           GRADLE_VARS: >
             -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
