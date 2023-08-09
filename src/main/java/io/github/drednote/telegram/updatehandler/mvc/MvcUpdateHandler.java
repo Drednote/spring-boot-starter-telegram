@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.updatehandler.mvc;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
@@ -20,7 +20,7 @@ public class MvcUpdateHandler implements UpdateHandler {
   private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
 
   @Override
-  public void onUpdate(ExtendedTelegramUpdateRequest request) throws Exception {
+  public void onUpdate(TelegramUpdateRequest request) throws Exception {
     handlerMethodPopular.populate(request);
     RequestHandler requestHandler = request.getRequestHandler();
     if (requestHandler != null) {

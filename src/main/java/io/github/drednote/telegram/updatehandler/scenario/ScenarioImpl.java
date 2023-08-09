@@ -1,9 +1,8 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
 import io.github.drednote.telegram.core.ActionExecutor;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -137,9 +136,7 @@ public final class ScenarioImpl implements Scenario {
 
   @NonNull
   private ResultImpl doMakeStep(TelegramUpdateRequest request, Node nextNode) throws Exception {
-    if (request instanceof ExtendedTelegramUpdateRequest setter) {
-      setter.setScenario(this);
-    }
+    request.setScenario(this);
     Object result = nextNode.action.onAction(request);
     nextNode = tryToGoToRef(nextNode);
     mutate(nextNode);

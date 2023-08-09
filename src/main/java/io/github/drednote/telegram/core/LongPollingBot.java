@@ -6,11 +6,10 @@ import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilter;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
-import io.github.drednote.telegram.session.BotSessionContext;
+import io.github.drednote.telegram.session.UpdateRequestContext;
 import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.updatehandler.response.AbstractTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
 import java.util.Collection;
 import java.util.Iterator;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -47,15 +46,16 @@ public class LongPollingBot extends TelegramLongPollingBot {
 
   @Override
   public void onUpdateReceived(Update update) {
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, this, telegramProperties);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, this,
+        telegramProperties);
     request.setObjectMapper(objectMapper);
     try {
-      BotSessionContext.saveRequest(request);
+      UpdateRequestContext.saveRequest(request);
       doReceive(request);
     } catch (Exception ex) {
       handleException(request, ex);
     } finally {
-      BotSessionContext.removeRequest(true);
+      UpdateRequestContext.removeRequest(true);
     }
   }
 
@@ -96,10 +96,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
       if (request.getResponse() == null) {
         updateHandler.onUpdate(request);
       }
-    }
-    if (request.getResponse() == null
-        && request.getProperties().getUpdateHandler().isSetDefaultAnswer()) {
-      request.setResponse(NotHandledTelegramResponse.INSTANCE);
     }
   }
 

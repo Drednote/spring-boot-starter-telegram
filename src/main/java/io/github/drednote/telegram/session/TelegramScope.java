@@ -11,6 +11,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Scope(scopeName = BotSessionScope.BOT_SCOPE_NAME, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public @interface BotScope {
+@Scope(scopeName = TelegramSessionScope.BOT_SCOPE_NAME, proxyMode = ScopedProxyMode.TARGET_CLASS)
+public @interface TelegramScope {
 }

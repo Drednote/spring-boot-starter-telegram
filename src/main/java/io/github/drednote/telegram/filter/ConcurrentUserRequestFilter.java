@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
@@ -35,7 +35,7 @@ public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
   }
 
   @Override
-  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
+  public void preFilter(@NonNull TelegramUpdateRequest request) {
     Long chatId = request.getChatId();
     ChronoUnit unit = sessionProperties.getUserConcurrencyUnit();
     long duration = sessionProperties.getUserConcurrency();

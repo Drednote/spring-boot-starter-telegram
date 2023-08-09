@@ -46,7 +46,7 @@ public class SessionAutoConfiguration {
   @Bean
   public CustomScopeConfigurer customScopeConfigurer() {
     CustomScopeConfigurer configurer = new CustomScopeConfigurer();
-    configurer.addScope(BotSessionScope.BOT_SCOPE_NAME, new BotSessionScope());
+    configurer.addScope(TelegramSessionScope.BOT_SCOPE_NAME, new TelegramSessionScope());
     return configurer;
   }
 
@@ -56,7 +56,7 @@ public class SessionAutoConfiguration {
   }
 
   @Bean
-  public BotSessionContext botSessionContext() {
-    return new BotSessionContext() {};
+  public UpdateRequestContext botSessionContext() {
+    return new UpdateRequestContext() {};
   }
 }

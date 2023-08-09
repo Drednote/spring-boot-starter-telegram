@@ -2,7 +2,7 @@ package io.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +42,12 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
       responseMessage = request.getAbsSender().execute(botApiMethod);
     } else if (response instanceof SendMediaBotMethod<?>) {
       responseMessage = tryToSendMedia(request);
-    } else if (request instanceof ExtendedTelegramUpdateRequest extendedBotRequest) {
+    } else if (response instanceof TelegramResponse telegramResponse) {
+      telegramResponse.process(request);
+      responseMessage = null;
+    } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
       try {
-        String stringResponse = extendedBotRequest.getObjectMapper().writeValueAsString(response);
+        String stringResponse = request.getObjectMapper().writeValueAsString(response);
         String truncated = truncateQuotes(stringResponse);
         responseMessage = sendString(truncated, request);
       } catch (JsonProcessingException e) {

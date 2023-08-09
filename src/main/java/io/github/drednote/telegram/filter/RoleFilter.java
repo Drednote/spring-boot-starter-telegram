@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.datasource.Permission.DefaultPermission;
@@ -22,7 +22,7 @@ public class RoleFilter implements PriorityUpdateFilter {
 
   @Override
   @SuppressWarnings({"java:S1874", "deprecation"})
-  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
+  public void preFilter(@NonNull TelegramUpdateRequest request) {
     User user = request.getUser();
     Set<String> roles = new HashSet<>();
     if (user != null) {
@@ -42,7 +42,7 @@ public class RoleFilter implements PriorityUpdateFilter {
   }
 
   @Override
-  public boolean matches(ExtendedTelegramUpdateRequest request) {
+  public boolean matches(TelegramUpdateRequest request) {
     return request.getChat() != null;
   }
 

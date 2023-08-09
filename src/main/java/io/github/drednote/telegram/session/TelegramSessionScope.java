@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.session;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.config.Scope;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-public class BotSessionScope implements Scope {
+public class TelegramSessionScope implements Scope {
 
   public static final String BOT_SCOPE_NAME = "bot-session";
   private final Map<BeanKey, Object> scopedObjects = new ConcurrentHashMap<>();
@@ -20,7 +20,7 @@ public class BotSessionScope implements Scope {
   public Object get(@NonNull String name, @NonNull ObjectFactory<?> objectFactory) {
     BeanKey key = createBeanKey(name);
     return scopedObjects.computeIfAbsent(key, it -> {
-      BotSessionContext.saveBeanName(name);
+      UpdateRequestContext.saveBeanName(name);
       return objectFactory.getObject();
     });
   }
@@ -41,7 +41,7 @@ public class BotSessionScope implements Scope {
 
   @NonNull
   private BeanKey createBeanKey(@NonNull String name) {
-    ExtendedTelegramUpdateRequest botRequest = BotSessionContext.getRequest();
+    TelegramUpdateRequest botRequest = UpdateRequestContext.getRequest();
     return new BeanKey(botRequest.getId(), name);
   }
 
@@ -49,7 +49,7 @@ public class BotSessionScope implements Scope {
   @Override
   public Object resolveContextualObject(@NonNull String key) {
     if (BOT_SCOPE_NAME.equals(key)) {
-      return BotSessionContext.getRequest();
+      return UpdateRequestContext.getRequest();
     }
     return null;
   }
