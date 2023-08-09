@@ -39,4 +39,10 @@ public class FiltersAutoConfiguration {
   public ConcurrentUserRequestFilter concurrentUserRequestFilter(SessionProperties properties) {
     return new ConcurrentUserRequestFilter(properties);
   }
+  
+  @Bean
+  @ConditionalOnMissingBean
+  public NotHandledUpdateFilter notHandledUpdateFilter() {
+    return new NotHandledUpdateFilter();
+  }
 }

@@ -247,7 +247,7 @@ git push origin feature/new-feature
 11. Once your pull request is approved, it will be merged into the main repository, and your
     contributions will be part of the Spring Boot Starter Telegram library.
 
-Thank you for considering contributing to project! I appreciate your efforts to make this library
+Thank you for considering contributing to the project! I appreciate your efforts to make this library
 better and more useful for the community. If you have any questions or need assistance with the
 contribution process, feel free to ask in the pull request discussion.
 

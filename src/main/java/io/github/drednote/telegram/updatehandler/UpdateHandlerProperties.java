@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.updatehandler;
 
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
+import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioUpdateHandler;
@@ -24,8 +25,8 @@ public class UpdateHandlerProperties {
    */
   private boolean scenarioEnabled = true;
   /**
-   * If at the end of update handling the response is null, set {@link NotHandledTelegramResponse} as
-   * response
+   * If at the end of update handling, the response is null, set {@link NotHandledTelegramResponse}
+   * as response
    */
   private boolean setDefaultAnswer = true;
   /**
@@ -40,4 +41,10 @@ public class UpdateHandlerProperties {
    * If it needs to autoconfigure scenarioPersister if no one provided
    */
   private boolean autoConfigureScenarioPersister = true;
+  /**
+   * By default, java pojo objects will be serialized with Jackson to json in
+   * {@link GenericTelegramResponse}. Set this parameter to false, if you want to disable this
+   * behavior
+   */
+  private boolean serializeJavaObjectWithJackson = true;
 }

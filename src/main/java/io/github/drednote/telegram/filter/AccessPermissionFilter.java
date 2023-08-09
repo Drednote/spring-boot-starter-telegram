@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
@@ -16,7 +16,7 @@ public class AccessPermissionFilter implements PriorityUpdateFilter {
   private final PermissionProperties permissionProperties;
 
   @Override
-  public void preFilter(@NonNull ExtendedTelegramUpdateRequest request) {
+  public void preFilter(@NonNull TelegramUpdateRequest request) {
     if (permissionProperties.getAccess() == Access.BY_ROLE) {
       Permission permission = request.getPermission();
       boolean canRead = permission.getRoles().stream()
@@ -30,7 +30,7 @@ public class AccessPermissionFilter implements PriorityUpdateFilter {
   }
 
   @Override
-  public boolean matches(ExtendedTelegramUpdateRequest request) {
+  public boolean matches(TelegramUpdateRequest request) {
     return request.getChat() != null;
   }
 

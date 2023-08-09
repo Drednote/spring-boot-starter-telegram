@@ -3,6 +3,7 @@ package io.github.drednote.telegram.updatehandler.response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.testsupport.UpdateUtils;
 import java.nio.charset.StandardCharsets;
@@ -73,7 +74,7 @@ class GenericTelegramResponseTest {
     GenericTelegramResponse response = new GenericTelegramResponse(object);
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, absSender, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, absSender, new TelegramProperties());
     request.setObjectMapper(new ObjectMapper());
     response.process(request);
     Mockito.verify(absSender)
