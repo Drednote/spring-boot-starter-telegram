@@ -15,7 +15,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @Getter
-public abstract class AbstractTelegramUpdateRequest implements ExtendedTelegramUpdateRequest {
+public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateRequest {
 
   /**
    * updateId

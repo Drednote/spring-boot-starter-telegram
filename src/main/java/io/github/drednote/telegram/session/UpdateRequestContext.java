@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.session;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,27 +14,28 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.lang.NonNull;
 
-public abstract class BotSessionContext implements ApplicationContextAware {
+public abstract class UpdateRequestContext implements ApplicationContextAware {
 
   /**
    * key = thread id
    */
-  private static final Map<Long, ExtendedTelegramUpdateRequest> requests = new ConcurrentHashMap<>();
+  private static final Map<Long, TelegramUpdateRequest> requests = new ConcurrentHashMap<>();
   /**
    * key = update id
    */
   private static final Map<Integer, List<String>> beanNames = new ConcurrentHashMap<>();
   private static ConfigurableBeanFactory factory;
 
-  BotSessionContext() {}
+  UpdateRequestContext() {
+  }
 
-  public static void saveRequest(ExtendedTelegramUpdateRequest request) {
+  public static void saveRequest(TelegramUpdateRequest request) {
     Assert.notNull(request, "request");
     requests.put(Thread.currentThread().getId(), request);
   }
 
   @NonNull
-  public static ExtendedTelegramUpdateRequest getRequest() {
+  public static TelegramUpdateRequest getRequest() {
     return Optional.of(Thread.currentThread().getId())
         .map(requests::get)
         .orElseThrow(() -> new IllegalStateException("No thread-bound bot request found: " +
@@ -44,7 +45,7 @@ public abstract class BotSessionContext implements ApplicationContextAware {
 
   public static void removeRequest(boolean destroyBeans) {
     if (destroyBeans) {
-      ExtendedTelegramUpdateRequest request = getRequest();
+      TelegramUpdateRequest request = getRequest();
       synchronized (request) {
         List<String> names = beanNames.remove(request.getId());
         for (String name : names) {
@@ -58,7 +59,7 @@ public abstract class BotSessionContext implements ApplicationContextAware {
   static void saveBeanName(@NonNull String name) {
     Assert.notEmpty(name, "name");
 
-    ExtendedTelegramUpdateRequest request = getRequest();
+    TelegramUpdateRequest request = getRequest();
     synchronized (request) {
       List<String> names = beanNames.computeIfAbsent(request.getId(), key -> new ArrayList<>());
       names.add(name);

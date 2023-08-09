@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.updatehandler.mvc;
 
-import io.github.drednote.telegram.core.request.ExtendedTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class TelegramControllerContainer implements HandlerMethodPopular, Contro
   private final Map<TelegramRequestMapping, HandlerMethod> mappingLookup = new HashMap<>();
 
   @Override
-  public void populate(ExtendedTelegramUpdateRequest request) {
+  public void populate(TelegramUpdateRequest request) {
     String text = request.getText() == null ? "" : request.getText();
 
     mappingLookup.keySet().stream()

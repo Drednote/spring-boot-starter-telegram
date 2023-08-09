@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.Permission;
-import io.github.drednote.telegram.datasource.Permission.DefaultPermission;
 import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
-import java.util.HashSet;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
@@ -24,17 +22,13 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
   @JsonIgnore
   private final TelegramProperties properties;
 
-  @Setter
-  @NonNull
   private Permission permission;
 
   // mvc
-  @Setter
   @Nullable
   private RequestHandler requestHandler;
 
   // scenario
-  @Setter
   @Nullable
   private Scenario scenario;
 
@@ -60,7 +54,6 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
     super(update);
     this.absSender = absSender;
     this.properties = properties;
-    this.permission = new DefaultPermission(new HashSet<>());
   }
 
   public DefaultTelegramUpdateRequest(DefaultTelegramUpdateRequest request) {
@@ -78,5 +71,26 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
   @Override
   public String toString() {
     return "Update = %s".formatted(this.origin);
+  }
+
+  @Override
+  public void setScenario(Scenario scenario) {
+    if (this.scenario == null) {
+      this.scenario = scenario;
+    }
+  }
+
+  @Override
+  public void setRequestHandler(RequestHandler requestHandler) {
+    if (this.requestHandler == null) {
+      this.requestHandler = requestHandler;
+    }
+  }
+
+  @Override
+  public void setPermission(Permission permission) {
+    if (this.permission == null) {
+      this.permission = permission;
+    }
   }
 }
