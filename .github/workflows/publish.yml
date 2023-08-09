@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Get version
         id: version
-        run: echo "generatedVersion=$(echo ${GITHUB_REF#refs/tags/} | cut -c 2-)" >> $GITHUB_OUTPUT
+        run: echo "tag_version=$(echo ${GITHUB_REF#refs/tags/} | cut -c 2-)" >> $GITHUB_OUTPUT
 
 #      - uses: actions/checkout@v3
 #      - uses: actions/setup-java@v3
@@ -28,5 +28,6 @@ jobs:
             -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}
             -POSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}
             -POSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}
-        run: echo "Publish to Maven with version ${{ steps.version.outputs.generatedVersion }}"
+            -Ptag_version=${{ steps.version.outputs.tag_version }}
+        run: echo "Publish to Maven with args ${GRADLE_VARS}"
 #        run: ./gradlew ${GRADLE_VARS} publish
