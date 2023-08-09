@@ -35,7 +35,7 @@ jobs:
       - name: Publish to Maven Central
         env:
           GRADLE_VARS: |
-            -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
+            -Psigning.gnupg.keyName=${{ env.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${GNUPG_PASSPHRASE}
             -POSSRH_USERNAME=${POSSRH_USERNAME}
             -POSSRH_PASSWORD=${POSSRH_PASSWORD}
