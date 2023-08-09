@@ -13,7 +13,9 @@ jobs:
       - name: Get tag name
         run: |
           tag=${GITHUB_REF#refs/tags/}
-          echo "Tag name is ${$tag#*v}"
+          echo "Tag name is $tag"
+          sub=$(echo "$tag" | cut -c 1-)
+          echo "Substitute tag $sub"
 
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
