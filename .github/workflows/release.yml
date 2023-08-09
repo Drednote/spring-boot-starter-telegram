@@ -25,7 +25,7 @@ jobs:
       - name: Set up secrets
         id: export_secrets
         run: |
-          echo "GNUPG_KEY_ID=${{ secrets.GNUPG_KEY_ID }}" >> $GITHUB_OUTPUT
+          echo "export GNUPG_KEY_ID=${{ secrets.GNUPG_KEY_ID }}" >> $GITHUB_OUTPUT
           echo "export GNUPG_PASSPHRASE=${{ secrets.GNUPG_PASSPHRASE }}" >> $GITHUB_ENV
           echo "export OSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}" >> $GITHUB_ENV
           echo "export OSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}" >> $GITHUB_ENV
