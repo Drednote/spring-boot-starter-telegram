@@ -33,13 +33,14 @@ jobs:
       #      - name: Build with Gradle
       #        run: ./gradlew --build-cache build
       - name: Publish to Maven Central
-        env:
+        with:
           GNUPG_KEY_ID: ${{ secrets.GNUPG_KEY_ID }}
           GNUPG_PASSPHRASE: ${{ secrets.GNUPG_PASSPHRASE }}
           POSSRH_USERNAME: ${{ secrets.POSSRH_USERNAME }}
           POSSRH_PASSWORD: ${{ secrets.POSSRH_PASSWORD }}
+        env:
           GRADLE_VARS: |
-            -Psigning.gnupg.keyName=$GNUPG_KEY_ID
+            -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
             -Psigning.gnupg.passphrase=${{ env.GNUPG_PASSPHRASE }}
             -POSSRH_USERNAME=${POSSRH_USERNAME}
             -Ptag_version=${{ steps.version.outputs.tag_version }}
