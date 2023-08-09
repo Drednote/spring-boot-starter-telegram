@@ -1,6 +1,6 @@
 name: Publish to Maven Central
 on:
-  create:
+  push:
     tags:
       - 'v*'
 
