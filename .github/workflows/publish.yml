@@ -14,7 +14,7 @@ jobs:
         run: |
           tag=${GITHUB_REF#refs/tags/}
           echo "Tag name is $tag"
-          sub=$(echo "$tag" | cut -c 1-)
+          sub=$(echo "$tag" | cut -c 2-)
           echo "Substitute tag $sub"
 
       - uses: actions/checkout@v3
