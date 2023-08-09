@@ -39,7 +39,7 @@ jobs:
           POSSRH_USERNAME: ${{ secrets.POSSRH_USERNAME }}
           POSSRH_PASSWORD: ${{ secrets.POSSRH_PASSWORD }}
           GRADLE_VARS: |
-            -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
+            -Psigning.gnupg.keyName=$GNUPG_KEY_ID
             -Psigning.gnupg.passphrase=${{ env.GNUPG_PASSPHRASE }}
             -POSSRH_USERNAME=${POSSRH_USERNAME}
             -Ptag_version=${{ steps.version.outputs.tag_version }}
