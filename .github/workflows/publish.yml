@@ -1,8 +1,8 @@
 name: Publish to Maven Central
 on:
   push:
-    tags:
-      - 'v*'
+#    tags:
+#      - 'v*'
 
 jobs:
   publish:
@@ -16,10 +16,15 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '17'
-          cache: 'gradle'
+          java-version: ${{ vars.JAVA_VERSION }}
       - name: Build with Gradle
         run: ./gradlew --build-cache build
-#
-#      - name: Publish to Maven Central
-#        run: echo "Tag name is ${GITHUB_REF#refs/tags/}"
+      - name: Publish to Maven Central
+        env:
+          GRADLE_VARS: >
+            -Psigning.gnupg.keyName=${{ secrets.GNUPG_KEY_ID }}
+            -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}
+            -POSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}
+            -POSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}
+        run: echo "Publish to Maven ${${GITHUB_REF#refs/tags/}:1}"
+#        run: ./gradlew ${GRADLE_VARS} publish

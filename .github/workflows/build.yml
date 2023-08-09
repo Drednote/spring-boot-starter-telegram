@@ -1,5 +1,8 @@
 name: Build
-on: push
+on:
+  push:
+    branches:
+      - '*'
 
 jobs:
   build:
@@ -10,7 +13,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: '17'
+          java-version: ${{ vars.JAVA_VERSION }}
           cache: 'gradle'
       - name: Build with Gradle
         run: ./gradlew --build-cache build
