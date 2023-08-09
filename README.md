@@ -275,6 +275,10 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FO
 OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+## Thanks
+
+Thanks to [OlegNyr](https://github.com/OlegNyr/java-telegram-bot-mvc) for an idea of mvc controllers
+
 ## Authors
 
 The Spring Boot Starter Telegram library is maintained and developed by Galushko Ivan (Drednote).
