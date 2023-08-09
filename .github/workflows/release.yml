@@ -23,15 +23,16 @@ jobs:
       #      - name: Build with Gradle
       #        run: ./gradlew --build-cache build
       - name: Set up secrets
+        id: export_secrets
         run: |
-          echo "GNUPG_KEY_ID=${{ secrets.GNUPG_KEY_ID }}" >> $GITHUB_ENV
+          echo "GNUPG_KEY_ID=${{ secrets.GNUPG_KEY_ID }}" >> $GITHUB_OUTPUT
           echo "export GNUPG_PASSPHRASE=${{ secrets.GNUPG_PASSPHRASE }}" >> $GITHUB_ENV
           echo "export OSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}" >> $GITHUB_ENV
           echo "export OSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}" >> $GITHUB_ENV
       - name: Publish to Maven Central
         env:
           GRADLE_VARS: |
-            -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
+            -Psigning.gnupg.keyName=${{ steps.export_secrets.outputs.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${GNUPG_PASSPHRASE}
             -POSSRH_USERNAME=${OSSRH_USERNAME}
             -Ptag_version=${{ steps.version.outputs.tag_version }}
