@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'io.github.drednote'
-version = '0.1.0.Beta1-SNAPSHOT'
+version = System.getProperty("generatedVersion") ?: '0.1.0.Beta1-SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -55,9 +55,7 @@ signing {
 publishing {
     repositories {
         maven {
-            def releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            def snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = (version.toString().endsWith("SNAPSHOT")) ? snapshotsUrl : releasesUrl
+            url = (version.toString().endsWith("SNAPSHOT")) ? MAVEN_SNAPSHOT_REPO : MAVEN_RELEASE_REPO
             credentials {
                 username = findProperty("OSSRH_USERNAME")
                 password = findProperty("OSSRH_PASSWORD")
@@ -68,7 +66,7 @@ publishing {
         register('mavenJava', MavenPublication) {
             groupId group
             artifactId archivesBaseName
-            version System.getProperty("generatedVersion") ?: version
+            version version
 
             from components.java
             artifact sourceJar {
