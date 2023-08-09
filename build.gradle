@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'io.github.drednote'
-version = System.getProperty("generatedVersion") ?: '0.1.0.Beta1-SNAPSHOT'
+version = findProperty("tag_version") ?: 'local-SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
