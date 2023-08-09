@@ -29,11 +29,10 @@ jobs:
           echo "export OSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}" >> $GITHUB_ENV
           echo "export OSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}" >> $GITHUB_ENV
       - name: Publish to Maven Central
-        run: ./gradlew ${GRADLE_VARS} publish
         env:
           GRADLE_VARS: |
             -Psigning.gnupg.keyName=${GNUPG_KEY_ID}
-            -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}
-            -POSSRH_USERNAME=${{ secrets.OSSRH_USERNAME }}
-#             -POSSRH_PASSWORD=${{ secrets.OSSRH_PASSWORD }}
+            -Psigning.gnupg.passphrase=${GNUPG_PASSPHRASE}
+            -POSSRH_USERNAME=${OSSRH_USERNAME}
             -Ptag_version=${{ steps.version.outputs.tag_version }}
+        run: ./gradlew ${GRADLE_VARS} publish
