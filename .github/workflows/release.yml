@@ -34,11 +34,12 @@ jobs:
         name: Install gpg secret key
         run: |
           cat <(echo -e "${{ secrets.GNUPG_SECRET_KEY }}") | gpg --batch --import
-          gpg --list-secret-keys --keyid-format LONG
+#          gpg --list-secret-keys --keyid-format LONG
       - name: Publish to Maven Central
         env:
           ORG_GRADLE_PROJECT_signing.gnupg.keyName: ${{ secrets.GNUPG_KEY_ID }}
           ORG_GRADLE_PROJECT_signing.gnupg.passphrase: ${{ secrets.GNUPG_PASSPHRASE }}
+          signing.gnupg.passphrase: ${{ secrets.GNUPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: no_password
 #          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}

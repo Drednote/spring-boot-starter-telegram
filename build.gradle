@@ -55,9 +55,7 @@ signing {
 configurations.named('signatures') {
     println('1 = ' + findProperty('signing.gnupg.keyName'))
     println('2 = ' + findProperty('signing.gnupg.passphrase'))
-
-    println('3 = ' + System.getenv('OSSRH_USERNAME'))
-    println('4 = ' + System.getenv('OSSRH_PASSWORD'))
+    println('3 = ' +  System.getenv('signing.gnupg.passphrase'))
 }
 
 publishing {
