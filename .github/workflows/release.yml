@@ -34,7 +34,7 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_signing.gnupg.keyName: ${{ secrets.GNUPG_KEY_ID }}
           ORG_GRADLE_PROJECT_signing.gnupg.passphrase: ${{ secrets.GNUPG_PASSPHRASE }}
-          POSSRH_USERNAME: ${{ secrets.POSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_POSSRH_USERNAME: ${{ secrets.POSSRH_USERNAME }}
           POSSRH_PASSWORD: ${{ secrets.POSSRH_PASSWORD }}
 #          GRADLE_VARS: |
 #            -Psigning.gnupg.keyName=${GNUPG_KEY_ID}

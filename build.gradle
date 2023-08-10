@@ -53,6 +53,14 @@ signing {
     sign publishing.publications
 }
 
+configurations.named('signatures') {
+    println('name = ' + it.name)
+    println('1 = ' + findProperty('signing.gnupg.keyName'))
+    println('2 = ' + findProperty('POSSRH_USERNAME'))
+    println('3 = ' + findProperty('POSSRH_PASSWORD'))
+    println('4 = ' + System.getenv('POSSRH_PASSWORD'))
+}
+
 publishing {
     repositories {
         maven {
