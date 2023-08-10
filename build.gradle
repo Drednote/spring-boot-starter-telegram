@@ -49,19 +49,15 @@ tasks.register('sourceJar', Jar) {
 
 signing {
     useGpgCmd()
-    useInMemoryPgpKeys(System.getenv("GNUPG_KEY_ID"), System.getenv("GNUPG_PASSPHRASE"))
     sign publishing.publications
 }
 
 configurations.named('signatures') {
-    println('name = ' + it.name)
     println('1 = ' + findProperty('signing.gnupg.keyName'))
-    println('2 = ' + findProperty('GNUPG_KEY_ID'))
-    println('3 = ' + findProperty('GNUPG_PASSPHRASE'))
+    println('2 = ' + findProperty('signing.gnupg.passphrase'))
 
-    println('4 = ' + findProperty('POSSRH_USERNAME'))
-    println('5 = ' + findProperty('POSSRH_PASSWORD'))
-    println('6 = ' + System.getenv('POSSRH_PASSWORD'))
+    println('3 = ' + System.getenv('OSSRH_USERNAME'))
+    println('4 = ' + System.getenv('OSSRH_PASSWORD'))
 }
 
 publishing {
@@ -69,8 +65,8 @@ publishing {
         maven {
             url = (version.toString().endsWith("SNAPSHOT")) ? MAVEN_SNAPSHOT_REPO : MAVEN_RELEASE_REPO
             credentials {
-                username = findProperty("OSSRH_USERNAME")
-                password = findProperty("OSSRH_PASSWORD")
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
             }
         }
     }
