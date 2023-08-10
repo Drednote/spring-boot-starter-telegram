@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'io.github.drednote'
-version = findProperty("tag_version") ?: 'local-SNAPSHOT'
+version = findProperty("tag_version") ?: '0.1.0.Alpha1'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -49,6 +49,7 @@ tasks.register('sourceJar', Jar) {
 
 signing {
     useGpgCmd()
+//    useInMemoryPgpKeys(System.getenv("GNUPG_KEY_ID"), System.getenv("GNUPG_PASSPHRASE"))
     sign publishing.publications
 }
 
@@ -84,6 +85,12 @@ publishing {
                         name = "MIT License"
                         url = "https://github.com/drednote/spring-boot-starter-telegram/LICENSE"
                     }
+                }
+
+                scm {
+                    connection = "scm:https://github.com/drednote/spring-boot-starter-telegram.git"
+                    developerConnection = "scm:git@github.com:drednote/spring-boot-starter-telegram.git"
+                    url = "https://github.com/drednote/spring-boot-starter-telegram"
                 }
 
                 developers {
