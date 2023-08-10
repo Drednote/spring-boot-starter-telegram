@@ -49,16 +49,19 @@ tasks.register('sourceJar', Jar) {
 
 signing {
     useGpgCmd()
-//    useInMemoryPgpKeys(System.getenv("GNUPG_KEY_ID"), System.getenv("GNUPG_PASSPHRASE"))
+    useInMemoryPgpKeys(System.getenv("GNUPG_KEY_ID"), System.getenv("GNUPG_PASSPHRASE"))
     sign publishing.publications
 }
 
 configurations.named('signatures') {
     println('name = ' + it.name)
     println('1 = ' + findProperty('signing.gnupg.keyName'))
-    println('2 = ' + findProperty('POSSRH_USERNAME'))
-    println('3 = ' + findProperty('POSSRH_PASSWORD'))
-    println('4 = ' + System.getenv('POSSRH_PASSWORD'))
+    println('2 = ' + findProperty('GNUPG_KEY_ID'))
+    println('3 = ' + findProperty('GNUPG_PASSPHRASE'))
+
+    println('4 = ' + findProperty('POSSRH_USERNAME'))
+    println('5 = ' + findProperty('POSSRH_PASSWORD'))
+    println('6 = ' + System.getenv('POSSRH_PASSWORD'))
 }
 
 publishing {
