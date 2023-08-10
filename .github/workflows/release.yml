@@ -1,48 +1,35 @@
 name: Release to Maven Central
 on:
-  #  release:
-  #    types:
-  #      -
-  push:
-#    tags:
-#      - 'v*'
+  release:
+    types:
+      - published
 
-#    GRADLE_VARS: |
-#      -Psigning.gnupg.keyName=${{ vars.GNUPG_KEY_ID }}
-#      -Psigning.gnupg.passphrase=${{ vars.GNUPG_PASSPHRASE }}
-#      -POSSRH_USERNAME=${{ vars.OSSRH_USERNAME }}
-#      -POSSRH_PASSWORD=${{ vars.OSSRH_PASSWORD }}
-#      -Ptag_version=${{ steps.version.outputs.tag_version }}
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get version
-        id: version
-        run: echo "tag_version=$(echo ${GITHUB_REF#refs/tags/} | cut -c 2-)" >> $GITHUB_OUTPUT
-
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: ${{ vars.JAVA_VERSION }}
           cache: 'gradle'
-      #      - name: Build with Gradle
-      #        run: ./gradlew --build-cache build
-      - id: install-secret-key
-        name: Install gpg secret key
-        run: |
-          cat <(echo -e "${{ secrets.GNUPG_SECRET_KEY }}") | gpg --batch --import
-#          gpg --list-secret-keys --keyid-format LONG
+
+      - name: Build with Gradle
+        run: ./gradlew --build-cache build
+
+      - name: Get version
+        id: version
+        run: echo "tag_version=$(echo ${GITHUB_REF#refs/tags/} | cut -c 2-)" >> $GITHUB_OUTPUT
+
+      - name: Install gpg secret key
+        run: cat <(echo -e "${{ secrets.GNUPG_SECRET_KEY }}") | gpg --batch --import
+
       - name: Publish to Maven Central
         env:
-#          ORG_GRADLE_PROJECT_signing.gnupg.keyName: ${{ secrets.GNUPG_KEY_ID }}
-#          ORG_GRADLE_PROJECT_signing.gnupg.passphrase: ${{ secrets.GNUPG_PASSPHRASE }}
-#          signing.gnupg.passphrase: ${{ secrets.GNUPG_PASSPHRASE }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: no_password
-#          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GRADLE_VARS: |
             -Psigning.gnupg.keyName=${{ secrets.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}

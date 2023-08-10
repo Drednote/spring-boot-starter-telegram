@@ -3,12 +3,13 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'jacoco'
+    id "com.adarshr.test-logger" version "3.2.0"
     id 'org.springframework.boot' version '3.1.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'io.github.drednote'
-version = findProperty("tag_version") ?: '0.1.0.Alpha1'
+version = findProperty("tag_version") ?: 'local-SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -50,12 +51,6 @@ tasks.register('sourceJar', Jar) {
 signing {
     useGpgCmd()
     sign publishing.publications
-}
-
-configurations.named('signatures') {
-    println('1 = ' + findProperty('signing.gnupg.keyName'))
-    println('2 = ' + findProperty('signing.gnupg.passphrase'))
-    println('3 = ' +  System.getenv('signing.gnupg.passphrase'))
 }
 
 publishing {
