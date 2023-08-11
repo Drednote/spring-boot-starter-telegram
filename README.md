@@ -1,6 +1,6 @@
 # Spring Boot Starter Telegram
 
-[![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
+[![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
@@ -171,7 +171,106 @@ That's all! Enjoy your bot. For further information and bot configuration read b
 
 ## Configuration
 
-If your project requires any configuration, provide details on how users can customize it.
+### Base properties
+
+| Name          | Description                               | Default Value                                            |
+|---------------|-------------------------------------------|----------------------------------------------------------|
+| name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               |
+| token*        | The token of a bot.                       | <b>must be set by user</b>                               |
+| defaultLocale | The default locale for sending responses. | -                                                        |
+| session       | Session properties.                       | [Session properties](#session-properties)                |
+| updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |
+| dataSource    | Datasource properties.                    | [Datasource properties](#datasource-properties)          |
+| filters       | Filters properties.                       | [Filters properties](#filters-properties)                |
+| menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |
+
+### Session properties
+
+| Name            | Description                                                                                                           | Default Value      |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|
+| updateLimit     | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                |
+| updateTimeout   | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 |
+| maxThreads      | Max number of threads used for async methods executions                                                               | 1                  |
+| allowedUpdates  | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  |
+| updateStrategy  | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       |
+| backOffStrategy | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff |
+| proxyType       | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           |
+| proxyHost       | The proxy host.                                                                                                       | -                  |
+| proxyPort       | The proxy port.                                                                                                       | 0                  |
+
+Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
+
+### Update handler properties
+
+| Name                           | Description                                                                                        | Default Value |
+|--------------------------------|----------------------------------------------------------------------------------------------------|---------------|
+| mvcEnabled                     | Enabled mvc update handling.                                                                       | true          |
+| scenarioEnabled                | Enabled scenario update handling.                                                                  | true          |
+| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          |
+| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             |
+| autoConfigureScenarioPersister | Whether to autoconfigure scenarioPersister if none is provided.                                    | true          |
+| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          |
+
+### Datasource properties
+
+| Name                               | Description                                                                                                                                                         | Default Value |
+|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| disableAutoGenerateTables          | By default, all tables for JPA datasource are generated with Hibernate (if it exists on classpath). If you don't want to generate them, set this parameter to true. | false         |
+| disableDataSourceAutoConfiguration | Disable all datasource configuration. DataSourceAdapter bean will not be created. The application will work as if there is no datasource.                           | false         |
+
+### Filters properties
+
+| Name                | Description                                                                                                       | Default Value                                   |
+|---------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| permission          | Permission filter properties.                                                                                     | [Permission properties](#permission-properties) |
+| userConcurrency     | How often each user can perform requests to bot. 0 = no rules.                                                    | 0                                               |
+| userConcurrencyUnit | The ChronoUnit which will be applied to userConcurrency.                                                          | SECONDS                                         |
+| setDefaultAnswer    | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response. | true                                            |
+
+### Permission properties
+
+| Name        | Description                                                               | Default Value |
+|-------------|---------------------------------------------------------------------------|---------------|
+| access      | Define who has access to the bot.                                         | ALL           |
+| defaultRole | If a user has no role, this role will be set by default.                  | NONE          |
+| roles       | The list of roles with privileges.                                        | -             |
+| assignRole  | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             |
+
+#### Role
+
+```java
+public class Role {
+
+  /**
+   * Boolean indicating if the role has basic interaction permission and can send requests to bot
+   */
+  private boolean canRead;
+}
+```
+
+### Menu properties
+
+| Name       | Description                              | Default Value |
+|------------|------------------------------------------|---------------|
+| values     | Map of [name:[CommandCls](#CommandCls)]. | -             |
+| sendPolicy | Send policy.                             | ON_STARTUP    |
+
+#### CommandCls
+
+```java
+public class CommandCls {
+
+  /**
+   * Text for the button. Example: Registration
+   */
+  private String text;
+
+  /**
+   * Command for the button. Example: /register
+   */
+  private String command;
+}
+```
 
 ## Dependencies
 
@@ -247,9 +346,9 @@ git push origin feature/new-feature
 11. Once your pull request is approved, it will be merged into the main repository, and your
     contributions will be part of the Spring Boot Starter Telegram library.
 
-Thank you for considering contributing to the project! I appreciate your efforts to make this library
-better and more useful for the community. If you have any questions or need assistance with the
-contribution process, feel free to ask in the pull request discussion.
+Thank you for considering contributing to the project! I appreciate your efforts to make this
+library better and more useful for the community. If you have any questions or need assistance with
+the contribution process, feel free to ask in the pull request discussion.
 
 **Happy coding!**
 

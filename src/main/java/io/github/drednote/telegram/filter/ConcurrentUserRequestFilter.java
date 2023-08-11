@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
 import io.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
@@ -22,23 +21,23 @@ import org.springframework.lang.NonNull;
 
 public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
 
-  private final SessionProperties sessionProperties;
+  private final FilterProperties filterProperties;
   private final Map<Long, Instant> pool = new ConcurrentHashMap<>();
   private final ReadWriteKeyLock<Long> keyLock = new SynchronizedReadWriteKeyLock<>();
   private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-  public ConcurrentUserRequestFilter(SessionProperties sessionProperties) {
-    this.sessionProperties = sessionProperties;
+  public ConcurrentUserRequestFilter(FilterProperties filterProperties) {
+    this.filterProperties = filterProperties;
     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-    executor.scheduleWithFixedDelay(new Cleaner(60_000, sessionProperties, lock, pool),
+    executor.scheduleWithFixedDelay(new Cleaner(60_000, filterProperties, lock, pool),
         30, 30, TimeUnit.SECONDS);
   }
 
   @Override
   public void preFilter(@NonNull TelegramUpdateRequest request) {
     Long chatId = request.getChatId();
-    ChronoUnit unit = sessionProperties.getUserConcurrencyUnit();
-    long duration = sessionProperties.getUserConcurrency();
+    ChronoUnit unit = filterProperties.getUserConcurrencyUnit();
+    long duration = filterProperties.getUserConcurrency();
     if (duration > 0) {
       try {
         lock.readLock().lock();
@@ -68,7 +67,7 @@ public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
      * in ms
      */
     private final long staleFactor;
-    private final SessionProperties sessionProperties;
+    private final FilterProperties filterProperties;
     private final ReadWriteLock lock;
     private final Map<Long, Instant> pool;
 
@@ -79,8 +78,8 @@ public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
       }
 
       Instant now = Instant.now();
-      long userConcurrency = sessionProperties.getUserConcurrency();
-      ChronoUnit unit = sessionProperties.getUserConcurrencyUnit();
+      long userConcurrency = filterProperties.getUserConcurrency();
+      ChronoUnit unit = filterProperties.getUserConcurrencyUnit();
 
       Duration base = unit.getDuration().plus(userConcurrency, unit);
       Duration staleDuration = base.plus(Duration.ofMillis(staleFactor));

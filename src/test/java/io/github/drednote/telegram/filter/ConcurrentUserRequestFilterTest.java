@@ -23,7 +23,7 @@ class ConcurrentUserRequestFilterTest {
 
   @Test
   void testPreFilterWithOnceAccess() {
-    SessionProperties sessionProperties = Mockito.mock(SessionProperties.class);
+    FilterProperties sessionProperties = Mockito.mock(FilterProperties.class);
     when(sessionProperties.getUserConcurrencyUnit()).thenReturn(ChronoUnit.MINUTES);
     when(sessionProperties.getUserConcurrency()).thenReturn(10L);
 
@@ -38,7 +38,7 @@ class ConcurrentUserRequestFilterTest {
 
   @Test
   void testPreFilterWithInvalidDuration() throws InterruptedException {
-    SessionProperties sessionProperties = Mockito.mock(SessionProperties.class);
+    FilterProperties sessionProperties = Mockito.mock(FilterProperties.class);
     when(sessionProperties.getUserConcurrencyUnit()).thenReturn(ChronoUnit.SECONDS);
     when(sessionProperties.getUserConcurrency()).thenReturn(100L);
 
@@ -55,7 +55,7 @@ class ConcurrentUserRequestFilterTest {
 
   @Test
   void testPreFilterWithValidDuration() throws InterruptedException {
-    SessionProperties sessionProperties = Mockito.mock(SessionProperties.class);
+    FilterProperties sessionProperties = Mockito.mock(FilterProperties.class);
     when(sessionProperties.getUserConcurrencyUnit()).thenReturn(ChronoUnit.MILLIS);
     when(sessionProperties.getUserConcurrency()).thenReturn(10L);
 
@@ -72,7 +72,7 @@ class ConcurrentUserRequestFilterTest {
 
   @Test
   void shouldCleanStaledObjectsCorrect() {
-    SessionProperties sessionProperties = Mockito.mock(SessionProperties.class);
+    FilterProperties sessionProperties = Mockito.mock(FilterProperties.class);
     when(sessionProperties.getUserConcurrencyUnit()).thenReturn(ChronoUnit.MILLIS);
     when(sessionProperties.getUserConcurrency()).thenReturn(10L);
 
