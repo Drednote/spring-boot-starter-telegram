@@ -30,23 +30,21 @@ public class SessionProperties {
   private int updateLimit = 100;
   /**
    * Timeout in seconds for long polling. Should be positive, short polling (0) should be used for
-   * testing purposes only.
+   * testing purposes only
    *
    * @apiNote applies only to long polling session
    */
   private int updateTimeout = 50;
   /**
-   * The maximum number of threads that will execute user code.
-   *
-   * @apiNote Only one thread can connect to telegram API
+   * Max number of threads used for async methods executions
    */
-  private int updateHandlerThreadCount = 1;
+  private int maxThreads = 1;
   /**
    * A JSON-serialized list of the update types you want your bot to receive. For example, specify
    * [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types.
    * See {@link RequestType} for a complete list of available update types. Specify an empty list to
    * receive all update types except chat_member (default). If not specified, the previous setting
-   * will be used.
+   * will be used
    */
   private List<String> allowedUpdates;
   /**
@@ -57,7 +55,7 @@ public class SessionProperties {
    */
   private UpdateStrategy updateStrategy = UpdateStrategy.LONG_POLLING;
   /**
-   * Backoff strategy which will be applied if requests to telegram API are failed with errors.
+   * Backoff strategy which will be applied if requests to telegram API are failed with errors
    *
    * @apiNote impl of interface {@link BackOff} must have one empty public constructor
    */
@@ -80,7 +78,7 @@ public class SessionProperties {
     defaultBotOptions.setAllowedUpdates(this.getAllowedUpdates());
     defaultBotOptions.setGetUpdatesLimit(this.getUpdateLimit());
     defaultBotOptions.setGetUpdatesTimeout(this.getUpdateTimeout());
-    defaultBotOptions.setMaxThreads(this.getUpdateHandlerThreadCount());
+    defaultBotOptions.setMaxThreads(this.getMaxThreads());
     defaultBotOptions.setProxyType(this.getProxyType());
     defaultBotOptions.setProxyHost(this.getProxyHost());
     defaultBotOptions.setProxyPort(this.getProxyPort());

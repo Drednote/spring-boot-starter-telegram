@@ -28,7 +28,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
 
   public LongPollingSession(TelegramClient telegramClient, SessionProperties properties) {
     this.readerService = Executors.newSingleThreadScheduledExecutor();
-    this.executorService = Executors.newFixedThreadPool(properties.getUpdateHandlerThreadCount());
+    this.executorService = Executors.newFixedThreadPool(properties.getMaxThreads());
     this.telegramClient = telegramClient;
   }
 

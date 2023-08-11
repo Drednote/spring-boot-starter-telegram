@@ -186,18 +186,17 @@ That's all! Enjoy your bot. For further information and bot configuration read b
 
 ### Session properties
 
-| Name                     | Description                                                                                                   | Default Value      |
-|--------------------------|---------------------------------------------------------------------------------------------------------------|--------------------|
-| updateLimit              | Limits the number of updates to be retrieved. Values between 1-100 are accepted                               | 100                |
-| updateTimeout            | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only          | 50                 |
-| updateHandlerThreadCount | The maximum number of threads that will execute user code.                                                    | 1                  |
-| allowedUpdates           | A JSON-serialized list of update types to receive. See RequestType for available update types.                | null               |
-| updateStrategy           | The strategy to receive updates from Telegram API. Long polling or webhooks.                                  | LONG_POLLING       |
-| backOffStrategy          | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface with public empty constructor | ExponentialBackOff |
-| proxyType                | The proxy type for executing requests to Telegram API.                                                        | NO_PROXY           |
-| proxyHost                | The proxy host.                                                                                               | -                  |
-| proxyPort                | The proxy port.                                                                                               | 0                  |
-| UpdateStrategy           | Enum for update strategies (LONG_POLLING, WEBHOOKS)                                                           | LONG_POLLING       |
+| Name            | Description                                                                                                           | Default Value      |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|
+| updateLimit     | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                |
+| updateTimeout   | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 |
+| maxThreads      | Max number of threads used for async methods executions                                                               | 1                  |
+| allowedUpdates  | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  |
+| updateStrategy  | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       |
+| backOffStrategy | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff |
+| proxyType       | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           |
+| proxyHost       | The proxy host.                                                                                                       | -                  |
+| proxyPort       | The proxy port.                                                                                                       | 0                  |
 
 Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
@@ -217,7 +216,7 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 | Name                               | Description                                                                                                                                                         | Default Value |
 |------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | disableAutoGenerateTables          | By default, all tables for JPA datasource are generated with Hibernate (if it exists on classpath). If you don't want to generate them, set this parameter to true. | false         |
-| disableDataSourceAutoConfiguration | Disable all datasource configuration. DataSourceAdapter bean will not be created.The application will work as if there is no datasource.                            | false         |
+| disableDataSourceAutoConfiguration | Disable all datasource configuration. DataSourceAdapter bean will not be created. The application will work as if there is no datasource.                           | false         |
 
 ### Filters properties
 

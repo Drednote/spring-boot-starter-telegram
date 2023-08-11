@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'io.github.drednote'
-version = findProperty("tag_version") ?: 'local-SNAPSHOT'
+version = findProperty("tag_version") ?: 'master-SNAPSHOT'
 sourceCompatibility = '17'
 
 bootJar.enabled = false
@@ -48,18 +48,29 @@ tasks.register('sourceJar', Jar) {
     from sourceSets.main.allJava
 }
 
+tasks.named('compileJava') {
+    inputs.files(tasks.named('processResources'))
+}
+
 signing {
-    useGpgCmd()
-    sign publishing.publications
+    if (!version.toString().endsWith("SNAPSHOT")) {
+        useGpgCmd()
+        sign publishing.publications
+    }
 }
 
 publishing {
     repositories {
         maven {
-            url = (version.toString().endsWith("SNAPSHOT")) ? MAVEN_SNAPSHOT_REPO : MAVEN_RELEASE_REPO
+            if (version.toString().endsWith("SNAPSHOT")) {
+                allowInsecureProtocol true
+                url = NEXUS_UPLOAD_REPO
+            } else {
+                url = MAVEN_RELEASE_REPO
+            }
             credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
+                username = System.getenv("OSSRH_USERNAME") ?: System.getProperty("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD") ?: System.getProperty("OSSRH_PASSWORD")
             }
         }
     }
