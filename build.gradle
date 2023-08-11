@@ -83,7 +83,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT License"
-                        url = "https://github.com/drednote/spring-boot-starter-telegram/LICENSE"
+                        url = "https://github.com/Drednote/spring-boot-starter-telegram/blob/master/LICENSE"
                     }
                 }
 

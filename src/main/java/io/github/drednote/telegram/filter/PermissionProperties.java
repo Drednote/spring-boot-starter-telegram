@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("drednote.telegram.permission")
+@ConfigurationProperties("drednote.telegram.filters.permission")
 @Getter
 @Setter
 public class PermissionProperties {
@@ -20,7 +20,7 @@ public class PermissionProperties {
    */
   private Access access = Access.ALL;
   /**
-   * If a user has no role, this will be set by default
+   * If a user has no role, this role will be set by default
    */
   private String defaultRole = DEFAULT_ROLE;
   /**

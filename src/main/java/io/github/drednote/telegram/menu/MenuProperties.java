@@ -62,6 +62,6 @@ public class MenuProperties {
   }
 
   public enum SendPolicy {
-    NONE, ON_STARTUP, SCHEDULED
+    NONE, ON_STARTUP
   }
 }

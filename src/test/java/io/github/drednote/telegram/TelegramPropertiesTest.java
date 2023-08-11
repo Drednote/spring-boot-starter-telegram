@@ -25,7 +25,7 @@ class TelegramPropertiesTest {
     assertThat(session).isNotNull();
 
     DefaultBotOptions expected = new DefaultBotOptions();
-    expected.setAllowedUpdates(Collections.emptyList());
+    expected.setAllowedUpdates(null);
     expected.setGetUpdatesLimit(90);
     expected.setGetUpdatesTimeout(40);
     expected.setBackOff(new FixedBackoff());

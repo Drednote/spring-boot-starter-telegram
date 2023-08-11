@@ -1,6 +1,6 @@
 # Spring Boot Starter Telegram
 
-[![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
+[![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
@@ -247,9 +247,9 @@ git push origin feature/new-feature
 11. Once your pull request is approved, it will be merged into the main repository, and your
     contributions will be part of the Spring Boot Starter Telegram library.
 
-Thank you for considering contributing to the project! I appreciate your efforts to make this library
-better and more useful for the community. If you have any questions or need assistance with the
-contribution process, feel free to ask in the pull request discussion.
+Thank you for considering contributing to the project! I appreciate your efforts to make this
+library better and more useful for the community. If you have any questions or need assistance with
+the contribution process, feel free to ask in the pull request discussion.
 
 **Happy coding!**
 

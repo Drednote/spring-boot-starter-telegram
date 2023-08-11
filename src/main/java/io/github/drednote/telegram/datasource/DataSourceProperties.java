@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class DataSourceProperties {
 
   /**
-   * By default, all tables for jpa datasource are generating with hibernate (if it exists on
+   * By default, all tables for jpa datasource are generating with Hibernate (if it exists on
    * classpath). If you don't want to generate them, set this parameter to true.
    *
    * @apiNote <b>WARNING</b> If you set this to true, be aware to create tables manually for needed

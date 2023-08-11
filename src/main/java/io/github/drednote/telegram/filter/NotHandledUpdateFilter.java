@@ -9,7 +9,7 @@ public class NotHandledUpdateFilter implements UpdateFilter {
   @Override
   public void postFilter(@NonNull TelegramUpdateRequest request) {
     if (request.getResponse() == null
-        && request.getProperties().getUpdateHandler().isSetDefaultAnswer()) {
+        && request.getProperties().getFilters().isSetDefaultAnswer()) {
       request.setResponse(NotHandledTelegramResponse.INSTANCE);
     }
   }
