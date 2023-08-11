@@ -173,35 +173,35 @@ That's all! Enjoy your bot. For further information and bot configuration read b
 
 ### Base properties
 
-| Name                                                     | Description                               | Default Value                                             |
-|----------------------------------------------------------|-------------------------------------------|-----------------------------------------------------------|
-| name<span style="color:red; font-size: small;">*</span>  | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                                |
-| token<span style="color:red; font-size: small;">*</span> | The token of a bot.                       | <b>must be set by user</b>                                |
-| defaultLocale                                            | The default locale for sending responses. | -                                                         |
-| session                                                  | Session properties.                       | [Session properties](#session properties)                 |
-| updateHandler                                            | Properties of update handlers.            | [Update handlers properties](#update handlers properties) |
-| dataSource                                               | Datasource properties.                    | [Datasource properties](#datasource properties)           |
-| filters                                                  | Filters properties.                       | [Filters properties](#filters properties)                 |
-| menu                                                     | Menu properties.                          | [Menu properties](#menu properties)                       |
+| Name          | Description                               | Default Value                                            |
+|---------------|-------------------------------------------|----------------------------------------------------------|
+| name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               |
+| token<*       | The token of a bot.                       | <b>must be set by user</b>                               |
+| defaultLocale | The default locale for sending responses. | -                                                        |
+| session       | Session properties.                       | [Session properties](#session-properties)                |
+| updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |
+| dataSource    | Datasource properties.                    | [Datasource properties](#datasource-properties)          |
+| filters       | Filters properties.                       | [Filters properties](#filters-properties)                |
+| menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |
 
 ### Session properties
 
-| Name                     | Description                                                                                                   | Default Value       |
-|--------------------------|---------------------------------------------------------------------------------------------------------------|---------------------|
-| updateLimit              | Limits the number of updates to be retrieved. Values between 1-100 are accepted                               | 100                 |
-| updateTimeout            | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only          | 50                  |
-| updateHandlerThreadCount | The maximum number of threads that will execute user code.                                                    | 1                   |
-| allowedUpdates           | A JSON-serialized list of update types to receive. See RequestType for available update types.                | null                |
-| updateStrategy           | The strategy to receive updates from Telegram API. Long polling or webhooks.                                  | LONG_POLLING        |
-| backOffStrategy          | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface with public empty constructor | ExponentialBackOff  |
-| proxyType                | The proxy type for executing requests to Telegram API.                                                        | NO_PROXY            |
-| proxyHost                | The proxy host.                                                                                               | null                |
-| proxyPort                | The proxy port.                                                                                               | 0                   |
-| UpdateStrategy           | Enum for update strategies (LONG_POLLING, WEBHOOKS)                                                           | LONG_POLLING        |
+| Name                     | Description                                                                                                   | Default Value      |
+|--------------------------|---------------------------------------------------------------------------------------------------------------|--------------------|
+| updateLimit              | Limits the number of updates to be retrieved. Values between 1-100 are accepted                               | 100                |
+| updateTimeout            | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only          | 50                 |
+| updateHandlerThreadCount | The maximum number of threads that will execute user code.                                                    | 1                  |
+| allowedUpdates           | A JSON-serialized list of update types to receive. See RequestType for available update types.                | null               |
+| updateStrategy           | The strategy to receive updates from Telegram API. Long polling or webhooks.                                  | LONG_POLLING       |
+| backOffStrategy          | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface with public empty constructor | ExponentialBackOff |
+| proxyType                | The proxy type for executing requests to Telegram API.                                                        | NO_PROXY           |
+| proxyHost                | The proxy host.                                                                                               | -                  |
+| proxyPort                | The proxy port.                                                                                               | 0                  |
+| UpdateStrategy           | Enum for update strategies (LONG_POLLING, WEBHOOKS)                                                           | LONG_POLLING       |
 
 Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
-### Update handlers properties
+### Update handler properties
 
 | Name                           | Description                                                                                        | Default Value |
 |--------------------------------|----------------------------------------------------------------------------------------------------|---------------|
@@ -223,19 +223,19 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 
 | Name                | Description                                                                                                       | Default Value                                   |
 |---------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| permission          | Permission filter properties.                                                                                     | [Permission properties](#permission properties) |
+| permission          | Permission filter properties.                                                                                     | [Permission properties](#permission-properties) |
 | userConcurrency     | How often each user can perform requests to bot. 0 = no rules.                                                    | 0                                               |
 | userConcurrencyUnit | The ChronoUnit which will be applied to userConcurrency.                                                          | SECONDS                                         |
 | setDefaultAnswer    | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response. | true                                            |
 
 ### Permission properties
 
-| Name         | Description                                                               | Default Value |
-|--------------|---------------------------------------------------------------------------|---------------|
-| access       | Define who has access to the bot.                                         | ALL           |
-| defaultRole  | If a user has no role, this role will be set by default.                  | NONE          |
-| roles        | The list of roles with privileges.                                        | -             |
-| assignRole   | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             |
+| Name        | Description                                                               | Default Value |
+|-------------|---------------------------------------------------------------------------|---------------|
+| access      | Define who has access to the bot.                                         | ALL           |
+| defaultRole | If a user has no role, this role will be set by default.                  | NONE          |
+| roles       | The list of roles with privileges.                                        | -             |
+| assignRole  | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             |
 
 #### Role
 
@@ -251,10 +251,10 @@ public class Role {
 
 ### Menu properties
 
-| Name               | Description                              | Default Value |
-|--------------------|------------------------------------------|---------------|
-| values             | Map of [name:[CommandCls](#CommandCls)]. | -             |
-| sendPolicy         | Send policy.                             | ON_STARTUP    |
+| Name       | Description                              | Default Value |
+|------------|------------------------------------------|---------------|
+| values     | Map of [name:[CommandCls](#CommandCls)]. | -             |
+| sendPolicy | Send policy.                             | ON_STARTUP    |
 
 #### CommandCls
 
