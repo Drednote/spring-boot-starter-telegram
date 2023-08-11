@@ -30,13 +30,13 @@ public class MenuProperties {
   public static class CommandCls {
 
     /**
-     * Текст кнопки. Пример - Регистрация
+     * Text for the button. Example: Registration
      * todo add localization
      */
     private String text;
 
     /**
-     * Команда. Пример - /register
+     * Command for the button. Example: /register
      */
     private String command;
 
