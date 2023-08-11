@@ -176,7 +176,7 @@ That's all! Enjoy your bot. For further information and bot configuration read b
 | Name          | Description                               | Default Value                                            |
 |---------------|-------------------------------------------|----------------------------------------------------------|
 | name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               |
-| token<*       | The token of a bot.                       | <b>must be set by user</b>                               |
+| token*        | The token of a bot.                       | <b>must be set by user</b>                               |
 | defaultLocale | The default locale for sending responses. | -                                                        |
 | session       | Session properties.                       | [Session properties](#session-properties)                |
 | updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |
