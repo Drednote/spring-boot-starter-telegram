@@ -186,17 +186,18 @@ That's all! Enjoy your bot. For further information and bot configuration read b
 
 ### Session properties
 
-| Name            | Description                                                                                                           | Default Value      |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|
-| updateLimit     | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                |
-| updateTimeout   | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 |
-| maxThreads      | Max number of threads used for async methods executions                                                               | 1                  |
-| allowedUpdates  | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  |
-| updateStrategy  | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       |
-| backOffStrategy | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff |
-| proxyType       | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           |
-| proxyHost       | The proxy host.                                                                                                       | -                  |
-| proxyPort       | The proxy port.                                                                                                       | 0                  |
+| Name              | Description                                                                                                           | Default Value      |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|
+| updateLimit       | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                |
+| updateTimeout     | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 |
+| produceMaxThreads | Max number of threads used for async methods executions (send messages to telegram)                                   | 10                 |
+| consumeMaxThreads | Max number of threads used for consumption messages from a telegram                                                   | 1                  |
+| allowedUpdates    | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  |
+| updateStrategy    | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       |
+| backOffStrategy   | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff |
+| proxyType         | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           |
+| proxyHost         | The proxy host.                                                                                                       | -                  |
+| proxyPort         | The proxy port.                                                                                                       | 0                  |
 
 Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 

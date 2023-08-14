@@ -1,10 +1,13 @@
 package io.github.drednote.telegram.session;
 
+import static org.telegram.telegrambots.Constants.SOCKET_TIMEOUT;
+
 import io.github.drednote.telegram.core.request.RequestType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.http.client.config.RequestConfig;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -36,9 +39,13 @@ public class SessionProperties {
    */
   private int updateTimeout = 50;
   /**
-   * Max number of threads used for async methods executions
+   * Max number of threads used for async methods executions (send messages to telegram)
    */
-  private int maxThreads = 1;
+  private int produceMaxThreads = 10;
+  /**
+   * Max number of threads used for consumption messages from a telegram
+   */
+  private int consumeMaxThreads = 1;
   /**
    * A JSON-serialized list of the update types you want your bot to receive. For example, specify
    * [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types.
@@ -78,10 +85,19 @@ public class SessionProperties {
     defaultBotOptions.setAllowedUpdates(this.getAllowedUpdates());
     defaultBotOptions.setGetUpdatesLimit(this.getUpdateLimit());
     defaultBotOptions.setGetUpdatesTimeout(this.getUpdateTimeout());
-    defaultBotOptions.setMaxThreads(this.getMaxThreads());
+    defaultBotOptions.setMaxThreads(this.getProduceMaxThreads());
     defaultBotOptions.setProxyType(this.getProxyType());
     defaultBotOptions.setProxyHost(this.getProxyHost());
     defaultBotOptions.setProxyPort(this.getProxyPort());
+
+    if (defaultBotOptions.getRequestConfig() == null) {
+      defaultBotOptions.setRequestConfig(
+          RequestConfig.copy(RequestConfig.custom().build())
+              .setSocketTimeout(SOCKET_TIMEOUT)
+              .setConnectTimeout(SOCKET_TIMEOUT)
+              .setConnectionRequestTimeout(SOCKET_TIMEOUT).build()
+      );
+    }
 
     try {
       Class<? extends BackOff> backOffClazz = this.getBackOffStrategy();
