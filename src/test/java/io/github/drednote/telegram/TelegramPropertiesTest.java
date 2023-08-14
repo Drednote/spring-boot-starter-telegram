@@ -1,10 +1,11 @@
 package io.github.drednote.telegram;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.telegram.telegrambots.Constants.SOCKET_TIMEOUT;
 
 import io.github.drednote.telegram.session.FixedBackoff;
 import io.github.drednote.telegram.session.SessionProperties;
-import java.util.Collections;
+import org.apache.http.client.config.RequestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,11 @@ class TelegramPropertiesTest {
     expected.setProxyType(ProxyType.SOCKS4);
     expected.setProxyHost("hostProxy");
     expected.setProxyPort(8080);
+    expected.setRequestConfig(
+        RequestConfig.copy(RequestConfig.custom().build())
+            .setSocketTimeout(SOCKET_TIMEOUT)
+            .setConnectTimeout(SOCKET_TIMEOUT)
+            .setConnectionRequestTimeout(SOCKET_TIMEOUT).build());
 
     assertThat(session.toBotOptions()).usingRecursiveComparison().isEqualTo(expected);
   }
