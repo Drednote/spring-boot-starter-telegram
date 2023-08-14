@@ -111,16 +111,16 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
     this.messageTypes = parseMessageType();
   }
 
-  protected AbstractTelegramUpdateRequest(AbstractTelegramUpdateRequest request) {
-    this.id = request.id;
-    this.origin = request.origin;
-    this.chatId = request.chatId;
-    this.requestType = request.requestType;
-    this.messageTypes = request.messageTypes;
-    this.message = request.message;
-    this.chat = request.chat;
-    this.user = request.user;
-    this.text = request.text;
+  protected AbstractTelegramUpdateRequest(TelegramUpdateRequest request) {
+    this.id = request.getId();
+    this.origin = request.getOrigin();
+    this.chatId = request.getChatId();
+    this.requestType = request.getRequestType();
+    this.messageTypes = request.getMessageTypes();
+    this.message = request.getMessage();
+    this.chat = request.getChat();
+    this.user = request.getUser();
+    this.text = request.getText();
   }
 
   @NonNull

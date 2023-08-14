@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class DefaultExceptionHandler implements ExceptionHandler {
 
   private final ExceptionHandlerResolver exceptionHandlerResolver;
-  private final HandlerMethodInvoker handlerMethodInvoker = new DefaultHandlerMethodInvoker();
+  private final HandlerMethodInvoker handlerMethodInvoker;
 
   @Override
   public void handle(TelegramUpdateRequest request) {

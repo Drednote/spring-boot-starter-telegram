@@ -1,26 +1,32 @@
 package io.github.drednote.telegram.core.invoke;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.resolver.HandlerMethodArgumentResolver;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 
   private static final Object[] EMPTY_ARGS = new Object[0];
 
-  private final HandlerMethodArgumentResolver resolver = new DefaultHandlerMethodArgumentResolver();
+  private final HandlerMethodArgumentResolver resolver;
   private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
   @Override
   @Nullable
-  public Object invoke(TelegramUpdateRequest request, HandlerMethod handlerMethod) throws Exception {
+  public Object invoke(
+      @NonNull TelegramUpdateRequest request, @NonNull HandlerMethod handlerMethod
+  ) throws Exception {
     Object[] argumentValues = getMethodArgumentValues(request, handlerMethod);
     if (handlerMethod instanceof InvocableHandlerMethod invocableHandlerMethod) {
       return invocableHandlerMethod.invoke(argumentValues);
@@ -30,7 +36,7 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 
   private Object[] getMethodArgumentValues(
       TelegramUpdateRequest request, HandlerMethod handlerMethod, Object... providedArgs
-  ) throws Exception {
+  ) {
     MethodParameter[] parameters = handlerMethod.getMethodParameters();
     if (ObjectUtils.isEmpty(parameters)) {
       return EMPTY_ARGS;

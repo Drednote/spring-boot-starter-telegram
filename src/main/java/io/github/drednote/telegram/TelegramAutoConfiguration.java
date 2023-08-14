@@ -1,6 +1,7 @@
 package io.github.drednote.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.drednote.telegram.core.CoreAutoConfiguration;
 import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.core.LongPollingBot;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
@@ -29,7 +30,7 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
 @ImportAutoConfiguration({
     SessionAutoConfiguration.class, UpdateHandlerAutoConfiguration.class,
     ExceptionHandlerAutoConfiguration.class, DataSourceAutoConfiguration.class,
-    FiltersAutoConfiguration.class, MenuAutoConfiguration.class
+    FiltersAutoConfiguration.class, MenuAutoConfiguration.class, CoreAutoConfiguration.class
 })
 @EnableConfigurationProperties(TelegramProperties.class)
 @AutoConfiguration
