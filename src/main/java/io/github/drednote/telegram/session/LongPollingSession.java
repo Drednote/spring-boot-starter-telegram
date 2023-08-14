@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.session;
 
-import io.github.drednote.telegram.session.TelegramClient.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -28,7 +27,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
 
   public LongPollingSession(TelegramClient telegramClient, SessionProperties properties) {
     this.readerService = Executors.newSingleThreadScheduledExecutor();
-    this.executorService = Executors.newFixedThreadPool(properties.getMaxThreads());
+    this.executorService = Executors.newFixedThreadPool(properties.getConsumeMaxThreads());
     this.telegramClient = telegramClient;
   }
 
@@ -83,20 +82,16 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
   private List<Update> getUpdatesFromServer() {
     try {
       log.trace("Started request");
-      Response response = telegramClient.getUpdates(
+      List<Update> response = telegramClient.getUpdates(
           callback.getBotToken(),
           lastReceivedUpdate + 1,
           options.getGetUpdatesLimit(),
           options.getGetUpdatesTimeout(),
           options.getAllowedUpdates()
       );
+      options.getBackOff().reset();
       log.trace("Finished request");
-      if (response.isOk()) {
-        return response.getResult();
-      } else {
-        log.error("Something went wrong while trying to get updates, response = '%s'"
-            .formatted(response));
-      }
+      return response;
     } catch (Exception exception) {
       log.error("Error while reading updates", exception);
       try {
