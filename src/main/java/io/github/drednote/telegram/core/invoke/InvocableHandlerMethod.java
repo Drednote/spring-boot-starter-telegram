@@ -8,7 +8,7 @@ import org.springframework.web.method.HandlerMethod;
 
 public class InvocableHandlerMethod extends HandlerMethod {
 
-  public InvocableHandlerMethod(HandlerMethod handlerMethod) {
+  public InvocableHandlerMethod(@NonNull HandlerMethod handlerMethod) {
     super(handlerMethod);
   }
 

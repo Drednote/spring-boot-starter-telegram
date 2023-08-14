@@ -2,10 +2,13 @@ package io.github.drednote.telegram.updatehandler.mvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.drednote.telegram.core.request.MessageType;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
-import io.github.drednote.telegram.core.request.RequestType;
+import io.github.drednote.telegram.core.CoreAutoConfiguration;
+import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.MessageType;
+import io.github.drednote.telegram.core.request.RequestType;
+import io.github.drednote.telegram.core.resolver.CompositeArgumentResolver;
+import io.github.drednote.telegram.testsupport.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
@@ -13,6 +16,7 @@ import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestCo
 import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
 import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
 import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,22 +28,16 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @SpringBootTest(classes = {
-    UpdateHandlerAutoConfiguration.class, TestController.class
+    UpdateHandlerAutoConfiguration.class, TestController.class, CoreAutoConfiguration.class
 })
 @Slf4j
 @ActiveProfiles("mvcTest")
 class MvcUpdateHandlerTest {
 
   @Autowired
-  TelegramControllerContainer container;
-  @Autowired
   TestController testController;
-  UpdateHandler updateHandler;
-
-  @BeforeEach
-  void setUp() {
-    updateHandler = new MvcUpdateHandler(container);
-  }
+  @Autowired
+  MvcUpdateHandler updateHandler;
 
   @Test
   void shouldCallRegister() throws Exception {

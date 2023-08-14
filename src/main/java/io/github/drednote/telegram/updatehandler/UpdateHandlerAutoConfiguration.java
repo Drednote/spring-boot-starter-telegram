@@ -1,12 +1,13 @@
 package io.github.drednote.telegram.updatehandler;
 
+import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
-import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerBeanPostProcessor;
-import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerContainer;
 import io.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
 import io.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
+import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerBeanPostProcessor;
+import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerContainer;
 import io.github.drednote.telegram.updatehandler.scenario.DataSourceScenarioPersister;
 import io.github.drednote.telegram.updatehandler.scenario.InMemoryScenarioPersister;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioAdapter;
@@ -74,11 +75,14 @@ public class UpdateHandlerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MvcUpdateHandler mvcUpdateHandler(HandlerMethodPopular handlerMethodLookup) {
-      return new MvcUpdateHandler(handlerMethodLookup);
+    public MvcUpdateHandler mvcUpdateHandler(
+        HandlerMethodPopular handlerMethodLookup, HandlerMethodInvoker handlerMethodInvoker
+    ) {
+      return new MvcUpdateHandler(handlerMethodLookup, handlerMethodInvoker);
     }
 
     @Bean
+    @ConditionalOnMissingBean({ControllerRegistrar.class, HandlerMethodPopular.class})
     public TelegramControllerContainer handlerMethodContainer() {
       return new TelegramControllerContainer();
     }

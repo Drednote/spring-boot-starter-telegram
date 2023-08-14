@@ -56,21 +56,21 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
     this.properties = properties;
   }
 
-  public DefaultTelegramUpdateRequest(DefaultTelegramUpdateRequest request) {
+  public DefaultTelegramUpdateRequest(TelegramUpdateRequest request) {
     super(request);
-    this.properties = request.properties;
-    this.absSender = request.absSender;
-    this.requestHandler = request.requestHandler;
-    this.scenario = request.scenario;
-    this.response = request.response;
-    this.objectMapper = request.objectMapper;
-    this.error = request.error;
-    this.permission = request.permission;
+    this.properties = request.getProperties();
+    this.absSender = request.getAbsSender();
+    this.requestHandler = request.getRequestHandler();
+    this.scenario = request.getScenario();
+    this.response = request.getResponse();
+    this.objectMapper = request.getObjectMapper();
+    this.error = request.getError();
+    this.permission = request.getPermission();
   }
 
   @Override
   public String toString() {
-    return "Update = %s".formatted(this.origin);
+    return "Id = %s, text = %s".formatted(this.id, this.text);
   }
 
   @Override

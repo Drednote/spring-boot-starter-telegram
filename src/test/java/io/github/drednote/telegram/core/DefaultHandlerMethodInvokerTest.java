@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.resolver.CompositeArgumentResolver;
 import io.github.drednote.telegram.testsupport.UpdateUtils;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.method.HandlerMethod;
@@ -14,7 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 class DefaultHandlerMethodInvokerTest {
 
-  final DefaultHandlerMethodInvoker invoker = new DefaultHandlerMethodInvoker();
+  final DefaultHandlerMethodInvoker invoker = new DefaultHandlerMethodInvoker(
+      new CompositeArgumentResolver(new ArrayList<>()));
 
   @Test
   void shouldCallMethodWithKnownArguments() throws NoSuchMethodException {
