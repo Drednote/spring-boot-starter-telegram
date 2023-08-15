@@ -30,8 +30,16 @@ features to facilitate the bot development process
 
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [QuikStart](#quik-start)
 - [Usage](#usage)
-    - [QuikStart](#quik-start)
+    - [Update](#update)
+    - [TelegramUpdateRequest](#telegramupdaterequest)
+    - [UpdateHandlers](#updatehandlers)
+    - [UpdateFilters](#updatefilters)
+    - [TelegramResponse](#telegramresponse)
+    - [TelegramScope](#telegramscope)
+    - [ExceptionHandler](#exceptionhandler)
+    - [DataSourceAdapter](#datasourceadapter)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -62,12 +70,6 @@ Add the repository for the library in your to your `pom.xml` file to fetch the a
     <name>Maven Central</name>
     <url>https://repo.maven.apache.org/maven2</url>
   </repository>
-  <!--if you want to download snapshots-->
-  <repository>
-    <id>snapshots</id>
-    <name>Maven Snapshots</name>
-    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-  </repository>
 </repositories>
 ```
 
@@ -89,8 +91,6 @@ Add the following repository to your `build.gradle` file to fetch the artifact f
 ```groovy
 repositories {
     mavenCentral()
-    // if you want to download snapshots
-    maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
 }
 ```
 
@@ -106,12 +106,7 @@ dependencies {
 Make sure to use Java 17 or a later version in your project as the Spring Boot Starter Telegram
 library is based on Spring Boot 3 and requires Java 17 or higher.
 
-Please note that the version specified (yourVersion) is just a placeholder. Replace it with the
-actual version you want to use for your project.
-
-## Usage
-
-### Quik Start
+## Quik Start
 
 Add to `application.yml` your bot token and specify the name of bot
 
@@ -168,6 +163,62 @@ public class Application {
 ```
 
 That's all! Enjoy your bot. For further information and bot configuration read below
+
+## Usage
+
+### Overall information
+
+The implementation of this library is very similar to how regular `java http servlets` work. At
+startup application, a session is created that connects to the telegram api and starts receiving
+updates (in **long polling strategy**) or a webhook is created to which telegram itself sends
+updates (
+in **webhook strategy**).
+
+When an [Update](#update) is received, a [TelegramUpdateRequest](#telegramupdaterequest) object is
+created, which will be distributed throughout further update processing chain. Initially, it
+contains only information that has been obtained from the [Update](#update) object. In the
+future, [TelegramUpdateRequest](#telegramupdaterequest) will be enriched with data.
+
+At the very beginning of the update processing chain,
+the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current stream,
+to be able to create a [TelegramScope](#telegramscope) bean.
+
+Next, the update is pre-filtered by calling [UpdateFilters](#updatefilters).
+
+After filtering, available [UpdateHandlers](#updatehandlers) are called in turn at the given
+priority. If one of [UpdateHandler](#updatehandlers) set not null response
+in [TelegramUpdateRequest](#telegramupdaterequest) , then the [UpdateHandlers](#updatehandlers) call
+is interrupted and the request is considered successfully processed.
+
+After successful processing, post filtering of the update occurs
+using [UpdateFilters](#updatefilters).
+
+Be aware that one implementation of [UpdateFilter](#updatefilters) has the ability to both filter an
+update before user code execution, and after.
+
+After all, a response is sent to the user using [TelegramResponse](#telegramresponse)
+
+Throughout the execution, any errors that occur are caught
+using [ExceptionHandler](#exceptionhandler).
+
+Also, some filters and handlers need the ability to work with the database. For this purpose, there
+is [DataSourceAdapter](#datasourceadapter)
+
+### Update
+
+### TelegramUpdateRequest
+
+### UpdateHandlers
+
+### UpdateFilters
+
+### TelegramResponse
+
+### TelegramScope
+
+### ExceptionHandler
+
+### DataSourceAdapter
 
 ## Configuration
 

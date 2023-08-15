@@ -52,8 +52,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
     try {
       UpdateRequestContext.saveRequest(request);
       doReceive(request);
-    } catch (Exception ex) {
-      handleException(request, ex);
     } finally {
       UpdateRequestContext.removeRequest(true);
     }
@@ -65,13 +63,13 @@ public class LongPollingBot extends TelegramLongPollingBot {
       doHandle(request);
     } catch (Exception e) {
       handleException(request, e);
-    }
-    try {
-      doAnswer(request);
-    } catch (Exception e) {
-      handleException(request, e);
     } finally {
-      doPostFilter(request);
+      try {
+        doPostFilter(request);
+        doAnswer(request);
+      } catch (Exception e) {
+        handleException(request, e);
+      }
     }
   }
 
