@@ -4,7 +4,7 @@ import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
 import org.springframework.lang.NonNull;
 
-public class NotHandledUpdateFilter implements UpdateFilter {
+public class NotHandledUpdateFilter implements PostUpdateFilter {
 
   @Override
   public void postFilter(@NonNull TelegramUpdateRequest request) {

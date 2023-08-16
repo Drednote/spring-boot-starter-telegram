@@ -30,18 +30,20 @@ features to facilitate the bot development process
 
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [QuikStart](#quik-start)
-- [Controllers](#controllers)
-- [Scenario](#scenario)
 - [Usage](#usage)
-    - [Update](#update)
-    - [TelegramUpdateRequest](#telegramupdaterequest)
-    - [UpdateHandlers](#updatehandlers)
-    - [UpdateFilters](#updatefilters)
-    - [TelegramResponse](#telegramresponse)
-    - [TelegramScope](#telegramscope)
-    - [ExceptionHandler](#exceptionhandler)
-    - [DataSourceAdapter](#datasourceadapter)
+    - [Quik Start](#quik-start)
+    - [Overall Information](#overall-information)
+    - [Controllers](#controllers)
+    - [Scenario](#scenario)
+    - [Key Entities](#key-entities)
+        - [Update](#update)
+        - [TelegramUpdateRequest](#telegramupdaterequest)
+        - [UpdateHandler](#updatehandlers)
+        - [UpdateFilter](#updatefilters)
+        - [TelegramResponse](#telegramresponse)
+        - [TelegramScope](#telegramscope)
+        - [ExceptionHandler](#exceptionhandler)
+        - [DataSourceAdapter](#datasourceadapter)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -108,7 +110,9 @@ dependencies {
 Make sure to use Java 17 or a later version in your project as the Spring Boot Starter Telegram
 library is based on Spring Boot 3 and requires Java 17 or higher.
 
-## Quik Start
+## Usage
+
+### Quik Start
 
 Add to `application.yml` your bot token and specify the name of bot
 
@@ -166,12 +170,6 @@ public class Application {
 
 That's all! Enjoy your bot
 
-## Controllers
-
-## Scenario
-
-## Usage
-
 ### Overall information
 
 This library's implementation closely resembles the familiar structure of `Java HTTP servlets`. Upon
@@ -210,14 +208,20 @@ using [ExceptionHandler](#exceptionhandler).
 Also, some filters and handlers need the ability to work with the database. For this purpose, there
 is [DataSourceAdapter](#datasourceadapter)
 
-### Update
+### Controllers
+
+### Scenario
+
+### Key Entities
+
+#### Update
 
 `Update` - главный объект который приходит от Telegram API. Он содержит всю информацию о событии,
 которое произошло в боте, будь то новое сообщение от пользователя, или изменения каких то настроек
 чата в котором находится бот. Additional docs <a href="https://core.telegram.org/bots/api">Telegram
 API docs</a>
 
-### TelegramUpdateRequest
+#### TelegramUpdateRequest
 
 `TelegramUpdateRequest` является собой мастер объектом, который хранит в себе всю информацию об
 обновлении. Любое изменение, которое произошло в процессе обработки обновления записываются в него.
@@ -238,7 +242,7 @@ public class Example {
 
 Дополнительно про `MvcUpdateHandler` читать тут.
 
-### UpdateHandlers
+#### UpdateHandler
 
 Интерфейс **UpdateHandler** представляет собой входную точку для обработки обновлений. На данный
 момент есть два **UpdateHandler** - `MvcUpdateHandler` и `ScenarioUpdateHandler`.
@@ -256,7 +260,7 @@ public class Example {
 чтобы обработку обновления можно было считать успешной. Если этого не сделать, будут вызываны
 дальнейшие обработчики обновлений.
 
-### UpdateFilters
+#### UpdateFilter
 
 `UpdateFilters` позволяют исполнить какой либо код до или после основного вызова `UpdateHandlers`.
 Основной интерфейс - `UpdateFilter`. С помощью фильтров можно довольно легко настраивать какую то
@@ -296,13 +300,13 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
 Note: `PriorityUpdateFilter` исполняются раньше чем `UpdateFilter` независимо от того, что вернет
 **getPreOrder()**/**getPostOrder()**
 
-### TelegramResponse
+#### TelegramResponse
 
-### TelegramScope
+#### TelegramScope
 
-### ExceptionHandler
+#### ExceptionHandler
 
-### DataSourceAdapter
+#### DataSourceAdapter
 
 ## Configuration
 

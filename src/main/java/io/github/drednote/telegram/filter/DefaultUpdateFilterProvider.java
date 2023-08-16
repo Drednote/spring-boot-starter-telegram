@@ -22,7 +22,7 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   public List<PreUpdateFilter> getPreFilters(TelegramUpdateRequest request) {
     return new ArrayList<>(preFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
-        .sorted(FilterOrderComparator.PRE_INSTANCE)
+        .sorted(PreFilterOrderComparator.INSTANCE)
         .toList());
   }
 
@@ -30,7 +30,7 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   public List<PostUpdateFilter> getPostFilters(TelegramUpdateRequest request) {
     return new ArrayList<>(postFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
-        .sorted(FilterOrderComparator.POST_INSTANCE)
+        .sorted(PostFilterOrderComparator.INSTANCE)
         .toList());
   }
 }

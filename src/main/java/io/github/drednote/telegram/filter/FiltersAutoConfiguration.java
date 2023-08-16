@@ -14,9 +14,10 @@ public class FiltersAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public UpdateFilterProvider updateFilterProvider(
-      ObjectProvider<UpdateFilter> filters
+      ObjectProvider<PreUpdateFilter> prefilters,
+      ObjectProvider<PostUpdateFilter> postFilters
   ) {
-    return new DefaultUpdateFilterProvider(filters);
+    return new DefaultUpdateFilterProvider(prefilters, postFilters);
   }
 
   @Bean
