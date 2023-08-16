@@ -255,7 +255,7 @@ about `MvcUpdateHandler` [here](src/main/java/io/github/drednote/telegram/update
   and `RequestMapping`. Read
   more [here](src/main/java/io/github/drednote/telegram/updatehandler/mvc/README.md).
 
-- `ScenarioUpdateHandler` - allows the user to customize scripts (request - response)
+- `ScenarioUpdateHandler` - allows the user to customize scenarios (request - response)
   and handle updates more flexibly than with `MvcUpdateHandler`. Read
   more [here](src/main/java/io/github/drednote/telegram/updatehandler/scenario/README.md).
 
@@ -272,9 +272,10 @@ about `MvcUpdateHandler` [here](src/main/java/io/github/drednote/telegram/update
   The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. With the help of filters, you
   can quite easily customize some kind of logic applicable to all updates.
 
-- To add a filter, you need to create a **bean** that will implement the `UpdateFilter` interface.
+- To add a filter, you need to create a **bean** that will implement the `PreUpdateFilter`
+  or `PostUpdateFilter` interface.
 
-- You can also make the filter not **singleton**, and [TelegramScope](#telegramscope) so that each
+- You can also mark the filter with [TelegramScope](#telegramscope) so that each
   update creates its own filter instance and kept until the end of processing. Example:
 
 ```java
@@ -316,7 +317,7 @@ than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
 
 - **Reply can only be sent if `Update` has a `chatId`**.
 
-- If you need to poison multiple responses, return`TelegramResponse` list, the library will send
+- If you need to send multiple responses, return`TelegramResponse` list, the library will send
   them one by one with the given priority. For to specify priority, use the `Order` annotation
 
 - Any custom code can be inside `TelegramResponse`, but I strongly discourage using
@@ -324,7 +325,7 @@ than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
 
 #### TelegramScope
 
-- `TelegramScope` is a specialization of @Scope for a component whose lifecycle is bound to the
+- `TelegramScope` is a specialization of `@Scope` for a component whose lifecycle is bound to the
   current telegram update handling. In simple words, for each `TelegramUpdateRequest` will have its
   own bean instance
 
