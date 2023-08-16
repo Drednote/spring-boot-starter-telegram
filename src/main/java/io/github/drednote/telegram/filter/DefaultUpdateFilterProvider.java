@@ -1,6 +1,10 @@
 package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.filter.post.PostFilterOrderComparator;
+import io.github.drednote.telegram.filter.post.PostUpdateFilter;
+import io.github.drednote.telegram.filter.pre.PreFilterOrderComparator;
+import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;

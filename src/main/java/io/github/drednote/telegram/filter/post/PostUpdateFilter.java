@@ -1,6 +1,7 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.post;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 

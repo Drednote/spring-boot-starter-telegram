@@ -1,9 +1,10 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.datasource.Permission.DefaultPermission;
+import io.github.drednote.telegram.filter.PermissionProperties;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;

@@ -1,14 +1,13 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.pre;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.filter.ConcurrentUserRequestFilter.Cleaner;
-import io.github.drednote.telegram.session.SessionProperties;
+import io.github.drednote.telegram.filter.FilterProperties;
+import io.github.drednote.telegram.filter.pre.ConcurrentUserRequestFilter.Cleaner;
 import io.github.drednote.telegram.testsupport.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import java.time.Instant;
@@ -29,7 +28,8 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(
+        UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
 
@@ -44,7 +44,8 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(
+        UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
     Thread.sleep(50);
@@ -61,7 +62,8 @@ class ConcurrentUserRequestFilterTest {
 
     ConcurrentUserRequestFilter filter = new ConcurrentUserRequestFilter(sessionProperties);
 
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(UpdateUtils.createEmpty(), null, null);
+    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(
+        UpdateUtils.createEmpty(), null, null);
 
     filter.preFilter(request);
     Thread.sleep(50);

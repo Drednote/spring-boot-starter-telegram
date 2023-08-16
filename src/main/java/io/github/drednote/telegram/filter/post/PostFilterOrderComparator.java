@@ -1,5 +1,6 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.post;
 
+import io.github.drednote.telegram.filter.FilterOrderComparator;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 

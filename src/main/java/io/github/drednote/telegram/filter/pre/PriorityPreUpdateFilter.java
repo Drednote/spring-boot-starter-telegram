@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.pre;
 
 public interface PriorityPreUpdateFilter extends PreUpdateFilter {
 }

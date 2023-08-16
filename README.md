@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.drednote/spring-boot-starter-telegram.svg)](https://search.maven.org/artifact/io.github.drednote/spring-boot-starter-telegram)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
 `Spring Boot` and `org.telegram:telegrambots` as the core dependency. It provides several key
@@ -38,12 +39,13 @@ features to facilitate the bot development process
     - [Key Entities](#key-entities)
         - [Update](#update)
         - [TelegramUpdateRequest](#telegramupdaterequest)
-        - [UpdateHandler](#updatehandlers)
-        - [UpdateFilter](#updatefilters)
+        - [UpdateHandler](#updatehandler)
+        - [UpdateFilter](#updatefilter)
         - [TelegramResponse](#telegramresponse)
         - [TelegramScope](#telegramscope)
         - [ExceptionHandler](#exceptionhandler)
         - [DataSourceAdapter](#datasourceadapter)
+    - [Argument resolving](#argument-resolving)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -60,7 +62,7 @@ based on Spring Boot 3. Spring Boot 3 requires Java 17 or higher.
 To use the **Spring Boot Starter Telegram** library in your project, follow the instructions below
 based on your preferred build tool.
 
-The Latest version you can check in **Releases** tab
+The Latest version you can check in **Releases** tab or in **Maven Central** badge
 
 ### Maven
 
@@ -187,18 +189,18 @@ At the very beginning of the update processing chain,
 the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current thread,
 to be able to create a [TelegramScope](#telegramscope) bean.
 
-Next, the update is pre-filtered by calling [UpdateFilters](#updatefilters).
+Next, the update is pre-filtered by calling [PreUpdateFilters](#updatefilter).
 
-After filtering, available [UpdateHandlers](#updatehandlers) are called in turn at the given
-priority. If one of [UpdateHandler](#updatehandlers) set not null response
-in [TelegramUpdateRequest](#telegramupdaterequest) , then the [UpdateHandlers](#updatehandlers) call
+After filtering, available [UpdateHandlers](#updatehandler) are called in turn at the given
+priority. If one of [UpdateHandler](#updatehandler) set not null response
+in [TelegramUpdateRequest](#telegramupdaterequest), then the [UpdateHandlers](#updatehandler) call
 is interrupted and the request is considered successfully processed.
 
 After successful processing, post filtering of the update occurs
-using [UpdateFilters](#updatefilters).
+using [PostUpdateFilters](#updatefilter).
 
-Be aware that one implementation of [UpdateFilter](#updatefilters) has the ability to both filter an
-update before user code execution, and after.
+Note, that one bean can implement both [PreUpdateFilter](#updatefilter)
+and [PostUpdateFilter](#updatefilter)
 
 After all, a response is sent to the user using [TelegramResponse](#telegramresponse)
 
@@ -216,17 +218,18 @@ is [DataSourceAdapter](#datasourceadapter)
 
 #### Update
 
-`Update` - главный объект который приходит от Telegram API. Он содержит всю информацию о событии,
-которое произошло в боте, будь то новое сообщение от пользователя, или изменения каких то настроек
-чата в котором находится бот. Additional docs <a href="https://core.telegram.org/bots/api">Telegram
-API docs</a>
+- `Update` is the main object that comes from the Telegram API. It contains all information about
+  the event that happened in the bot, whether it's a new message from the user, or changes in some
+  settings chat in which the bot is located.
+
+- Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
 #### TelegramUpdateRequest
 
-`TelegramUpdateRequest` является собой мастер объектом, который хранит в себе всю информацию об
-обновлении. Любое изменение, которое произошло в процессе обработки обновления записываются в него.
-Таким образом если в юзер коде получить его, можно узнать всю информацию о текущем обновлении.
-Например таким образом:
+`TelegramUpdateRequest` is a primary object that stores all information about update. Any change
+that occurs during the processing of an update is written to it. Thus, if you get it in the user
+code, you can find out all the information about the current update.
+For example, in this way:
 
 ```java
 
@@ -240,34 +243,39 @@ public class Example {
 }
 ```
 
-Дополнительно про `MvcUpdateHandler` читать тут.
+Read more
+about `MvcUpdateHandler` [here](src/main/java/io/github/drednote/telegram/updatehandler/mvc/README.md).
 
 #### UpdateHandler
 
-Интерфейс **UpdateHandler** представляет собой входную точку для обработки обновлений. На данный
-момент есть два **UpdateHandler** - `MvcUpdateHandler` и `ScenarioUpdateHandler`.
+- The **UpdateHandler** interface is the entry point for handling updates. For now
+  moment there are two **UpdateHandler** - `MvcUpdateHandler` and `ScenarioUpdateHandler`.
 
-`MvcUpdateHandler` - предоставляет возможность обработки обновлений в стиле `Controller`
-и `RequestMapping`. Подробнее читать тут.
+- `MvcUpdateHandler` - provides the ability to handle updates in the style of `Controller`
+  and `RequestMapping`. Read
+  more [here](src/main/java/io/github/drednote/telegram/updatehandler/mvc/README.md).
 
-`ScenarioUpdateHandler` - предоставляет возможность пользователю настроить сценарии (запрос - ответ)
-и обрабатывать обновления более гибко чем при помощи `MvcUpdateHandler`. Подробнее читать тут.
+- `ScenarioUpdateHandler` - allows the user to customize scripts (request - response)
+  and handle updates more flexibly than with `MvcUpdateHandler`. Read
+  more [here](src/main/java/io/github/drednote/telegram/updatehandler/scenario/README.md).
 
-Если вам нужно сделать свой собственный обработчик, нужно всего лишь создать **bean**, который будет
-наследовать интерфейс `UpdateHandler` и задать ему приоритет выполнения с помощью спринговой
-аннотации `@Order` если это нужно. Так же после успешного выполнения обработки сообщения, необходимо
-проставить в объект `TelegramUpdateRequest` response с типом [TelegramResponse](#telegramresponse),
-чтобы обработку обновления можно было считать успешной. Если этого не сделать, будут вызываны
-дальнейшие обработчики обновлений.
+- If you need to make your own handler, all you have to do is create a **bean** that will
+  implement the `UpdateHandler` interface and set its execution priority using a spring
+  annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
+  put in the object `TelegramUpdateRequest` response with
+  type [TelegramResponse](#telegramresponse), so that update processing can be considered
+  successful. If this is not done, further update handlers will be called
 
 #### UpdateFilter
 
-`UpdateFilters` позволяют исполнить какой либо код до или после основного вызова `UpdateHandlers`.
-Основной интерфейс - `UpdateFilter`. С помощью фильтров можно довольно легко настраивать какую то
-логику применимую для всех обновлений. Для добавления фильтра нужно создать **bean**, который будет
-наследовать интерфейс `UpdateFilter`. Так же вы можете сделать фильтр не **singleton**,
-а [TelegramScope](#telegramscope), чтобы на каждое обновление создавался свой инстанс фильтра и
-сохранялся до конца обработки. Пример:
+- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call.
+  The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. With the help of filters, you
+  can quite easily customize some kind of logic applicable to all updates.
+
+- To add a filter, you need to create a **bean** that will implement the `UpdateFilter` interface.
+
+- You can also make the filter not **singleton**, and [TelegramScope](#telegramscope) so that each
+  update creates its own filter instance and kept until the end of processing. Example:
 
 ```java
 
@@ -297,16 +305,74 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
 
 ```
 
-Note: `PriorityUpdateFilter` исполняются раньше чем `UpdateFilter` независимо от того, что вернет
+Note: `PriorityPreUpdateFilter`/`PriorityPostUpdateFilter` are executed earlier
+than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
 **getPreOrder()**/**getPostOrder()**
 
 #### TelegramResponse
 
+- `TelegramResponse` represents the response to be sent the user who initiated the update
+  processing.
+
+- **Reply can only be sent if `Update` has a `chatId`**.
+
+- If you need to poison multiple responses, return`TelegramResponse` list, the library will send
+  them one by one with the given priority. For to specify priority, use the `Order` annotation
+
+- Any custom code can be inside `TelegramResponse`, but I strongly discourage using
+  this interface is for nothing other than sending a response to Telegram
+
 #### TelegramScope
+
+- `TelegramScope` is a specialization of @Scope for a component whose lifecycle is bound to the
+  current telegram update handling. In simple words, for each `TelegramUpdateRequest` will have its
+  own bean instance
+
+- Each update handling is tied to a specific thread, so if you are creating sub-threads inside the
+  main thread you need to manually bind `TelegramUpdateRequest` to a new thread. This can be done
+  using class `UpdateRequestContext`
 
 #### ExceptionHandler
 
+- Error handling is centralized using the `TelegramAdvice` and `TelegramExceptionHandler`
+  annotations. Any error will be caught and sent to `ExceptionHandler` for processing.
+- If the user is not marked any method with the `TelegramExceptionHandler` annotation, then the
+  default one will be applied error processing
+
+- If multiple handlers are found for a particular error, then sorting will be applied,
+  where the higher in the hierarchy is an error that is valid for the handler, the lower priority
+  will be this handler is called.
+
+[Valid input arguments](#argument-resolving) for `TelegramExceptionHandler` method
+
 #### DataSourceAdapter
+
+- For some filters and scenarios to work correctly, you need to save information to the database.
+  You can save data to the application memory, but then during the restart, all information will be
+  lost. Therefore, it is better if you configure the datasource using spring.
+
+- This library is fully based on Spring JPA in working with the database. Therefore, to support
+  different databases (postgres, mongo, etc.), using the `DataSourceAdapter` interface
+
+- **Currently supported `JpaRepository` and `MongoRepository`**
+
+- Note: currently autoconfigure data source, breaks searching for user repositories and
+  entities, so you should manually mark configuration class this way, that spring can pick your
+  repositories and entities
+
+```java
+
+@EnableJpaRepositories(basePackageClasses = Application.class)
+@EntityScan(basePackageClasses = Application.class)
+@Configuration
+public class JpaConfig {
+
+}
+```
+
+`Application` your main class, or you can pass any class what you want
+
+### Argument resolving
 
 ## Configuration
 
@@ -427,7 +493,7 @@ These dependencies will automatically be included in your project
 ### Optional
 
 You can manually add them if you want to configure datasource. For what you should configure
-datasource read in [Configuration](#configuration) block
+datasource read in [DataSourceAdapter](#datasourceadapter) block
 
 `org.springframework.boot:spring-boot-starter-data-jpa`
 
@@ -478,8 +544,8 @@ git push origin feature/new-feature
 8. Open a pull request (PR) on the original repository by navigating to your forked repository on
    GitHub and clicking the "Compare & pull request" button next to your newly pushed branch.
 
-9. Fill out the pull request template with relevant information about your changes, and click the "
-   Create pull request" button.
+9. Fill out the pull request template with relevant information about your changes, and click the
+   "Create pull request" button.
 
 10. I will review your pull request and provide feedback or request further changes if necessary.
 

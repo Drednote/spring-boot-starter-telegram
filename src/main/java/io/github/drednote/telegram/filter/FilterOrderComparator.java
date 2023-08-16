@@ -3,7 +3,7 @@ package io.github.drednote.telegram.filter;
 import org.springframework.core.OrderComparator;
 import org.springframework.lang.Nullable;
 
-class FilterOrderComparator extends OrderComparator {
+public class FilterOrderComparator extends OrderComparator {
 
   private final Class<?> priorityClazz;
 
