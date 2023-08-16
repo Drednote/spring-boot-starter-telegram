@@ -1,6 +1,7 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
 import io.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
-public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
+public class ConcurrentUserRequestFilter implements PriorityPreUpdateFilter {
 
   private final FilterProperties filterProperties;
   private final Map<Long, Instant> pool = new ConcurrentHashMap<>();

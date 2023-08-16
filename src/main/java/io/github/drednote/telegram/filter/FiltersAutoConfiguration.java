@@ -1,6 +1,12 @@
 package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
+import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
+import io.github.drednote.telegram.filter.post.PostUpdateFilter;
+import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
+import io.github.drednote.telegram.filter.pre.ConcurrentUserRequestFilter;
+import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
+import io.github.drednote.telegram.filter.pre.RoleFilter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,9 +20,10 @@ public class FiltersAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public UpdateFilterProvider updateFilterProvider(
-      ObjectProvider<UpdateFilter> filters
+      ObjectProvider<PreUpdateFilter> prefilters,
+      ObjectProvider<PostUpdateFilter> postFilters
   ) {
-    return new DefaultUpdateFilterProvider(filters);
+    return new DefaultUpdateFilterProvider(prefilters, postFilters);
   }
 
   @Bean

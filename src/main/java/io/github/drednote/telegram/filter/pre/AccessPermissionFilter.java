@@ -1,7 +1,8 @@
-package io.github.drednote.telegram.filter;
+package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
 import io.github.drednote.telegram.updatehandler.response.ForbiddenTelegramResponse;
@@ -11,7 +12,7 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
-public class AccessPermissionFilter implements PriorityUpdateFilter {
+public class AccessPermissionFilter implements PriorityPreUpdateFilter {
 
   private final PermissionProperties permissionProperties;
 

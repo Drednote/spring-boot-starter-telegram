@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
-import io.github.drednote.telegram.filter.UpdateFilter;
+import io.github.drednote.telegram.filter.post.PostUpdateFilter;
+import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.session.UpdateRequestContext;
 import io.github.drednote.telegram.updatehandler.TelegramResponse;
@@ -12,6 +13,7 @@ import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.updatehandler.response.AbstractTelegramResponse;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -52,8 +54,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
     try {
       UpdateRequestContext.saveRequest(request);
       doReceive(request);
-    } catch (Exception ex) {
-      handleException(request, ex);
     } finally {
       UpdateRequestContext.removeRequest(true);
     }
@@ -65,27 +65,27 @@ public class LongPollingBot extends TelegramLongPollingBot {
       doHandle(request);
     } catch (Exception e) {
       handleException(request, e);
-    }
-    try {
-      doAnswer(request);
-    } catch (Exception e) {
-      handleException(request, e);
     } finally {
-      doPostFilter(request);
+      try {
+        doPostFilter(request);
+        doAnswer(request);
+      } catch (Exception e) {
+        handleException(request, e);
+      }
     }
   }
 
   private void doPreFilter(DefaultTelegramUpdateRequest request) {
-    Collection<UpdateFilter> filters = updateFilterProvider.getPreFilters(request);
-    Iterator<UpdateFilter> iterator = filters.iterator();
+    List<PreUpdateFilter> filters = updateFilterProvider.getPreFilters(request);
+    Iterator<PreUpdateFilter> iterator = filters.iterator();
     do {
       iterator.next().preFilter(request);
     } while (request.getResponse() == null && iterator.hasNext());
   }
 
   private void doPostFilter(DefaultTelegramUpdateRequest request) {
-    Collection<UpdateFilter> filters = updateFilterProvider.getPostFilters(request);
-    Iterator<UpdateFilter> iterator = filters.iterator();
+    List<PostUpdateFilter> filters = updateFilterProvider.getPostFilters(request);
+    Iterator<PostUpdateFilter> iterator = filters.iterator();
     do {
       iterator.next().postFilter(request);
     } while (iterator.hasNext());
