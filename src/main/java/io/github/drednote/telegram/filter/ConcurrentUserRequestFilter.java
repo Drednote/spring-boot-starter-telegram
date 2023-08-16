@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
-public class ConcurrentUserRequestFilter implements PriorityUpdateFilter {
+public class ConcurrentUserRequestFilter implements PriorityPreUpdateFilter {
 
   private final FilterProperties filterProperties;
   private final Map<Long, Instant> pool = new ConcurrentHashMap<>();

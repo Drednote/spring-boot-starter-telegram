@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface UpdateFilterProvider {
 
-  List<UpdateFilter> getPreFilters(TelegramUpdateRequest request);
+  List<PreUpdateFilter> getPreFilters(TelegramUpdateRequest request);
 
-  List<UpdateFilter> getPostFilters(TelegramUpdateRequest request);
+  List<PostUpdateFilter> getPostFilters(TelegramUpdateRequest request);
 }

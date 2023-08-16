@@ -35,9 +35,6 @@ public class ScenarioUpdateHandler implements UpdateHandler {
         ResponseSetter.setResponse(request, result.response());
         persister.ifExistsWithException(p -> p.persist(scenario));
       }
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new ScenarioException("Interrupt", e);
     } finally {
       lock.writeLock().unlock(chatId);
     }

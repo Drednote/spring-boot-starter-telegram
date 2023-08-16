@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
-public class AccessPermissionFilter implements PriorityUpdateFilter {
+public class AccessPermissionFilter implements PriorityPreUpdateFilter {
 
   private final PermissionProperties permissionProperties;
 

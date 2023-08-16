@@ -31,6 +31,8 @@ features to facilitate the bot development process
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [QuikStart](#quik-start)
+- [Controllers](#controllers)
+- [Scenario](#scenario)
 - [Usage](#usage)
     - [Update](#update)
     - [TelegramUpdateRequest](#telegramupdaterequest)
@@ -162,25 +164,29 @@ public class Application {
 }
 ```
 
-That's all! Enjoy your bot. For further information and bot configuration read below
+That's all! Enjoy your bot
+
+## Controllers
+
+## Scenario
 
 ## Usage
 
 ### Overall information
 
-The implementation of this library is very similar to how regular `java http servlets` work. At
-startup application, a session is created that connects to the telegram api and starts receiving
-updates (in **long polling strategy**) or a webhook is created to which telegram itself sends
-updates (
-in **webhook strategy**).
+This library's implementation closely resembles the familiar structure of `Java HTTP servlets`. Upon
+application startup, a session is established to connect with the Telegram API, initiating the
+reception of updates. These updates are obtained either through a **long polling strategy** or by
+setting up a **webhook** that prompts Telegram to directly transmit updates to the application.
 
-When an [Update](#update) is received, a [TelegramUpdateRequest](#telegramupdaterequest) object is
-created, which will be distributed throughout further update processing chain. Initially, it
-contains only information that has been obtained from the [Update](#update) object. In the
-future, [TelegramUpdateRequest](#telegramupdaterequest) will be enriched with data.
+Upon receiving an [Update](#update), a [TelegramUpdateRequest](#telegramupdaterequest) object is
+generated. This object serves as the central entity throughout the subsequent update processing
+pipeline. Initially, it contains only the information extracted from the [Update](#update) object.
+As the processing continued, the [TelegramUpdateRequest](#telegramupdaterequest)
+accumulates additional data, enriching its content.
 
 At the very beginning of the update processing chain,
-the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current stream,
+the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current thread,
 to be able to create a [TelegramScope](#telegramscope) bean.
 
 Next, the update is pre-filtered by calling [UpdateFilters](#updatefilters).
@@ -206,11 +212,89 @@ is [DataSourceAdapter](#datasourceadapter)
 
 ### Update
 
+`Update` - главный объект который приходит от Telegram API. Он содержит всю информацию о событии,
+которое произошло в боте, будь то новое сообщение от пользователя, или изменения каких то настроек
+чата в котором находится бот. Additional docs <a href="https://core.telegram.org/bots/api">Telegram
+API docs</a>
+
 ### TelegramUpdateRequest
+
+`TelegramUpdateRequest` является собой мастер объектом, который хранит в себе всю информацию об
+обновлении. Любое изменение, которое произошло в процессе обработки обновления записываются в него.
+Таким образом если в юзер коде получить его, можно узнать всю информацию о текущем обновлении.
+Например таким образом:
+
+```java
+
+@TelegramController
+public class Example {
+
+  @TelegramRequest
+  public void onAll(TelegramUpdateRequest request) {
+    System.out.printf("request is %s", request);
+  }
+}
+```
+
+Дополнительно про `MvcUpdateHandler` читать тут.
 
 ### UpdateHandlers
 
+Интерфейс **UpdateHandler** представляет собой входную точку для обработки обновлений. На данный
+момент есть два **UpdateHandler** - `MvcUpdateHandler` и `ScenarioUpdateHandler`.
+
+`MvcUpdateHandler` - предоставляет возможность обработки обновлений в стиле `Controller`
+и `RequestMapping`. Подробнее читать тут.
+
+`ScenarioUpdateHandler` - предоставляет возможность пользователю настроить сценарии (запрос - ответ)
+и обрабатывать обновления более гибко чем при помощи `MvcUpdateHandler`. Подробнее читать тут.
+
+Если вам нужно сделать свой собственный обработчик, нужно всего лишь создать **bean**, который будет
+наследовать интерфейс `UpdateHandler` и задать ему приоритет выполнения с помощью спринговой
+аннотации `@Order` если это нужно. Так же после успешного выполнения обработки сообщения, необходимо
+проставить в объект `TelegramUpdateRequest` response с типом [TelegramResponse](#telegramresponse),
+чтобы обработку обновления можно было считать успешной. Если этого не сделать, будут вызываны
+дальнейшие обработчики обновлений.
+
 ### UpdateFilters
+
+`UpdateFilters` позволяют исполнить какой либо код до или после основного вызова `UpdateHandlers`.
+Основной интерфейс - `UpdateFilter`. С помощью фильтров можно довольно легко настраивать какую то
+логику применимую для всех обновлений. Для добавления фильтра нужно создать **bean**, который будет
+наследовать интерфейс `UpdateFilter`. Так же вы можете сделать фильтр не **singleton**,
+а [TelegramScope](#telegramscope), чтобы на каждое обновление создавался свой инстанс фильтра и
+сохранялся до конца обработки. Пример:
+
+```java
+
+@Component
+@TelegramScope
+public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter {
+
+  private LocalDateTime startTime;
+
+  @Override
+  public void preFilter(@NonNull TelegramUpdateRequest request) {
+    this.startTime = LocalDateTime.now();
+    log.info("Receive request with id {}", request.getId());
+  }
+
+  @Override
+  public void postFilter(@NonNull TelegramUpdateRequest request) {
+    log.info("Request with id {} processed for {} ms", request.getId(),
+        ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()));
+  }
+
+  @Override
+  public int getPreOrder() {
+    return Ordered.HIGHEST_PRECEDENCE;
+  }
+}
+
+```
+
+Note: `PriorityUpdateFilter` исполняются раньше чем `UpdateFilter` независимо от того, что вернет
+**getPreOrder()**/**getPostOrder()**
 
 ### TelegramResponse
 

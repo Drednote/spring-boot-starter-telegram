@@ -7,23 +7,28 @@ import org.springframework.beans.factory.ObjectProvider;
 
 public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
 
-  private final ObjectProvider<UpdateFilter> filters;
+  private final ObjectProvider<PreUpdateFilter> preFilters;
+  private final ObjectProvider<PostUpdateFilter> postFilters;
 
-  public DefaultUpdateFilterProvider(ObjectProvider<UpdateFilter> filters) {
-    this.filters = filters;
+  public DefaultUpdateFilterProvider(
+      ObjectProvider<PreUpdateFilter> prefilters,
+      ObjectProvider<PostUpdateFilter> postFilters
+  ) {
+    this.preFilters = prefilters;
+    this.postFilters = postFilters;
   }
 
   @Override
-  public List<UpdateFilter> getPreFilters(TelegramUpdateRequest request) {
-    return new ArrayList<>(filters.stream()
+  public List<PreUpdateFilter> getPreFilters(TelegramUpdateRequest request) {
+    return new ArrayList<>(preFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
         .sorted(FilterOrderComparator.PRE_INSTANCE)
         .toList());
   }
 
   @Override
-  public List<UpdateFilter> getPostFilters(TelegramUpdateRequest request) {
-    return new ArrayList<>(filters.stream()
+  public List<PostUpdateFilter> getPostFilters(TelegramUpdateRequest request) {
+    return new ArrayList<>(postFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
         .sorted(FilterOrderComparator.POST_INSTANCE)
         .toList());

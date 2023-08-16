@@ -15,7 +15,7 @@ import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 @RequiredArgsConstructor
-public class RoleFilter implements PriorityUpdateFilter {
+public class RoleFilter implements PriorityPreUpdateFilter {
 
   private final ObjectProvider<DataSourceAdapter> adapterProvider;
   private final PermissionProperties permissionProperties;
