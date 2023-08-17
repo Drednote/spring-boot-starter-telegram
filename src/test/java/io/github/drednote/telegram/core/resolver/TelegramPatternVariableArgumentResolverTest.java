@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPathVariable;
+import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPatternVariable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -17,15 +17,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.MethodParameter;
 
-class PathVariableArgumentResolverTest {
+class TelegramPatternVariableArgumentResolverTest {
 
-  private PathVariableArgumentResolver resolver;
+  private TelegramPatternVariableArgumentResolver resolver;
   private TelegramUpdateRequest request;
   private MethodParameter methodParameter;
 
   @BeforeEach
   public void setUp() {
-    resolver = new PathVariableArgumentResolver();
+    resolver = new TelegramPatternVariableArgumentResolver();
     request = mock(TelegramUpdateRequest.class);
   }
 
@@ -95,7 +95,7 @@ class PathVariableArgumentResolverTest {
   @SuppressWarnings({"unused", "OptionalUsedAsFieldOrParameterType"})
   static class TestClass {
 
-    void supportIfAnnotationIsPresent(@TelegramPathVariable String variable) {
+    void supportIfAnnotationIsPresent(@TelegramPatternVariable String variable) {
 
     }
 
@@ -103,16 +103,16 @@ class PathVariableArgumentResolverTest {
 
     }
 
-    void passAllVariablesToMap(@TelegramPathVariable Map<String, String> variables) {
+    void passAllVariablesToMap(@TelegramPatternVariable Map<String, String> variables) {
 
     }
 
-    void throwExceptionIfRequiredAndNoValue(@TelegramPathVariable Optional<String> variable) {
+    void throwExceptionIfRequiredAndNoValue(@TelegramPatternVariable Optional<String> variable) {
 
     }
 
     void returnOptionalIfNotRequiredAndNoValue(
-        @TelegramPathVariable(required = false) Optional<String> variable) {
+        @TelegramPatternVariable(required = false) Optional<String> variable) {
 
     }
   }

@@ -15,13 +15,13 @@ import org.springframework.core.annotation.AliasFor;
 public @interface TelegramRequest {
 
   /**
-   * @see TelegramRequest#path
+   * @see TelegramRequest#pattern
    */
-  @AliasFor("path")
+  @AliasFor("pattern")
   String[] value() default {};
 
   @AliasFor("value")
-  String[] path() default {};
+  String[] pattern() default {};
 
   RequestType[] requestType() default {};
 

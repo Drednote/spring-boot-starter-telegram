@@ -9,6 +9,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
+/**
+ * @see TelegramRequest
+ */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -22,10 +25,10 @@ public @interface TelegramMessage {
   String[] value() default {};
 
   /**
-   * @see TelegramRequest#path
+   * @see TelegramRequest#pattern
    */
-  @AliasFor(value = "path", annotation = TelegramRequest.class)
-  String[] path() default {};
+  @AliasFor(value = "pattern", annotation = TelegramRequest.class)
+  String[] pattern() default {};
 
   /**
    * @see TelegramRequest#messageType

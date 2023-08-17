@@ -149,6 +149,11 @@ public class MainController {
     return "You sent message with types %s".formatted(request.getMessageTypes());
   }
 
+  @TelegramMessage("My name is {name}")
+  public String onPattern(@TelegramPatternVariable("name") String name) {
+    return "Hello " + name;
+  }
+
   @TelegramRequest
   public TelegramResponse onAll(TelegramUpdateRequest request) {
     return new GenericTelegramResponse("Unsupported command");
@@ -174,43 +179,112 @@ That's all! Enjoy your bot
 
 ### Overall information
 
-This library's implementation closely resembles the familiar structure of `Java HTTP servlets`. Upon
-application startup, a session is established to connect with the Telegram API, initiating the
-reception of updates. These updates are obtained either through a **long polling strategy** or by
-setting up a **webhook** that prompts Telegram to directly transmit updates to the application.
+This library's implementation closely resembles the familiar structure of `Java HTTP servlets`.
 
-Upon receiving an [Update](#update), a [TelegramUpdateRequest](#telegramupdaterequest) object is
-generated. This object serves as the central entity throughout the subsequent update processing
-pipeline. Initially, it contains only the information extracted from the [Update](#update) object.
-As the processing continued, the [TelegramUpdateRequest](#telegramupdaterequest)
-accumulates additional data, enriching its content.
+- Upon application startup, a session is established to connect with the Telegram API, initiating
+  the reception of updates. These updates are obtained either through a **long polling strategy** or
+  by setting up a **webhook** that prompts Telegram to directly transmit updates to the application.
 
-At the very beginning of the update processing chain,
-the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current thread,
-to be able to create a [TelegramScope](#telegramscope) bean.
+- Upon receiving an [Update](#update), a [TelegramUpdateRequest](#telegramupdaterequest) object is
+  generated. This object serves as the central entity throughout the subsequent update processing
+  pipeline. Initially, it contains only the information extracted from the [Update](#update) object.
+  As the processing continued, the [TelegramUpdateRequest](#telegramupdaterequest)
+  accumulates additional data, enriching its content.
 
-Next, the update is pre-filtered by calling [PreUpdateFilters](#updatefilter).
+- At the very beginning of the update processing chain,
+  the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current
+  thread, to be able to create a [TelegramScope](#telegramscope) bean.
 
-After filtering, available [UpdateHandlers](#updatehandler) are called in turn at the given
-priority. If one of [UpdateHandler](#updatehandler) set not null response
-in [TelegramUpdateRequest](#telegramupdaterequest), then the [UpdateHandlers](#updatehandler) call
-is interrupted and the request is considered successfully processed.
+- Next, the update is pre-filtered by calling [PreUpdateFilters](#updatefilter).
 
-After successful processing, post filtering of the update occurs
-using [PostUpdateFilters](#updatefilter).
+- After filtering, available [UpdateHandlers](#updatehandler) are called in turn at the given
+  priority. If one of [UpdateHandler](#updatehandler) set not null response
+  in [TelegramUpdateRequest](#telegramupdaterequest), then the [UpdateHandlers](#updatehandler) call
+  is interrupted and the request is considered successfully processed.
 
-Note, that one bean can implement both [PreUpdateFilter](#updatefilter)
-and [PostUpdateFilter](#updatefilter)
+- After successful processing, post filtering of the update occurs
+  using [PostUpdateFilters](#updatefilter).
 
-After all, a response is sent to the user using [TelegramResponse](#telegramresponse)
+- **Note that one bean can implement both [PreUpdateFilter](#updatefilter)
+  and [PostUpdateFilter](#updatefilter)**
 
-Throughout the execution, any errors that occur are caught
-using [ExceptionHandler](#exceptionhandler).
+- After all, a response is sent to the user using [TelegramResponse](#telegramresponse)
 
-Also, some filters and handlers need the ability to work with the database. For this purpose, there
-is [DataSourceAdapter](#datasourceadapter)
+- Throughout the execution, any errors that occur are caught
+  using [ExceptionHandler](#exceptionhandler).
+
+- Also, some filters and handlers need the ability to work with the database. For this purpose,
+  there is [DataSourceAdapter](#datasourceadapter)
 
 ### Controllers
+
+This library provides users with two main approaches for handling updates. One of them are
+**controllers**. Works the same as **spring controllers**
+
+To start receiving updates from the **Telegram**, you need to create a controller and set criteria
+receipt. For analysis, let's take the controller from the [Quik Start](#quik-start) block:
+
+```java
+
+@TelegramController
+public class MainController {
+
+  @TelegramCommand("/start")
+  public String onStart(User user) {
+    return "Hello " + user.getFirstName();
+  }
+
+  @TelegramMessage
+  public String onMessage(TelegramUpdateRequest request) {
+    return "You sent message with types %s".formatted(request.getMessageTypes());
+  }
+
+  @TelegramMessage("My name is {name}")
+  public String onPattern(@TelegramPatternVariable("name") String name) {
+    return "Hello " + name;
+  }
+
+  @TelegramRequest
+  public TelegramResponse onAll(TelegramUpdateRequest request) {
+    return new GenericTelegramResponse("Unsupported command");
+  }
+
+}
+```
+
+- In order for an application to register a class as a controller, it must be marked
+  annotation `@TelegramController`
+- To receive updates, there is an annotation `@TelegramRequest`. Also, to make it easier to work
+  with [updates](#update), created several derived annotations. The main ones are `@TelegramCommand`
+  and `@TelegramMessage`. As the names imply, with the help of the first one you can only receive
+  commands **(Message#isCommand)**, and from the second any messages **(Update#getMessage)**
+- `@TelegramRequest` takes as **pattern()** a string that will match the text
+  the message that comes with the update, whether it's just a message text or a photo caption. For
+  matcher uses `AntPathMatcher`, so you can specify any condition in the string
+  valid for `AntPathMatcher`. For example: `Hello*`, will match any string that
+  starts with `Hello`
+- If the [update](#update) matches with several patterns that you specified in different methods
+  marked with `@TelegramRequest`, than sorted will be applied:
+    - `TelegramRequest` without **requestType** has the lowest priority
+    - `TelegramRequest` without **messageType** has the lowest priority among the
+      `requestType == RequestType.MESSAGE`
+    - `TelegramRequest` with **exclusiveMessageType** set to true and with more count **messageType**
+      specified takes precedence over others
+    - If `TelegramRequest` has the same priority by the above conditions, than the `AntPathMatcher`
+      order applied
+- Methods marked with `@TelegramRequest` annotation can accept a specific set of inputs
+  parameters. More about this in the [Argument resolving](#argument-resolving) block
+- Methods marked with `@TelegramRequest` annotation can return any object, as
+  a result. It will automatically be wrapped in the `TelegramResponse` interface and sent as a
+  response. If you immediately return a `TelegramResponse` object, it will be sent without wrapping.
+  For more information on cast rules, see the `ResponseSetter` class. More
+  about `TelegramResponse` [here](#telegramresponse)
+- Also, if you need to get some data from the message from the user by
+  a specific pattern, then you can use the `TelegramPatternVariable` annotation, and you will need
+  to correctly compose `TelegramRequest#pattern()`.
+  **Essentially `TelegramPatternVariable` works the same as `PathVariable`.**
+- Any uncaught errors that occur during the execution of user code, are caught
+  by [ExceptionHandler](#exceptionhandler).
 
 ### Scenario
 
@@ -244,7 +318,7 @@ public class Example {
 ```
 
 Read more
-about `MvcUpdateHandler` [here](src/main/java/io/github/drednote/telegram/updatehandler/mvc/README.md).
+about `MvcUpdateHandler` [Controllers block](#controllers).
 
 #### UpdateHandler
 
@@ -253,11 +327,11 @@ about `MvcUpdateHandler` [here](src/main/java/io/github/drednote/telegram/update
 
 - `MvcUpdateHandler` - provides the ability to handle updates in the style of `Controller`
   and `RequestMapping`. Read
-  more [here](src/main/java/io/github/drednote/telegram/updatehandler/mvc/README.md).
+  more in [Controllers block](#controllers).
 
 - `ScenarioUpdateHandler` - allows the user to customize scenarios (request - response)
   and handle updates more flexibly than with `MvcUpdateHandler`. Read
-  more [here](src/main/java/io/github/drednote/telegram/updatehandler/scenario/README.md).
+  more [Scenario block](#scenario).
 
 - If you need to make your own handler, all you have to do is create a **bean** that will
   implement the `UpdateHandler` interface and set its execution priority using a spring
@@ -314,11 +388,12 @@ than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
 
 - `TelegramResponse` represents the response to be sent the user who initiated the update
   processing.
+- **Reply can only be sent if [Update](#update) has a `chatId`**.
 
-- **Reply can only be sent if `Update` has a `chatId`**.
+- You can create any implementation of `TelegramResponse` for sending response
 
-- If you need to send multiple responses, return`TelegramResponse` list, the library will send
-  them one by one with the given priority. For to specify priority, use the `Order` annotation
+- If you need to send multiple responses, return `TelegramResponse` list, the library will send
+  them one by one with the given priority. For to specify priority, use the `@Order` annotation
 
 - Any custom code can be inside `TelegramResponse`, but I strongly discourage using
   this interface is for nothing other than sending a response to Telegram
@@ -338,7 +413,7 @@ than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
 - Error handling is centralized using the `TelegramAdvice` and `TelegramExceptionHandler`
   annotations. Any error will be caught and sent to `ExceptionHandler` for processing.
 - If the user is not marked any method with the `TelegramExceptionHandler` annotation, then the
-  default one will be applied error processing
+  default error processing will be applied
 
 - If multiple handlers are found for a particular error, then sorting will be applied,
   where the higher in the hierarchy is an error that is valid for the handler, the lower priority

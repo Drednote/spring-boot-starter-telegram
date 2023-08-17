@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.updatehandler.mvc.annotation;
 
-import io.github.drednote.telegram.core.resolver.PathVariableArgumentResolver;
+import io.github.drednote.telegram.core.resolver.TelegramPatternVariableArgumentResolver;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.PathVariable;
  * variable. Supported for {@link TelegramRequest} annotated handler methods.
  *
  * <p>If the method parameter is {@link java.util.Map Map&lt;String, String&gt;}
- * then the map is populated with all path variable names and values.
+ * then the map is populated with all pattern variable names and values.
  *
  * <p>
  * Works like {@link PathVariable}
  *
  * @author Galushko Ivan
  * @see TelegramRequest
- * @see PathVariableArgumentResolver
+ * @see TelegramPatternVariableArgumentResolver
  * @since 1.0
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface TelegramPathVariable {
+public @interface TelegramPatternVariable {
 
   /**
    * Alias for {@link #name}.
@@ -36,7 +36,7 @@ public @interface TelegramPathVariable {
   String value() default "";
 
   /**
-   * The name of the path variable to bind to.
+   * The name of the pattern variable to bind to.
    *
    * @since 4.3.3
    */
@@ -44,8 +44,8 @@ public @interface TelegramPathVariable {
   String name() default "";
 
   /**
-   * Whether the path variable is required.
-   * <p>Defaults to {@code true}, leading to an exception being thrown if the path
+   * Whether the pattern variable is required.
+   * <p>Defaults to {@code true}, leading to an exception being thrown if the pattern
    * variable is missing in the incoming request. Switch this to {@code false} if you prefer a
    * {@code null} or Java 8 {@code java.util.Optional}.
    */

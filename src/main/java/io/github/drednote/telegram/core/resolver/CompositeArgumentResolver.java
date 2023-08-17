@@ -17,7 +17,7 @@ public class CompositeArgumentResolver implements HandlerMethodArgumentResolver 
   ) {
     Assert.notNull(resolvers, "resolvers");
 
-    resolvers.add(new PathVariableArgumentResolver());
+    resolvers.add(new TelegramPatternVariableArgumentResolver());
     resolvers.add(new UpdateAccessorsArgumentResolver());
     resolvers.add(new RequestArgumentResolver());
 
