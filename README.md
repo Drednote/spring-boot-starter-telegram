@@ -15,37 +15,43 @@ features to facilitate the bot development process
    `RestController` in Spring. This enables seamless integration of Telegram bot functionality with
    the existing Spring ecosystem.
 
-2. **Centralized Error Handling**: Leveraging annotations in conjunction with `TelegramAdvice` and
-   `TelegramExceptionHandler`, the library offers a centralized approach for handling errors,
-   similar to `ControllerAdvice` and `ExceptionHandler` in Spring.
-
-3. **Customizable Scenarios**: Users can define custom scenarios for their bots, which can be
+2. **Customizable Scenarios**: Users can define custom scenarios for their bots, which can be
    configured via Java configuration. These scenarios allow the bot to process user interactions in
    a more organized and structured manner.
 
-4. **Flexible Update Filters**: The library provides the capability to set up custom filters for
+3. **Flexible Update Filters**: The library provides the capability to set up custom filters for
    individual bot updates. These filters are executed before and after the user-defined code,
    allowing for pre-processing and post-processing of updates.
+
+4. **Centralized Error Handling**: Leveraging annotations in conjunction with `TelegramAdvice` and
+   `TelegramExceptionHandler`, the library offers a centralized approach for handling errors,
+   similar to `ControllerAdvice` and `ExceptionHandler` in Spring.
 
 ## Getting started
 
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-    - [Quik Start](#quik-start)
+    - [Quick Start](#quick-start)
     - [Overall Information](#overall-information)
-    - [Controllers](#controllers)
-    - [Scenario](#scenario)
-    - [Key Entities](#key-entities)
+    - [Update Handling](#update-handling)
+        - [Controllers](#controllers)
+        - [Scenario](#scenario)
+    - [Filters](#filters)
+    - [Response Processing](#response-processing)
+    - [Exception Handling](#exception-handling)
+    - [Argument Resolving](#argument-resolving)
+    - [Telegram Scope](#telegram-scope)
+    - [Data Source](#data-source)
+    - [Primary Entities](#primary-entities)
         - [Update](#update)
         - [TelegramUpdateRequest](#telegramupdaterequest)
         - [UpdateHandler](#updatehandler)
         - [UpdateFilter](#updatefilter)
         - [TelegramResponse](#telegramresponse)
-        - [TelegramScope](#telegramscope)
+        - [@TelegramScope](#telegramscope)
         - [ExceptionHandler](#exceptionhandler)
         - [DataSourceAdapter](#datasourceadapter)
-    - [Argument resolving](#argument-resolving)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -114,7 +120,7 @@ library is based on Spring Boot 3 and requires Java 17 or higher.
 
 ## Usage
 
-### Quik Start
+### Quick Start
 
 Add to `application.yml` your bot token and specify the name of bot
 
@@ -193,36 +199,48 @@ This library's implementation closely resembles the familiar structure of `Java 
 
 - At the very beginning of the update processing chain,
   the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current
-  thread, to be able to create a [TelegramScope](#telegramscope) bean.
+  thread. This is done to create a [Telegram Scope](#telegram-scope).
 
-- Next, the update is pre-filtered by calling [PreUpdateFilters](#updatefilter).
+- After that, the main update processing starts with calls to [Filters](#filters). These filters
+  help in determining which updates should be processed further. Or you can put logic in the filter
+  that will be executed for each update, for example, log something
 
-- After filtering, available [UpdateHandlers](#updatehandler) are called in turn at the given
-  priority. If one of [UpdateHandler](#updatehandler) set not null response
-  in [TelegramUpdateRequest](#telegramupdaterequest), then the [UpdateHandlers](#updatehandler) call
-  is interrupted and the request is considered successfully processed.
+- Once the updates are filtered, the available [UpdateHandlers](#updatehandler) are called in a
+  specific order based on their priority. There are different mechanisms available for handling
+  updates, and you can find more information about them in the [Update Handling](#update-handling)
+  section
 
-- After successful processing, post filtering of the update occurs
-  using [PostUpdateFilters](#updatefilter).
+- After the successful processing of updates, the [Filters](#filters) are called again as part of
+  the post-processing stage. This gives an opportunity for any additional filtering or actions to be
+  applied.
 
-- **Note that one bean can implement both [PreUpdateFilter](#updatefilter)
-  and [PostUpdateFilter](#updatefilter)**
+- Once all the processing and filtering are done, the response is processed using a specialized
+  mechanism called [Response Processing](#response-processing). This mechanism takes the defined
+  response and performs necessary actions, such as sending it back to the user or performing any
+  other desired logic.
 
-- After all, a response is sent to the user using [TelegramResponse](#telegramresponse)
+- Throughout the entire processing chain, there is a dedicated mechanism for handling errors called
+  [Exception Handling](#exception-handling). This ensures that any errors or exceptions that occur
+  during the processing are properly handled and don't disrupt the flow of the program.
 
-- Throughout the execution, any errors that occur are caught
-  using [ExceptionHandler](#exceptionhandler).
+- Additionally, some filters and handlers defined by this library require access to a database. For
+  this purpose, they can make use of the [Data Source](#data-source) functionality. This allows them
+  to interact with the database and retrieve or store data as needed.
 
-- Also, some filters and handlers need the ability to work with the database. For this purpose,
-  there is [DataSourceAdapter](#datasourceadapter)
+### Update Handling
 
-### Controllers
+This library offers users two primary approaches for handling updates: [controllers](#controllers)
+and [scenarios](#scenario). Both controllers and scenarios offer their own benefits, so you can
+choose the one that suits your bot's requirements and your preferred coding style.
+**But I recommend using both**
 
-This library provides users with two main approaches for handling updates. One of them are
-**controllers**. Works the same as **spring controllers**
+#### Controllers
 
-To start receiving updates from the **Telegram**, you need to create a controller and set criteria
-receipt. For analysis, let's take the controller from the [Quik Start](#quik-start) block:
+In order to begin receiving updates from **Telegram**, you will first need to create a controller
+and specify the criteria for which updates you want to receive.
+
+To assist with the analysis, let's utilize the controller provided in
+the [Quick Start](#quick-start) section:
 
 ```java
 
@@ -258,99 +276,75 @@ public class MainController {
   with [updates](#update), created several derived annotations. The main ones are `@TelegramCommand`
   and `@TelegramMessage`. As the names imply, with the help of the first one you can only receive
   commands **(Message#isCommand)**, and from the second any messages **(Update#getMessage)**
-- `@TelegramRequest` takes as **pattern()** a string that will match the text
-  the message that comes with the update, whether it's just a message text or a photo caption. For
-  matcher uses `AntPathMatcher`, so you can specify any condition in the string
-  valid for `AntPathMatcher`. For example: `Hello*`, will match any string that
-  starts with `Hello`
+- The `@TelegramRequest` annotation's **pattern()** parameter takes a string that serves as a
+  matching condition for the text in the incoming message, whether it's just a message text or a
+  photo caption. For matcher uses `AntPathMatcher`, so you can specify any condition in the string
+  valid for `AntPathMatcher`. For example: `Hello*`, will match any string that starts with `Hello`
 - If the [update](#update) matches with several patterns that you specified in different methods
   marked with `@TelegramRequest`, than sorted will be applied:
     - `TelegramRequest` without **requestType** has the lowest priority
-    - `TelegramRequest` without **messageType** has the lowest priority among the
-      `requestType == RequestType.MESSAGE`
-    - `TelegramRequest` with **exclusiveMessageType** set to true and with more count **messageType**
-      specified takes precedence over others
+    - `TelegramRequest` without **messageType** has the lowest priority among the **requestType**
+      equal to `RequestType.MESSAGE`
+    - `TelegramRequest` with **exclusiveMessageType** set to true and with more elements
+      specified in **messageType** takes precedence over others
     - If `TelegramRequest` has the same priority by the above conditions, than the `AntPathMatcher`
       order applied
 - Methods marked with `@TelegramRequest` annotation can accept a specific set of inputs
-  parameters. More about this in the [Argument resolving](#argument-resolving) block
-- Methods marked with `@TelegramRequest` annotation can return any object, as
-  a result. It will automatically be wrapped in the `TelegramResponse` interface and sent as a
-  response. If you immediately return a `TelegramResponse` object, it will be sent without wrapping.
-  For more information on cast rules, see the `ResponseSetter` class. More
-  about `TelegramResponse` [here](#telegramresponse)
+  parameters as defined in the [Argument resolving](#argument-resolving) section
+- Methods marked with `@TelegramRequest` annotation can return any object, as a result. and the
+  response processing mechanism is detailed in the [Response Processing](#response-processing)
+  section
 - Also, if you need to get some data from the message from the user by
   a specific pattern, then you can use the `TelegramPatternVariable` annotation, and you will need
   to correctly compose `TelegramRequest#pattern()`.
   **Essentially `TelegramPatternVariable` works the same as `PathVariable`.**
 - Any uncaught errors that occur during the execution of user code, are caught
-  by [ExceptionHandler](#exceptionhandler).
+  by [ExceptionHandler](#exceptionhandler). More [here](#exception-handling).
 
-### Scenario
+#### Scenario
 
-### Key Entities
+**WARNING** This feature is currently in beta. It can be changed in future releases.
 
-#### Update
+To create scenarios, you will need to implement the `ScenarioAdapter` interface by creating a
+**Spring bean**. This interface is the main tool for creating scenarios and allows you to define and
+customize the behavior of your scenarios.
 
-- `Update` is the main object that comes from the Telegram API. It contains all information about
-  the event that happened in the bot, whether it's a new message from the user, or changes in some
-  settings chat in which the bot is located.
+### Filters
 
-- Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
+Filters serve as both pre-processing and post-processing mechanisms for the primary stage of update
+processing. They allow you to define specific criteria for filtering and manipulating updates before
+and after they are processed.
 
-#### TelegramUpdateRequest
+- Filters are needed for several main purposes:
+    1. To filter updates
+        - To control update filtering, filters can set some properties
+          in [TelegramUpdateRequest](#telegramupdaterequest), such as `response`. If any filter set
+          property `response` then the update is considered successful and an attempt will be made
+          to send a response
+    2. To execute the code for each update
 
-`TelegramUpdateRequest` is a primary object that stores all information about update. Any change
-that occurs during the processing of an update is written to it. Thus, if you get it in the user
-code, you can find out all the information about the current update.
-For example, in this way:
+- Filters are called twice: before (pre-filters) the main [Update Handling](#update-handling) and
+  after (post-filters). It is important to note that, even if an error occurred during the main
+  processing of the update, post-filters will still be executed
 
-```java
+- There are two main interfaces for creating a filter:
+    1. `PreUpdateFilter` - **spring beans** that implement this interface will be called **before**
+       the main [Update Handling](#update-handling)
+    2. `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
+       the main [Update Handling](#update-handling)
 
-@TelegramController
-public class Example {
+- Also, for convenience, two interfaces are created, which are implemented from `PreUpdateFilter`
+  and `PostUpdateFilter`. These are `PriorityPreUpdateFilter` and `PriorityPostUpdateFilter`
+  respectively. They take precedence over `PreUpdateFilter`/`PostUpdateFilter` and are executed
+  earlier whatever returns **getPreOrder()**/**getPostOrder()**
 
-  @TelegramRequest
-  public void onAll(TelegramUpdateRequest request) {
-    System.out.printf("request is %s", request);
-  }
-}
-```
-
-Read more
-about `MvcUpdateHandler` [Controllers block](#controllers).
-
-#### UpdateHandler
-
-- The **UpdateHandler** interface is the entry point for handling updates. For now
-  moment there are two **UpdateHandler** - `MvcUpdateHandler` and `ScenarioUpdateHandler`.
-
-- `MvcUpdateHandler` - provides the ability to handle updates in the style of `Controller`
-  and `RequestMapping`. Read
-  more in [Controllers block](#controllers).
-
-- `ScenarioUpdateHandler` - allows the user to customize scenarios (request - response)
-  and handle updates more flexibly than with `MvcUpdateHandler`. Read
-  more [Scenario block](#scenario).
-
-- If you need to make your own handler, all you have to do is create a **bean** that will
-  implement the `UpdateHandler` interface and set its execution priority using a spring
-  annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
-  put in the object `TelegramUpdateRequest` response with
-  type [TelegramResponse](#telegramresponse), so that update processing can be considered
-  successful. If this is not done, further update handlers will be called
-
-#### UpdateFilter
-
-- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call.
-  The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. With the help of filters, you
-  can quite easily customize some kind of logic applicable to all updates.
-
-- To add a filter, you need to create a **bean** that will implement the `PreUpdateFilter`
+- To add a filter, you need to create a **spring bean** that will implement the `PreUpdateFilter`
   or `PostUpdateFilter` interface.
 
-- You can also mark the filter with [TelegramScope](#telegramscope) so that each
-  update creates its own filter instance and kept until the end of processing. Example:
+- Additionally, it is possible to create a filter with [Telegram Scope](#telegram-scope). With this
+  approach, a unique filter instance is created for each update, and it remains active until the
+  processing of the update is completed. This allows for better separation and management of filters
+  for individual updates. Example:
 
 ```java
 
@@ -380,9 +374,79 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
 
 ```
 
-Note: `PriorityPreUpdateFilter`/`PriorityPostUpdateFilter` are executed earlier
-than `PreUpdateFilter`/`PostUpdateFilter` whatever returns
-**getPreOrder()**/**getPostOrder()**
+### Response Processing
+
+- You can return `String` and
+- It will automatically be wrapped in the `TelegramResponse` interface and sent as a
+  response. If you immediately return a `TelegramResponse` object, it will be sent without
+  wrapping.
+  For more information on cast rules, see the `ResponseSetter` class. More
+  about `TelegramResponse` [here](#telegramresponse)
+
+### Exception Handling
+
+### Argument resolving
+
+### Telegram Scope
+
+### Data Source
+
+### Primary Entities
+
+#### Update
+
+- `Update` is the main object that comes from the Telegram API. It contains all information about
+  the event that happened in the bot, whether it's a new message from the user, or changes in some
+  settings chat in which the bot is located.
+
+- Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
+
+#### TelegramUpdateRequest
+
+`TelegramUpdateRequest` is a primary object that stores all information about update. Any change
+that occurs during the processing of an update is written to it. Thus, if you get it in the user
+code, you can find out all the information about the current update.
+For example, in this way:
+
+```java
+
+@TelegramController
+public class Example {
+
+  @TelegramRequest
+  public void onAll(TelegramUpdateRequest request) {
+    System.out.printf("request is %s", request);
+  }
+}
+```
+
+Read more about [Telegram Controllers](#controllers).
+
+#### UpdateHandler
+
+- The **UpdateHandler** interface is the entry point for handling updates. For now
+  moment there are two **UpdateHandler** - `MvcUpdateHandler` and `ScenarioUpdateHandler`.
+
+- `MvcUpdateHandler` - provides the ability to handle updates in the style of `Controller`
+  and `RequestMapping`. Read
+  more in [Controllers block](#controllers).
+
+- `ScenarioUpdateHandler` - allows the user to customize scenarios (request - response)
+  and handle updates more flexibly than with `MvcUpdateHandler`. Read
+  more [Scenario block](#scenario).
+
+- If you need to make your own handler, all you have to do is create a **bean** that will
+  implement the `UpdateHandler` interface and set its execution priority using a spring
+  annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
+  put in the object `TelegramUpdateRequest` response with
+  type [TelegramResponse](#telegramresponse), so that update processing can be considered
+  successful. If this is not done, further update handlers will be called
+
+#### UpdateFilter
+
+- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call.
+  The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. More about
+  filters [here](#filters)
 
 #### TelegramResponse
 
@@ -447,8 +511,6 @@ public class JpaConfig {
 ```
 
 `Application` your main class, or you can pass any class what you want
-
-### Argument resolving
 
 ## Configuration
 
