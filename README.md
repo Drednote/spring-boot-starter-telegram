@@ -238,7 +238,11 @@ and [scenarios](#scenario). Both controllers and scenarios offer their own benef
 choose the one that suits your bot's requirements and your preferred coding style.
 **But I recommend using both**
 
+---
+
 #### Controllers
+
+---
 
 In order to begin receiving updates from **Telegram**, you will first need to create a controller
 and specify the criteria for which updates you want to receive.
@@ -305,15 +309,17 @@ public class MainController {
 - Any uncaught errors that occur during the execution of user code, are caught
   by [ExceptionHandler](#exceptionhandler). More [here](#exception-handling).
 
+---
+
 #### Scenario
+
+---
 
 **WARNING** This feature is currently in beta. It can be changed in future releases.
 
 To create scenarios, you will need to implement the `ScenarioAdapter` interface by creating a
 **Spring bean**. This interface is the main tool for creating scenarios and allows you to define and
 customize the behavior of your scenarios.
-
----
 
 ### Filters
 
