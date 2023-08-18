@@ -183,6 +183,8 @@ public class Application {
 
 That's all! Enjoy your bot
 
+---
+
 ### Overall information
 
 This library's implementation closely resembles the familiar structure of `Java HTTP servlets`.
@@ -226,6 +228,8 @@ This library's implementation closely resembles the familiar structure of `Java 
 - Additionally, some filters and handlers defined by this library require access to a database. For
   this purpose, they can make use of the [Data Source](#data-source) functionality. This allows them
   to interact with the database and retrieve or store data as needed.
+
+---
 
 ### Update Handling
 
@@ -309,6 +313,8 @@ To create scenarios, you will need to implement the `ScenarioAdapter` interface 
 **Spring bean**. This interface is the main tool for creating scenarios and allows you to define and
 customize the behavior of your scenarios.
 
+---
+
 ### Filters
 
 Filters serve as both pre-processing and post-processing mechanisms for the primary stage of update
@@ -374,6 +380,8 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
 
 ```
 
+---
+
 ### Response Processing
 
 - You can return `String` and
@@ -383,13 +391,23 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
   For more information on cast rules, see the `ResponseSetter` class. More
   about `TelegramResponse` [here](#telegramresponse)
 
+---
+
 ### Exception Handling
+
+---
 
 ### Argument resolving
 
+---
+
 ### Telegram Scope
 
+---
+
 ### Data Source
+
+---
 
 ### Primary Entities
 
