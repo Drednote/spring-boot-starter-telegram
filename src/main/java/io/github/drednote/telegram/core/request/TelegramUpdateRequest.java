@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
-import io.github.drednote.telegram.updatehandler.TelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
 import java.util.Set;

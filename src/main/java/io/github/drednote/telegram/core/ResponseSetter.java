@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.core;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.TelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
