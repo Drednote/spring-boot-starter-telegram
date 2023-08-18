@@ -232,12 +232,12 @@ and [scenarios](#scenario). Both controllers and scenarios offer their own benef
 choose the one that suits your bot's requirements and your preferred coding style.
 **But I recommend using both**
 
-- If you need to make your own handler, all you have to do is create a **spring bean** that will
-  implement the `UpdateHandler` interface and set its execution priority using a spring
-  annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
-  put in the object `TelegramUpdateRequest` response with type `TelegramResponse`, so that update
-  processing can be considered successful. If this is not done, further update handlers will be
-  called
+> If you need to make your own handler, all you have to do is create a **spring bean** that will
+> implement the `UpdateHandler` interface and set its execution priority using a spring
+> annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
+> put in the object `TelegramUpdateRequest` response with type `TelegramResponse`, so that update
+> processing can be considered successful. If this is not done, further update handlers will be
+> called
 
 ---
 
@@ -316,9 +316,7 @@ public class MainController {
 
 ---
 
-**WARNING**
-
-This feature is currently in beta. It can be changed in future releases.
+> **WARNING** This feature is currently in beta. It can be changed in future releases.
 
 To create scenarios, you will need to implement the `ScenarioAdapter` interface by creating a
 **Spring bean**. This interface is the main tool for creating scenarios and allows you to define and
@@ -435,7 +433,7 @@ handle this, there is a component called **Response Processing**, which follows 
   the event that happened in the bot, whether it's a new message from the user, or changes in some
   settings chat in which the bot is located.
 
-- Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
+> Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
 #### TelegramUpdateRequest
 
