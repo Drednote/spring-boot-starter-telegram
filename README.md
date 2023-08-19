@@ -41,15 +41,17 @@ features to facilitate the bot development process
     - [Response Processing](#response-processing)
     - [Exception Handling](#exception-handling)
     - [Argument Resolving](#argument-resolving)
+        - [Java types](#java-types)
+        - [TelegramPatternVariable](#telegrampatternvariable)
     - [Telegram Scope](#telegram-scope)
     - [Data Source](#data-source)
     - [Primary Entities](#primary-entities)
         - [Update](#update)
         - [TelegramUpdateRequest](#telegramupdaterequest)
+        - [UpdateHandler](#updatehandler)
         - [UpdateFilter](#updatefilter)
-        - [@TelegramScope](#telegramscope)
-        - [ExceptionHandler](#exceptionhandler)
-        - [DataSourceAdapter](#datasourceadapter)
+        - [TelegramResponse](#telegramresponse)
+        - [TelegramScope](#telegramscope)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -112,9 +114,6 @@ dependencies {
     implementation 'io.github.drednote:spring-boot-starter-telegram:yourVersion'
 }
 ```
-
-Make sure to use Java 17 or a later version in your project as the Spring Boot Starter Telegram
-library is based on Spring Boot 3 and requires Java 17 or higher.
 
 ## Usage
 
@@ -287,8 +286,11 @@ public class MainController {
   commands **(Message#isCommand)**, and from the second any messages **(Update#getMessage)**
 - The `@TelegramRequest` annotation's **pattern()** parameter takes a string that serves as a
   matching condition for the text in the incoming message, whether it's just a message text or a
-  photo caption. For matcher uses `AntPathMatcher`, so you can specify any condition in the string
-  valid for `AntPathMatcher`. For example: `Hello*`, will match any string that starts with `Hello`
+  photo caption. For matcher uses `AntPathMatcher`, so you can specify
+  any [condition](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html)
+  in the string valid for `AntPathMatcher`. For example: `Hello*`, will match any string that starts
+  with `Hello`. If you do not specify **pattern()** it will be replaced with the `**` pattern and
+  matched with any text.
 - If the [update](#update) matches with several patterns that you specified in different methods
   marked with `@TelegramRequest`, than sorted will be applied:
     - `TelegramRequest` without **requestType** has the lowest priority
@@ -298,17 +300,19 @@ public class MainController {
       specified in **messageType** takes precedence over others
     - If `TelegramRequest` has the same priority by the above conditions, than the `AntPathMatcher`
       order applied
+      > This ensures that the most specific controllers are given precedence in the update
+      handling process
 - Methods marked with `@TelegramRequest` annotation can accept a specific set of inputs
   parameters as defined in the [Argument resolving](#argument-resolving) section
 - Methods marked with `@TelegramRequest` annotation can return any object, as a result. The
   response processing mechanism is detailed in the [Response Processing](#response-processing)
   section
-- Also, if you need to get some data from the message from the user by
-  a specific pattern, then you can use the `TelegramPatternVariable` annotation, and you will need
-  to correctly compose `TelegramRequest#pattern()`.
+- Also, if you need to get some data from the user's message by
+  a specific pattern, then you can use the [TelegramPatternVariable](#telegrampatternvariable)
+  annotation
   **Essentially `TelegramPatternVariable` works the same as `PathVariable`.**
 - Any uncaught errors that occur during the execution of user code, are caught
-  by [ExceptionHandler](#exceptionhandler). More [here](#exception-handling).
+  by `ExceptionHandler`. More [here](#exception-handling).
 
 ---
 
@@ -419,11 +423,102 @@ handle this, there is a component called **Response Processing**, which follows 
 
 ### Exception Handling
 
+The purpose of the ExceptionHandler mechanism is to provide centralized error handling. Any errors
+that occur during the processing will be caught and sent to
+the `ExceptionHandler` for further handling. Here are some important rules to
+keep in mind:
+
+- To initiate error handling, the class must be annotated with `@TelegramAdvice`. Additionally, you
+  need to specify at least one method and annotate it with `@TelegramExceptionHandler`.
+- If the user is not marked any method with the `@TelegramExceptionHandler` annotation, the default
+  error handling approach will be applied.
+- In situations where multiple handlers are present for a particular error, a sorting mechanism is
+  implemented to determine the priority of method calls. The higher in the hierarchy the error
+  (throwable at the very top) that the handler expects, the lower the priority of the method call
+  will be compared to others.
+  > This ensures that the most specific error handlers are given
+  precedence in the error handling process
+- Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
+  parameters as defined in the [Argument resolving](#argument-resolving) section
+
 ### Argument resolving
+
+To provide maximum flexibility when calling custom code through the reflection mechanism, the input
+parameters for any method are calculated dynamically according to the following rules:
+
+> If you need to add support for your custom argument, you need to create **spring bean** and
+> implement `HandlerMethodArgumentResolver` interface
+
+#### Java types
+
+You can specify arguments based on a java type:
+
+- [Update](#update) and any top-level nested objects within
+  it. `Message`, `Poll`, `InlineQuery`, etc.
+- [TelegramUpdateRequest](#telegramupdaterequest)
+- `TelegramBot` or any subclasses if you need to consume current telegram bot instance
+- `String` arguments will fill with the **text** property
+  of [TelegramUpdateRequest](#telegramupdaterequest) if it exists, or it will be `null`
+  > In almost all cases this will be the text of the `Message`
+- `Long` arguments will fill with the **chatId** property
+  of [TelegramUpdateRequest](#telegramupdaterequest)
+- `Throwable` arguments will fill with the **error** property
+  of [TelegramUpdateRequest](#telegramupdaterequest) if it exists. If no error than it will
+  be `null`
+  > This type should be only used in methods marked with `@TelegramExceptionHandler`. In other
+  > methods, it more likely will be `null`
+
+#### TelegramPatternVariable
+
+You can annotate certain arguments using `@TelegramPatternVariable`. Here are the rules to follow:
+
+- This annotation is only valid if there's text in the update (e.g., message text, photo caption).
+  Otherwise, it will be `null`
+- This annotation supports only two Java types: `String` and `Map`
+- When using `String`, the value of the template variable from the pattern is exposed
+- In the case of `Map`, all template variables are exposed
 
 ### Telegram Scope
 
+The functionality of `@TelegramScope` is similar to the Spring annotation `@Scope("request")`, with
+the difference being that the context is created at the start of update processing instead of at the
+request level.
+By marking a **spring bean** with this annotation, a new instance of the bean will be created for
+each
+update processing.
+
+> It's important to note that each update handling is associated with a specific thread. In cases
+> where you create sub-threads within the main thread, you will need to manually bind
+> the `TelegramUpdateRequest` to the new thread. This can be achieved using
+> the `UpdateRequestContext`
+> class.
+
 ### Data Source
+
+- For some filters and scenarios to work correctly, you need to save information to the database.
+  You can save data to the application memory, but then during the restart, all information will be
+  lost. Therefore, it is better if you configure the datasource using spring.
+
+- This library is fully based on Spring JPA in working with the database. Therefore, to support
+  different databases (postgres, mongo, etc.), using the `DataSourceAdapter` interface
+
+> **Currently supported `JpaRepository` and `MongoRepository`**
+
+> Note: currently autoconfigure data source, breaks searching for user repositories and
+> entities, so you should manually mark configuration class this way, that spring can pick your
+> repositories and entities
+
+```java
+
+@EnableJpaRepositories(basePackageClasses = Application.class)
+@EntityScan(basePackageClasses = Application.class)
+@Configuration
+public class JpaConfig {
+
+}
+```
+
+`Application` your main class, or you can pass any class what you want
 
 ### Primary Entities
 
@@ -456,61 +551,27 @@ public class Example {
 
 Read more about [Telegram Controllers](#controllers).
 
+#### UpdateHandler
+
+- The `UpdateHandler` interface is the entry point for handling updates. More
+  in [Update Handling](#update-handling) section.
+
 #### UpdateFilter
 
 - `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call.
   The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. More about
   filters [here](#filters)
 
+#### TelegramResponse
+
+- `TelegramResponse` represents the action that need to be executed to sent response to the user who
+  initiated the update processing. For this here special
+  mechanism [Response Processing](#response-processing)
+
 #### TelegramScope
 
 - `TelegramScope` is a specialization of `@Scope` for a component whose lifecycle is bound to the
-  current telegram update handling. In simple words, for each `TelegramUpdateRequest` will have its
-  own bean instance
-
-- Each update handling is tied to a specific thread, so if you are creating sub-threads inside the
-  main thread you need to manually bind `TelegramUpdateRequest` to a new thread. This can be done
-  using class `UpdateRequestContext`
-
-#### ExceptionHandler
-
-- Error handling is centralized using the `TelegramAdvice` and `TelegramExceptionHandler`
-  annotations. Any error will be caught and sent to `ExceptionHandler` for processing.
-- If the user is not marked any method with the `TelegramExceptionHandler` annotation, then the
-  default error processing will be applied
-
-- If multiple handlers are found for a particular error, then sorting will be applied,
-  where the higher in the hierarchy is an error that is valid for the handler, the lower priority
-  will be this handler is called.
-
-[Valid input arguments](#argument-resolving) for `TelegramExceptionHandler` method
-
-#### DataSourceAdapter
-
-- For some filters and scenarios to work correctly, you need to save information to the database.
-  You can save data to the application memory, but then during the restart, all information will be
-  lost. Therefore, it is better if you configure the datasource using spring.
-
-- This library is fully based on Spring JPA in working with the database. Therefore, to support
-  different databases (postgres, mongo, etc.), using the `DataSourceAdapter` interface
-
-- **Currently supported `JpaRepository` and `MongoRepository`**
-
-- Note: currently autoconfigure data source, breaks searching for user repositories and
-  entities, so you should manually mark configuration class this way, that spring can pick your
-  repositories and entities
-
-```java
-
-@EnableJpaRepositories(basePackageClasses = Application.class)
-@EntityScan(basePackageClasses = Application.class)
-@Configuration
-public class JpaConfig {
-
-}
-```
-
-`Application` your main class, or you can pass any class what you want
+  current telegram update handling. More [here](#telegram-scope)
 
 ## Configuration
 
@@ -631,7 +692,7 @@ These dependencies will automatically be included in your project
 ### Optional
 
 You can manually add them if you want to configure datasource. For what you should configure
-datasource read in [DataSourceAdapter](#datasourceadapter) block
+datasource read in [Data Source](#data-source) block
 
 `org.springframework.boot:spring-boot-starter-data-jpa`
 
