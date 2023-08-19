@@ -2,7 +2,7 @@ package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPathVariable;
+import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPatternVariable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,14 +10,14 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
 
-public class PathVariableArgumentResolver implements HandlerMethodArgumentResolver {
+public class TelegramPatternVariableArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
   public Object resolveArgument(
       @NonNull MethodParameter parameter, @NonNull TelegramUpdateRequest request
   ) {
-    TelegramPathVariable pathVariable = AnnotatedElementUtils
-        .findMergedAnnotation(parameter.getParameter(), TelegramPathVariable.class);
+    TelegramPatternVariable pathVariable = AnnotatedElementUtils
+        .findMergedAnnotation(parameter.getParameter(), TelegramPatternVariable.class);
     if (pathVariable == null) {
       throw new IllegalArgumentException(
           "No PathVariable annotation found on parameter %s".formatted(parameter));
@@ -52,7 +52,7 @@ public class PathVariableArgumentResolver implements HandlerMethodArgumentResolv
   @Override
   public boolean supportsParameter(@NonNull MethodParameter parameter) {
     return AnnotatedElementUtils.hasAnnotation(parameter.getParameter(),
-        TelegramPathVariable.class);
+        TelegramPatternVariable.class);
   }
 
   @Override

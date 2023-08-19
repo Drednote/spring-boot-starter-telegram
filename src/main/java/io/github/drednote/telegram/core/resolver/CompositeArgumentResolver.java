@@ -17,18 +17,20 @@ public class CompositeArgumentResolver implements HandlerMethodArgumentResolver 
   ) {
     Assert.notNull(resolvers, "resolvers");
 
-    resolvers.add(new PathVariableArgumentResolver());
+    resolvers.add(new TelegramPatternVariableArgumentResolver());
     resolvers.add(new UpdateAccessorsArgumentResolver());
     resolvers.add(new RequestArgumentResolver());
 
     this.resolvers = resolvers.stream()
-        .filter(it -> it.getClass() != this.getClass())
+        .filter(it -> it != this)
         .sorted(AnnotationAwareOrderComparator.INSTANCE)
         .toList();
   }
 
   @Override
-  public Object resolveArgument(@NonNull MethodParameter parameter, @NonNull TelegramUpdateRequest request) {
+  public Object resolveArgument(
+      @NonNull MethodParameter parameter, @NonNull TelegramUpdateRequest request
+  ) {
     for (HandlerMethodArgumentResolver resolver : resolvers) {
       if (resolver.supportsParameter(parameter)) {
         return resolver.resolveArgument(parameter, request);

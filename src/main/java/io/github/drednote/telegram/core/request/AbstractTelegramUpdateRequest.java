@@ -9,6 +9,7 @@ import java.util.Set;
 import lombok.Getter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -204,7 +205,7 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
   private void parseChatChanges(Set<MessageType> types) {
     if (message != null &&
         (message.getPinnedMessage() != null ||
-            message.getNewChatMembers() != null ||
+            !CollectionUtils.isEmpty(message.getNewChatMembers()) ||
             message.getLeftChatMember() != null ||
             message.getNewChatTitle() != null ||
             message.getNewChatPhoto() != null ||
@@ -228,6 +229,6 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
 
   @NonNull
   public Set<MessageType> getMessageTypes() {
-    return EnumSet.copyOf(messageTypes);
+    return messageTypes.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(messageTypes);
   }
 }

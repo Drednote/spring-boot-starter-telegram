@@ -8,7 +8,7 @@ import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.session.UpdateRequestContext;
-import io.github.drednote.telegram.updatehandler.TelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.updatehandler.response.AbstractTelegramResponse;
 import java.util.Collection;

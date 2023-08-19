@@ -2,7 +2,6 @@ package io.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.TelegramResponse;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
