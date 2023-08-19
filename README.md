@@ -335,8 +335,8 @@ processing. They allow you to define specific criteria for filtering and manipul
 and after they are processed.
 
 - Filters are needed for several main purposes:
-    1. To filter updates
-    2. To execute the code for each update
+    - To filter updates
+    - To execute the code for each update
 
 - To control update filtering, filters can set some properties
   in [TelegramUpdateRequest](#telegramupdaterequest), such as `response`. If any filter set
@@ -347,10 +347,10 @@ and after they are processed.
   processing of the update, post-filters will still be executed
 
 - There are two main interfaces for creating a filter:
-    1. `PreUpdateFilter` - **spring beans** that implement this interface will be called **before**
-       the main [Update Handling](#update-handling)
-    2. `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
-       the main [Update Handling](#update-handling)
+    - `PreUpdateFilter` - **spring beans** that implement this interface will be called **before**
+      the main [Update Handling](#update-handling)
+    - `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
+      the main [Update Handling](#update-handling)
 
 - Also, for convenience, two interfaces are created, which are implemented from `PreUpdateFilter`
   and `PostUpdateFilter`. These are `PriorityPreUpdateFilter` and `PriorityPostUpdateFilter`
