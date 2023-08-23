@@ -123,7 +123,7 @@ test {
     jacocoTestReport {
         dependsOn test
         reports {
-            xml.enabled false
+            xml.enabled true
             csv.enabled false
             html.outputLocation = layout.buildDirectory.dir('reports/jacoco/test/html')
         }
