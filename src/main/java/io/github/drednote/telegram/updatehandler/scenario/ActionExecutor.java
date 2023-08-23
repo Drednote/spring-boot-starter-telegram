@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.core;
+package io.github.drednote.telegram.updatehandler.scenario;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 

@@ -3,6 +3,7 @@
 [![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.drednote/spring-boot-starter-telegram.svg)](https://search.maven.org/artifact/io.github.drednote/spring-boot-starter-telegram)
+[![Codecov](https://codecov.io/gh/drednote/spring-boot-starter-telegram/branch/master/graph/badge.svg)](https://codecov.io/gh/drednote/spring-boot-starter-telegram)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
 `Spring Boot` and `org.telegram:telegrambots` as the core dependency. It provides several key
@@ -52,6 +53,7 @@ features to facilitate the bot development process
         - [UpdateFilter](#updatefilter)
         - [TelegramResponse](#telegramresponse)
         - [TelegramScope](#telegramscope)
+- [Additional Info](#additional-info)
 - [Configuration](#configuration)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
@@ -574,6 +576,13 @@ Read more about [Telegram Controllers](#controllers).
 - `TelegramScope` is a specialization of `@Scope` for a component whose lifecycle is bound to the
   current telegram update handling. More [here](#telegram-scope)
 
+## Additional Info
+
+- All packages are children of `io.github.drednote.telegram` marked with two
+  annotations - `@NonNullApi` and `@NonNullFields`. This means that by default all fields and APIs
+  accept and return non-null objects. If it is needed to return a nullable object, then the field or
+  method is annotated with `@Nullable`
+
 ## Configuration
 
 ### Base properties
@@ -686,7 +695,9 @@ These dependencies will automatically be included in your project
 
 `org.telegram:telegrambots`
 
-`org.springframework.boot:spring-boot-starter-web`
+`org.springframework.boot:spring-boot-starter`
+
+`org.springframework:spring-web`
 
 `com.esotericsoftware:kryo`
 

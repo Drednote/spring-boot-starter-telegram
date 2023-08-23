@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
-import io.github.drednote.telegram.core.ActionExecutor;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;

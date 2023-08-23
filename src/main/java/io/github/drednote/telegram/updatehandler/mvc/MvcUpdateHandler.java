@@ -26,7 +26,7 @@ public class MvcUpdateHandler implements UpdateHandler {
       HandlerMethod handlerMethod = requestHandler.handlerMethod();
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
       Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
-      ResponseSetter.setResponse(request, invoked, () -> parameterType);
+      ResponseSetter.setResponse(request, invoked, parameterType);
     }
   }
 }

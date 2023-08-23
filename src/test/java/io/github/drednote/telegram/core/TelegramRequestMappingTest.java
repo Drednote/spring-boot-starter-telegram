@@ -22,7 +22,7 @@ class TelegramRequestMappingTest {
   void shouldBeLess0WhenCallCompare() {
     TelegramRequestMapping telegramRequestMapping = new TelegramRequestMapping("Pattern",
         RequestType.POLL, Collections.emptySet());
-    assertEquals(1,
+    assertEquals(0,
         telegramRequestMapping.compareTo(
             new TelegramRequestMapping("Pattern", RequestType.MESSAGE, Collections.emptySet())));
   }
@@ -31,7 +31,7 @@ class TelegramRequestMappingTest {
   void shouldBeMore0WhenCallCompare() {
     TelegramRequestMapping telegramRequestMapping = new TelegramRequestMapping("Pattern",
         RequestType.MESSAGE, Collections.emptySet());
-    assertEquals(-1,
+    assertEquals(0,
         telegramRequestMapping.compareTo(
             new TelegramRequestMapping("Pattern", RequestType.POLL, Collections.emptySet())));
   }

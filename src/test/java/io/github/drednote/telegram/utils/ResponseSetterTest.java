@@ -3,8 +3,9 @@ package io.github.drednote.telegram.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.ResponseSetter;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.testsupport.UpdateRequestUtils;
+import io.github.drednote.telegram.testsupport.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
@@ -14,8 +15,8 @@ import org.junit.jupiter.api.Test;
 
 class ResponseSetterTest {
 
-  private final DefaultTelegramUpdateRequest updateRequest = new DefaultTelegramUpdateRequest(UpdateUtils.createCommand(""),
-      null, null);
+  private final DefaultTelegramUpdateRequest updateRequest = new DefaultTelegramUpdateRequest(
+      UpdateRequestUtils.createMockRequest(UpdateUtils.createCommand("")));
 
   @BeforeEach
   void setUp() {
@@ -48,7 +49,8 @@ class ResponseSetterTest {
         .isNotNull()
         .isInstanceOf(CompositeTelegramResponse.class);
 
-    ResponseSetter.setResponse(updateRequest, List.of(EmptyTelegramResponse.INSTANCE, new Object()));
+    ResponseSetter.setResponse(updateRequest,
+        List.of(EmptyTelegramResponse.INSTANCE, new Object()));
     assertThat(updateRequest.getResponse())
         .isNotNull()
         .isInstanceOf(GenericTelegramResponse.class);

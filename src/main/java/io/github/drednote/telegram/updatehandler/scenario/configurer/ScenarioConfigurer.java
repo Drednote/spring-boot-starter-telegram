@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario.configurer;
 
-import io.github.drednote.telegram.core.ActionExecutor;
+import io.github.drednote.telegram.updatehandler.scenario.ActionExecutor;
 
 public sealed interface ScenarioConfigurer permits ScenarioConfigurerImpl {
 

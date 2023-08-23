@@ -10,7 +10,7 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
- * The Annotation which indicates that a method parameter should be bound to a URI template
+ * The Annotation which indicates that a method parameter should be bound to a pattern template
  * variable. Supported for {@link TelegramRequest} annotated handler methods.
  *
  * <p>If the method parameter is {@link java.util.Map Map&lt;String, String&gt;}
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Galushko Ivan
  * @see TelegramRequest
  * @see TelegramPatternVariableArgumentResolver
- * @since 1.0
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

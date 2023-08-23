@@ -6,14 +6,29 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
+/**
+ * The {@code InvocableHandlerMethod} class is a subclass of {@link HandlerMethod} that represents
+ * an invocable handler method. It provides a method to invoke the handler method with the given
+ * method arguments
+ */
 public class InvocableHandlerMethod extends HandlerMethod {
 
-  public InvocableHandlerMethod(@NonNull HandlerMethod handlerMethod) {
+  /**
+   * Creates a new instance of the {@code InvocableHandlerMethod} class with the given handler
+   * method.
+   *
+   * @param handlerMethod the handler method to invoke, not null
+   */
+  public InvocableHandlerMethod(HandlerMethod handlerMethod) {
     super(handlerMethod);
   }
 
   /**
-   * Invoke the handler method with the given argument commands.
+   * Invokes the handler method with the given method arguments
+   *
+   * @param args the method arguments to pass to the handler method, not null
+   * @return the result of invoking the handler method, or null if no result is returned
+   * @throws Exception if an error occurs during invocation
    */
   @Nullable
   public Object invoke(Object... args) throws Exception {
@@ -42,7 +57,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
   }
 
   @Override
-  protected void assertTargetBean(Method method, Object targetBean, @NonNull Object[] args) {
+  protected void assertTargetBean(Method method, Object targetBean, Object[] args) {
     Class<?> methodDeclaringClass = method.getDeclaringClass();
     Class<?> targetBeanClass = targetBean.getClass();
     if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
@@ -56,7 +71,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
   @NonNull
   @Override
-  protected String formatInvokeError(@NonNull String text, @NonNull Object[] args) {
+  protected String formatInvokeError(String text, Object[] args) {
     return super.formatInvokeError(text, args).replace("Controller", "TelegramController");
   }
 }

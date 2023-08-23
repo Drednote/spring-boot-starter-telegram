@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import io.github.drednote.telegram.core.ActionExecutor;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import io.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioDefinition;

@@ -26,9 +26,9 @@ class ScenarioBotTest {
   @Test
   void name() throws Exception {
     updateHandler.onUpdate(
-        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/start"), null, null));
+        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/start"), null, null, null));
     updateHandler.onUpdate(
-        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/cancel"), null, null));
+        new DefaultTelegramUpdateRequest(UpdateUtils.createCommand("/cancel"), null, null, null));
 
   }
 

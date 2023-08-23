@@ -12,12 +12,12 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class RequestTypeMatcherTest {
+class RequestAndMessageTypeMatcherTest {
 
   @Test
   void shouldMatchRequestType() {
-    RequestTypeMatcher matcher = new RequestTypeMatcher(
-        new TelegramRequestMapping(null, RequestType.POLL, Collections.emptySet()));
+    RequestAndMessageTypeMatcher matcher = new RequestAndMessageTypeMatcher(
+        new TelegramRequestMapping("", RequestType.POLL, Collections.emptySet()));
     // mock
     TelegramUpdateRequest request = Mockito.mock(TelegramUpdateRequest.class);
     when(request.getMessageTypes()).thenReturn(Collections.emptySet());
@@ -28,15 +28,15 @@ class RequestTypeMatcherTest {
     when(request.getRequestType()).thenReturn(RequestType.MESSAGE);
     assertThat(matcher.matches(request)).isFalse();
 
-    matcher = new RequestTypeMatcher(
-        new TelegramRequestMapping(null, null, Collections.emptySet()));
+    matcher = new RequestAndMessageTypeMatcher(
+        new TelegramRequestMapping("", null, Collections.emptySet()));
     assertThat(matcher.matches(request)).isTrue();
   }
 
   @Test
   void shouldMatchMessageType() {
-    RequestTypeMatcher matcher = new RequestTypeMatcher(
-        new TelegramRequestMapping(null, RequestType.MESSAGE, Set.of(MessageType.COMMAND)));
+    RequestAndMessageTypeMatcher matcher = new RequestAndMessageTypeMatcher(
+        new TelegramRequestMapping("", RequestType.MESSAGE, Set.of(MessageType.COMMAND)));
     // mock
     TelegramUpdateRequest request = Mockito.mock(TelegramUpdateRequest.class);
     when(request.getRequestType()).thenReturn(RequestType.MESSAGE);
@@ -47,8 +47,8 @@ class RequestTypeMatcherTest {
     when(request.getMessageTypes()).thenReturn(Set.of(MessageType.COMMAND));
     assertThat(matcher.matches(request)).isTrue();
 
-    matcher = new RequestTypeMatcher(
-        new TelegramRequestMapping(null, RequestType.MESSAGE,
+    matcher = new RequestAndMessageTypeMatcher(
+        new TelegramRequestMapping("", RequestType.MESSAGE,
             Set.of(MessageType.COMMAND, MessageType.PHOTO)));
     when(request.getMessageTypes()).thenReturn(Set.of(MessageType.COMMAND));
     assertThat(matcher.matches(request)).isFalse();
