@@ -3,7 +3,7 @@
 [![Build](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/Drednote/spring-boot-starter-telegram/actions/workflows/build.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.drednote/spring-boot-starter-telegram.svg)](https://search.maven.org/artifact/io.github.drednote/spring-boot-starter-telegram)
-[![Codecov](https://codecov.io/gh/drednote/spring-boot-starter-telegram/branch/master/graph/badge.svg)](https://codecov.io/gh/drednote/spring-boot-starter-telegram)
+[![Codecov](https://codecov.io/gh/Drednote/spring-boot-starter-telegram/graph/badge.svg?token=4GGKDCSXH2)](https://codecov.io/gh/Drednote/spring-boot-starter-telegram)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
 `Spring Boot` and `org.telegram:telegrambots` as the core dependency. It provides several key
