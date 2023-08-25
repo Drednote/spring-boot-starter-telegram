@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.testsupport.UpdateRequestUtils;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;

@@ -3,11 +3,10 @@ package io.github.drednote.telegram.updatehandler.mvc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.CoreAutoConfiguration;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.testsupport.UpdateRequestUtils;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestController;

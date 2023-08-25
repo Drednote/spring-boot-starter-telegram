@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.testsupport;
+package io.github.drednote.telegram.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;

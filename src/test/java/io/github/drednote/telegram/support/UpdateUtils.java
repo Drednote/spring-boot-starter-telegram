@@ -1,6 +1,8 @@
-package io.github.drednote.telegram.testsupport;
+package io.github.drednote.telegram.support;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.EntityType;

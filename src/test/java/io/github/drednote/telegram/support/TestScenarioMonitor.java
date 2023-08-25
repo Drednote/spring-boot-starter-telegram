@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.testsupport;
+package io.github.drednote.telegram.support;
 
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioMonitor;
 import io.github.drednote.telegram.updatehandler.scenario.Step;

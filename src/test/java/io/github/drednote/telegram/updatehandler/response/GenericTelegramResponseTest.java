@@ -2,8 +2,8 @@ package io.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.github.drednote.telegram.testsupport.UpdateRequestUtils;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

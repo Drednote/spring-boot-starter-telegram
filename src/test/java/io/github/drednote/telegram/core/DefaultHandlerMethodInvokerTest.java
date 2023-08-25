@@ -3,10 +3,9 @@ package io.github.drednote.telegram.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.core.resolver.CompositeArgumentResolver;
-import io.github.drednote.telegram.testsupport.UpdateRequestUtils;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
