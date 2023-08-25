@@ -2,7 +2,6 @@ package io.github.drednote.telegram;
 
 import io.github.drednote.telegram.datasource.DataSourceProperties;
 import io.github.drednote.telegram.filter.FilterProperties;
-import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.menu.MenuProperties;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerProperties;
@@ -11,6 +10,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.Nullable;
 
 @Configuration
 @ConfigurationProperties("drednote.telegram")
@@ -40,6 +40,7 @@ public class TelegramProperties {
    *
    * @see java.util.Locale
    */
+  @Nullable
   private String defaultLocale;
   /**
    * Session properties

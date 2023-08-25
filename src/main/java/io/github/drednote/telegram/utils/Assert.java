@@ -24,7 +24,7 @@ public interface Assert {
 
   static void required(Object object, String paramName) {
     if (object == null) {
-      throw new IllegalArgumentException("'%s' property is required".formatted(paramName));
+      throw new IllegalArgumentException("'%s' is required".formatted(paramName));
     }
   }
 

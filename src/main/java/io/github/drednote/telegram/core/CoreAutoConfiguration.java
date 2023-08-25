@@ -9,9 +9,20 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * The {@code CoreAutoConfiguration} class provides configuration for the beans of core package
+ *
+ * @author Galushko Ivan
+ */
 @AutoConfiguration
 public class CoreAutoConfiguration {
 
+  /**
+   * Creates a {@link HandlerMethodInvoker} bean if no other bean of the same type is present
+   *
+   * @param resolvers the collection of argument resolvers
+   * @return the {@code HandlerMethodInvoker} bean
+   */
   @Bean
   @ConditionalOnMissingBean
   public HandlerMethodInvoker handlerMethodInvoker(

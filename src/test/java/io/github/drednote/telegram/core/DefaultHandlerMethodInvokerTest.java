@@ -3,13 +3,12 @@ package io.github.drednote.telegram.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.core.resolver.CompositeArgumentResolver;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.method.HandlerMethod;
@@ -26,7 +25,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new DefaultTelegramUpdateRequest(update, null, null),
+      invoker.invoke(UpdateRequestUtils.createMockRequest(update),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNull();
@@ -40,7 +39,7 @@ class DefaultHandlerMethodInvokerTest {
     Bean bean = Mockito.spy(Bean.class);
     Update update = UpdateUtils.createEmpty();
     try {
-      invoker.invoke(new DefaultTelegramUpdateRequest(update, null, null),
+      invoker.invoke(UpdateRequestUtils.createMockRequest(update),
           new HandlerMethod(bean, testMethod));
     } catch (Exception e) {
       assertThat(e).isNotNull().isInstanceOf(IllegalStateException.class);

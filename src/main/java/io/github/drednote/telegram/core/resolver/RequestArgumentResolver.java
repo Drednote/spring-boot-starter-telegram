@@ -2,15 +2,24 @@ package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
+/**
+ * The {@code RequestArgumentResolver} class is an implementation of the
+ * {@code HandlerMethodArgumentResolver} interface that resolves base arguments like
+ * {@link TelegramUpdateRequest} or {@link TelegramBot}
+ *
+ * @author Galushko Ivan
+ */
 public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(@NonNull MethodParameter parameter,
-      @NonNull TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+    Assert.notNull(parameter, "MethodParameter");
+    Assert.notNull(request, "TelegramUpdateRequest");
+
     Class<?> paramType = parameter.getParameterType();
     if (TelegramUpdateRequest.class.isAssignableFrom(paramType)) {
       return new DefaultTelegramUpdateRequest(request);
@@ -28,7 +37,9 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
   }
 
   @Override
-  public boolean supportsParameter(@NonNull MethodParameter parameter) {
+  public boolean supportsParameter(MethodParameter parameter) {
+    Assert.notNull(parameter, "MethodParameter");
+
     Class<?> paramType = parameter.getParameterType();
     return TelegramUpdateRequest.class.isAssignableFrom(paramType) ||
         TelegramBot.class.isAssignableFrom(paramType) ||

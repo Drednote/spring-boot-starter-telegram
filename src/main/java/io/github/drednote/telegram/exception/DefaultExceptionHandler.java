@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.exception;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.core.invoke.DefaultHandlerMethodInvoker;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioException;
@@ -26,7 +25,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
       try {
         Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
         ResponseSetter.setResponse(request, invoked,
-            () -> handlerMethod.getReturnType().getParameterType());
+            handlerMethod.getReturnType().getParameterType());
       } catch (Exception e) {
         processInternal(e, request);
       }

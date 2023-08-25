@@ -3,10 +3,10 @@ package io.github.drednote.telegram.updatehandler.mvc;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.CoreAutoConfiguration;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestController;
@@ -39,7 +39,7 @@ class MvcUpdateHandlerTest {
     Update update = UpdateUtils.createCommand("/register");
     update.setUpdateId(1);
 
-    updateHandler.onUpdate(new DefaultTelegramUpdateRequest(update, null, null));
+    updateHandler.onUpdate(UpdateRequestUtils.createMockRequest(update));
 
     assertThat(testController.registerCount).isEqualTo(1);
   }
@@ -51,7 +51,7 @@ class MvcUpdateHandlerTest {
     message.setText("hello");
     update.setMessage(message);
     update.setUpdateId(1);
-    updateHandler.onUpdate(new DefaultTelegramUpdateRequest(update, null, null));
+    updateHandler.onUpdate(UpdateRequestUtils.createMockRequest(update));
 
     assertThat(testController.textCount).isEqualTo(1);
   }

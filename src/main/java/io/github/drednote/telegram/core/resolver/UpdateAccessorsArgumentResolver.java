@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.MethodParameter;
-import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.ChatJoinRequest;
@@ -17,11 +17,20 @@ import org.telegram.telegrambots.meta.api.objects.payments.ShippingQuery;
 import org.telegram.telegrambots.meta.api.objects.polls.Poll;
 import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
 
+/**
+ * The {@code RequestArgumentResolver} class is an implementation of the
+ * {@code HandlerMethodArgumentResolver} interface that resolves {@link Update}'s arguments
+ *
+ * @author Galushko Ivan
+ * @see Update
+ */
 public class UpdateAccessorsArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(@NonNull MethodParameter parameter,
-      @NonNull TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+    Assert.notNull(parameter, "MethodParameter");
+    Assert.notNull(request, "TelegramUpdateRequest");
+
     Class<?> parameterType = parameter.getParameterType();
     if (Update.class.isAssignableFrom(parameterType)) {
       return request.getOrigin();
@@ -55,7 +64,9 @@ public class UpdateAccessorsArgumentResolver implements HandlerMethodArgumentRes
   }
 
   @Override
-  public boolean supportsParameter(@NonNull MethodParameter parameter) {
+  public boolean supportsParameter(MethodParameter parameter) {
+    Assert.notNull(parameter, "MethodParameter");
+
     Class<?> paramType = parameter.getParameterType();
     return Update.class.isAssignableFrom(paramType) ||
         Message.class.isAssignableFrom(paramType) ||

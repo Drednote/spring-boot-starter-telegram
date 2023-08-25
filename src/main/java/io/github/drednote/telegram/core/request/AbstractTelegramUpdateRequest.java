@@ -15,6 +15,13 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+/**
+ * The {@code AbstractTelegramUpdateRequest} class is an abstract implementation of the
+ * {@link TelegramUpdateRequest} interface. It provides common functionality for processing update
+ * requests received from Telegram.
+ *
+ * @author Galushko Ivan
+ */
 @Getter
 public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateRequest {
 
@@ -29,7 +36,6 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
   protected final Long chatId;
   protected final RequestType requestType;
 
-  @NonNull
   protected final Set<MessageType> messageTypes;
 
   @Nullable
@@ -41,8 +47,15 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
   @Nullable
   protected final String text;
 
-  protected AbstractTelegramUpdateRequest(@NonNull Update update) {
-    Assert.notNull(update, "update");
+  /**
+   * Creates a new instance of the {@code AbstractTelegramUpdateRequest} class with the given
+   * update.
+   *
+   * @param update the update received from Telegram, not null
+   */
+  protected AbstractTelegramUpdateRequest(Update update) {
+    Assert.notNull(update, "Update");
+
     this.origin = update;
     this.id = update.getUpdateId();
 
@@ -112,7 +125,14 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
     this.messageTypes = parseMessageType();
   }
 
+  /**
+   * Create new instance of {@code AbstractTelegramUpdateRequest} class based on an existing
+   * {@code TelegramUpdateRequest}
+   *
+   * @param request existing {@code TelegramUpdateRequest}
+   */
   protected AbstractTelegramUpdateRequest(TelegramUpdateRequest request) {
+    Assert.notNull(request, "TelegramUpdateRequest");
     this.id = request.getId();
     this.origin = request.getOrigin();
     this.chatId = request.getChatId();

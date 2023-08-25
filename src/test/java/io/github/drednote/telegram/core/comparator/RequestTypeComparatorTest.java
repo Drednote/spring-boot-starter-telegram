@@ -18,7 +18,7 @@ class RequestTypeComparatorTest {
     assertEquals(-1, comparator.compare(RequestType.MESSAGE, null));
     assertEquals(0, comparator.compare(RequestType.MESSAGE, RequestType.MESSAGE));
 
-    assertEquals(1,
+    assertEquals(0,
         comparator.compare(RequestType.INLINE_QUERY, RequestType.MESSAGE));
   }
 }

@@ -1,11 +1,9 @@
 package io.github.drednote.telegram.updatehandler.response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.github.drednote.telegram.TelegramProperties;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.testsupport.UpdateUtils;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,9 +22,11 @@ class GenericTelegramResponseTest {
     String text = "1";
     GenericTelegramResponse response = new GenericTelegramResponse(text);
     Update update = UpdateUtils.createMessage("2");
-    AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
+    var request = UpdateRequestUtils.createMockRequest(update);
+    AbsSender absSender = request.getAbsSender();
+
+    response.process(request);
     Mockito.verify(absSender)
         .execute(new SendMessage(update.getMessage().getChatId().toString(), text));
   }
@@ -36,9 +36,11 @@ class GenericTelegramResponseTest {
     byte[] text = "1".getBytes(StandardCharsets.UTF_8);
     GenericTelegramResponse response = new GenericTelegramResponse(text);
     Update update = UpdateUtils.createMessage("2");
-    AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
+    var request = UpdateRequestUtils.createMockRequest(update);
+    AbsSender absSender = request.getAbsSender();
+
+    response.process(request);
     Mockito.verify(absSender)
         .execute(new SendMessage(update.getMessage().getChatId().toString(),
             new String(text, StandardCharsets.UTF_8)));
@@ -49,9 +51,11 @@ class GenericTelegramResponseTest {
     Update update = UpdateUtils.createMessage("2");
     SendContact sendContact = new SendContact(update.getMessage().getChatId().toString(), "", "");
     GenericTelegramResponse response = new GenericTelegramResponse(sendContact);
-    AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
+    var request = UpdateRequestUtils.createMockRequest(update);
+    AbsSender absSender = request.getAbsSender();
+
+    response.process(request);
     Mockito.verify(absSender).execute(sendContact);
   }
 
@@ -61,9 +65,10 @@ class GenericTelegramResponseTest {
     SendAnimation animation = new SendAnimation(update.getMessage().getChatId().toString(),
         new InputFile("1"));
     GenericTelegramResponse response = new GenericTelegramResponse(animation);
-    AbsSender absSender = Mockito.mock(AbsSender.class);
+    var request = UpdateRequestUtils.createMockRequest(update);
+    AbsSender absSender = request.getAbsSender();
 
-    response.process(new DefaultTelegramUpdateRequest(update, absSender, null));
+    response.process(request);
     Mockito.verify(absSender).execute(animation);
   }
 
@@ -72,10 +77,10 @@ class GenericTelegramResponseTest {
     Update update = UpdateUtils.createMessage("2");
     DataClass object = new DataClass("1");
     GenericTelegramResponse response = new GenericTelegramResponse(object);
-    AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(update, absSender, new TelegramProperties());
-    request.setObjectMapper(new ObjectMapper());
+    var request = UpdateRequestUtils.createMockRequest(update);
+    AbsSender absSender = request.getAbsSender();
+
     response.process(request);
     Mockito.verify(absSender)
         .execute(new SendMessage(update.getMessage().getChatId().toString(), "text = 1"));
