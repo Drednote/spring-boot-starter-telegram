@@ -39,9 +39,11 @@ public class ConcurrentUserRequestFilter implements PriorityPreUpdateFilter {
     Long chatId = request.getChatId();
     ChronoUnit unit = filterProperties.getUserConcurrencyUnit();
     long duration = filterProperties.getUserConcurrency();
+    // Брат, ты изобрел https://www.baeldung.com/spring-bucket4j
     if (duration > 0) {
       try {
         lock.readLock().lock();
+        // а кейлок не понял аааа сложна
         keyLock.writeLock().lock(chatId);
         Instant lastCall = pool.get(chatId);
         if (lastCall != null && unit.between(lastCall, Instant.now()) < duration) {
