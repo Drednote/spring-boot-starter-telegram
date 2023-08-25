@@ -70,6 +70,7 @@ based on your preferred build tool.
 
 The Latest version you can check in **Releases** tab or in **Maven Central** badge
 
+[Maven dependency](https://mvnrepository.com/artifact/io.github.drednote/spring-boot-starter-telegram)
 ### Maven
 
 Add the repository for the library in your to your `pom.xml` file to fetch the artifact from:
