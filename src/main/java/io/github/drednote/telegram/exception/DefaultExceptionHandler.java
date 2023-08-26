@@ -1,22 +1,52 @@
 package io.github.drednote.telegram.exception;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
+import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioException;
-import io.github.drednote.telegram.core.ResponseSetter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import io.github.drednote.telegram.utils.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.method.HandlerMethod;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@Slf4j
-@RequiredArgsConstructor
+/**
+ * The {@code DefaultExceptionHandler} class implements the {@code ExceptionHandler} interface and
+ * serves as a default exception handler for {@code TelegramUpdateRequest} processing. This class
+ * uses the {@link  ExceptionHandlerResolver} and {@link HandlerMethodInvoker} for resolving and
+ * invoking the handler method. It also provides internal methods for handling various types of
+ * exceptions
+ *
+ * @author Ivan Galushko
+ * @see ExceptionHandlerResolver
+ * @see HandlerMethodInvoker
+ */
 public class DefaultExceptionHandler implements ExceptionHandler {
+
+  private static final Logger log = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
   private final ExceptionHandlerResolver exceptionHandlerResolver;
   private final HandlerMethodInvoker handlerMethodInvoker;
 
+  public DefaultExceptionHandler(
+      ExceptionHandlerResolver exceptionHandlerResolver, HandlerMethodInvoker handlerMethodInvoker
+  ) {
+    Assert.required(exceptionHandlerResolver, "ExceptionHandlerResolver");
+    Assert.required(handlerMethodInvoker, "HandlerMethodInvoker");
+
+    this.exceptionHandlerResolver = exceptionHandlerResolver;
+    this.handlerMethodInvoker = handlerMethodInvoker;
+  }
+
+  /**
+   * Handles exceptions that occur during the processing of a {@code TelegramUpdateRequest}. It
+   * resolves the appropriate handler method for the thrown exception and invokes it to handle the
+   * request. If no handler method is found, it logs the error and optionally does some stuff
+   *
+   * @param request the {@code TelegramUpdateRequest} object representing the request to be
+   *                processed
+   */
   @Override
   public void handle(TelegramUpdateRequest request) {
     Throwable throwable = request.getError();
@@ -40,7 +70,8 @@ public class DefaultExceptionHandler implements ExceptionHandler {
           request.getResponse(), request.getId(), telegramApiException);
     } else if (throwable instanceof ScenarioException scenarioException) {
       // do something
-      log.error("For UpdateRequest {} error occurred during update handling", request, scenarioException);
+      log.error("For UpdateRequest {} error occurred during update handling", request,
+          scenarioException);
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {

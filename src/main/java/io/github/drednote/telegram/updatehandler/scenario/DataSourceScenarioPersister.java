@@ -8,6 +8,7 @@ import io.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.repository.CrudRepository;
 
 public class DataSourceScenarioPersister implements ScenarioPersister {
@@ -17,10 +18,17 @@ public class DataSourceScenarioPersister implements ScenarioPersister {
   private final Class<? extends ScenarioDB> clazz;
 
   public DataSourceScenarioPersister(DataSourceAdapter dataSourceAdapter) {
-    Assert.notNull(dataSourceAdapter, "DataSourceAdapter");
+    Assert.required(dataSourceAdapter, "DataSourceAdapter");
     this.serializationService = new ScenarioMachineSerializationService();
     this.repository = dataSourceAdapter.scenarioRepository();
-    this.clazz = dataSourceAdapter.scenarioClass();
+    ResolvableType generic = ResolvableType
+        .forClass(CrudRepository.class, this.repository.getClass())
+        .getGeneric(0);
+    this.clazz = (Class<? extends ScenarioDB>) generic.resolve();
+    if (this.clazz == null) {
+      throw new IllegalStateException(
+          "Cannot resolve Scenario entity class from CrudRepository generic types");
+    }
   }
 
   @Override

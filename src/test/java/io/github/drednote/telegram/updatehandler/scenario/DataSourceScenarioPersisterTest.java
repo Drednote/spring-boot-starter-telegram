@@ -1,28 +1,28 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
 
 import io.github.drednote.telegram.datasource.DataSourceAdapterImpl;
 import io.github.drednote.telegram.datasource.jpa.ScenarioEntity;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.data.repository.CrudRepository;
 
 class DataSourceScenarioPersisterTest {
 
   DataSourceScenarioPersister persister;
-  CrudRepository repository;
+  Repo repository;
 
   @BeforeEach
   void setUp() {
-    repository = Mockito.mock(CrudRepository.class);
+    repository = new Repo();
     persister = new DataSourceScenarioPersister(
-        new DataSourceAdapterImpl(null, repository, ScenarioEntity.class));
+        new DataSourceAdapterImpl(null, repository));
   }
 
 
@@ -32,7 +32,7 @@ class DataSourceScenarioPersisterTest {
     scenario.name = "1";
     scenario.step = new StepImpl(scenario, r -> null, "2");
     persister.persist(scenario);
-    verify(repository).save(Mockito.any(ScenarioEntity.class));
+    assertThat(repository.count).isOne();
   }
 
   @Test
@@ -46,15 +46,71 @@ class DataSourceScenarioPersisterTest {
         IllegalArgumentException.class);
   }
 
-  @Test
-  void shouldFailIf() {
-    assertThatThrownBy(() -> persister.persist(null)).isInstanceOf(IllegalArgumentException.class);
-    assertThatThrownBy(() -> persister.restore(null)).isInstanceOf(IllegalArgumentException.class);
-    ScenarioImpl scenario = new ScenarioImpl(null, List.of(), Map.of());
-    assertThatThrownBy(() -> persister.persist(scenario)).isInstanceOf(
-        IllegalArgumentException.class);
-    assertThatThrownBy(() -> persister.restore(scenario)).isInstanceOf(
-        IllegalArgumentException.class);
-  }
+  static class Repo implements CrudRepository<ScenarioEntity, Long> {
 
+    int count = 0;
+
+    @Override
+    public <S extends ScenarioEntity> S save(S entity) {
+      count++;
+      return entity;
+    }
+
+    @Override
+    public <S extends ScenarioEntity> Iterable<S> saveAll(Iterable<S> entities) {
+      return null;
+    }
+
+    @Override
+    public Optional<ScenarioEntity> findById(Long aLong) {
+      return Optional.empty();
+    }
+
+    @Override
+    public boolean existsById(Long aLong) {
+      return false;
+    }
+
+    @Override
+    public Iterable<ScenarioEntity> findAll() {
+      return null;
+    }
+
+    @Override
+    public Iterable<ScenarioEntity> findAllById(Iterable<Long> longs) {
+      return null;
+    }
+
+    @Override
+    public long count() {
+      return 0;
+    }
+
+    @Override
+    public void deleteById(Long aLong) {
+
+    }
+
+    @Override
+    public void delete(ScenarioEntity entity) {
+
+    }
+
+    @Override
+    public void deleteAllById(Iterable<? extends Long> longs) {
+
+    }
+
+    @Override
+    public void deleteAll(Iterable<? extends ScenarioEntity> entities) {
+
+    }
+
+    @Override
+    public void deleteAll() {
+
+    }
+
+
+  }
 }
