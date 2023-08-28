@@ -49,6 +49,8 @@ public class DefaultExceptionHandler implements ExceptionHandler {
    */
   @Override
   public void handle(TelegramUpdateRequest request) {
+    Assert.notNull(request, "TelegramUpdateRequest");
+
     Throwable throwable = request.getError();
     HandlerMethod handlerMethod = exceptionHandlerResolver.resolve(throwable);
     if (handlerMethod != null) {
