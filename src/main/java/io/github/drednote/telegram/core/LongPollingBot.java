@@ -28,7 +28,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * then processed through a series of steps: pre-filtering, handling, post-filtering, and answering.
  * Any exceptions thrown during processing are handled by the exception handler
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see UpdateHandler
  * @see ExceptionHandler
  * @see UpdateFilterProvider

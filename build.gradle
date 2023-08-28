@@ -107,7 +107,7 @@ publishing {
 
                 developers {
                     developer {
-                        name = "Galushko Ivan"
+                        name = "Ivan Galushko"
                         email = "galushko.ivan8@gmail.com"
                     }
                 }

@@ -32,7 +32,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
  * Implementations of this interface provide getters and setters to access and modify the various
  * properties of the request.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public interface TelegramUpdateRequest {
 

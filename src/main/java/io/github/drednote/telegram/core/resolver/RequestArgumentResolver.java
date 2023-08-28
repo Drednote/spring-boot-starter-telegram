@@ -11,7 +11,7 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
  * {@code HandlerMethodArgumentResolver} interface that resolves base arguments like
  * {@link TelegramUpdateRequest} or {@link TelegramBot}
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
 

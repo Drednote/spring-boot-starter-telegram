@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * The {@code CoreAutoConfiguration} class provides configuration for the beans of core package
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 @AutoConfiguration
 public class CoreAutoConfiguration {

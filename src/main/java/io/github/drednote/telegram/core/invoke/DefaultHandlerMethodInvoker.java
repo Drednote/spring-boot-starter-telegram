@@ -19,7 +19,7 @@ import org.springframework.web.method.HandlerMethod;
  * given request. It uses a {@link HandlerMethodArgumentResolver} to resolve method arguments and
  * invoke the handler method
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
 

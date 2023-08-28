@@ -13,7 +13,7 @@ import org.springframework.lang.Nullable;
  * {@link HandlerMethodInvoker}. Implementations of this interface provide the logic to resolve
  * specific types of method arguments
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see HandlerMethodInvoker
  */
 public interface HandlerMethodArgumentResolver extends Ordered {

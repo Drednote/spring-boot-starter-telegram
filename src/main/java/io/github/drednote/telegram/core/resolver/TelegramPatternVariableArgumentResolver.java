@@ -17,7 +17,7 @@ import org.springframework.lang.Nullable;
  * {@link TelegramPatternVariable}. It provides logic to resolve method arguments based on the
  * pattern variables extracted from the request.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see TelegramPatternVariable
  */
 public class TelegramPatternVariableArgumentResolver implements HandlerMethodArgumentResolver {

@@ -11,7 +11,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
  * interface that represents a composite matcher. It contains a list of individual matchers and
  * checks whether any of them matches the given update request
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class CompositeRequestMatcher implements RequestMatcher {
 

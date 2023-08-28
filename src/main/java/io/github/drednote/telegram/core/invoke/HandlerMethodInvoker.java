@@ -10,7 +10,7 @@ import org.springframework.web.method.HandlerMethod;
  * the given request and handler method. Implementations of this interface provide the logic to
  * resolve method arguments and invoke the handler method
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see HandlerMethod
  * @see InvocableHandlerMethod
  * @see TelegramUpdateRequest

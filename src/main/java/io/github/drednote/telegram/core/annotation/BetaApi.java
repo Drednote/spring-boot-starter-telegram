@@ -20,11 +20,10 @@ import org.glassfish.jersey.Beta;
  * Once a {@code @BetaApi}-annotated API reaches the desired maturity, the {@code @BetaApi}
  * annotation will be removed from such API, and the API will become part of a stable public API.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS)
 @Documented
-@Beta
 public @interface BetaApi {
 }

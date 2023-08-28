@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * <p>
  * Works like {@link PathVariable}
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see TelegramRequest
  * @see TelegramPatternVariableArgumentResolver
  */

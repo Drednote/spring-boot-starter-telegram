@@ -17,7 +17,7 @@ import org.springframework.util.PathMatcher;
  * requests. It implements the {@link Comparable} interface to allow for sorting and the
  * {@link RequestMatcher} interface to determine if a request matches the mapping
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class TelegramRequestMapping implements Comparable<TelegramRequestMapping>, RequestMatcher {
 

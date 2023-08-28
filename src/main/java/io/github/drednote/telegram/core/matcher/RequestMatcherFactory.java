@@ -9,7 +9,7 @@ import java.util.Collection;
  * a {@link TelegramRequestMapping}. It provides static methods for creating request matchers and
  * retrieving a collection of matchers for a {@code TelegramRequestMapping}
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see RequestMatcher
  */
 public abstract class RequestMatcherFactory {

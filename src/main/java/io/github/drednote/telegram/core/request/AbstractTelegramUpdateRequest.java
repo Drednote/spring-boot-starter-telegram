@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
  * {@link TelegramUpdateRequest} interface. It provides common functionality for processing update
  * requests received from Telegram.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 @Getter
 public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateRequest {

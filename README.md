@@ -797,6 +797,6 @@ Thanks to [OlegNyr](https://github.com/OlegNyr/java-telegram-bot-mvc) for an ide
 
 ## Authors
 
-The Spring Boot Starter Telegram library is maintained and developed by Galushko Ivan (Drednote).
+The Spring Boot Starter Telegram library is maintained and developed by Ivan Galushko (Drednote).
 
 Happy bot development!

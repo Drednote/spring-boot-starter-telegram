@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
  * class for only one purpose. It overrides the {@link #getDefaultLocale()} method to make it public
  * and return the default locale configured in the superclass
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class TelegramMessageSource extends ReloadableResourceBundleMessageSource {
 

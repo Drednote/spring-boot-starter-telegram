@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
  * The {@code DefaultTelegramUpdateRequest} class is default implementation of the
  * {@link TelegramUpdateRequest} interface
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 @Getter
 public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest {

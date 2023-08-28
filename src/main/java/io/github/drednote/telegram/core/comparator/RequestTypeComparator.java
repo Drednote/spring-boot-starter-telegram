@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * <p>The priority of each {@link RequestType} is specified in the priority map
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public final class RequestTypeComparator extends DefaultComparator<RequestType> {
 

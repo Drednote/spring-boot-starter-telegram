@@ -26,8 +26,8 @@ public class TelegramAdviceBeanPostProcessor implements BeanPostProcessor {
   private final ExceptionHandlerRegistrar registrar;
 
   /**
-   * Constructs a {@code TelegramAdviceBeanPostProcessor} instance with the given {@code
-   * ExceptionHandlerRegistrar}
+   * Constructs a {@code TelegramAdviceBeanPostProcessor} instance with the given
+   * {@code ExceptionHandlerRegistrar}
    *
    * @param registrar The registrar for registering exception handler methods. Must not be null
    * @throws IllegalArgumentException If the registrar is null
@@ -50,8 +50,7 @@ public class TelegramAdviceBeanPostProcessor implements BeanPostProcessor {
   public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
       throws BeansException {
     Class<?> targetClass = AopUtils.getTargetClass(bean);
-    TelegramAdvice telegramAdvice = AnnotationUtils
-        .findAnnotation(targetClass, TelegramAdvice.class);
+    var telegramAdvice = AnnotationUtils.findAnnotation(targetClass, TelegramAdvice.class);
     if (telegramAdvice != null) {
       registrar.register(bean, targetClass);
     }

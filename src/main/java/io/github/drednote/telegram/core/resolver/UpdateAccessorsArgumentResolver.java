@@ -21,7 +21,7 @@ import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
  * The {@code RequestArgumentResolver} class is an implementation of the
  * {@code HandlerMethodArgumentResolver} interface that resolves {@link Update}'s arguments
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see Update
  */
 public class UpdateAccessorsArgumentResolver implements HandlerMethodArgumentResolver {
