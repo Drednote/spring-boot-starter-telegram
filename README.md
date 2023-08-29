@@ -204,10 +204,9 @@ This library's implementation closely resembles the familiar structure of `Java 
   help in determining which updates should be processed further. Or you can put logic in the filter
   that will be executed for each update, for example, log something
 
-- Once the updates are filtered, the available `UpdateHandler` are called in a
-  specific order based on their priority. There are different mechanisms available for handling
-  updates, and you can find more information about them in the [Update Handling](#update-handling)
-  section
+- Once the updates are filtered, the available `UpdateHandler` are called in a specific order based
+  on their priority. There are different mechanisms available for handling updates, and you can find
+  more information about them in the [Update Handling](#update-handling) section
 
 - After the successful processing of updates, the [Filters](#filters) are called again as part of
   the post-processing stage. This gives an opportunity for any additional filtering or actions to be
@@ -298,8 +297,8 @@ public class MainController {
     - `TelegramRequest` without **requestType** has the lowest priority
     - `TelegramRequest` without **messageType** has the lowest priority among the **requestType**
       equal to `RequestType.MESSAGE`
-    - `TelegramRequest` with **exclusiveMessageType** set to true and with more elements
-      specified in **messageType** takes precedence over others
+    - `TelegramRequest` with **exclusiveMessageType** set to true and with more elements specified
+      in **messageType** takes precedence over others
     - If `TelegramRequest` has the same priority by the above conditions, than the `AntPathMatcher`
       order applied
       > This ensures that the most specific controllers are given precedence in the update
@@ -309,8 +308,8 @@ public class MainController {
 - Methods marked with `@TelegramRequest` annotation can return any object, as a result. The
   response processing mechanism is detailed in the [Response Processing](#response-processing)
   section
-- Also, if you need to get some data from the user's message by
-  a specific pattern, then you can use the [TelegramPatternVariable](#telegrampatternvariable)
+- Also, if you need to get some data from the user's message by a specific pattern, then you can use
+  the [TelegramPatternVariable](#telegrampatternvariable)
   annotation
   **Essentially `TelegramPatternVariable` works the same as `PathVariable`.**
 - Any uncaught errors that occur during the execution of user code, are caught
@@ -342,8 +341,8 @@ and after they are processed.
 
 - To control update filtering, filters can set some properties
   in [TelegramUpdateRequest](#telegramupdaterequest), such as `response`. If any filter set
-  property `response` then the update is considered successful and an attempt will be made
-  to send a response
+  property `response` then the update is considered successful and an attempt will be made to send a
+  response
 - Filters are called twice: before (pre-filters) the main [Update Handling](#update-handling) and
   after (post-filters). It is important to note that, even if an error occurred during the main
   processing of the update, post-filters will still be executed
@@ -403,8 +402,8 @@ handle this, there is a component called **Response Processing**, which follows 
 - The response represents by interface `TelegramResponse`
 - **Response can only be sent if [Update](#update) has a `chatId`**. So if in update there is
   no `chatId` than you should return `void`
-- Any response will automatically be wrapped in the `TelegramResponse` interface and execute
-  sending method. Rules of wrapping:
+- Any response will automatically be wrapped in the `TelegramResponse` interface and execute sending
+  method. Rules of wrapping:
     - `void` or `null` will not trigger sending the response
     - `String` will be wrapped in `GenericTelegramResponse` and execution method will send simple
       text response (`SendMessage`)
@@ -421,15 +420,14 @@ handle this, there is a component called **Response Processing**, which follows 
     - For more information on wrapping rules, see the `ResponseSetter` and `GenericTelegramResponse`
       classes
 - You can create any implementation of `TelegramResponse` for sending response
-- Any custom code can be written in `TelegramResponse`, but I strongly recommend using
-  this interface only for sending a response to **Telegram**
+- Any custom code can be written in `TelegramResponse`, but I strongly recommend using this
+  interface only for sending a response to **Telegram**
 
 ### Exception Handling
 
 The purpose of the ExceptionHandler mechanism is to provide centralized error handling. Any errors
-that occur during the processing will be caught and sent to
-the `ExceptionHandler` for further handling. Here are some important rules to
-keep in mind:
+that occur during the processing will be caught and sent to the `ExceptionHandler` for further
+handling. Here are some important rules to keep in mind:
 
 - To initiate error handling, the class must be annotated with `@TelegramAdvice`. Additionally, you
   need to specify at least one method and annotate it with `@TelegramExceptionHandler`.
@@ -439,8 +437,7 @@ keep in mind:
   implemented to determine the priority of method calls. The higher in the hierarchy the error
   (throwable at the very top) that the handler expects, the lower the priority of the method call
   will be compared to others.
-  > This ensures that the most specific error handlers are given
-  precedence in the error handling process
+  > This ensures that the most specific error handlers are given precedence in the error handling process
 - Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
   parameters as defined in the [Argument resolving](#argument-resolving) section
 
@@ -456,8 +453,8 @@ parameters for any method are calculated dynamically according to the following 
 
 You can specify arguments based on a java type:
 
-- [Update](#update) and any top-level nested objects within
-  it. `Message`, `Poll`, `InlineQuery`, etc.
+- [Update](#update) and any top-level nested objects within it. `Message`, `Poll`, `InlineQuery`,
+  etc.
 - [TelegramUpdateRequest](#telegramupdaterequest)
 - `TelegramBot` or any subclasses if you need to consume current telegram bot instance
 - `String` arguments will fill with the **text** property
@@ -485,10 +482,8 @@ You can annotate certain arguments using `@TelegramPatternVariable`. Here are th
 
 The functionality of `@TelegramScope` is similar to the Spring annotation `@Scope("request")`, with
 the difference being that the context is created at the start of update processing instead of at the
-request level.
-By marking a **spring bean** with this annotation, a new instance of the bean will be created for
-each
-update processing.
+request level. By marking a **spring bean** with this annotation, a new instance of the bean will be
+created for each update processing.
 
 > It's important to note that each update handling is associated with a specific thread. In cases
 > where you create sub-threads within the main thread, you will need to manually bind
@@ -537,8 +532,7 @@ public class JpaConfig {
 
 `TelegramUpdateRequest` is a primary object that stores all information about update. Any change
 that occurs during the processing of an update is written to it. Thus, if you get it in the user
-code, you can find out all the information about the current update.
-For example, in this way:
+code, you can find out all the information about the current update. For example, in this way:
 
 ```java
 
@@ -561,9 +555,8 @@ Read more about [Telegram Controllers](#controllers).
 
 #### UpdateFilter
 
-- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call.
-  The main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. More about
-  filters [here](#filters)
+- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call. The
+  main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. More about filters [here](#filters)
 
 #### TelegramResponse
 
@@ -578,10 +571,10 @@ Read more about [Telegram Controllers](#controllers).
 
 ## Additional Info
 
-- All packages are children of `io.github.drednote.telegram` marked with two
-  annotations - `@NonNullApi` and `@NonNullFields`. This means that by default all fields and APIs
-  accept and return non-null objects. If it is needed to return a nullable object, then the field or
-  method is annotated with `@Nullable`
+- All packages are children of `io.github.drednote.telegram` marked with two annotations
+    - `@NonNullApi` and `@NonNullFields`. This means that by default all fields and APIs accept and
+      return non-null objects. If it is needed to return a nullable object, then the field or method
+      is annotated with `@Nullable`
 
 ## Configuration
 
@@ -635,12 +628,14 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 
 ### Filters properties
 
-| Name                | Description                                                                                                       | Default Value                                   |
-|---------------------|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| permission          | Permission filter properties.                                                                                     | [Permission properties](#permission-properties) |
-| userConcurrency     | How often each user can perform requests to bot. 0 = no rules.                                                    | 0                                               |
-| userConcurrencyUnit | The ChronoUnit which will be applied to userConcurrency.                                                          | SECONDS                                         |
-| setDefaultAnswer    | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response. | true                                            |
+| Name                         | Description                                                                                                                    | Default Value                                   |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| permission                   | Permission filter properties.                                                                                                  | [Permission properties](#permission-properties) |
+| userRateLimit                | How often each user can perform requests to bot. 0 = no rules.                                                                 | 0                                               |
+| userRateLimitUnit            | The ChronoUnit which will be applied to userRateLimit.                                                                         | SECONDS                                         |
+| userRateLimitCacheExpire     | How long cache with rate limit bucket will not expire. This parameter needed just for delete staled buckets to free up memory. | 1                                               |
+| userRateLimitCacheExpireUnit | The ChronoUnit which will be applied to userRateLimitCacheExpire.                                                              | HOURS                                           |
+| setDefaultAnswer             | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response.              | true                                            |
 
 ### Permission properties
 

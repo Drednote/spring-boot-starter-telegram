@@ -1,10 +1,35 @@
 package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.filter.post.PostUpdateFilter;
+import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
+import org.springframework.lang.NonNull;
 
+/**
+ * Represents an interface for matching Telegram update requests against certain criteria to be
+ * processed by {@link PreUpdateFilter} or {@link PostUpdateFilter}.
+ *
+ * <p>Designed specifically to work with {@link PreUpdateFilter} and {@link PostUpdateFilter}.
+ *
+ * <p>This interface provides a default implementation for the
+ * {@link #matches(TelegramUpdateRequest)} method, which returns {@code true} by default. Classes
+ * implementing this interface can override the default implementation to define custom logic for
+ * matching update requests.
+ *
+ * @author Ivan Galushko
+ * @see PreUpdateFilter
+ * @see PostUpdateFilter
+ */
 public interface UpdateFilterMatcher {
 
-  default boolean matches(TelegramUpdateRequest request) {
+  /**
+   * Determines whether the given Telegram update request matches certain criteria to be processed
+   * by {@link PreUpdateFilter} or {@link PostUpdateFilter}.
+   *
+   * @param request The Telegram update request to be matched against criteria. Must not be null
+   * @return {@code true} if the update request matches the criteria, {@code false} otherwise
+   */
+  default boolean matches(@NonNull TelegramUpdateRequest request) {
     return true;
   }
 }

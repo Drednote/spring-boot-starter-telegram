@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.glassfish.jersey.Beta;
 
 /**
  * Marker of a public API that is still in "beta" non-final version.
@@ -26,4 +25,5 @@ import org.glassfish.jersey.Beta;
 @Retention(RetentionPolicy.CLASS)
 @Documented
 public @interface BetaApi {
+
 }
