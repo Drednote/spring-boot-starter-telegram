@@ -696,6 +696,10 @@ These dependencies will automatically be included in your project
 
 `com.esotericsoftware:kryo`
 
+`com.github.vladimir-bukhtoyarov:bucket4j-core`
+
+`com.github.ben-manes.caffeine:caffeine`
+
 ### Optional
 
 You can manually add them if you want to configure datasource. For what you should configure
