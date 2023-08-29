@@ -2,6 +2,7 @@ package io.github.drednote.telegram.session;
 
 import static org.telegram.telegrambots.Constants.SOCKET_TIMEOUT;
 
+import io.github.drednote.telegram.core.LongPollingBot;
 import io.github.drednote.telegram.core.request.RequestType;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -57,7 +58,7 @@ public class SessionProperties {
   /**
    * The strategy to receive updates from Telegram API
    *
-   * @apiNote type WebHooks don't implement yet
+   * @apiNote type WebHooks not implemented yet
    * @see <a href="https://core.telegram.org/bots/api#getting-updates">Getting updates</a>
    */
   private UpdateStrategy updateStrategy = UpdateStrategy.LONG_POLLING;
@@ -114,6 +115,14 @@ public class SessionProperties {
   }
 
   public enum UpdateStrategy {
-    LONG_POLLING, WEBHOOKS
+    /**
+     * @see LongPollingBot
+     * @see LongPollingSession
+     */
+    LONG_POLLING,
+    /**
+     * WebHooks not implemented yet
+     */
+    WEBHOOKS
   }
 }

@@ -21,7 +21,10 @@ import java.lang.annotation.Target;
  *
  * @author Ivan Galushko
  */
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
+@Target({
+    ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE,
+    ElementType.PACKAGE
+})
 @Retention(RetentionPolicy.CLASS)
 @Documented
 public @interface BetaApi {

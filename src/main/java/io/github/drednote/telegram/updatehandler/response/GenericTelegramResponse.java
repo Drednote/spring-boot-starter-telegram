@@ -2,11 +2,12 @@ package io.github.drednote.telegram.updatehandler.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.utils.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
@@ -19,19 +20,47 @@ import org.telegram.telegrambots.meta.api.methods.send.SendVideoNote;
 import org.telegram.telegrambots.meta.api.methods.send.SendVoice;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-@Slf4j
+/**
+ * This class represents a generic Telegram response handler that can process various types of
+ * responses and messages. It extends the {@code AbstractTelegramResponse} class and implements the
+ * {@link TelegramResponse} interface. The response can be a String, byte array, BotApiMethod,
+ * SendMediaBotMethod, TelegramResponse, or any serializable object. Depending on the type of
+ * response, it will be processed accordingly.
+ * <p>
+ * It is the main {@code TelegramResponse} implementation that should be used manually in code
+ * <p>
+ * todo add realization for collection of TelegramResponse
+ *
+ * @author Ivan Galushko
+ */
 public class GenericTelegramResponse extends AbstractTelegramResponse {
 
+  /**
+   * The response object to be processed
+   */
   @NonNull
   private final Object response;
 
+  /**
+   * Creates a new instance of GenericTelegramResponse with the specified response object.
+   *
+   * @param response The response object to be processed
+   */
   public GenericTelegramResponse(@NonNull Object response) {
-    super(null, null);
+    Assert.required(response, "Response");
     this.response = response;
   }
 
+  /**
+   * Processes the Telegram response. Depending on the type of response, it will be sent to the
+   * chat.
+   *
+   * @param request The TelegramUpdateRequest containing the update and sender information
+   * @throws TelegramApiException if an error occurs while sending the response
+   */
   @Override
   public void process(TelegramUpdateRequest request) throws TelegramApiException {
+    Assert.notNull(request, "TelegramUpdateRequest");
     Serializable responseMessage;
     if (response instanceof String str) {
       responseMessage = sendString(str, request);
@@ -68,6 +97,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     return stringResponse;
   }
 
+  @Nullable
   private Serializable tryToSendMedia(TelegramUpdateRequest request) throws TelegramApiException {
     if (response instanceof SendAnimation sendAnimation) {
       return request.getAbsSender().execute(sendAnimation);

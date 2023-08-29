@@ -12,7 +12,7 @@ public interface FieldProvider<T> {
   @Nullable
   T getField();
 
-  void setField(T t);
+  void setField(@Nullable T t);
 
   static <K> FieldProvider<K> create(K k) {
     return new FieldProviderImpl<>(k);
