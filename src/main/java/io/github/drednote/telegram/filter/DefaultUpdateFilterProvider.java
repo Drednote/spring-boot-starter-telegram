@@ -5,7 +5,7 @@ import io.github.drednote.telegram.filter.post.PostFilterOrderComparator;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreFilterOrderComparator;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
-import io.github.drednote.telegram.session.TelegramScope;
+import io.github.drednote.telegram.core.TelegramScope;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;

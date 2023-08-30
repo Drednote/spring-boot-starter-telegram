@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,8 +14,7 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
  *
  * <p>This class provides automatic configuration for different types of Telegram bot sessions,
  * including long polling and webhooks, based on properties defined in the application's
- * configuration. It also configures custom scopes to manage beans associated with Telegram bot
- * requests.
+ * configuration.
  */
 @AutoConfiguration
 @EnableConfigurationProperties(SessionProperties.class)
@@ -67,18 +65,6 @@ public class SessionAutoConfiguration {
   }
 
   /**
-   * Configures a custom scope for managing Telegram bot request beans.
-   *
-   * @return The configured CustomScopeConfigurer bean
-   */
-  @Bean
-  public CustomScopeConfigurer customScopeConfigurer() {
-    CustomScopeConfigurer configurer = new CustomScopeConfigurer();
-    configurer.addScope(TelegramRequestScope.BOT_SCOPE_NAME, new TelegramRequestScope());
-    return configurer;
-  }
-
-  /**
    * Configures a bean for the Telegram client to interact with the Telegram API.
    *
    * @return The configured Telegram client
@@ -87,15 +73,5 @@ public class SessionAutoConfiguration {
   @ConditionalOnMissingBean
   public TelegramClient telegramClient(SessionProperties properties, ObjectMapper objectMapper) {
     return new TelegramClientImpl(properties, objectMapper);
-  }
-
-  /**
-   * Configures a bean for managing the Telegram bot request context.
-   *
-   * @return The configured UpdateRequestContext bean
-   */
-  @Bean
-  public UpdateRequestContext botSessionContext() {
-    return new UpdateRequestContext() {};
   }
 }

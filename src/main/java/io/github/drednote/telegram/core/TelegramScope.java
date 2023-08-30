@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session;
+package io.github.drednote.telegram.core;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.lang.annotation.Documented;

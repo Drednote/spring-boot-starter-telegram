@@ -7,9 +7,8 @@ import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
-import io.github.drednote.telegram.session.UpdateRequestContext;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
-import io.github.drednote.telegram.updatehandler.response.AbstractTelegramResponse;
+import io.github.drednote.telegram.updatehandler.response.SimpleMessageTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
@@ -149,9 +148,9 @@ public class LongPollingBot extends TelegramLongPollingBot {
   private void doPreFilter(DefaultTelegramUpdateRequest request) {
     List<PreUpdateFilter> filters = updateFilterProvider.getPreFilters(request);
     Iterator<PreUpdateFilter> iterator = filters.iterator();
-    do {
+    while (request.getResponse() == null && iterator.hasNext()) {
       iterator.next().preFilter(request);
-    } while (request.getResponse() == null && iterator.hasNext());
+    }
   }
 
   /**
@@ -161,10 +160,9 @@ public class LongPollingBot extends TelegramLongPollingBot {
    */
   private void doPostFilter(DefaultTelegramUpdateRequest request) {
     List<PostUpdateFilter> filters = updateFilterProvider.getPostFilters(request);
-    Iterator<PostUpdateFilter> iterator = filters.iterator();
-    do {
-      iterator.next().postFilter(request);
-    } while (iterator.hasNext());
+    for (PostUpdateFilter filter : filters) {
+      filter.postFilter(request);
+    }
   }
 
   /**
@@ -190,8 +188,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
   private void doAnswer(DefaultTelegramUpdateRequest request) throws TelegramApiException {
     TelegramResponse response = request.getResponse();
     if (response != null) {
-      if (response instanceof AbstractTelegramResponse abstractHandlerResponse) {
-        abstractHandlerResponse.setMessageSource(messageSource);
+      if (response instanceof SimpleMessageTelegramResponse simpleMessageTelegramResponse) {
+        simpleMessageTelegramResponse.setMessageSource(messageSource);
       }
       response.process(new DefaultTelegramUpdateRequest(request));
     }

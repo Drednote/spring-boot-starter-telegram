@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session;
+package io.github.drednote.telegram.core;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
@@ -94,8 +94,10 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
       TelegramUpdateRequest request = getRequest();
       synchronized (request) {
         List<String> names = beanNames.remove(request.getId());
-        for (String name : names) {
-          factory.destroyScopedBean(name);
+        if (names != null) {
+          for (String name : names) {
+            factory.destroyScopedBean(name);
+          }
         }
       }
     }
