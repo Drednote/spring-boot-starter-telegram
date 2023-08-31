@@ -7,12 +7,23 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration properties for defining access permissions and roles.
+ *
+ * <p>The properties defined in this class are used for enforcing access permissions and roles
+ * in various filters and components.
+ *
+ * @author Ivan Galushko
+ */
 @Configuration
 @ConfigurationProperties("drednote.telegram.filters.permission")
 @Getter
 @Setter
 public class PermissionProperties {
 
+  /**
+   * The default role assigned to users with no roles.
+   */
   public static final String DEFAULT_ROLE = "NONE";
 
   /**
@@ -35,14 +46,30 @@ public class PermissionProperties {
   @Deprecated(forRemoval = true)
   private Map<Long, Set<String>> assignRole = Map.of();
 
+  /**
+   * Enumeration of access control modes.
+   */
   public enum Access {
-    ALL, BY_ROLE
+    /**
+     * All users have access to bot
+     */
+    ALL,
+    /**
+     * Only users with specific privilege have access to bot
+     */
+    BY_ROLE
   }
 
+  /**
+   * Defines the privileges and attributes of a role
+   */
   @Getter
   @Setter
   public static class Role {
 
+    /**
+     * Indicates whether the role has read privileges
+     */
     private boolean canRead;
   }
 }

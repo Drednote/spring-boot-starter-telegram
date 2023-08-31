@@ -4,10 +4,23 @@ import io.github.drednote.telegram.filter.FilterOrderComparator;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+/**
+ * Comparator for ordering post-update filters based on their priority.
+ *
+ * <p>This class extends the {@link FilterOrderComparator} and is specifically designed
+ * for comparing post-update filter objects and their order values.
+ *
+ * @author Ivan Galushko
+ * @see FilterOrderComparator
+ * @see PostUpdateFilter
+ */
 public class PostFilterOrderComparator extends FilterOrderComparator {
 
   public static final PostFilterOrderComparator INSTANCE = new PostFilterOrderComparator();
 
+  /**
+   * Constructs a FilterOrderComparator with the specified priority class
+   */
   private PostFilterOrderComparator() {
     super(PriorityPostUpdateFilter.class);
   }

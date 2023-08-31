@@ -4,7 +4,7 @@ import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
-import io.github.drednote.telegram.filter.pre.ConcurrentUserRequestFilter;
+import io.github.drednote.telegram.filter.pre.UserRateLimitRequestFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
 import org.springframework.beans.factory.ObjectProvider;
@@ -13,6 +13,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * Autoconfiguration class for setting up update filters and related properties.
+ *
+ * @author Ivan Galushko
+ */
 @AutoConfiguration
 @EnableConfigurationProperties({FilterProperties.class, PermissionProperties.class})
 public class FiltersAutoConfiguration {
@@ -42,8 +47,8 @@ public class FiltersAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ConcurrentUserRequestFilter concurrentUserRequestFilter(FilterProperties properties) {
-    return new ConcurrentUserRequestFilter(properties);
+  public UserRateLimitRequestFilter concurrentUserRequestFilter(FilterProperties properties) {
+    return new UserRateLimitRequestFilter(properties);
   }
 
   @Bean

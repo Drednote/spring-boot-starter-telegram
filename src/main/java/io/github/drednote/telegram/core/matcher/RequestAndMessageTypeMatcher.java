@@ -12,7 +12,7 @@ import org.springframework.core.Ordered;
  * of the given update request matches the request type specified in the mapping, and if it is true,
  * checks the message types
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see TelegramRequestMapping
  */
 public class RequestAndMessageTypeMatcher implements RequestMatcher {

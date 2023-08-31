@@ -1,9 +1,9 @@
 package io.github.drednote.telegram.updatehandler;
 
 import io.github.drednote.telegram.exception.DefaultExceptionHandler;
-import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
+import io.github.drednote.telegram.updatehandler.controller.ControllerUpdateHandler;
+import io.github.drednote.telegram.updatehandler.controller.TelegramController;
+import io.github.drednote.telegram.updatehandler.controller.TelegramRequest;
 import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
 import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioAdapter;
@@ -20,13 +20,13 @@ import org.springframework.context.annotation.Configuration;
 public class UpdateHandlerProperties {
 
   /**
-   * Enabled mvc update handling
+   * Enabled controller update handling
    *
    * @see TelegramController
    * @see TelegramRequest
-   * @see MvcUpdateHandler
+   * @see ControllerUpdateHandler
    */
-  private boolean mvcEnabled = true;
+  private boolean controllerEnabled = true;
   /**
    * Enabled scenario update handling
    *

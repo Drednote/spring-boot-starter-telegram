@@ -1,10 +1,8 @@
-package io.github.drednote.telegram.updatehandler.mvc;
+package io.github.drednote.telegram.updatehandler.controller;
 
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
+import io.github.drednote.telegram.utils.Assert;
 import java.lang.reflect.Method;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -13,16 +11,38 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.NonNull;
 
-@RequiredArgsConstructor
+/**
+ * A {@code BeanPostProcessor} that processes beans annotated with {@link TelegramController}. It
+ * identifies methods annotated with {@link TelegramRequest} and registers them with the {@link
+ * ControllerRegistrar}.
+ * <p>
+ * This post-processor is responsible for identifying and registering methods in Telegram
+ * controllers that should handle incoming requests.
+ *
+ * @author Ivan Galushko
+ * @see TelegramController
+ * @see TelegramRequest
+ * @see ControllerRegistrar
+ */
 public class TelegramControllerBeanPostProcessor implements BeanPostProcessor {
 
   private final ControllerRegistrar registrar;
 
+  public TelegramControllerBeanPostProcessor(ControllerRegistrar registrar) {
+    Assert.required(registrar, "ControllerRegistrar");
+    this.registrar = registrar;
+  }
+
+  /**
+   * Processes beans before initialization. For beans annotated with {@link TelegramController}, it
+   * identifies annotated methods and registers them using the {@link ControllerRegistrar}.
+   */
   @Override
   public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
       throws BeansException {
     Class<?> targetClass = AopUtils.getTargetClass(bean);
-    TelegramController telegramController = AnnotationUtils.findAnnotation(targetClass, TelegramController.class);
+    TelegramController telegramController = AnnotationUtils.findAnnotation(targetClass,
+        TelegramController.class);
     if (telegramController != null) {
       var annotatedMethods = findAnnotatedMethodsTelegramRequest(targetClass);
       if (!annotatedMethods.isEmpty()) {

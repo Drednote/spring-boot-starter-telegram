@@ -8,9 +8,9 @@ import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
-import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
-import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
+import io.github.drednote.telegram.updatehandler.controller.ControllerUpdateHandler;
+import io.github.drednote.telegram.updatehandler.controller.RequestHandler;
+import io.github.drednote.telegram.updatehandler.controller.TelegramRequest;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioAdapter;
@@ -32,7 +32,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
  * Implementations of this interface provide getters and setters to access and modify the various
  * properties of the request.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public interface TelegramUpdateRequest {
 
@@ -188,7 +188,7 @@ public interface TelegramUpdateRequest {
    * Returns the info for invocation {@link TelegramRequest} methods
    *
    * @return the info for invocation, or null if not found methods
-   * @see MvcUpdateHandler
+   * @see ControllerUpdateHandler
    */
   @Nullable
   RequestHandler getRequestHandler();

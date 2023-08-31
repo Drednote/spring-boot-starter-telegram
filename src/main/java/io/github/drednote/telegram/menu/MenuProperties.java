@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.Nullable;
 
 @Configuration
 @ConfigurationProperties("drednote.telegram.menu")
@@ -19,6 +20,7 @@ public class MenuProperties {
   /**
    * Create bean {@link BotMenu} with this commands
    */
+  @Nullable
   private Map<String, CommandCls> values;
   /**
    * Send policy
@@ -40,7 +42,7 @@ public class MenuProperties {
      */
     private String command;
 
-    public void setCommand(String command) {
+    public void setCommand(@Nullable String command) {
       if (command != null) {
         validate(command);
         this.command = (command.startsWith("/") ? "" : "/") + command;
@@ -62,6 +64,13 @@ public class MenuProperties {
   }
 
   public enum SendPolicy {
-    NONE, ON_STARTUP
+    /**
+     * No auto sending menu to Telegram API
+     */
+    NONE,
+    /**
+     * Auto send menu to Telegram API on application start up
+     */
+    ON_STARTUP
   }
 }

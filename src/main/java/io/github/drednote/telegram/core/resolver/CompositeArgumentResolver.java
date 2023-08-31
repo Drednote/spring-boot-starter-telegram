@@ -14,7 +14,7 @@ import org.springframework.lang.Nullable;
  * composite resolver. It iterates through the list of resolvers and delegates the resolution of
  * method arguments to the first resolver that supports the parameter type
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class CompositeArgumentResolver implements HandlerMethodArgumentResolver {
 

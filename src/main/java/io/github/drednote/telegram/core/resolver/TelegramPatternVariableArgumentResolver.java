@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPatternVariable;
+import io.github.drednote.telegram.updatehandler.controller.RequestHandler;
+import io.github.drednote.telegram.updatehandler.controller.TelegramPatternVariable;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import org.springframework.lang.Nullable;
  * {@link TelegramPatternVariable}. It provides logic to resolve method arguments based on the
  * pattern variables extracted from the request.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see TelegramPatternVariable
  */
 public class TelegramPatternVariableArgumentResolver implements HandlerMethodArgumentResolver {

@@ -29,6 +29,8 @@ dependencies {
     api 'com.esotericsoftware:kryo:4.0.3'
     api 'org.springframework.boot:spring-boot-starter'
     api 'org.springframework:spring-web'
+    api 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
+    api 'com.github.ben-manes.caffeine:caffeine'
 
     // data
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -107,7 +109,7 @@ publishing {
 
                 developers {
                     developer {
-                        name = "Galushko Ivan"
+                        name = "Ivan Galushko"
                         email = "galushko.ivan8@gmail.com"
                     }
                 }

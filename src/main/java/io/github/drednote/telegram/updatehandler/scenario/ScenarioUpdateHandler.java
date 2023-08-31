@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import io.github.drednote.telegram.utils.FieldProvider;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+@BetaApi
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE + 100)
 public class ScenarioUpdateHandler implements UpdateHandler {

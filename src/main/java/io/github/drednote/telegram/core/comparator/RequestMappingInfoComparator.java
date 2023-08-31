@@ -13,7 +13,7 @@ import org.springframework.util.PathMatcher;
  * <p>
  * Delegators - other comparators, that compare specific fields in {@link TelegramRequestMapping}
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see RequestTypeComparator
  * @see MessageTypeComparator
  * @see PatternComparator

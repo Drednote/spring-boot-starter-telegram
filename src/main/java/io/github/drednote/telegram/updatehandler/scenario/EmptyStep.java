@@ -1,9 +1,11 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+@BetaApi
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EmptyStep implements Step {
 

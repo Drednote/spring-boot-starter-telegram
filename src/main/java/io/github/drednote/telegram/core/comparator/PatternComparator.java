@@ -6,7 +6,7 @@ import org.springframework.util.PathMatcher;
 /**
  * A comparator that delegate comparing of two strings based to {@link PathMatcher}
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see PathMatcher
  */
 public final class PatternComparator extends DefaultComparator<String> {

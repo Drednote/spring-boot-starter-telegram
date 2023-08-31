@@ -1,8 +1,10 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import org.springframework.lang.Nullable;
 
+@BetaApi
 public sealed interface Scenario permits ScenarioImpl {
 
   /**

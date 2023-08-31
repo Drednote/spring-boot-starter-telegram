@@ -48,7 +48,7 @@ public class DataSourceAutoConfiguration {
     public DataSourceAdapter dataSourceAdapter(
         JpaPermissionRepository repository, JpaScenarioRepository scenarioRepository
     ) {
-      return new DataSourceAdapterImpl(repository, scenarioRepository, ScenarioEntity.class);
+      return new DataSourceAdapterImpl(repository, scenarioRepository);
     }
 
     @ConditionalOnClass(Hibernate.class)
@@ -82,7 +82,7 @@ public class DataSourceAutoConfiguration {
     public DataSourceAdapter dataSourceAdapter(
         MongoPermissionRepository repository, MongoScenarioRepository scenarioRepository
     ) {
-      return new DataSourceAdapterImpl(repository, scenarioRepository, ScenarioDocument.class);
+      return new DataSourceAdapterImpl(repository, scenarioRepository);
     }
   }
 }

@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 /**
  * The {@code RequestType} enum represents the type of {@link Update}.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @apiNote Only one type can be present for any given update.
  * @see Update
  */

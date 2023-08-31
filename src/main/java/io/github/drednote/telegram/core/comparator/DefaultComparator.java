@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
  * implement the {@link #doCompare} method to define the comparison logic
  *
  * @param <T> The type of objects being compared
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public abstract class DefaultComparator<T> implements Comparator<T> {
 

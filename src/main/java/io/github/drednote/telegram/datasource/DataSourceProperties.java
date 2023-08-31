@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.datasource;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("drednote.telegram.datasource")
 @Getter
 @Setter
+@BetaApi
 public class DataSourceProperties {
 
   /**

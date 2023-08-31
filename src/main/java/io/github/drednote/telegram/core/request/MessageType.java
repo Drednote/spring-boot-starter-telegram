@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 /**
  * The {@code MessageType} enum represents the type of {@link Update}'s message.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  * @see Update#getMessage
  */
 public enum MessageType {

@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.datasource;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -27,6 +28,7 @@ import org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator;
  * Create schemas for entities define by {@link Entity}
  */
 @RequiredArgsConstructor
+@BetaApi
 public class SchemaGenerator {
 
   private final EntityManager entityManager;

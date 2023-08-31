@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario.configurer;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.updatehandler.scenario.ActionExecutor;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.LinkedList;
@@ -7,6 +8,7 @@ import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 
+@BetaApi
 @RequiredArgsConstructor
 public final class ScenarioConfigurerImpl implements ScenarioConfigurer {
 

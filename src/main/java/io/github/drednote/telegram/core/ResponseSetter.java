@@ -16,7 +16,7 @@ import org.springframework.lang.Nullable;
  * responses, including empty responses, single responses, composite responses, and generic
  * responses
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public abstract class ResponseSetter {
 

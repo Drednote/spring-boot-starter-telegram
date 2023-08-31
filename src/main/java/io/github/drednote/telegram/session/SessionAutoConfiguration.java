@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,10 +9,25 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
 
+/**
+ * Autoconfiguration class for managing Telegram bot sessions and scopes.
+ *
+ * <p>This class provides automatic configuration for different types of Telegram bot sessions,
+ * including long polling and webhooks, based on properties defined in the application's
+ * configuration.
+ */
 @AutoConfiguration
 @EnableConfigurationProperties(SessionProperties.class)
 public class SessionAutoConfiguration {
 
+  /**
+   * Configures a bean for the Telegram bot session using long polling. And starts session
+   *
+   * @param telegramClient The Telegram client used to interact with the Telegram API
+   * @param bot            The Telegram bot instance
+   * @param properties     Configuration properties for the session
+   * @return The configured Telegram bot session
+   */
   @Bean(destroyMethod = "stop")
   @ConditionalOnProperty(
       prefix = "drednote.telegram.session",
@@ -26,12 +40,19 @@ public class SessionAutoConfiguration {
   public TelegramBotSession longPollingTelegramBotSession(
       TelegramClient telegramClient, TelegramBot bot, SessionProperties properties
   ) {
-    LongPollingSession session = new LongPollingSession(telegramClient, properties);
-    session.setCallback(bot);
+    LongPollingSession session = new LongPollingSession(telegramClient, properties, bot);
     session.start();
     return session;
   }
 
+  /**
+   * Configures a bean for the Telegram bot session using webhooks.
+   *
+   * <p><b>Throws {@link UnsupportedOperationException} because webhooks are not yet
+   * implemented</b>
+   *
+   * @return The configured Telegram bot session
+   */
   @Bean(destroyMethod = "stop")
   @ConditionalOnProperty(
       prefix = "drednote.telegram.session",
@@ -43,20 +64,14 @@ public class SessionAutoConfiguration {
     throw new UnsupportedOperationException("Webhooks not implemented yet");
   }
 
+  /**
+   * Configures a bean for the Telegram client to interact with the Telegram API.
+   *
+   * @return The configured Telegram client
+   */
   @Bean
-  public CustomScopeConfigurer customScopeConfigurer() {
-    CustomScopeConfigurer configurer = new CustomScopeConfigurer();
-    configurer.addScope(TelegramSessionScope.BOT_SCOPE_NAME, new TelegramSessionScope());
-    return configurer;
-  }
-
-  @Bean
+  @ConditionalOnMissingBean
   public TelegramClient telegramClient(SessionProperties properties, ObjectMapper objectMapper) {
     return new TelegramClientImpl(properties, objectMapper);
-  }
-
-  @Bean
-  public UpdateRequestContext botSessionContext() {
-    return new UpdateRequestContext() {};
   }
 }

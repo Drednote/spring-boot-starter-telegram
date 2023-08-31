@@ -15,9 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-class AbstractTelegramResponseTest {
+class SimpleMessageTelegramResponseTest {
 
-  private AbstractTelegramResponse handlerResponse;
+  private SimpleMessageTelegramResponse handlerResponse;
   private TelegramUpdateRequest telegramUpdateRequest;
   private User user;
   private TelegramMessageSource messageSource;
@@ -34,7 +34,7 @@ class AbstractTelegramResponseTest {
     messageSource = mock(TelegramMessageSource.class);
 
     // Create an instance of AbstractHandlerResponse with a code and default message
-    handlerResponse = new AbstractTelegramResponse("CODE", "Default Message") {
+    handlerResponse = new SimpleMessageTelegramResponse("CODE", "Default Message") {
       @Override
       public void process(TelegramUpdateRequest request) {
 

@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.updatehandler.mvc;
+package io.github.drednote.telegram.updatehandler.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,9 +9,7 @@ import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerAutoConfiguration;
-import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandlerTest.TestController;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramController;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
+import io.github.drednote.telegram.updatehandler.controller.ControllerUpdateHandlerTest.TestController;
 import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -27,12 +25,12 @@ import org.telegram.telegrambots.meta.api.objects.User;
 })
 @Slf4j
 @ActiveProfiles("mvcTest")
-class MvcUpdateHandlerTest {
+class ControllerUpdateHandlerTest {
 
   @Autowired
   TestController testController;
   @Autowired
-  MvcUpdateHandler updateHandler;
+  ControllerUpdateHandler updateHandler;
 
   @Test
   void shouldCallRegister() throws Exception {

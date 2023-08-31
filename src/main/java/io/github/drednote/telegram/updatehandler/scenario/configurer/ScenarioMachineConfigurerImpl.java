@@ -1,11 +1,13 @@
 package io.github.drednote.telegram.updatehandler.scenario.configurer;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioMonitor;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioPersister;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.LinkedList;
 import lombok.Getter;
 
+@BetaApi
 @Getter
 public final class ScenarioMachineConfigurerImpl implements ScenarioMachineConfigurer {
 

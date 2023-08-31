@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.core.request.RequestType;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
+@BetaApi
 final class ScenarioNodeBuilder {
 
   @Getter

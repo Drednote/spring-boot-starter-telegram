@@ -14,7 +14,7 @@ import org.springframework.util.PathMatcher;
  * requests based on the text of the request. It checks if the text of the given update request
  * matches the text specified in the mapping.
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 public class TextRequestMatcher implements RequestMatcher {
 

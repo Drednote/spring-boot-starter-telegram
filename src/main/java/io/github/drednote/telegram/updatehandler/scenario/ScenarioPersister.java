@@ -1,7 +1,9 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import java.io.IOException;
 
+@BetaApi
 public interface ScenarioPersister {
 
   /**

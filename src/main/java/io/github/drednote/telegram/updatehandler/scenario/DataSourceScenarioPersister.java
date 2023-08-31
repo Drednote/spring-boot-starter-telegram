@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.ScenarioDB;
 import io.github.drednote.telegram.datasource.kryo.ScenarioContext;
@@ -8,8 +9,10 @@ import io.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import org.springframework.core.ResolvableType;
 import org.springframework.data.repository.CrudRepository;
 
+@BetaApi
 public class DataSourceScenarioPersister implements ScenarioPersister {
 
   private final CrudRepository<? extends ScenarioDB, Long> repository;
@@ -17,10 +20,17 @@ public class DataSourceScenarioPersister implements ScenarioPersister {
   private final Class<? extends ScenarioDB> clazz;
 
   public DataSourceScenarioPersister(DataSourceAdapter dataSourceAdapter) {
-    Assert.notNull(dataSourceAdapter, "DataSourceAdapter");
+    Assert.required(dataSourceAdapter, "DataSourceAdapter");
     this.serializationService = new ScenarioMachineSerializationService();
     this.repository = dataSourceAdapter.scenarioRepository();
-    this.clazz = dataSourceAdapter.scenarioClass();
+    ResolvableType generic = ResolvableType
+        .forClass(CrudRepository.class, this.repository.getClass())
+        .getGeneric(0);
+    this.clazz = (Class<? extends ScenarioDB>) generic.resolve();
+    if (this.clazz == null) {
+      throw new IllegalStateException(
+          "Cannot resolve Scenario entity class from CrudRepository generic types");
+    }
   }
 
   @Override

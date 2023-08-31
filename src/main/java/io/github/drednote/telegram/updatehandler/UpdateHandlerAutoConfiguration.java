@@ -3,11 +3,11 @@ package io.github.drednote.telegram.updatehandler;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
-import io.github.drednote.telegram.updatehandler.mvc.ControllerRegistrar;
-import io.github.drednote.telegram.updatehandler.mvc.HandlerMethodPopular;
-import io.github.drednote.telegram.updatehandler.mvc.MvcUpdateHandler;
-import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerBeanPostProcessor;
-import io.github.drednote.telegram.updatehandler.mvc.TelegramControllerContainer;
+import io.github.drednote.telegram.updatehandler.controller.ControllerRegistrar;
+import io.github.drednote.telegram.updatehandler.controller.HandlerMethodPopular;
+import io.github.drednote.telegram.updatehandler.controller.ControllerUpdateHandler;
+import io.github.drednote.telegram.updatehandler.controller.TelegramControllerBeanPostProcessor;
+import io.github.drednote.telegram.updatehandler.controller.TelegramControllerContainer;
 import io.github.drednote.telegram.updatehandler.scenario.DataSourceScenarioPersister;
 import io.github.drednote.telegram.updatehandler.scenario.InMemoryScenarioPersister;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioAdapter;
@@ -67,18 +67,18 @@ public class UpdateHandlerAutoConfiguration {
   @AutoConfiguration
   @ConditionalOnProperty(
       prefix = "drednote.telegram.update-handler",
-      name = "mvc-enabled",
+      name = "controller-enabled",
       havingValue = "true",
       matchIfMissing = true
   )
-  public static class MvcAutoConfiguration {
+  public static class ControllerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MvcUpdateHandler mvcUpdateHandler(
+    public ControllerUpdateHandler mvcUpdateHandler(
         HandlerMethodPopular handlerMethodLookup, HandlerMethodInvoker handlerMethodInvoker
     ) {
-      return new MvcUpdateHandler(handlerMethodLookup, handlerMethodInvoker);
+      return new ControllerUpdateHandler(handlerMethodLookup, handlerMethodInvoker);
     }
 
     @Bean

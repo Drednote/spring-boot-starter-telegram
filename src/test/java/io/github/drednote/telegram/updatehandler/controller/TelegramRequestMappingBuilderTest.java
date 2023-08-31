@@ -1,11 +1,11 @@
-package io.github.drednote.telegram.updatehandler.mvc;
+package io.github.drednote.telegram.updatehandler.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.updatehandler.mvc.TelegramRequestMappingBuilder.TelegramRequestMappingMetaData;
+import io.github.drednote.telegram.updatehandler.controller.TelegramRequestMappingBuilder.TelegramRequestMappingMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;

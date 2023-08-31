@@ -3,7 +3,7 @@ package io.github.drednote.telegram.core.request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.Permission;
-import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
+import io.github.drednote.telegram.updatehandler.controller.RequestHandler;
 import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
 import io.github.drednote.telegram.updatehandler.scenario.Scenario;
 import io.github.drednote.telegram.utils.Assert;
@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
  * The {@code DefaultTelegramUpdateRequest} class is default implementation of the
  * {@link TelegramUpdateRequest} interface
  *
- * @author Galushko Ivan
+ * @author Ivan Galushko
  */
 @Getter
 public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest {
