@@ -1,8 +1,10 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@BetaApi
 public class InMemoryScenarioPersister implements ScenarioPersister {
 
   final Map<Long, Scenario> map = new ConcurrentHashMap<>();

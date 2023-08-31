@@ -10,7 +10,10 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 /**
- * Abstract base class for implementing simple Telegram response actions that involve sending a text message.
+ * Abstract base class for implementing simple Telegram response actions that involve sending a text
+ * message.
+ *
+ * @author Ivan Galushko
  */
 public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResponse {
 
@@ -21,7 +24,8 @@ public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResp
   private TelegramMessageSource messageSource;
 
   /**
-   * Constructs an instance of SimpleMessageTelegramResponse with optional code and default message.
+   * Constructs an instance of SimpleMessageTelegramResponse with optional code and default
+   * message.
    *
    * @param code           The code to look up in the message source for the response message
    * @param defaultMessage The default message to use if the code is not found in the message

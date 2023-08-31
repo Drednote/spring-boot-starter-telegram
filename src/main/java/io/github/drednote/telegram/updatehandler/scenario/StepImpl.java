@@ -1,9 +1,11 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 
+@BetaApi
 @RequiredArgsConstructor
 public class StepImpl implements Step {
 

@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario.configurer;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.updatehandler.scenario.ActionExecutor;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.utils.Assert;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 
+@BetaApi
 @RequiredArgsConstructor
 public final class StepConfigurerImpl implements StepConfigurer {
 

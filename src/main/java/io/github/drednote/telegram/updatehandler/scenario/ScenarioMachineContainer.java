@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.updatehandler.UpdateHandlerProperties;
 import io.github.drednote.telegram.updatehandler.scenario.ScenarioImpl.Node;
 import io.github.drednote.telegram.updatehandler.scenario.configurer.ScenarioMachineConfigurerImpl;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 
+@BetaApi
 public class ScenarioMachineContainer implements ScenarioFactory {
 
   private final List<Node> scenarios;

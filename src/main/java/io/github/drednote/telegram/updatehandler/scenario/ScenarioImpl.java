@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.FieldProvider;
@@ -23,6 +24,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.function.ThrowingSupplier;
 
+@BetaApi
 @Slf4j
 public final class ScenarioImpl implements Scenario {
 

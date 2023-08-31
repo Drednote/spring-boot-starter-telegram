@@ -126,6 +126,11 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     return null;
   }
 
+  /**
+   * Handles the processed response message, allowing for further actions if needed.
+   *
+   * @param response The response message to be handled
+   */
   protected void handleResponseMessage(@NonNull Serializable response) {
     // do something if needed
   }

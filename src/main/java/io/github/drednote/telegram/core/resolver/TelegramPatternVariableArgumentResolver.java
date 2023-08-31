@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.mvc.RequestHandler;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramPatternVariable;
+import io.github.drednote.telegram.updatehandler.controller.RequestHandler;
+import io.github.drednote.telegram.updatehandler.controller.TelegramPatternVariable;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.HashMap;
 import java.util.Map;

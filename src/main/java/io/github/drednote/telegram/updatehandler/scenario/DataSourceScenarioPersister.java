@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.updatehandler.scenario;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.ScenarioDB;
 import io.github.drednote.telegram.datasource.kryo.ScenarioContext;
@@ -11,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.repository.CrudRepository;
 
+@BetaApi
 public class DataSourceScenarioPersister implements ScenarioPersister {
 
   private final CrudRepository<? extends ScenarioDB, Long> repository;

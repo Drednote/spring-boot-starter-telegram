@@ -1,9 +1,8 @@
-package io.github.drednote.telegram.updatehandler.mvc;
+package io.github.drednote.telegram.updatehandler.controller;
 
 import io.github.drednote.telegram.core.request.MessageType;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.updatehandler.mvc.annotation.TelegramRequest;
+import io.github.drednote.telegram.core.request.TelegramRequestMapping;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +15,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+/**
+ * The {@code TelegramRequestMappingBuilder} class is responsible for building Telegram request
+ * mappings based on provided metadata. It allows constructing mappings with various combinations of
+ * patterns, request types, and message types.
+ * <p>
+ * It accepts a {@link TelegramRequestMappingMetaData} or {@link TelegramRequest} as input and
+ * generates multiple {@link TelegramRequestMapping} instances based on the provided data. The
+ * generated mappings can then be processed using a consumer.
+ *
+ * @author Ivan Galushko
+ * @see TelegramRequestMapping
+ */
 public class TelegramRequestMappingBuilder {
 
   private static final String DEFAULT_PATTERN = "**";
@@ -28,12 +39,23 @@ public class TelegramRequestMappingBuilder {
   private final Set<MessageType> messageTypes;
   private final boolean exclusiveMessageType;
 
+  /**
+   * Constructs a {@code TelegramRequestMappingBuilder} using metadata from a {@link
+   * TelegramRequest}.
+   *
+   * @param requestMapping The Telegram request mapping annotation, not null
+   */
   public TelegramRequestMappingBuilder(TelegramRequest requestMapping) {
     this(new TelegramRequestMappingMetaData(requestMapping));
   }
 
+  /**
+   * Constructs a {@code TelegramRequestMappingBuilder} using provided metadata.
+   *
+   * @param metaData The metadata for constructing request mappings, not null
+   */
   public TelegramRequestMappingBuilder(TelegramRequestMappingMetaData metaData) {
-    Assert.notNull(metaData, "TelegramRequestMappingMetaData");
+    Assert.required(metaData, "TelegramRequestMappingMetaData");
     this.patterns = createList(metaData.patterns);
     this.requestTypes = createList(metaData.requestTypes);
     this.messageTypes = createEnumSet(metaData.messageTypes, MessageType.class);
@@ -43,6 +65,11 @@ public class TelegramRequestMappingBuilder {
     }
   }
 
+  /**
+   * Processes and applies the provided consumer to each generated {@link TelegramRequestMapping}.
+   *
+   * @param consumer The consumer to apply to each mapping, not null
+   */
   public void forEach(Consumer<TelegramRequestMapping> consumer) {
     Assert.notNull(consumer, "consumer");
     if (requestTypes.isEmpty() && patterns.isEmpty()) {
@@ -96,7 +123,8 @@ public class TelegramRequestMappingBuilder {
   ) {
     if (pattern == null) {
       if (requestType == RequestType.MESSAGE && messageTypes.contains(MessageType.COMMAND)) {
-        consumer.accept(new TelegramRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
+        consumer.accept(
+            new TelegramRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
       } else {
         consumer.accept(new TelegramRequestMapping(DEFAULT_PATTERN, requestType, messageTypes));
       }
@@ -117,6 +145,12 @@ public class TelegramRequestMappingBuilder {
     return set;
   }
 
+  /**
+   * The {@code TelegramRequestMappingMetaData} class represents the metadata extracted from a
+   * {@link TelegramRequest} annotation.
+   *
+   * @author Ivan Galushko
+   */
   @AllArgsConstructor
   public static class TelegramRequestMappingMetaData {
 
@@ -125,8 +159,14 @@ public class TelegramRequestMappingBuilder {
     private final MessageType[] messageTypes;
     private final boolean exclusiveMessageType;
 
+    /**
+     * Constructs a {@code TelegramRequestMappingMetaData} using a {@link TelegramRequest}
+     * annotation.
+     *
+     * @param requestMapping The Telegram request mapping annotation, not null
+     */
     public TelegramRequestMappingMetaData(TelegramRequest requestMapping) {
-      Assert.notNull(requestMapping, "TelegramRequest annotation");
+      Assert.required(requestMapping, "TelegramRequest annotation");
       this.patterns = requestMapping.value();
       this.requestTypes = requestMapping.requestType();
       this.messageTypes = requestMapping.messageType();

@@ -11,7 +11,7 @@ features to facilitate the bot development process
 
 ## Main Features
 
-1. **Mvc Update Handling**: Allows receiving updates from the bot via `TelegramController` similar
+1. **Controller Update Handling**: Allows receiving updates from the bot via `TelegramController` similar
    to
    `RestController` in Spring. This enables seamless integration of Telegram bot functionality with
    the existing Spring ecosystem.
@@ -612,7 +612,7 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 
 | Name                           | Description                                                                                        | Default Value |
 |--------------------------------|----------------------------------------------------------------------------------------------------|---------------|
-| mvcEnabled                     | Enabled mvc update handling.                                                                       | true          |
+| controllerEnabled              | Enabled controller update handling.                                                                | true          |
 | scenarioEnabled                | Enabled scenario update handling.                                                                  | true          |
 | setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          |
 | scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             |
@@ -792,7 +792,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Thanks
 
-Thanks to [OlegNyr](https://github.com/OlegNyr/java-telegram-bot-mvc) for an idea of mvc controllers
+Thanks to [OlegNyr](https://github.com/OlegNyr/java-telegram-bot-mvc) for an idea of controllers
 
 ## Authors
 
