@@ -47,7 +47,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
   /**
    * key = update id
    */
-  private static final Map<Integer, List<String>> beanNames = new ConcurrentHashMap<>();
+  static final Map<Integer, List<String>> beanNames = new ConcurrentHashMap<>();
   private static ConfigurableBeanFactory factory;
 
   UpdateRequestContext() {

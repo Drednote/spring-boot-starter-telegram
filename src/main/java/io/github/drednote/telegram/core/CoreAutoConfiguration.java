@@ -39,7 +39,7 @@ public class CoreAutoConfiguration {
    * @return The configured CustomScopeConfigurer bean
    */
   @Bean
-  public CustomScopeConfigurer customScopeConfigurer() {
+  public static CustomScopeConfigurer customScopeConfigurer() {
     CustomScopeConfigurer configurer = new CustomScopeConfigurer();
     configurer.addScope(TelegramRequestScope.BOT_SCOPE_NAME, new TelegramRequestScope());
     return configurer;

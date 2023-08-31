@@ -36,7 +36,7 @@ import org.springframework.core.annotation.AliasFor;
  * @author Ivan Galushko
  * @see TelegramRequestScope
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Scope(scopeName = TelegramRequestScope.BOT_SCOPE_NAME)
