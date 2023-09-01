@@ -32,8 +32,8 @@ public class RoleFilter implements PriorityPreUpdateFilter {
   private final PermissionProperties permissionProperties;
 
   /**
-   * Constructs a RoleFilter with the specified {@link DataSourceAdapter} provider and {@link
-   * PermissionProperties}.
+   * Constructs a RoleFilter with the specified {@link DataSourceAdapter} provider and
+   * {@link PermissionProperties}.
    *
    * @param adapterProvider      The provider for the DataSourceAdapter, not null
    * @param permissionProperties The permission properties for role assignment, not null
@@ -53,9 +53,9 @@ public class RoleFilter implements PriorityPreUpdateFilter {
    * Pre-filters the incoming Telegram update request to assign roles to the user.
    *
    * <p>This method assigns roles to a user by querying the {@link DataSourceAdapter} for
-   * permission information and using the role assignment configuration from the {@link
-   * PermissionProperties}. If no roles are assigned, it assigns the default role specified in the
-   * properties.
+   * permission information and using the role assignment configuration from the
+   * {@link PermissionProperties}. If no roles are assigned, it assigns the default role specified
+   * in the properties.
    *
    * @param request The incoming Telegram update request to be pre-filtered, not null
    */

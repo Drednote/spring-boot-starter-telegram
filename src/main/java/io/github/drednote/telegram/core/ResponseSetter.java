@@ -1,10 +1,10 @@
 package io.github.drednote.telegram.core;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
+import io.github.drednote.telegram.response.CompositeTelegramResponse;
+import io.github.drednote.telegram.response.EmptyTelegramResponse;
+import io.github.drednote.telegram.response.GenericTelegramResponse;
+import io.github.drednote.telegram.response.TelegramResponse;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.lang.NonNull;

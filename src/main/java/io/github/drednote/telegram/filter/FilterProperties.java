@@ -3,7 +3,7 @@ package io.github.drednote.telegram.filter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
 import io.github.drednote.telegram.filter.pre.UserRateLimitRequestFilter;
-import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
+import io.github.drednote.telegram.response.NotHandledTelegramResponse;
 import java.time.temporal.ChronoUnit;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,8 +46,8 @@ public class FilterProperties {
    * staled buckets to free up memory
    *
    * @apiNote cache duration cannot be less than {@link #userRateLimit}, so if you specify value
-   * less than {@code #userRateLimit}, then cache will be expired after value of {@code
-   * #userRateLimit}
+   * less than {@code #userRateLimit}, then cache will be expired after value of
+   * {@code #userRateLimit}
    * @see UserRateLimitRequestFilter
    */
   private long userRateLimitCacheExpire = 1L;
@@ -58,8 +58,8 @@ public class FilterProperties {
    */
   private ChronoUnit userRateLimitCacheExpireUnit = ChronoUnit.HOURS;
   /**
-   * If at the end of update handling and post filtering, the response is null, set {@link
-   * NotHandledTelegramResponse} as response
+   * If at the end of update handling and post filtering, the response is null, set
+   * {@link NotHandledTelegramResponse} as response
    *
    * @see NotHandledUpdateFilter
    */

@@ -3,8 +3,8 @@ package io.github.drednote.telegram.exception;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
-import io.github.drednote.telegram.updatehandler.scenario.ScenarioException;
+import io.github.drednote.telegram.response.InternalErrorTelegramResponse;
+import io.github.drednote.telegram.handler.scenario.ScenarioException;
 import io.github.drednote.telegram.utils.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +52,9 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     Assert.notNull(request, "TelegramUpdateRequest");
 
     Throwable throwable = request.getError();
+    if (throwable == null) {
+      return;
+    }
     HandlerMethod handlerMethod = exceptionHandlerResolver.resolve(throwable);
     if (handlerMethod != null) {
       try {

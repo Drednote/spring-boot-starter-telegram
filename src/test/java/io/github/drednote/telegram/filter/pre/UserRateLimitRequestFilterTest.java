@@ -8,7 +8,7 @@ import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
-import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
+import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.Test;

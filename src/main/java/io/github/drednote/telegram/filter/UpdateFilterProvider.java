@@ -1,9 +1,9 @@
 package io.github.drednote.telegram.filter;
 
+import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
-import io.github.drednote.telegram.updatehandler.UpdateHandler;
 import java.util.List;
 import org.springframework.lang.NonNull;
 

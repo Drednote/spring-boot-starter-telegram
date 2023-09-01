@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.core;
 
+import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
@@ -28,8 +29,9 @@ import org.springframework.lang.NonNull;
  * to create beans with Telegram request scope. See {@link TelegramScope}.
  *
  * <p>You should not use this class directly. The only one purpose to use it if you creating
- * sub-threads within the main thread, you will need to manually bind the {@code
- * TelegramUpdateRequest} to the new thread by calling {@link #saveRequest(TelegramUpdateRequest)}.
+ * sub-threads within the main thread, you will need to manually bind the
+ * {@code TelegramUpdateRequest} to the new thread by calling
+ * {@link #saveRequest(TelegramUpdateRequest)}.
  * <b>If you do this, do not forget to call {@link #removeRequest(boolean)} with parameter {@code
  * false} on every sub-thread when it is finished</b>
  *

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.drednote.telegram.core.TelegramRequestScopeTest.Config;
+import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import java.util.List;
 import java.util.Map;

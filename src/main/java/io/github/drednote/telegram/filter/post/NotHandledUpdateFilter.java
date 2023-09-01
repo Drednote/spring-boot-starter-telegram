@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.filter.post;
 
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.response.NotHandledTelegramResponse;
+import io.github.drednote.telegram.response.NotHandledTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.lang.NonNull;
 
@@ -10,8 +10,8 @@ import org.springframework.lang.NonNull;
  *
  * <p>This class implements the {@link PostUpdateFilter} interface and is responsible for checking
  * if an incoming Telegram update request has not been handled. If the update request does not have
- * a response and the default answer is enabled in the properties, this filter sets the {@link
- * NotHandledTelegramResponse} as the response for the update request.
+ * a response and the default answer is enabled in the properties, this filter sets the
+ * {@link NotHandledTelegramResponse} as the response for the update request.
  *
  * @author Ivan Galushko
  * @see NotHandledTelegramResponse

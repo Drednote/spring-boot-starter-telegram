@@ -16,8 +16,8 @@ public interface TelegramBotSession {
    * Starts the bot's session.
    *
    * <p>This method is responsible for initiating the bot's operation. It may involve setting
-   * up necessary resources, establishing connections to the Telegram server, and scheduling
-   * tasks to handle incoming updates.
+   * up necessary resources, establishing connections to the Telegram server, and scheduling tasks
+   * to handle incoming updates.
    */
   void start();
 

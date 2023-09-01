@@ -5,7 +5,7 @@ import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
-import io.github.drednote.telegram.updatehandler.response.ForbiddenTelegramResponse;
+import io.github.drednote.telegram.response.ForbiddenTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Optional;
 import org.springframework.core.Ordered;

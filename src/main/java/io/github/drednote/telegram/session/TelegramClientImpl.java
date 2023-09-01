@@ -27,8 +27,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
  * {@link CloseableHttpClient} to perform HTTP requests to the Telegram API.
  *
  * <p>Requests are sent using the provided {@link DefaultBotOptions} and are configured with the
- * properties defined in the {@link SessionProperties}. The class also utilizes an {@link
- * ObjectMapper} for serializing and deserializing JSON data.
+ * properties defined in the {@link SessionProperties}. The class also utilizes an
+ * {@link ObjectMapper} for serializing and deserializing JSON data.
  *
  * @author Ivan Galushko
  * @see CloseableHttpClient

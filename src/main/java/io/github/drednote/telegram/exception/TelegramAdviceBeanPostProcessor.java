@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.exception;
 
+import io.github.drednote.telegram.core.annotation.TelegramAdvice;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;

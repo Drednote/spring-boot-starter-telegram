@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.filter.pre;
 
+import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
-import io.github.drednote.telegram.core.TelegramScope;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
