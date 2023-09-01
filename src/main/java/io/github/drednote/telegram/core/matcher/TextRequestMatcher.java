@@ -2,8 +2,8 @@ package io.github.drednote.telegram.core.matcher;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Objects;
 import org.springframework.core.Ordered;
@@ -21,15 +21,15 @@ public class TextRequestMatcher implements RequestMatcher {
   /**
    * The Telegram request mapping
    */
-  private final TelegramRequestMapping mapping;
+  private final UpdateRequestMapping mapping;
 
   /**
    * Creates a new instance of the {@code TextRequestMatcher} class with the given mapping
    *
    * @param mapping the Telegram request mapping, not null
    */
-  public TextRequestMatcher(TelegramRequestMapping mapping) {
-    Assert.required(mapping, "TelegramRequestMapping");
+  public TextRequestMatcher(UpdateRequestMapping mapping) {
+    Assert.required(mapping, "UpdateRequestMapping");
 
     this.mapping = mapping;
   }
@@ -42,8 +42,8 @@ public class TextRequestMatcher implements RequestMatcher {
    * @return true if the text matches, false otherwise
    */
   @Override
-  public boolean matches(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public boolean matches(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     String text = defaultIfNull(request.getText(), "");
     String pattern = mapping.getPattern();

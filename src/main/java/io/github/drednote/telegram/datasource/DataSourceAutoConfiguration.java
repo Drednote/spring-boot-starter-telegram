@@ -6,7 +6,6 @@ import io.github.drednote.telegram.datasource.jpa.PermissionEntity;
 import io.github.drednote.telegram.datasource.jpa.ScenarioEntity;
 import io.github.drednote.telegram.datasource.mongo.MongoPermissionRepository;
 import io.github.drednote.telegram.datasource.mongo.MongoScenarioRepository;
-import io.github.drednote.telegram.datasource.mongo.ScenarioDocument;
 import jakarta.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.Set;

@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.resolver;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.MethodParameter;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -27,9 +27,9 @@ import org.telegram.telegrambots.meta.api.objects.polls.PollAnswer;
 public class UpdateAccessorsArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
     Assert.notNull(parameter, "MethodParameter");
-    Assert.notNull(request, "TelegramUpdateRequest");
+    Assert.notNull(request, "UpdateRequest");
 
     Class<?> parameterType = parameter.getParameterType();
     if (Update.class.isAssignableFrom(parameterType)) {

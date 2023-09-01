@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.controller.RequestHandler;
-import io.github.drednote.telegram.updatehandler.controller.TelegramPatternVariable;
+import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.handler.controller.RequestHandler;
+import io.github.drednote.telegram.core.annotation.TelegramPatternVariable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -20,13 +20,13 @@ import org.springframework.core.MethodParameter;
 class TelegramPatternVariableArgumentResolverTest {
 
   private TelegramPatternVariableArgumentResolver resolver;
-  private TelegramUpdateRequest request;
+  private UpdateRequest request;
   private MethodParameter methodParameter;
 
   @BeforeEach
   public void setUp() {
     resolver = new TelegramPatternVariableArgumentResolver();
-    request = mock(TelegramUpdateRequest.class);
+    request = mock(UpdateRequest.class);
   }
 
   @Test

@@ -3,19 +3,19 @@ package io.github.drednote.telegram.utils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.ResponseSetter;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
-import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
+import io.github.drednote.telegram.response.CompositeTelegramResponse;
+import io.github.drednote.telegram.response.EmptyTelegramResponse;
+import io.github.drednote.telegram.response.GenericTelegramResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ResponseSetterTest {
 
-  private final DefaultTelegramUpdateRequest updateRequest = new DefaultTelegramUpdateRequest(
+  private final DefaultUpdateRequest updateRequest = new DefaultUpdateRequest(
       UpdateRequestUtils.createMockRequest(UpdateUtils.createCommand("")));
 
   @BeforeEach

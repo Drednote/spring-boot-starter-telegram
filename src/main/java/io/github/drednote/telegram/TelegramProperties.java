@@ -4,7 +4,7 @@ import io.github.drednote.telegram.datasource.DataSourceProperties;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.menu.MenuProperties;
 import io.github.drednote.telegram.session.SessionProperties;
-import io.github.drednote.telegram.updatehandler.UpdateHandlerProperties;
+import io.github.drednote.telegram.handler.UpdateHandlerProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

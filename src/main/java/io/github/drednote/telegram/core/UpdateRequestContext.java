@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.core;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.annotation.TelegramScope;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,20 +22,21 @@ import org.springframework.lang.NonNull;
  * Telegram bot update request contexts along with their associated beans. It uses thread-local
  * storage to store the current update request context for each thread processing bot requests.
  *
- * <p>The class supports storing and retrieving the {@link TelegramUpdateRequest}. It also provides
+ * <p>The class supports storing and retrieving the {@link UpdateRequest}. It also provides
  * methods for safely removing the update request and optionally destroying associated beans.
  *
  * <p>The main purpose of this class is to work with {@link TelegramRequestScope}, to have ability
  * to create beans with Telegram request scope. See {@link TelegramScope}.
  *
  * <p>You should not use this class directly. The only one purpose to use it if you creating
- * sub-threads within the main thread, you will need to manually bind the {@code
- * TelegramUpdateRequest} to the new thread by calling {@link #saveRequest(TelegramUpdateRequest)}.
+ * sub-threads within the main thread, you will need to manually bind the
+ * {@code UpdateRequest} to the new thread by calling
+ * {@link #saveRequest(UpdateRequest)}.
  * <b>If you do this, do not forget to call {@link #removeRequest(boolean)} with parameter {@code
  * false} on every sub-thread when it is finished</b>
  *
  * @author Ivan Galushko
- * @see TelegramUpdateRequest
+ * @see UpdateRequest
  * @see TelegramRequestScope
  * @see TelegramScope
  */
@@ -43,7 +45,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
   /**
    * key = thread id
    */
-  private static final Map<Long, TelegramUpdateRequest> requests = new ConcurrentHashMap<>();
+  private static final Map<Long, UpdateRequest> requests = new ConcurrentHashMap<>();
   /**
    * key = update id
    */
@@ -60,7 +62,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
    *
    * @param request The Telegram update request to be saved
    */
-  public static void saveRequest(TelegramUpdateRequest request) {
+  public static void saveRequest(UpdateRequest request) {
     Assert.notNull(request, "request");
     requests.put(Thread.currentThread().getId(), request);
   }
@@ -72,7 +74,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
    * @throws IllegalStateException if no update request is found for the current thread
    */
   @NonNull
-  static TelegramUpdateRequest getRequest() {
+  static UpdateRequest getRequest() {
     return Optional.of(Thread.currentThread().getId())
         .map(requests::get)
         .orElseThrow(() -> new IllegalStateException("No thread-bound bot request found: " +
@@ -91,7 +93,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
    */
   public static void removeRequest(boolean destroyBeans) {
     if (destroyBeans) {
-      TelegramUpdateRequest request = getRequest();
+      UpdateRequest request = getRequest();
       synchronized (request) {
         List<String> names = beanNames.remove(request.getId());
         if (names != null) {
@@ -112,7 +114,7 @@ public abstract class UpdateRequestContext implements ApplicationContextAware {
   static void saveBeanName(@NonNull String name) {
     Assert.notEmpty(name, "name");
 
-    TelegramUpdateRequest request = getRequest();
+    UpdateRequest request = getRequest();
     synchronized (request) {
       List<String> names = beanNames.computeIfAbsent(request.getId(), key -> new ArrayList<>());
       names.add(name);

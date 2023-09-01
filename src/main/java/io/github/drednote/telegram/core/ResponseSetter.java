@@ -1,10 +1,10 @@
 package io.github.drednote.telegram.core;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.response.CompositeTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.EmptyTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.GenericTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
+import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.response.CompositeTelegramResponse;
+import io.github.drednote.telegram.response.EmptyTelegramResponse;
+import io.github.drednote.telegram.response.GenericTelegramResponse;
+import io.github.drednote.telegram.response.TelegramResponse;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.lang.NonNull;
@@ -39,7 +39,7 @@ public abstract class ResponseSetter {
    */
   @SuppressWarnings("unchecked")
   public static void setResponse(
-      @NonNull TelegramUpdateRequest request, @Nullable Object invoked,
+      @NonNull UpdateRequest request, @Nullable Object invoked,
       @Nullable Class<?> parameterType
   ) {
     if (invoked == null || parameterType == null || Void.TYPE.isAssignableFrom(parameterType)) {
@@ -61,7 +61,7 @@ public abstract class ResponseSetter {
    * @param request the base request, not null
    * @param invoked the result of the UpdateHandler, maybe null
    */
-  public static void setResponse(TelegramUpdateRequest request, @Nullable Object invoked) {
+  public static void setResponse(UpdateRequest request, @Nullable Object invoked) {
     setResponse(request, invoked, invoked != null ? invoked.getClass() : null);
   }
 

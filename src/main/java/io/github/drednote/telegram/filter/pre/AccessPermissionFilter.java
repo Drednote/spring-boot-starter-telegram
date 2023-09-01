@@ -1,11 +1,11 @@
 package io.github.drednote.telegram.filter.pre;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.Permission;
 import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
-import io.github.drednote.telegram.updatehandler.response.ForbiddenTelegramResponse;
+import io.github.drednote.telegram.response.ForbiddenTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Optional;
 import org.springframework.core.Ordered;
@@ -53,8 +53,8 @@ public class AccessPermissionFilter implements PriorityPreUpdateFilter {
    * @param request The incoming Telegram update request to be pre-filtered, not null
    */
   @Override
-  public void preFilter(@NonNull TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void preFilter(@NonNull UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     if (permissionProperties.getAccess() == Access.BY_ROLE) {
       Permission permission = request.getPermission();
       Assert.notNull(permission, "Permission");
@@ -69,8 +69,8 @@ public class AccessPermissionFilter implements PriorityPreUpdateFilter {
   }
 
   @Override
-  public boolean matches(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public boolean matches(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     return request.getChat() != null;
   }
 

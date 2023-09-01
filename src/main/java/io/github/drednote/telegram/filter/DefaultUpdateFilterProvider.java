@@ -1,11 +1,11 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.annotation.TelegramScope;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.post.PostFilterOrderComparator;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreFilterOrderComparator;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
-import io.github.drednote.telegram.core.TelegramScope;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.ObjectProvider;
  * Default implementation of the {@link UpdateFilterProvider} interface.
  *
  * <p>This class provides the implementation for retrieving pre-update and post-update filters
- * based on the provided {@link TelegramUpdateRequest}. It uses {@link ObjectProvider} to manage the
+ * based on the provided {@link UpdateRequest}. It uses {@link ObjectProvider} to manage the
  * instances of pre-update and post-update filters, to support creating beans with Telegram scope or
  * any other
  *
@@ -54,8 +54,8 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
    * @implNote Any bean scopes are supported
    */
   @Override
-  public List<PreUpdateFilter> getPreFilters(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public List<PreUpdateFilter> getPreFilters(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     return new ArrayList<>(preFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
         .sorted(PreFilterOrderComparator.INSTANCE)
@@ -71,8 +71,8 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
    * @implNote Any bean scopes are supported
    */
   @Override
-  public List<PostUpdateFilter> getPostFilters(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public List<PostUpdateFilter> getPostFilters(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     return new ArrayList<>(postFilters.stream()
         .filter(updateFilter -> updateFilter.matches(request))
         .sorted(PostFilterOrderComparator.INSTANCE)

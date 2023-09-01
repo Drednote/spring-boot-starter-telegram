@@ -11,9 +11,9 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import io.github.bucket4j.local.LocalBucket;
 import io.github.bucket4j.local.SynchronizationStrategy;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
-import io.github.drednote.telegram.updatehandler.response.TooManyRequestsTelegramResponse;
+import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.time.Duration;
 import org.springframework.core.Ordered;
@@ -24,8 +24,8 @@ import org.springframework.lang.Nullable;
  * Implementation of a priority pre-update filter for rate-limiting user requests.
  *
  * <p>This filter uses a caching mechanism to manage rate limits for individual users. It tracks
- * the rate of incoming requests per user and responds with a {@link
- * TooManyRequestsTelegramResponse} if the rate limit is exceeded.
+ * the rate of incoming requests per user and responds with a
+ * {@link TooManyRequestsTelegramResponse} if the rate limit is exceeded.
  *
  * @author Ivan Galushko
  * @see TooManyRequestsTelegramResponse
@@ -76,8 +76,8 @@ public class UserRateLimitRequestFilter implements PriorityPreUpdateFilter {
    * @param request The incoming Telegram update request to be pre-filtered, not null
    */
   @Override
-  public void preFilter(@NonNull TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void preFilter(@NonNull UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     Long chatId = request.getChatId();
     if (filterProperties.getUserRateLimit() > 0) {

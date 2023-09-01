@@ -20,9 +20,9 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
  * with the Telegram Bot API.
  *
  * <p>This class implements the {@link TelegramBotSession} interface to provide methods for
- * starting and stopping a long polling session with the Telegram Bot API. It utilizes a {@link
- * TelegramClient} to fetch updates from the Telegram server and processes them using a {@link
- * LongPollingBot}.
+ * starting and stopping a long polling session with the Telegram Bot API. It utilizes a
+ * {@link TelegramClient} to fetch updates from the Telegram server and processes them using a
+ * {@link LongPollingBot}.
  *
  * <p>The class is responsible for scheduling and executing the polling loop, processing updates,
  * and handling exceptions that may occur during the session and not caught with exception handling
@@ -57,9 +57,9 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
    * @param telegramClient The Telegram client for fetching updates
    * @param properties     The session properties containing bot configuration
    * @param callback       The long polling bot callback for processing updates
-   * @throws UnsupportedOperationException If the callback is not an instance of {@code
-   *                                       LongPollingBot} or if the options of the callback are not
-   *                                       {@code DefaultBotOptions}
+   * @throws UnsupportedOperationException If the callback is not an instance of
+   *                                       {@code LongPollingBot} or if the options of the callback
+   *                                       are not {@code DefaultBotOptions}
    */
   public LongPollingSession(
       TelegramClient telegramClient, SessionProperties properties, TelegramBot callback
@@ -87,7 +87,8 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
   /**
    * Starts the long polling session.
    *
-   * <p>This method schedules the polling loop to fetch updates from the Telegram server and process
+   * <p>This method schedules the polling loop to fetch updates from the Telegram server and
+   * process
    * them using the provided callback.
    *
    * @throws IllegalStateException If the session is already running
@@ -122,7 +123,8 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
   /**
    * The main loop of the polling session.
    *
-   * <p>This method is executed periodically to fetch updates from the Telegram server. It processes
+   * <p>This method is executed periodically to fetch updates from the Telegram server. It
+   * processes
    * the updates and forwards them to the callback for handling.
    */
   @Override

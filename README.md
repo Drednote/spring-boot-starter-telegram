@@ -11,7 +11,8 @@ features to facilitate the bot development process
 
 ## Main Features
 
-1. **Controller Update Handling**: Allows receiving updates from the bot via `TelegramController` similar
+1. **Controller Update Handling**: Allows receiving updates from the bot via `TelegramController`
+   similar
    to
    `RestController` in Spring. This enables seamless integration of Telegram bot functionality with
    the existing Spring ecosystem.
@@ -48,7 +49,7 @@ features to facilitate the bot development process
     - [Data Source](#data-source)
     - [Primary Entities](#primary-entities)
         - [Update](#update)
-        - [TelegramUpdateRequest](#telegramupdaterequest)
+        - [UpdateRequest](#updaterequest)
         - [UpdateHandler](#updatehandler)
         - [UpdateFilter](#updatefilter)
         - [TelegramResponse](#telegramresponse)
@@ -150,7 +151,7 @@ public class MainController {
   }
 
   @TelegramMessage
-  public String onMessage(TelegramUpdateRequest request) {
+  public String onMessage(UpdateRequest request) {
     return "You sent message with types %s".formatted(request.getMessageTypes());
   }
 
@@ -160,7 +161,7 @@ public class MainController {
   }
 
   @TelegramRequest
-  public TelegramResponse onAll(TelegramUpdateRequest request) {
+  public TelegramResponse onAll(UpdateRequest request) {
     return new GenericTelegramResponse("Unsupported command");
   }
 
@@ -190,14 +191,14 @@ This library's implementation closely resembles the familiar structure of `Java 
   the reception of updates. These updates are obtained either through a **long polling strategy** or
   by setting up a **webhook** that prompts Telegram to directly transmit updates to the application.
 
-- Upon receiving an [Update](#update), a [TelegramUpdateRequest](#telegramupdaterequest) object is
+- Upon receiving an [Update](#update), a [UpdateRequest](#updaterequest) object is
   generated. This object serves as the central entity throughout the subsequent update processing
   pipeline. Initially, it contains only the information extracted from the [Update](#update) object.
-  As the processing continued, the [TelegramUpdateRequest](#telegramupdaterequest)
+  As the processing continued, the [UpdateRequest](#updaterequest)
   accumulates additional data, enriching its content.
 
 - At the very beginning of the update processing chain,
-  the [TelegramUpdateRequest](#telegramupdaterequest) is stored in the context of the current
+  the [UpdateRequest](#updaterequest) is stored in the context of the current
   thread. This is done to create a [Telegram Scope](#telegram-scope).
 
 - After that, the main update processing starts with calls to [Filters](#filters). These filters
@@ -235,7 +236,7 @@ choose the one that suits your bot's requirements and your preferred coding styl
 > If you need to make your own handler, all you have to do is create a **spring bean** that will
 > implement the `UpdateHandler` interface and set its execution priority using a spring
 > annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
-> put in the object `TelegramUpdateRequest` response with type `TelegramResponse`, so that update
+> put in the object `UpdateRequest` response with type `TelegramResponse`, so that update
 > processing can be considered successful. If this is not done, further update handlers will be
 > called
 
@@ -262,7 +263,7 @@ public class MainController {
   }
 
   @TelegramMessage
-  public String onMessage(TelegramUpdateRequest request) {
+  public String onMessage(UpdateRequest request) {
     return "You sent message with types %s".formatted(request.getMessageTypes());
   }
 
@@ -272,7 +273,7 @@ public class MainController {
   }
 
   @TelegramRequest
-  public TelegramResponse onAll(TelegramUpdateRequest request) {
+  public TelegramResponse onAll(UpdateRequest request) {
     return new GenericTelegramResponse("Unsupported command");
   }
 
@@ -340,7 +341,7 @@ and after they are processed.
     - To execute the code for each update
 
 - To control update filtering, filters can set some properties
-  in [TelegramUpdateRequest](#telegramupdaterequest), such as `response`. If any filter set
+  in [UpdateRequest](#updaterequest), such as `response`. If any filter set
   property `response` then the update is considered successful and an attempt will be made to send a
   response
 - Filters are called twice: before (pre-filters) the main [Update Handling](#update-handling) and
@@ -375,13 +376,13 @@ public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter 
   private LocalDateTime startTime;
 
   @Override
-  public void preFilter(@NonNull TelegramUpdateRequest request) {
+  public void preFilter(@NonNull UpdateRequest request) {
     this.startTime = LocalDateTime.now();
     log.info("Receive request with id {}", request.getId());
   }
 
   @Override
-  public void postFilter(@NonNull TelegramUpdateRequest request) {
+  public void postFilter(@NonNull UpdateRequest request) {
     log.info("Request with id {} processed for {} ms", request.getId(),
         ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()));
   }
@@ -437,7 +438,8 @@ handling. Here are some important rules to keep in mind:
   implemented to determine the priority of method calls. The higher in the hierarchy the error
   (throwable at the very top) that the handler expects, the lower the priority of the method call
   will be compared to others.
-  > This ensures that the most specific error handlers are given precedence in the error handling process
+  > This ensures that the most specific error handlers are given precedence in the error handling
+  process
 - Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
   parameters as defined in the [Argument resolving](#argument-resolving) section
 
@@ -455,15 +457,15 @@ You can specify arguments based on a java type:
 
 - [Update](#update) and any top-level nested objects within it. `Message`, `Poll`, `InlineQuery`,
   etc.
-- [TelegramUpdateRequest](#telegramupdaterequest)
+- [UpdateRequest](#updaterequest)
 - `TelegramBot` or any subclasses if you need to consume current telegram bot instance
 - `String` arguments will fill with the **text** property
-  of [TelegramUpdateRequest](#telegramupdaterequest) if it exists, or it will be `null`
+  of [UpdateRequest](#updaterequest) if it exists, or it will be `null`
   > In almost all cases this will be the text of the `Message`
 - `Long` arguments will fill with the **chatId** property
-  of [TelegramUpdateRequest](#telegramupdaterequest)
+  of [UpdateRequest](#updaterequest)
 - `Throwable` arguments will fill with the **error** property
-  of [TelegramUpdateRequest](#telegramupdaterequest) if it exists. If no error than it will
+  of [UpdateRequest](#updaterequest) if it exists. If no error than it will
   be `null`
   > This type should be only used in methods marked with `@TelegramExceptionHandler`. In other
   > methods, it more likely will be `null`
@@ -487,7 +489,7 @@ created for each update processing.
 
 > It's important to note that each update handling is associated with a specific thread. In cases
 > where you create sub-threads within the main thread, you will need to manually bind
-> the `TelegramUpdateRequest` to the new thread. This can be achieved using
+> the `UpdateRequest` to the new thread. This can be achieved using
 > the `UpdateRequestContext`
 > class.
 
@@ -528,9 +530,9 @@ public class JpaConfig {
 
 > Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
-#### TelegramUpdateRequest
+#### UpdateRequest
 
-`TelegramUpdateRequest` is a primary object that stores all information about update. Any change
+`UpdateRequest` is a primary object that stores all information about update. Any change
 that occurs during the processing of an update is written to it. Thus, if you get it in the user
 code, you can find out all the information about the current update. For example, in this way:
 
@@ -540,7 +542,7 @@ code, you can find out all the information about the current update. For example
 public class Example {
 
   @TelegramRequest
-  public void onAll(TelegramUpdateRequest request) {
+  public void onAll(UpdateRequest request) {
     System.out.printf("request is %s", request);
   }
 }

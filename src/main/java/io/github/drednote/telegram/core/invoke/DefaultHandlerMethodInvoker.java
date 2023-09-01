@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.invoke;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.core.resolver.HandlerMethodArgumentResolver;
 import io.github.drednote.telegram.utils.Assert;
 import org.slf4j.Logger;
@@ -58,10 +58,10 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
   @Override
   @Nullable
   public Object invoke(
-      TelegramUpdateRequest request, HandlerMethod handlerMethod,
+      UpdateRequest request, HandlerMethod handlerMethod,
       Object... providedArgs
   ) throws Exception {
-    Assert.notNull(request, "TelegramUpdateRequest");
+    Assert.notNull(request, "UpdateRequest");
     Assert.notNull(handlerMethod, "HandlerMethod");
 
     Object[] argumentValues = getMethodArgumentValues(request, handlerMethod, providedArgs);
@@ -80,7 +80,7 @@ public class DefaultHandlerMethodInvoker implements HandlerMethodInvoker {
    * @return the method argument values
    */
   private Object[] getMethodArgumentValues(
-      TelegramUpdateRequest request, HandlerMethod handlerMethod, Object... providedArgs
+      UpdateRequest request, HandlerMethod handlerMethod, Object... providedArgs
   ) {
     MethodParameter[] parameters = handlerMethod.getMethodParameters();
     if (ObjectUtils.isEmpty(parameters)) {

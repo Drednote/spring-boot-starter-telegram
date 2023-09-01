@@ -2,9 +2,9 @@ package io.github.drednote.telegram.exception;
 
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
-import io.github.drednote.telegram.updatehandler.response.InternalErrorTelegramResponse;
-import io.github.drednote.telegram.updatehandler.scenario.ScenarioException;
+import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.response.InternalErrorTelegramResponse;
+import io.github.drednote.telegram.handler.scenario.ScenarioException;
 import io.github.drednote.telegram.utils.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 /**
  * The {@code DefaultExceptionHandler} class implements the {@code ExceptionHandler} interface and
- * serves as a default exception handler for {@code TelegramUpdateRequest} processing. This class
+ * serves as a default exception handler for {@code UpdateRequest} processing. This class
  * uses the {@link  ExceptionHandlerResolver} and {@link HandlerMethodInvoker} for resolving and
  * invoking the handler method. It also provides internal methods for handling various types of
  * exceptions
@@ -40,18 +40,21 @@ public class DefaultExceptionHandler implements ExceptionHandler {
   }
 
   /**
-   * Handles exceptions that occur during the processing of a {@code TelegramUpdateRequest}. It
+   * Handles exceptions that occur during the processing of a {@code UpdateRequest}. It
    * resolves the appropriate handler method for the thrown exception and invokes it to handle the
    * request. If no handler method is found, it logs the error and optionally does some stuff
    *
-   * @param request the {@code TelegramUpdateRequest} object representing the request to be
+   * @param request the {@code UpdateRequest} object representing the request to be
    *                processed
    */
   @Override
-  public void handle(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void handle(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     Throwable throwable = request.getError();
+    if (throwable == null) {
+      return;
+    }
     HandlerMethod handlerMethod = exceptionHandlerResolver.resolve(throwable);
     if (handlerMethod != null) {
       try {
@@ -66,7 +69,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     }
   }
 
-  private void processInternal(Throwable throwable, TelegramUpdateRequest request) {
+  private void processInternal(Throwable throwable, UpdateRequest request) {
     if (throwable instanceof TelegramApiException telegramApiException) {
       log.error("Cannot send response {} for request '{}' to telegram, cause: ",
           request.getResponse(), request.getId(), telegramApiException);

@@ -7,7 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.github.drednote.telegram.core.TelegramRequestScopeTest.Config;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.annotation.TelegramScope;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +41,7 @@ class TelegramRequestScopeTest {
 
     @Test
     void shouldCorrectManageBeans() {
-      TelegramUpdateRequest request = Mockito.mock(TelegramUpdateRequest.class);
+      UpdateRequest request = Mockito.mock(UpdateRequest.class);
       UpdateRequestContext.saveRequest(request);
       when(request.getId()).thenReturn(1);
       TelegramRequestScope localScope = new TelegramRequestScope();
@@ -65,7 +66,7 @@ class TelegramRequestScopeTest {
   @Test
   @DirtiesContext(methodMode = MethodMode.BEFORE_METHOD)
   void shouldRemoveFromScopeIfCallRemoveFromRequest() {
-    TelegramUpdateRequest request = Mockito.mock(TelegramUpdateRequest.class);
+    UpdateRequest request = Mockito.mock(UpdateRequest.class);
     UpdateRequestContext.saveRequest(request);
     when(request.getId()).thenReturn(1);
 

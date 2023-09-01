@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.request;
 
-import static io.github.drednote.telegram.core.request.AbstractTelegramUpdateRequestTest.Data.createData;
+import static io.github.drednote.telegram.core.request.AbstractUpdateRequestTest.Data.createData;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import io.github.drednote.telegram.support.UpdateUtils;

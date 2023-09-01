@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.core.resolver;
 
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.MethodParameter;
 import org.telegram.telegrambots.meta.generics.TelegramBot;
@@ -9,20 +9,20 @@ import org.telegram.telegrambots.meta.generics.TelegramBot;
 /**
  * The {@code RequestArgumentResolver} class is an implementation of the
  * {@code HandlerMethodArgumentResolver} interface that resolves base arguments like
- * {@link TelegramUpdateRequest} or {@link TelegramBot}
+ * {@link UpdateRequest} or {@link TelegramBot}
  *
  * @author Ivan Galushko
  */
 public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
 
   @Override
-  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
     Assert.notNull(parameter, "MethodParameter");
-    Assert.notNull(request, "TelegramUpdateRequest");
+    Assert.notNull(request, "UpdateRequest");
 
     Class<?> paramType = parameter.getParameterType();
-    if (TelegramUpdateRequest.class.isAssignableFrom(paramType)) {
-      return new DefaultTelegramUpdateRequest(request);
+    if (UpdateRequest.class.isAssignableFrom(paramType)) {
+      return new DefaultUpdateRequest(request);
     } else if (TelegramBot.class.isAssignableFrom(paramType)) {
       return request.getAbsSender();
     } else if (Throwable.class.isAssignableFrom(paramType)) {
@@ -41,7 +41,7 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
     Assert.notNull(parameter, "MethodParameter");
 
     Class<?> paramType = parameter.getParameterType();
-    return TelegramUpdateRequest.class.isAssignableFrom(paramType) ||
+    return UpdateRequest.class.isAssignableFrom(paramType) ||
         TelegramBot.class.isAssignableFrom(paramType) ||
         Long.class.isAssignableFrom(paramType) ||
         String.class.isAssignableFrom(paramType) ||

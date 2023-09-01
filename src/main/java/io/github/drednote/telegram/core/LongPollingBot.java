@@ -2,14 +2,14 @@ package io.github.drednote.telegram.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
-import io.github.drednote.telegram.updatehandler.UpdateHandler;
-import io.github.drednote.telegram.updatehandler.response.SimpleMessageTelegramResponse;
-import io.github.drednote.telegram.updatehandler.response.TelegramResponse;
+import io.github.drednote.telegram.handler.UpdateHandler;
+import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
+import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,7 +23,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * The {@code LongPollingBot} class extends the {@code TelegramLongPollingBot} class and serves as
  * the main bot implementation for handling updates. The bot overrides the `onUpdateReceived()`
  * method to handle incoming updates. Within the {@link #onUpdateReceived} method, a
- * {@link DefaultTelegramUpdateRequest} is created to encapsulate the {@link Update}. The request is
+ * {@link DefaultUpdateRequest} is created to encapsulate the {@link Update}. The request is
  * then processed through a series of steps: pre-filtering, handling, post-filtering, and answering.
  * Any exceptions thrown during processing are handled by the exception handler
  *
@@ -97,7 +97,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
   }
 
   /**
-   * Handles the received update. Creates a {@link  DefaultTelegramUpdateRequest} to encapsulate the
+   * Handles the received update. Creates a {@link  DefaultUpdateRequest} to encapsulate the
    * {@link Update}. Processes the request through pre-filtering, handling, post-filtering, and
    * answering. Handle any exceptions thrown during processing.
    * <p>
@@ -108,7 +108,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    */
   @Override
   public void onUpdateReceived(Update update) {
-    DefaultTelegramUpdateRequest request = new DefaultTelegramUpdateRequest(
+    DefaultUpdateRequest request = new DefaultUpdateRequest(
         update, this, telegramProperties, objectMapper);
     try {
       UpdateRequestContext.saveRequest(request);
@@ -124,7 +124,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    *
    * @param request the update request
    */
-  private void doReceive(DefaultTelegramUpdateRequest request) {
+  private void doReceive(DefaultUpdateRequest request) {
     try {
       doPreFilter(request);
       doHandle(request);
@@ -145,7 +145,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    *
    * @param request the update request
    */
-  private void doPreFilter(DefaultTelegramUpdateRequest request) {
+  private void doPreFilter(DefaultUpdateRequest request) {
     List<PreUpdateFilter> filters = updateFilterProvider.getPreFilters(request);
     Iterator<PreUpdateFilter> iterator = filters.iterator();
     while (request.getResponse() == null && iterator.hasNext()) {
@@ -158,7 +158,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    *
    * @param request the update request
    */
-  private void doPostFilter(DefaultTelegramUpdateRequest request) {
+  private void doPostFilter(DefaultUpdateRequest request) {
     List<PostUpdateFilter> filters = updateFilterProvider.getPostFilters(request);
     for (PostUpdateFilter filter : filters) {
       filter.postFilter(request);
@@ -171,7 +171,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    * @param request the update request
    * @throws Exception if an error occurs during handling
    */
-  private void doHandle(DefaultTelegramUpdateRequest request) throws Exception {
+  private void doHandle(DefaultUpdateRequest request) throws Exception {
     for (UpdateHandler updateHandler : updateHandlers) {
       if (request.getResponse() == null) {
         updateHandler.onUpdate(request);
@@ -185,13 +185,13 @@ public class LongPollingBot extends TelegramLongPollingBot {
    * @param request the update request
    * @throws TelegramApiException if an error occurs during processing answer
    */
-  private void doAnswer(DefaultTelegramUpdateRequest request) throws TelegramApiException {
+  private void doAnswer(DefaultUpdateRequest request) throws TelegramApiException {
     TelegramResponse response = request.getResponse();
     if (response != null) {
       if (response instanceof SimpleMessageTelegramResponse simpleMessageTelegramResponse) {
         simpleMessageTelegramResponse.setMessageSource(messageSource);
       }
-      response.process(new DefaultTelegramUpdateRequest(request));
+      response.process(new DefaultUpdateRequest(request));
     }
   }
 
@@ -201,7 +201,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
    * @param request the update request
    * @param e       the exception thrown
    */
-  private void handleException(DefaultTelegramUpdateRequest request, Exception e) {
+  private void handleException(DefaultUpdateRequest request, Exception e) {
     request.setError(e);
     if (!(e instanceof TelegramApiException)) {
       request.setResponse(null);

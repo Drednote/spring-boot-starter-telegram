@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.matcher;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.List;
@@ -42,8 +42,8 @@ public class CompositeRequestMatcher implements RequestMatcher {
    * @return true if any of the matchers matches the request, false otherwise
    */
   @Override
-  public boolean matches(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public boolean matches(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     return matchers.stream().anyMatch(requestMatcher -> requestMatcher.matches(request));
   }

@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.exception;
 
+import io.github.drednote.telegram.core.annotation.TelegramExceptionHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +17,9 @@ import org.springframework.util.ReflectionUtils.MethodFilter;
 import org.springframework.web.method.HandlerMethod;
 
 /**
- * This class, {@code DefaultExceptionHandlerResolver}, implements the {@link
- * ExceptionHandlerResolver} and {@link ExceptionHandlerRegistrar} interfaces. It is responsible for
- * resolving exception handlers and registering them for specific throwable types
+ * This class, {@code DefaultExceptionHandlerResolver}, implements the
+ * {@link ExceptionHandlerResolver} and {@link ExceptionHandlerRegistrar} interfaces. It is
+ * responsible for resolving exception handlers and registering them for specific throwable types
  *
  * <p>The class contains methods to handle and resolve exceptions by associating them with
  * appropriate handler methods
@@ -29,8 +30,8 @@ public class DefaultExceptionHandlerResolver
     implements ExceptionHandlerResolver, ExceptionHandlerRegistrar {
 
   /**
-   * A method filter that identifies handler methods annotated with {@code
-   * TelegramExceptionHandler}.
+   * A method filter that identifies handler methods annotated with
+   * {@code TelegramExceptionHandler}.
    */
   private static final MethodFilter EXCEPTION_HANDLER_METHODS = method ->
       AnnotatedElementUtils.hasAnnotation(method, TelegramExceptionHandler.class);

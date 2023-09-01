@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,12 +19,12 @@ import org.springframework.lang.Nullable;
  * in concurrent hash maps for thread-safe access and management.
  *
  * <p>The Telegram request scope is designed to be used within a Spring application context
- * to manage beans associated with a {@link TelegramUpdateRequest}. Beans within this scope are
- * created and managed for the duration of a {@code TelegramUpdateRequest}
+ * to manage beans associated with a {@link UpdateRequest}. Beans within this scope are
+ * created and managed for the duration of a {@code UpdateRequest}
  *
  * @author Ivan Galushko
  * @see UpdateRequestContext
- * @see TelegramUpdateRequest
+ * @see UpdateRequest
  */
 public class TelegramRequestScope implements Scope {
 
@@ -71,7 +71,7 @@ public class TelegramRequestScope implements Scope {
    * @return A unique bean key based on the update ID and bean name.
    */
   private BeanKey createBeanKey(String name) {
-    TelegramUpdateRequest botRequest = UpdateRequestContext.getRequest();
+    UpdateRequest botRequest = UpdateRequestContext.getRequest();
     return new BeanKey(botRequest.getId(), name);
   }
 

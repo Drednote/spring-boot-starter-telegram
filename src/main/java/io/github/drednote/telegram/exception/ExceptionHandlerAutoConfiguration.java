@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Bean;
 public class ExceptionHandlerAutoConfiguration {
 
   /**
-   * Creates and configures a bean for the {@code ExceptionHandler}, using the provided {@code
-   * ExceptionHandlerResolver} and {@code HandlerMethodInvoker}
+   * Creates and configures a bean for the {@code ExceptionHandler}, using the provided
+   * {@code ExceptionHandlerResolver} and {@code HandlerMethodInvoker}
    *
    * @param exceptionHandlerResolver The resolver for mapping exceptions to handler methods
    * @param handlerMethodInvoker     The invoker for handling method invocation
