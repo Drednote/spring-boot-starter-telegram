@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.ActionExecutor;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public final class StepConfigurerImpl implements StepConfigurer {
   private boolean finished = false;
   private String name;
   private String refToStep;
-  private final List<TelegramRequestMapping> pattern = new ArrayList<>();
+  private final List<UpdateRequestMapping> pattern = new ArrayList<>();
   private ActionExecutor action;
 
   @Override
@@ -30,7 +30,7 @@ public final class StepConfigurerImpl implements StepConfigurer {
   }
 
   @Override
-  public StepConfigurer pattern(TelegramRequestMapping pattern) {
+  public StepConfigurer pattern(UpdateRequestMapping pattern) {
     this.pattern.add(pattern);
     return this;
   }

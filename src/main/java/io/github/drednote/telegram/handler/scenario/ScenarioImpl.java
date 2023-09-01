@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -91,7 +91,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Override
-  public Result makeStep(TelegramUpdateRequest request) throws ScenarioException {
+  public Result makeStep(UpdateRequest request) throws ScenarioException {
     if (this.finished) {
       return EMPTY_RESULT;
     }
@@ -136,7 +136,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @NonNull
-  private ResultImpl doMakeStep(TelegramUpdateRequest request, Node nextNode) throws Exception {
+  private ResultImpl doMakeStep(UpdateRequest request, Node nextNode) throws Exception {
     request.setScenario(this);
     Object result = nextNode.action.onAction(request);
     nextNode = tryToGoToRef(nextNode);
@@ -168,7 +168,7 @@ public final class ScenarioImpl implements Scenario {
     this.stepsMade.add(nextNode);
   }
 
-  private Node findNextNode(TelegramUpdateRequest request) {
+  private Node findNextNode(UpdateRequest request) {
     if (step == null) {
       return findMatchingNode(request, starts);
     } else {
@@ -180,7 +180,7 @@ public final class ScenarioImpl implements Scenario {
   }
 
   @Nullable
-  private Node findMatchingNode(TelegramUpdateRequest request, List<Node> nodes) {
+  private Node findMatchingNode(UpdateRequest request, List<Node> nodes) {
     return nodes.stream()
         .filter(node -> node.pattern.matches(request))
         .min(Comparator.comparing(f -> f.pattern))
@@ -208,7 +208,7 @@ public final class ScenarioImpl implements Scenario {
   static class Node {
 
     final String name;
-    final TelegramRequestMapping pattern;
+    final UpdateRequestMapping pattern;
     final List<Node> children = new ArrayList<>();
     final ActionExecutor action;
     @Nullable

@@ -1,21 +1,21 @@
 package io.github.drednote.telegram.exception;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.springframework.lang.NonNull;
 
 /**
  * The {@code ExceptionHandler} interface describes a contract for classes that handle exceptions
- * that may occur during the processing of a TelegramUpdateRequest
+ * that may occur during the processing of a UpdateRequest
  *
  * @author Ivan Galushko
  */
 public interface ExceptionHandler {
 
   /**
-   * Handles exceptions that occur during the processing of a {@code TelegramUpdateRequest}
+   * Handles exceptions that occur during the processing of a {@code UpdateRequest}
    *
-   * @param request the {@code TelegramUpdateRequest} object representing the request to be
+   * @param request the {@code UpdateRequest} object representing the request to be
    *                processed, not null
    */
-  void handle(@NonNull TelegramUpdateRequest request);
+  void handle(@NonNull UpdateRequest request);
 }

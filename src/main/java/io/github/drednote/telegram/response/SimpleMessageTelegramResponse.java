@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.response;
 
 import io.github.drednote.telegram.core.TelegramMessageSource;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import java.util.Locale;
 import java.util.Optional;
 import lombok.Setter;
@@ -43,7 +43,7 @@ public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResp
    * @return The retrieved message for the locale, or the default message if unavailable
    */
   @Nullable
-  protected String getMessageForLocale(TelegramUpdateRequest request) {
+  protected String getMessageForLocale(UpdateRequest request) {
     if (messageSource != null) {
       User user = request.getUser();
       Locale locale = Optional.ofNullable(user)
@@ -63,7 +63,7 @@ public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResp
    * @throws TelegramApiException if sending the message fails
    */
   @Override
-  public void process(TelegramUpdateRequest request) throws TelegramApiException {
+  public void process(UpdateRequest request) throws TelegramApiException {
     String text = getMessageForLocale(request);
     if (text != null) {
       sendString(text, request);

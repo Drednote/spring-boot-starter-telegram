@@ -1,11 +1,11 @@
 package io.github.drednote.telegram.handler.controller;
 
 import io.github.drednote.telegram.core.ResponseSetter;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.core.annotation.TelegramController;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -64,7 +64,7 @@ public class ControllerUpdateHandler implements UpdateHandler {
    * @throws Exception if an error occurs during handling the update
    */
   @Override
-  public void onUpdate(TelegramUpdateRequest request) throws Exception {
+  public void onUpdate(UpdateRequest request) throws Exception {
     handlerMethodPopular.populate(request);
     RequestHandler requestHandler = request.getRequestHandler();
     if (requestHandler != null) {

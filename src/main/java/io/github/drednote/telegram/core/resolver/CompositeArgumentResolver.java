@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.resolver;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.List;
@@ -54,9 +54,9 @@ public class CompositeArgumentResolver implements HandlerMethodArgumentResolver 
    */
   @Override
   @Nullable
-  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
     Assert.notNull(parameter, "MethodParameter");
-    Assert.notNull(request, "TelegramUpdateRequest");
+    Assert.notNull(request, "UpdateRequest");
 
     for (HandlerMethodArgumentResolver resolver : resolvers) {
       if (resolver.supportsParameter(parameter)) {

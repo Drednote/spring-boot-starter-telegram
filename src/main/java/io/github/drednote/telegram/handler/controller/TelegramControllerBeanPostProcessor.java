@@ -58,14 +58,14 @@ public class TelegramControllerBeanPostProcessor implements BeanPostProcessor {
     return bean;
   }
 
-  private Map<Method, TelegramRequestMappingBuilder> findAnnotatedMethodsTelegramRequest(
+  private Map<Method, UpdateRequestMappingBuilder> findAnnotatedMethodsTelegramRequest(
       Class<?> targetClass) {
     return MethodIntrospector.selectMethods(targetClass,
-        (MethodIntrospector.MetadataLookup<TelegramRequestMappingBuilder>) method -> {
+        (MethodIntrospector.MetadataLookup<UpdateRequestMappingBuilder>) method -> {
           var telegramRequest = AnnotatedElementUtils.findMergedAnnotation(method,
               TelegramRequest.class);
           if (telegramRequest != null) {
-            return new TelegramRequestMappingBuilder(telegramRequest);
+            return new UpdateRequestMappingBuilder(telegramRequest);
           } else {
             return null;
           }

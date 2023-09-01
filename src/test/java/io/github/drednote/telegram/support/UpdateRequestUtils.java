@@ -2,7 +2,7 @@ package io.github.drednote.telegram.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import lombok.experimental.UtilityClass;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,10 +14,10 @@ public class UpdateRequestUtils {
   /**
    * @return request with mocked other properties than update
    */
-  public DefaultTelegramUpdateRequest createMockRequest(Update update) {
+  public DefaultUpdateRequest createMockRequest(Update update) {
     AbsSender absSender = Mockito.mock(AbsSender.class);
 
-    return new DefaultTelegramUpdateRequest(update, absSender, new TelegramProperties(),
+    return new DefaultUpdateRequest(update, absSender, new TelegramProperties(),
         new ObjectMapper());
   }
 }

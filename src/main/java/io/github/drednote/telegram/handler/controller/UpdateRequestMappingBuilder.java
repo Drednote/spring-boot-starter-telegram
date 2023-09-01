@@ -3,7 +3,7 @@ package io.github.drednote.telegram.handler.controller;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,18 +17,18 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 /**
- * The {@code TelegramRequestMappingBuilder} class is responsible for building Telegram request
+ * The {@code UpdateRequestMappingBuilder} class is responsible for building Telegram request
  * mappings based on provided metadata. It allows constructing mappings with various combinations of
  * patterns, request types, and message types.
  * <p>
  * It accepts a {@link TelegramRequestMappingMetaData} or {@link TelegramRequest} as input and
- * generates multiple {@link TelegramRequestMapping} instances based on the provided data. The
+ * generates multiple {@link UpdateRequestMapping} instances based on the provided data. The
  * generated mappings can then be processed using a consumer.
  *
  * @author Ivan Galushko
- * @see TelegramRequestMapping
+ * @see UpdateRequestMapping
  */
-public class TelegramRequestMappingBuilder {
+public class UpdateRequestMappingBuilder {
 
   private static final String DEFAULT_PATTERN = "**";
   private static final String DEFAULT_COMMAND_PATTERN = "/**";
@@ -41,21 +41,21 @@ public class TelegramRequestMappingBuilder {
   private final boolean exclusiveMessageType;
 
   /**
-   * Constructs a {@code TelegramRequestMappingBuilder} using metadata from a
+   * Constructs a {@code UpdateRequestMappingBuilder} using metadata from a
    * {@link TelegramRequest}.
    *
    * @param requestMapping The Telegram request mapping annotation, not null
    */
-  public TelegramRequestMappingBuilder(TelegramRequest requestMapping) {
+  public UpdateRequestMappingBuilder(TelegramRequest requestMapping) {
     this(new TelegramRequestMappingMetaData(requestMapping));
   }
 
   /**
-   * Constructs a {@code TelegramRequestMappingBuilder} using provided metadata.
+   * Constructs a {@code UpdateRequestMappingBuilder} using provided metadata.
    *
    * @param metaData The metadata for constructing request mappings, not null
    */
-  public TelegramRequestMappingBuilder(TelegramRequestMappingMetaData metaData) {
+  public UpdateRequestMappingBuilder(TelegramRequestMappingMetaData metaData) {
     Assert.required(metaData, "TelegramRequestMappingMetaData");
     this.patterns = createList(metaData.patterns);
     this.requestTypes = createList(metaData.requestTypes);
@@ -67,11 +67,11 @@ public class TelegramRequestMappingBuilder {
   }
 
   /**
-   * Processes and applies the provided consumer to each generated {@link TelegramRequestMapping}.
+   * Processes and applies the provided consumer to each generated {@link UpdateRequestMapping}.
    *
    * @param consumer The consumer to apply to each mapping, not null
    */
-  public void forEach(Consumer<TelegramRequestMapping> consumer) {
+  public void forEach(Consumer<UpdateRequestMapping> consumer) {
     Assert.notNull(consumer, "consumer");
     if (requestTypes.isEmpty() && patterns.isEmpty()) {
       process(null, null, consumer);
@@ -94,11 +94,11 @@ public class TelegramRequestMappingBuilder {
 
   private void process(
       @Nullable String pattern, @Nullable RequestType requestType,
-      @NonNull Consumer<TelegramRequestMapping> consumer
+      @NonNull Consumer<UpdateRequestMapping> consumer
   ) {
     if (requestType == null && pattern == null) {
-      consumer.accept(new TelegramRequestMapping(DEFAULT_PATTERN, null, Collections.emptySet()));
-      consumer.accept(new TelegramRequestMapping(DEFAULT_COMMAND_PATTERN, RequestType.MESSAGE,
+      consumer.accept(new UpdateRequestMapping(DEFAULT_PATTERN, null, Collections.emptySet()));
+      consumer.accept(new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, RequestType.MESSAGE,
           Set.of(MessageType.COMMAND)));
     } else if (requestType == RequestType.MESSAGE) {
       if (!messageTypes.isEmpty()) {
@@ -120,17 +120,17 @@ public class TelegramRequestMappingBuilder {
   private void doProcess(
       @Nullable String pattern, @Nullable RequestType requestType,
       @NonNull Set<MessageType> messageTypes,
-      @NonNull Consumer<TelegramRequestMapping> consumer
+      @NonNull Consumer<UpdateRequestMapping> consumer
   ) {
     if (pattern == null) {
       if (requestType == RequestType.MESSAGE && messageTypes.contains(MessageType.COMMAND)) {
         consumer.accept(
-            new TelegramRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
+            new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
       } else {
-        consumer.accept(new TelegramRequestMapping(DEFAULT_PATTERN, requestType, messageTypes));
+        consumer.accept(new UpdateRequestMapping(DEFAULT_PATTERN, requestType, messageTypes));
       }
     } else {
-      consumer.accept(new TelegramRequestMapping(pattern, requestType, messageTypes));
+      consumer.accept(new UpdateRequestMapping(pattern, requestType, messageTypes));
     }
   }
 

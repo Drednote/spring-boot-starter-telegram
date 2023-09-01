@@ -1,13 +1,13 @@
 package io.github.drednote.telegram.response;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 
 /**
- * This class represents a {@code TelegramResponse} indicating that {@link TelegramUpdateRequest}
+ * This class represents a {@code TelegramResponse} indicating that {@link UpdateRequest}
  * was not handled. It sends a message indicating that the command or text is unknown.
  *
  * @author Ivan Galushko
- * @see TelegramUpdateRequest
+ * @see UpdateRequest
  */
 public final class NotHandledTelegramResponse extends SimpleMessageTelegramResponse {
 

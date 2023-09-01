@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.core.annotation;
 
 import io.github.drednote.telegram.core.TelegramRequestScope;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,7 +22,7 @@ import org.springframework.core.annotation.AliasFor;
  * a proxy is used to manage the bean's lifecycle correctly.
  *
  * <p>The Telegram bot request scope is designed to be used within a Spring application context
- * to manage beans associated with a {@link TelegramUpdateRequest}. Beans within this scope are
+ * to manage beans associated with a {@link UpdateRequest}. Beans within this scope are
  * created and managed for the duration of a single Telegram bot request.
  *
  * <p>Usage example:

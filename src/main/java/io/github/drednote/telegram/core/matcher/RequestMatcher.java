@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.matcher;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -19,7 +19,7 @@ public interface RequestMatcher extends Ordered {
    * @param request the update request to match, not null
    * @return true if the request matches, false otherwise
    */
-  boolean matches(@NonNull TelegramUpdateRequest request);
+  boolean matches(@NonNull UpdateRequest request);
 
   /**
    * Returns a composite matcher that combines this matcher with another matcher

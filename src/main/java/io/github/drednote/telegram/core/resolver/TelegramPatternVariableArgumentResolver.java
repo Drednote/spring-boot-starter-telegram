@@ -2,7 +2,7 @@ package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.core.annotation.TelegramPatternVariable;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,9 +41,9 @@ public class TelegramPatternVariableArgumentResolver implements HandlerMethodArg
    */
   @Override
   @Nullable
-  public Object resolveArgument(MethodParameter parameter, TelegramUpdateRequest request) {
+  public Object resolveArgument(MethodParameter parameter, UpdateRequest request) {
     Assert.notNull(parameter, "MethodParameter");
-    Assert.notNull(request, "TelegramUpdateRequest");
+    Assert.notNull(request, "UpdateRequest");
 
     TelegramPatternVariable pathVariable = AnnotatedElementUtils
         .findMergedAnnotation(parameter.getParameter(), TelegramPatternVariable.class);
@@ -62,7 +62,7 @@ public class TelegramPatternVariableArgumentResolver implements HandlerMethodArg
 
   @Nullable
   private Object doResolve(
-      MethodParameter parameter, TelegramUpdateRequest request,
+      MethodParameter parameter, UpdateRequest request,
       TelegramPatternVariable variable
   ) {
     String name = variable.name().isEmpty() ? parameter.getParameter().getName() : variable.name();

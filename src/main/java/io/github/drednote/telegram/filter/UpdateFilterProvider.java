@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.filter;
 
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.lang.NonNull;
  * requests.
  *
  * <p>Classes implementing this interface should define methods for obtaining lists of pre-update
- * and post-update filters based on the provided {@link TelegramUpdateRequest}
+ * and post-update filters based on the provided {@link UpdateRequest}
  *
  * @author Ivan Galushko
  * @implNote All implementations must support creating beans wth any scopes
@@ -28,7 +28,7 @@ public interface UpdateFilterProvider {
    * @param request The incoming Telegram update request. Must not be null
    * @return A list of pre-update filters
    */
-  List<PreUpdateFilter> getPreFilters(@NonNull TelegramUpdateRequest request);
+  List<PreUpdateFilter> getPreFilters(@NonNull UpdateRequest request);
 
   /**
    * Retrieves a list of post-update filters to be applied after processing the Telegram update
@@ -37,5 +37,5 @@ public interface UpdateFilterProvider {
    * @param request The incoming Telegram update request.Must not be null
    * @return A list of post-update filters
    */
-  List<PostUpdateFilter> getPostFilters(@NonNull TelegramUpdateRequest request);
+  List<PostUpdateFilter> getPostFilters(@NonNull UpdateRequest request);
 }

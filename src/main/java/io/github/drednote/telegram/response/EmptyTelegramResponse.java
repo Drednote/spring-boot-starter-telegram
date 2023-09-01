@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.response;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 
 /**
  * This class represents an empty {@code TelegramResponse} that performs no action when executed. It
@@ -22,10 +22,10 @@ public final class EmptyTelegramResponse implements TelegramResponse {
   /**
    * Does nothing when executed.
    *
-   * @param updateRequest The TelegramUpdateRequest containing the update information.
+   * @param updateRequest The UpdateRequest containing the update information.
    */
   @Override
-  public void process(TelegramUpdateRequest updateRequest) {
+  public void process(UpdateRequest updateRequest) {
     // do nothing
   }
 }

@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.handler;
 
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
@@ -19,7 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * execution you can use {@link Order} annotation.
  * <p>
  * Also, after successful processing of the message, it is necessary set {@link TelegramResponse} in
- * {@link TelegramUpdateRequest}, so that update processing can be considered successful. If this is
+ * {@link UpdateRequest}, so that update processing can be considered successful. If this is
  * not done, further update handlers will be called
  * <p>
  * You can make your own handlers by implementing this interface and mark them with
@@ -29,7 +29,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * {@link UpdateHandlerProperties} to {@code false}
  *
  * @author Ivan Galushko
- * @see TelegramUpdateRequest
+ * @see UpdateRequest
  * @see UpdateHandlerProperties
  * @see ControllerUpdateHandler
  * @see ScenarioUpdateHandler
@@ -45,6 +45,6 @@ public interface UpdateHandler {
    * @param request The Telegram update request to be handled, not null
    * @throws Exception if an error occurs while processing the update
    */
-  void onUpdate(@NonNull TelegramUpdateRequest request) throws Exception;
+  void onUpdate(@NonNull UpdateRequest request) throws Exception;
 
 }

@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -55,12 +55,12 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
    * Processes the Telegram response. Depending on the type of response, it will be sent to the
    * chat.
    *
-   * @param request The TelegramUpdateRequest containing the update and sender information
+   * @param request The UpdateRequest containing the update and sender information
    * @throws TelegramApiException if an error occurs while sending the response
    */
   @Override
-  public void process(TelegramUpdateRequest request) throws TelegramApiException {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void process(UpdateRequest request) throws TelegramApiException {
+    Assert.notNull(request, "UpdateRequest");
     Serializable responseMessage;
     if (response instanceof String str) {
       responseMessage = sendString(str, request);
@@ -98,7 +98,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
   }
 
   @Nullable
-  private Serializable tryToSendMedia(TelegramUpdateRequest request) throws TelegramApiException {
+  private Serializable tryToSendMedia(UpdateRequest request) throws TelegramApiException {
     if (response instanceof SendAnimation sendAnimation) {
       return request.getAbsSender().execute(sendAnimation);
     }

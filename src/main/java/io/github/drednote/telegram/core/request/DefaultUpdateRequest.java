@@ -14,13 +14,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * The {@code DefaultTelegramUpdateRequest} class is default implementation of the
- * {@link TelegramUpdateRequest} interface
+ * The {@code DefaultUpdateRequest} class is default implementation of the
+ * {@link UpdateRequest} interface
  *
  * @author Ivan Galushko
  */
 @Getter
-public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest {
+public class DefaultUpdateRequest extends AbstractUpdateRequest {
 
   private final AbsSender absSender;
   private final TelegramProperties properties;
@@ -47,13 +47,13 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
   private Throwable error;
 
   /**
-   * Creates a new instance of the DefaultTelegramUpdateRequest class with the given parameters.
+   * Creates a new instance of the DefaultUpdateRequest class with the given parameters.
    *
    * @param update     the update received from Telegram.
    * @param absSender  the abstract sender used to send responses.
    * @param properties the Telegram properties.
    */
-  public DefaultTelegramUpdateRequest(
+  public DefaultUpdateRequest(
       Update update, AbsSender absSender, TelegramProperties properties, ObjectMapper objectMapper
   ) {
     super(update);
@@ -67,14 +67,14 @@ public class DefaultTelegramUpdateRequest extends AbstractTelegramUpdateRequest 
   }
 
   /**
-   * Create new instance of {@code DefaultTelegramUpdateRequest} class based on an existing
-   * {@code TelegramUpdateRequest}
+   * Create new instance of {@code DefaultUpdateRequest} class based on an existing
+   * {@code UpdateRequest}
    *
-   * @param request existing {@code TelegramUpdateRequest}
+   * @param request existing {@code UpdateRequest}
    */
-  public DefaultTelegramUpdateRequest(TelegramUpdateRequest request) {
+  public DefaultUpdateRequest(UpdateRequest request) {
     super(request);
-    Assert.required(request, "TelegramUpdateRequest");
+    Assert.required(request, "UpdateRequest");
 
     this.properties = request.getProperties();
     this.absSender = request.getAbsSender();

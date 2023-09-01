@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.filter.post;
 
 import io.github.drednote.telegram.core.annotation.TelegramScope;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -29,7 +29,7 @@ public interface PostUpdateFilter extends UpdateFilterMatcher {
    *
    * @param request The incoming Telegram update request to be post-filtered
    */
-  void postFilter(@NonNull TelegramUpdateRequest request);
+  void postFilter(@NonNull UpdateRequest request);
 
   /**
    * Gets the post-update filter's execution order

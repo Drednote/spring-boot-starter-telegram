@@ -13,13 +13,13 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
 /**
- * The {@code TelegramRequestMapping} class represents a mapping for handling Telegram update
+ * The {@code UpdateRequestMapping} class represents a mapping for handling Telegram update
  * requests. It implements the {@link Comparable} interface to allow for sorting and the
  * {@link RequestMatcher} interface to determine if a request matches the mapping
  *
  * @author Ivan Galushko
  */
-public class TelegramRequestMapping implements Comparable<TelegramRequestMapping>, RequestMatcher {
+public class UpdateRequestMapping implements Comparable<UpdateRequestMapping>, RequestMatcher {
 
   /**
    * The pattern associated with the mapping
@@ -53,7 +53,7 @@ public class TelegramRequestMapping implements Comparable<TelegramRequestMapping
   private final RequestMappingInfoComparator comparator =
       new RequestMappingInfoComparator(pathMatcher);
 
-  public TelegramRequestMapping(
+  public UpdateRequestMapping(
       @NonNull String pattern, @Nullable RequestType requestType,
       @NonNull Set<MessageType> messageTypes
   ) {
@@ -72,7 +72,7 @@ public class TelegramRequestMapping implements Comparable<TelegramRequestMapping
    * @return the comparison result
    */
   @Override
-  public int compareTo(@NonNull TelegramRequestMapping o) {
+  public int compareTo(@NonNull UpdateRequestMapping o) {
     return comparator.compare(this, o);
   }
 
@@ -83,7 +83,7 @@ public class TelegramRequestMapping implements Comparable<TelegramRequestMapping
    * @return true if the request matches, false otherwise
    */
   @Override
-  public boolean matches(@NonNull TelegramUpdateRequest request) {
+  public boolean matches(@NonNull UpdateRequest request) {
     return requestMatcher.matches(request);
   }
 
@@ -104,7 +104,7 @@ public class TelegramRequestMapping implements Comparable<TelegramRequestMapping
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TelegramRequestMapping that = (TelegramRequestMapping) o;
+    UpdateRequestMapping that = (UpdateRequestMapping) o;
     return Objects.equals(pattern, that.pattern) && requestType == that.requestType
         && messageTypes.equals(that.messageTypes);
   }

@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.springframework.lang.Nullable;
 
 @BetaApi
@@ -22,7 +22,7 @@ public sealed interface Scenario permits ScenarioImpl {
 
   /**
    * @return current step or {@link EmptyStep#INSTANCE} if no step exists for the scenario
-   * @apiNote If you call {@link Scenario#makeStep(TelegramUpdateRequest)}, a result of this method
+   * @apiNote If you call {@link Scenario#makeStep(UpdateRequest)}, a result of this method
    * will be changed
    */
   Step getCurrentStep();
@@ -32,7 +32,7 @@ public sealed interface Scenario permits ScenarioImpl {
    *
    * @return result of performed action
    */
-  Result makeStep(TelegramUpdateRequest updateRequest) throws ScenarioException;
+  Result makeStep(UpdateRequest updateRequest) throws ScenarioException;
 
   /**
    * @return true if a scenario has no more steps, false if a step can be isMade

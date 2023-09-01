@@ -16,14 +16,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 /**
- * The {@code AbstractTelegramUpdateRequest} class is an abstract implementation of the
- * {@link TelegramUpdateRequest} interface. It provides common functionality for processing update
+ * The {@code AbstractUpdateRequest} class is an abstract implementation of the
+ * {@link UpdateRequest} interface. It provides common functionality for processing update
  * requests received from Telegram.
  *
  * @author Ivan Galushko
  */
 @Getter
-public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateRequest {
+public abstract class AbstractUpdateRequest implements UpdateRequest {
 
   /**
    * updateId
@@ -48,12 +48,12 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
   protected final String text;
 
   /**
-   * Creates a new instance of the {@code AbstractTelegramUpdateRequest} class with the given
+   * Creates a new instance of the {@code AbstractUpdateRequest} class with the given
    * update.
    *
    * @param update the update received from Telegram, not null
    */
-  protected AbstractTelegramUpdateRequest(Update update) {
+  protected AbstractUpdateRequest(Update update) {
     Assert.notNull(update, "Update");
 
     this.origin = update;
@@ -126,13 +126,13 @@ public abstract class AbstractTelegramUpdateRequest implements TelegramUpdateReq
   }
 
   /**
-   * Create new instance of {@code AbstractTelegramUpdateRequest} class based on an existing
-   * {@code TelegramUpdateRequest}
+   * Create new instance of {@code AbstractUpdateRequest} class based on an existing
+   * {@code UpdateRequest}
    *
-   * @param request existing {@code TelegramUpdateRequest}
+   * @param request existing {@code UpdateRequest}
    */
-  protected AbstractTelegramUpdateRequest(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  protected AbstractUpdateRequest(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     this.id = request.getId();
     this.origin = request.getOrigin();
     this.chatId = request.getChatId();

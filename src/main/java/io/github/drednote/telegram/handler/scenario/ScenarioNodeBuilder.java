@@ -3,7 +3,7 @@ package io.github.drednote.telegram.handler.scenario;
 import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioDefinition;
 import io.github.drednote.telegram.handler.scenario.configurer.StepDefinition;
 import io.github.drednote.telegram.handler.scenario.ScenarioImpl.Node;
@@ -44,7 +44,7 @@ final class ScenarioNodeBuilder {
           ? truncateSlash(startCommand)
           : scenario.name();
       Node scenarioNode = new Node(
-          id, new TelegramRequestMapping(startCommand, RequestType.MESSAGE,
+          id, new UpdateRequestMapping(startCommand, RequestType.MESSAGE,
           Set.of(MessageType.COMMAND)), action, null, null);
       addToFlat(scenarioNode);
       addChildren(steps, scenarioNode);
@@ -60,8 +60,8 @@ final class ScenarioNodeBuilder {
   private void addChildren(LinkedList<StepDefinition> steps, Node parentNode) {
     int i = 0;
     for (StepDefinition step : steps) {
-      List<TelegramRequestMapping> patterns = createEmptyIfNeed(step.pattern());
-      for (TelegramRequestMapping mappingInfo : patterns) {
+      List<UpdateRequestMapping> patterns = createEmptyIfNeed(step.pattern());
+      for (UpdateRequestMapping mappingInfo : patterns) {
         ActionExecutor action = step.action();
         Assert.notNull(action, "Scenario action");
 
@@ -79,13 +79,13 @@ final class ScenarioNodeBuilder {
   }
 
   @NonNull
-  private List<TelegramRequestMapping> createEmptyIfNeed(
-      List<TelegramRequestMapping> patterns) {
+  private List<UpdateRequestMapping> createEmptyIfNeed(
+      List<UpdateRequestMapping> patterns) {
     if (patterns == null) {
       patterns = new ArrayList<>();
     }
     if (patterns.isEmpty()) {
-      patterns.add(new TelegramRequestMapping("**", null, Collections.emptySet()));
+      patterns.add(new UpdateRequestMapping("**", null, Collections.emptySet()));
     }
     return patterns;
   }

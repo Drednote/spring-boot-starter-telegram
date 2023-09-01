@@ -30,7 +30,7 @@ import org.springframework.core.annotation.AliasFor;
  * public class MyTelegramController {
  *
  *     @TelegramCommand("/start")
- *     public void handleStartCommand(TelegramUpdateRequest update) {
+ *     public void handleStartCommand(UpdateRequest update) {
  *         // Handle start command logic
  *     }
  * }

@@ -11,7 +11,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import io.github.bucket4j.local.LocalBucket;
 import io.github.bucket4j.local.SynchronizationStrategy;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
@@ -76,8 +76,8 @@ public class UserRateLimitRequestFilter implements PriorityPreUpdateFilter {
    * @param request The incoming Telegram update request to be pre-filtered, not null
    */
   @Override
-  public void preFilter(@NonNull TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void preFilter(@NonNull UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     Long chatId = request.getChatId();
     if (filterProperties.getUserRateLimit() > 0) {

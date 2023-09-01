@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.core.matcher;
 
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.Ordered;
 
@@ -13,20 +13,20 @@ import org.springframework.core.Ordered;
  * checks the message types
  *
  * @author Ivan Galushko
- * @see TelegramRequestMapping
+ * @see UpdateRequestMapping
  */
 public class RequestAndMessageTypeMatcher implements RequestMatcher {
 
   /**
    * The Telegram request mapping
    */
-  private final TelegramRequestMapping mapping;
+  private final UpdateRequestMapping mapping;
 
   /**
    * @param mapping the Telegram request mapping, not null
    */
-  public RequestAndMessageTypeMatcher(TelegramRequestMapping mapping) {
-    Assert.required(mapping, "TelegramRequestMapping");
+  public RequestAndMessageTypeMatcher(UpdateRequestMapping mapping) {
+    Assert.required(mapping, "UpdateRequestMapping");
 
     this.mapping = mapping;
   }
@@ -35,7 +35,7 @@ public class RequestAndMessageTypeMatcher implements RequestMatcher {
    * Checks if the given update request matches the request type specified in the mapping. If
    * matches than check message types
    * <p>
-   * If a request type doesn't present in current {@code TelegramRequestMapping}, then return true
+   * If a request type doesn't present in current {@code UpdateRequestMapping}, then return true
    * <p>
    * If the given update request matches the request type specified in the mapping and message types
    * are empty, then return true
@@ -44,8 +44,8 @@ public class RequestAndMessageTypeMatcher implements RequestMatcher {
    * @return true if the request matches criteria, false otherwise
    */
   @Override
-  public boolean matches(TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public boolean matches(UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
 
     RequestType requestType = request.getRequestType();
     if (mapping.getRequestType() != null && requestType != mapping.getRequestType()) {

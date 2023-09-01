@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
@@ -23,7 +23,7 @@ class UserRateLimitRequestFilterTest {
 
     UserRateLimitRequestFilter filter = new UserRateLimitRequestFilter(filterProperties);
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
     filter.preFilter(request);
@@ -39,7 +39,7 @@ class UserRateLimitRequestFilterTest {
 
     UserRateLimitRequestFilter filter = new UserRateLimitRequestFilter(filterProperties);
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
     filter.preFilter(request);
@@ -57,7 +57,7 @@ class UserRateLimitRequestFilterTest {
 
     UserRateLimitRequestFilter filter = new UserRateLimitRequestFilter(filterProperties);
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
     filter.preFilter(request);
@@ -79,7 +79,7 @@ class UserRateLimitRequestFilterTest {
     UserRateLimitRequestFilter filter = new UserRateLimitRequestFilter(filterProperties);
     filter.setCacheEvictionCallback((key1, value, cause) -> key.getAndIncrement());
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
     filter.preFilter(request);

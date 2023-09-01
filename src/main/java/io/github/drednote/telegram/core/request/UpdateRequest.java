@@ -27,14 +27,14 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * The {@code TelegramUpdateRequest} interface represents a request received from
+ * The {@code UpdateRequest} interface represents a request received from
  * <a href="https://core.telegram.org/bots/api">Telegram API</a> as an {@link Update}.
  * Implementations of this interface provide getters and setters to access and modify the various
  * properties of the request.
  *
  * @author Ivan Galushko
  */
-public interface TelegramUpdateRequest {
+public interface UpdateRequest {
 
   //-----------getters for Update-----------
 
@@ -82,7 +82,7 @@ public interface TelegramUpdateRequest {
    * can be field 'caption' if it presents
    *
    * @return the text of the message or of the request. Return null if {@link Update} has no text
-   * @see AbstractTelegramUpdateRequest#AbstractTelegramUpdateRequest(Update)
+   * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
    */
   @Nullable
   String getText();
@@ -95,7 +95,7 @@ public interface TelegramUpdateRequest {
    * @see Update#getEditedMessage()
    * @see Update#getChannelPost()
    * @see Update#getEditedChannelPost()
-   * @see AbstractTelegramUpdateRequest#AbstractTelegramUpdateRequest(Update)
+   * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
    */
   @Nullable
   Message getMessage();
@@ -104,7 +104,7 @@ public interface TelegramUpdateRequest {
    * Returns the chat associated with the request
    *
    * @return the chat, or null if not applicable
-   * @see AbstractTelegramUpdateRequest#AbstractTelegramUpdateRequest(Update)
+   * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
    */
   @Nullable
   Chat getChat();
@@ -113,7 +113,7 @@ public interface TelegramUpdateRequest {
    * Returns the user associated with the request
    *
    * @return the user, or null if not applicable
-   * @see AbstractTelegramUpdateRequest#AbstractTelegramUpdateRequest(Update)
+   * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
    */
   @Nullable
   User getUser();

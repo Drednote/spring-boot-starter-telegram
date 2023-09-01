@@ -3,14 +3,8 @@ package io.github.drednote.telegram.handler.scenario;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.handler.scenario.ActionExecutor;
-import io.github.drednote.telegram.handler.scenario.EmptyStep;
-import io.github.drednote.telegram.handler.scenario.Result;
-import io.github.drednote.telegram.handler.scenario.ScenarioException;
-import io.github.drednote.telegram.handler.scenario.ScenarioImpl;
-import io.github.drednote.telegram.handler.scenario.StepImpl;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import io.github.drednote.telegram.handler.scenario.ScenarioImpl.Node;
@@ -44,7 +38,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isFalse();
 
       result = scenario.makeStep(
-          new DefaultTelegramUpdateRequest(
+          new DefaultUpdateRequest(
               UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("abc"))));
 
       // result asserts
@@ -79,7 +73,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isTrue();
 
       result = scenario.makeStep(
-          new DefaultTelegramUpdateRequest(
+          new DefaultUpdateRequest(
               UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("abc"))));
 
       // result asserts
@@ -104,7 +98,7 @@ class ScenarioImplTest {
       makeStep(scenario, "/start");
 
       Result result = scenario.makeStep(
-          new DefaultTelegramUpdateRequest(
+          new DefaultUpdateRequest(
               UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("abc"))));
 
       // result asserts
@@ -118,7 +112,7 @@ class ScenarioImplTest {
       assertThat(scenario.isFinished()).isFalse();
 
       result = scenario.makeStep(
-          new DefaultTelegramUpdateRequest(
+          new DefaultUpdateRequest(
               UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("cancel"))));
 
       // result asserts
@@ -160,7 +154,7 @@ class ScenarioImplTest {
       makeStep(scenario, "/start");
 
       scenario.makeStep(
-          new DefaultTelegramUpdateRequest(
+          new DefaultUpdateRequest(
               UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("abc"))));
     } catch (ScenarioException e) {
       assertThat(e).isNull();
@@ -168,7 +162,7 @@ class ScenarioImplTest {
 
     flat.remove("root");
     assertThatThrownBy(() -> scenario.makeStep(
-        new DefaultTelegramUpdateRequest(
+        new DefaultUpdateRequest(
             UpdateRequestUtils.createMockRequest(UpdateUtils.createMessage("cancel")))))
         .isInstanceOf(ScenarioException.class)
         .cause().isInstanceOf(IllegalStateException.class);
@@ -187,7 +181,7 @@ class ScenarioImplTest {
   @SneakyThrows
   private static Result makeStep(ScenarioImpl scenario, String step) {
     return scenario.makeStep(
-        new DefaultTelegramUpdateRequest(
+        new DefaultUpdateRequest(
             UpdateRequestUtils.createMockRequest(UpdateUtils.createCommand(step))));
   }
 
@@ -213,23 +207,23 @@ class ScenarioImplTest {
   }
 
   private List<Node> generateNodes(Map<String, Node> flat, ActionExecutor actionExecutor) {
-    Node root = new Node("root", new TelegramRequestMapping("/start", null, Collections.emptySet()),
+    Node root = new Node("root", new UpdateRequestMapping("/start", null, Collections.emptySet()),
         actionExecutor, null,
         null);
     flat.put(root.name, root);
 
     Node root2 = new Node("root2",
-        new TelegramRequestMapping("/register", null, Collections.emptySet()), actionExecutor, null,
+        new UpdateRequestMapping("/register", null, Collections.emptySet()), actionExecutor, null,
         null);
     flat.put(root2.name, root2);
 
-    Node child = new Node("child", new TelegramRequestMapping("**", null, Collections.emptySet()),
+    Node child = new Node("child", new UpdateRequestMapping("**", null, Collections.emptySet()),
         actionExecutor, null, root);
     flat.put(child.name, child);
     root.addChild(child);
 
     Node cancel = new Node("cancel",
-        new TelegramRequestMapping("cancel", null, Collections.emptySet()), actionExecutor, "root",
+        new UpdateRequestMapping("cancel", null, Collections.emptySet()), actionExecutor, "root",
         root);
     child.addChild(cancel);
 

@@ -1,9 +1,9 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.ResponseSetter;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
 import io.github.drednote.telegram.utils.FieldProvider;
 import io.github.drednote.telegram.utils.lock.ReadWriteKeyLock;
 import io.github.drednote.telegram.utils.lock.SynchronizedReadWriteKeyLock;
@@ -26,7 +26,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
   }
 
   @Override
-  public void onUpdate(TelegramUpdateRequest request) throws Exception {
+  public void onUpdate(UpdateRequest request) throws Exception {
     Long chatId = request.getChatId();
     try {
       lock.writeLock().lock(chatId);

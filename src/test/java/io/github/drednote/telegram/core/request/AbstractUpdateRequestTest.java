@@ -16,12 +16,12 @@ import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
-class AbstractTelegramUpdateRequestTest {
+class AbstractUpdateRequestTest {
 
   @ParameterizedTest
   @ArgumentsSource(UpdateRequestArgumentsProvider.class)
   void shouldCorrectParseUpdate(Data data) {
-    var request = new TestTelegramUpdateRequest(data.update);
+    var request = new TestUpdateRequest(data.update);
 
     assertThat(request.getRequestType()).isEqualTo(data.requestType);
     assertThat(request.getMessageTypes()).containsExactlyElementsOf(data.messageTypes);
@@ -33,7 +33,7 @@ class AbstractTelegramUpdateRequestTest {
   @ParameterizedTest
   @ArgumentsSource(UpdateRequestArgumentsProvider.class)
   void shouldCorrectParseMessage(Data data) {
-    var request = new TestTelegramUpdateRequest(data.update);
+    var request = new TestUpdateRequest(data.update);
 
     assertThat(request.getRequestType()).isEqualTo(data.requestType);
     assertThat(request.getMessageTypes()).containsExactlyElementsOf(data.messageTypes);
@@ -66,9 +66,9 @@ class AbstractTelegramUpdateRequestTest {
     }
   }
 
-  static class TestTelegramUpdateRequest extends AbstractTelegramUpdateRequest {
+  static class TestUpdateRequest extends AbstractUpdateRequest {
 
-    public TestTelegramUpdateRequest(Update update) {
+    public TestUpdateRequest(Update update) {
       super(update);
     }
 

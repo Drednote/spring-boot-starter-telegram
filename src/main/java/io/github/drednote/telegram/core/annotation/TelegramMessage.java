@@ -28,7 +28,7 @@ import org.springframework.core.annotation.AliasFor;
  * public class MyTelegramController {
  *
  *     @TelegramMessage(pattern = "hello")
- *     public void handleHelloMessage(TelegramUpdateRequest update) {
+ *     public void handleHelloMessage(UpdateRequest update) {
  *         // Handle hello message logic
  *     }
  * }

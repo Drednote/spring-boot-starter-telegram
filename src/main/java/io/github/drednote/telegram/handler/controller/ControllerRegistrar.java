@@ -2,7 +2,7 @@ package io.github.drednote.telegram.handler.controller;
 
 import io.github.drednote.telegram.core.annotation.TelegramController;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import java.lang.reflect.Method;
 import org.springframework.lang.NonNull;
 
@@ -17,7 +17,7 @@ import org.springframework.lang.NonNull;
  * This allows for efficient handling of incoming Telegram update requests, ensuring that the
  * appropriate method is invoked for the received update.
  *
- * @see TelegramRequestMapping
+ * @see UpdateRequestMapping
  * @see TelegramController
  * @see TelegramRequest
  */
@@ -31,5 +31,5 @@ public interface ControllerRegistrar {
    * @param method The method to be registered, not null
    * @param info   The mapping information associated with the method, not null
    */
-  void register(@NonNull Object bean, @NonNull Method method, @NonNull TelegramRequestMapping info);
+  void register(@NonNull Object bean, @NonNull Method method, @NonNull UpdateRequestMapping info);
 }

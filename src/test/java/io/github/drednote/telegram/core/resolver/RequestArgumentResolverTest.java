@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-import io.github.drednote.telegram.core.request.DefaultTelegramUpdateRequest;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,14 +21,14 @@ class RequestArgumentResolverTest {
 
   @ParameterizedTest
   @ValueSource(classes = {
-      TelegramUpdateRequest.class, TelegramBot.class,
+      UpdateRequest.class, TelegramBot.class,
       Throwable.class, String.class, Long.class
   })
   void shouldNotThrowExceptionAndResolve(Class<?> clazz) {
     MethodParameter parameter = Mockito.mock(MethodParameter.class);
     when(((Class) parameter.getParameterType())).thenReturn(clazz);
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createMessage("1"));
     request.setError(new Exception());
 
@@ -45,7 +45,7 @@ class RequestArgumentResolverTest {
     MethodParameter parameter = Mockito.mock(MethodParameter.class);
     when(((Class) parameter.getParameterType())).thenReturn(clazz);
 
-    DefaultTelegramUpdateRequest request = UpdateRequestUtils.createMockRequest(
+    DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createMessage("1"));
     request.setError(new Exception());
 

@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.core.resolver;
 
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -42,7 +42,7 @@ public interface HandlerMethodArgumentResolver extends Ordered {
    */
   @Nullable
   Object resolveArgument(@NonNull MethodParameter parameter,
-      @NonNull TelegramUpdateRequest request);
+      @NonNull UpdateRequest request);
 
   /**
    * Checks if the resolver supports the given method parameter

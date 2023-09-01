@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter.post;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.response.NotHandledTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.lang.NonNull;
@@ -28,8 +28,8 @@ public class NotHandledUpdateFilter implements PostUpdateFilter {
    * @param request The incoming Telegram update request to be post-filtered, not null
    */
   @Override
-  public void postFilter(@NonNull TelegramUpdateRequest request) {
-    Assert.notNull(request, "TelegramUpdateRequest");
+  public void postFilter(@NonNull UpdateRequest request) {
+    Assert.notNull(request, "UpdateRequest");
     if (request.getResponse() == null
         && request.getProperties().getFilters().isSetDefaultAnswer()) {
       request.setResponse(NotHandledTelegramResponse.INSTANCE);

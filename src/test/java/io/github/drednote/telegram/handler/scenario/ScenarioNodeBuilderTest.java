@@ -7,10 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.handler.scenario.ActionExecutor;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.ScenarioImpl.Node;
-import io.github.drednote.telegram.handler.scenario.ScenarioNodeBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioDefinition;
 import io.github.drednote.telegram.handler.scenario.configurer.StepDefinition;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ class ScenarioNodeBuilderTest {
   @Test
   void shouldThrowExceptionIfActionNull() {
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     steps
         .add(new StepDefinition("Scenario start command", pattern, null, new LinkedList<>(),
             "Scenario start command"));
@@ -61,7 +59,7 @@ class ScenarioNodeBuilderTest {
   @Test
   void testConstructor5() {
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     ActionExecutor action = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition("Scenario start command", pattern, action, new LinkedList<>(),
@@ -85,14 +83,14 @@ class ScenarioNodeBuilderTest {
     assertEquals("Name", getResult.name);
     assertEquals("Scenario start command", getResult2.name);
     assertSame(getResult, getResult2.parent);
-    TelegramRequestMapping telegramRequestMapping = getResult.pattern;
-    assertEquals("Start Command", telegramRequestMapping.getPattern());
-    assertNull(telegramRequestMapping.getMessageTypes());
-    TelegramRequestMapping telegramRequestMapping2 = getResult2.pattern;
-    assertTrue(telegramRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
-    assertEquals("**", telegramRequestMapping2.getPattern());
-    assertNull(telegramRequestMapping2.getMessageTypes());
-    assertTrue(telegramRequestMapping.getPathMatcher() instanceof AntPathMatcher);
+    UpdateRequestMapping updateRequestMapping = getResult.pattern;
+    assertEquals("Start Command", updateRequestMapping.getPattern());
+    assertNull(updateRequestMapping.getMessageTypes());
+    UpdateRequestMapping updateRequestMapping2 = getResult2.pattern;
+    assertTrue(updateRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
+    assertEquals("**", updateRequestMapping2.getPattern());
+    assertNull(updateRequestMapping2.getMessageTypes());
+    assertTrue(updateRequestMapping.getPathMatcher() instanceof AntPathMatcher);
     assertEquals(1, definitions.get(0).steps().get(0).pattern().size());
   }
 
@@ -102,12 +100,12 @@ class ScenarioNodeBuilderTest {
   @Test
   void testConstructor6() {
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     ActionExecutor action = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition("Scenario start command", pattern, action, new LinkedList<>(),
             "Scenario start command"));
-    ArrayList<TelegramRequestMapping> pattern2 = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern2 = new ArrayList<>();
     ActionExecutor action2 = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition("Scenario start command", pattern2, action2, new LinkedList<>(),
@@ -127,7 +125,7 @@ class ScenarioNodeBuilderTest {
   @Test
   void testConstructor7() {
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     ActionExecutor action = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition(null, pattern, action, new LinkedList<>(), "Scenario start command"));
@@ -149,14 +147,14 @@ class ScenarioNodeBuilderTest {
     assertEquals("Name_s0", getResult2.name);
     assertEquals("Name", getResult.name);
     assertTrue(getResult2.children.isEmpty());
-    TelegramRequestMapping telegramRequestMapping = getResult2.pattern;
-    assertTrue(telegramRequestMapping.getPathMatcher() instanceof AntPathMatcher);
-    assertNull(telegramRequestMapping.getMessageTypes());
-    TelegramRequestMapping telegramRequestMapping2 = getResult.pattern;
-    assertTrue(telegramRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
-    assertEquals("Start Command", telegramRequestMapping2.getPattern());
-    assertNull(telegramRequestMapping2.getMessageTypes());
-    assertEquals("**", telegramRequestMapping.getPattern());
+    UpdateRequestMapping updateRequestMapping = getResult2.pattern;
+    assertTrue(updateRequestMapping.getPathMatcher() instanceof AntPathMatcher);
+    assertNull(updateRequestMapping.getMessageTypes());
+    UpdateRequestMapping updateRequestMapping2 = getResult.pattern;
+    assertTrue(updateRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
+    assertEquals("Start Command", updateRequestMapping2.getPattern());
+    assertNull(updateRequestMapping2.getMessageTypes());
+    assertEquals("**", updateRequestMapping.getPattern());
     assertEquals(1, definitions.get(0).steps().get(0).pattern().size());
   }
 
@@ -166,7 +164,7 @@ class ScenarioNodeBuilderTest {
   @Test
   void testConstructor9() {
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     ActionExecutor action = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition("Scenario start command", pattern, action, new LinkedList<>(),
@@ -190,14 +188,14 @@ class ScenarioNodeBuilderTest {
     assertEquals("Start Command", getResult.name);
     assertEquals("Scenario start command", getResult2.name);
     assertSame(getResult, getResult2.parent);
-    TelegramRequestMapping telegramRequestMapping = getResult.pattern;
-    assertEquals("Start Command", telegramRequestMapping.getPattern());
-    assertNull(telegramRequestMapping.getMessageTypes());
-    TelegramRequestMapping telegramRequestMapping2 = getResult2.pattern;
-    assertTrue(telegramRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
-    assertEquals("**", telegramRequestMapping2.getPattern());
-    assertNull(telegramRequestMapping2.getMessageTypes());
-    assertTrue(telegramRequestMapping.getPathMatcher() instanceof AntPathMatcher);
+    UpdateRequestMapping updateRequestMapping = getResult.pattern;
+    assertEquals("Start Command", updateRequestMapping.getPattern());
+    assertNull(updateRequestMapping.getMessageTypes());
+    UpdateRequestMapping updateRequestMapping2 = getResult2.pattern;
+    assertTrue(updateRequestMapping2.getPathMatcher() instanceof AntPathMatcher);
+    assertEquals("**", updateRequestMapping2.getPattern());
+    assertNull(updateRequestMapping2.getMessageTypes());
+    assertTrue(updateRequestMapping.getPathMatcher() instanceof AntPathMatcher);
     assertEquals(1, definitions.get(0).steps().get(0).pattern().size());
   }
 
@@ -217,7 +215,7 @@ class ScenarioNodeBuilderTest {
     //   See https://diff.blue/R013 to resolve this issue.
 
     LinkedList<StepDefinition> steps = new LinkedList<>();
-    ArrayList<TelegramRequestMapping> pattern = new ArrayList<>();
+    ArrayList<UpdateRequestMapping> pattern = new ArrayList<>();
     ActionExecutor action = mock(ActionExecutor.class);
     steps.add(
         new StepDefinition("Scenario start command", pattern, action, new LinkedList<>(),

@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.response;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.List;
@@ -40,11 +40,11 @@ public class CompositeTelegramResponse implements TelegramResponse {
   /**
    * Processes each of the invoked TelegramResponse instances sequentially
    *
-   * @param request The TelegramUpdateRequest containing the update information
+   * @param request The UpdateRequest containing the update information
    * @throws TelegramApiException if processing any of the invoked responses fails
    */
   @Override
-  public void process(TelegramUpdateRequest request) throws TelegramApiException {
+  public void process(UpdateRequest request) throws TelegramApiException {
     for (TelegramResponse response : invoked) {
       response.process(request);
     }

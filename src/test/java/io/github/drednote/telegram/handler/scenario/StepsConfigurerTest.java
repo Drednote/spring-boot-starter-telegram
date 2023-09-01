@@ -2,10 +2,7 @@ package io.github.drednote.telegram.handler.scenario;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.core.request.TelegramRequestMapping;
-import io.github.drednote.telegram.handler.scenario.ActionExecutor;
-import io.github.drednote.telegram.handler.scenario.ScenarioAdapter;
-import io.github.drednote.telegram.handler.scenario.ScenarioNodeBuilder;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioDefinition;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioMachineConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioMachineConfigurerImpl;
@@ -53,7 +50,7 @@ class StepsConfigurerTest {
                   .action(actionExecutor).next()
               )
               .next()
-              .name("r1_cancel").pattern(new TelegramRequestMapping("Cancel", null, null))
+              .name("r1_cancel").pattern(new UpdateRequestMapping("Cancel", null, null))
               .action(actionExecutor).refToStep("r1").next()
           )
           .next()

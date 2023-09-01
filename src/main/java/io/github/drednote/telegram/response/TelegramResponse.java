@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.response;
 
 import io.github.drednote.telegram.core.ResponseSetter;
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,7 +27,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *   <li>
  *     There are several utility responses that extend from {@link SimpleMessageTelegramResponse}.
  *     They are used to send simple messages to the current chat that is associated
- *     with {@link TelegramUpdateRequest}
+ *     with {@link UpdateRequest}
  *   </li>
  *   <li>
  *     You can put {@link Order} annotation on impl of {@code TelegramResponse} to specify
@@ -50,11 +50,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public interface TelegramResponse {
 
   /**
-   * Performs the Telegram response action. The {@code TelegramUpdateRequest} here for providing
-   * info for sending response to Telegram API
+   * Performs the Telegram response action. The {@code UpdateRequest} here for providing info for
+   * sending response to Telegram API
    *
    * @param request The update request, not null
    * @throws TelegramApiException if the response processing fails
    */
-  void process(@NonNull TelegramUpdateRequest request) throws TelegramApiException;
+  void process(@NonNull UpdateRequest request) throws TelegramApiException;
 }

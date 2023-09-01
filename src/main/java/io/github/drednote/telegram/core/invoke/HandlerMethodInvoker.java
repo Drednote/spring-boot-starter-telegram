@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.core.invoke;
 
-import io.github.drednote.telegram.core.request.TelegramUpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
@@ -13,7 +13,7 @@ import org.springframework.web.method.HandlerMethod;
  * @author Ivan Galushko
  * @see HandlerMethod
  * @see InvocableHandlerMethod
- * @see TelegramUpdateRequest
+ * @see UpdateRequest
  */
 public interface HandlerMethodInvoker {
 
@@ -27,6 +27,6 @@ public interface HandlerMethodInvoker {
    * @throws Exception if an error occurs during invocation
    */
   @Nullable
-  Object invoke(@NonNull TelegramUpdateRequest request, @NonNull HandlerMethod handlerMethod,
+  Object invoke(@NonNull UpdateRequest request, @NonNull HandlerMethod handlerMethod,
       Object... providedArgs) throws Exception;
 }
