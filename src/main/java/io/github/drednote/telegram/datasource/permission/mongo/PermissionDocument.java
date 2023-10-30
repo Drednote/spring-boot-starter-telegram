@@ -1,6 +1,6 @@
-package io.github.drednote.telegram.datasource.mongo;
+package io.github.drednote.telegram.datasource.permission.mongo;
 
-import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.datasource.permission.Permission;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class PermissionDocument implements Permission {
     if (!(o instanceof PermissionDocument that)) {
       return false;
     }
-    return getId() != null && Objects.equals(getId(), that.getId());
+    return id != null && Objects.equals(id, that.id);
   }
 
   @Override

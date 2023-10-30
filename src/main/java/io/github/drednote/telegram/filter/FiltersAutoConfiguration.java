@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.datasource.DataSourceAdapter;
+import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
@@ -34,9 +34,9 @@ public class FiltersAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public RoleFilter roleFilter(
-      ObjectProvider<DataSourceAdapter> adapterProvider, PermissionProperties permissionProperties
+      PermissionRepositoryAdapter permissionRepositoryAdapter, PermissionProperties permissionProperties
   ) {
-    return new RoleFilter(adapterProvider, permissionProperties);
+    return new RoleFilter(permissionRepositoryAdapter, permissionProperties);
   }
 
   @Bean

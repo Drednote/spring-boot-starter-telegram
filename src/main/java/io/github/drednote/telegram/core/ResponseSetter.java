@@ -71,7 +71,7 @@ public abstract class ResponseSetter {
    * @param invoked the collection to check
    * @return true if all elements are instances of {@code TelegramResponse}, false otherwise
    */
-  private static boolean elementsIsHandlerResponses(Collection<?> invoked) {
+  public static boolean elementsIsHandlerResponses(Collection<?> invoked) {
     for (Object o : invoked) {
       if (!(o instanceof TelegramResponse)) {
         return false;

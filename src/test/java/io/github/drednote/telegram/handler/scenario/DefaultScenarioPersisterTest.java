@@ -3,11 +3,11 @@ package io.github.drednote.telegram.handler.scenario;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import io.github.drednote.telegram.datasource.DataSourceAdapterImpl;
-import io.github.drednote.telegram.datasource.jpa.ScenarioEntity;
-import io.github.drednote.telegram.handler.scenario.DataSourceScenarioPersister;
-import io.github.drednote.telegram.handler.scenario.ScenarioImpl;
-import io.github.drednote.telegram.handler.scenario.StepImpl;
+import io.github.drednote.telegram.datasource.scenario.DefaultScenarioRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenario.InMemoryScenarioRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenario.ScenarioRepository;
+import io.github.drednote.telegram.datasource.scenario.jpa.ScenarioEntity;
+import io.github.drednote.telegram.support.MockObjectProvider;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +16,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.repository.CrudRepository;
 
-class DataSourceScenarioPersisterTest {
+class DefaultScenarioPersisterTest {
 
-  DataSourceScenarioPersister persister;
+  DefaultScenarioPersister persister;
   Repo repository;
 
   @BeforeEach
   void setUp() {
     repository = new Repo();
-    persister = new DataSourceScenarioPersister(
-        new DataSourceAdapterImpl(null, repository));
+    persister = new DefaultScenarioPersister(
+        new DefaultScenarioRepositoryAdapter(new MockObjectProvider<>(repository),
+            new InMemoryScenarioRepositoryAdapter()));
   }
 
 
@@ -49,7 +50,7 @@ class DataSourceScenarioPersisterTest {
         IllegalArgumentException.class);
   }
 
-  static class Repo implements CrudRepository<ScenarioEntity, Long> {
+  static class Repo implements ScenarioRepository<ScenarioEntity> {
 
     int count = 0;
 

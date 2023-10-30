@@ -1,13 +1,14 @@
 package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
 import io.github.drednote.telegram.response.ForbiddenTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
@@ -57,8 +58,10 @@ public class AccessPermissionFilter implements PriorityPreUpdateFilter {
     Assert.notNull(request, "UpdateRequest");
     if (permissionProperties.getAccess() == Access.BY_ROLE) {
       Permission permission = request.getPermission();
-      Assert.notNull(permission, "Permission");
-      boolean canRead = permission.getRoles().stream()
+
+      boolean canRead = Optional.ofNullable(permission)
+          .map(Permission::getRoles).stream()
+          .flatMap(Set::stream)
           .anyMatch(role -> Optional.ofNullable(permissionProperties.getRoles().get(role))
               .map(Role::isCanRead)
               .orElse(false));

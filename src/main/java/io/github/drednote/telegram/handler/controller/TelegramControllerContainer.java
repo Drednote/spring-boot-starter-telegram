@@ -70,12 +70,13 @@ public class TelegramControllerContainer implements HandlerMethodPopular, Contro
   public void register(Object bean, Method method, UpdateRequestMapping mapping) {
     HandlerMethod handlerMethod = new HandlerMethod(bean, method);
     HandlerMethod existingHandler = mappingLookup.get(mapping);
-    if (existingHandler != null) {
+    if (existingHandler != null && !mapping.isOptional()) {
       throw new IllegalStateException(
           "\nAmbiguous mapping. Cannot map '" + handlerMethod.getBean() + "' method \n" +
               handlerMethod + "\nto " + mapping + ": There is already '" +
               existingHandler.getBean() + "' bean method\n" + existingHandler + " mapped.");
+    } else if (existingHandler == null) {
+      mappingLookup.put(mapping, handlerMethod);
     }
-    mappingLookup.put(mapping, handlerMethod);
   }
 }

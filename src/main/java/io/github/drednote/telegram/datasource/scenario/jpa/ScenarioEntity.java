@@ -1,6 +1,6 @@
-package io.github.drednote.telegram.datasource.jpa;
+package io.github.drednote.telegram.datasource.scenario.jpa;
 
-import io.github.drednote.telegram.datasource.ScenarioDB;
+import io.github.drednote.telegram.datasource.scenario.PersistScenario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,7 +20,7 @@ import org.hibernate.type.SqlTypes;
 @ToString
 @RequiredArgsConstructor
 @Table(name = "scenarios")
-public class ScenarioEntity implements ScenarioDB {
+public class ScenarioEntity implements PersistScenario {
 
   @Id
   @Column(name = "id", nullable = false)
@@ -39,7 +39,7 @@ public class ScenarioEntity implements ScenarioDB {
       return false;
     }
     ScenarioEntity that = (ScenarioEntity) o;
-    return getId() != null && Objects.equals(getId(), that.getId());
+    return id != null && Objects.equals(getId(), that.getId());
   }
 
   @Override

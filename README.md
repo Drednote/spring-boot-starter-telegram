@@ -412,6 +412,9 @@ handle this, there is a component called **Response Processing**, which follows 
       from `byte[]` (`new String(byte[])`)
     - `BotApiMethod` and `SendMediaBotMethod` will be executed as is.
       > `BotApiMethod` is an abstract class that represents sending object.
+
+      > For `BotApiMethod` or `SendMediaBotMethod` the 'chatId' property will be automatically set
+      (only if it is null). If you manually set 'chatId', nothing happens
     - A `TelegramResponse` object will be handled without wrapping.
     - List of `TelegramResponse` will be wrapped in `CompositeTelegramResponse` and execute with
       specified priority.
@@ -423,6 +426,9 @@ handle this, there is a component called **Response Processing**, which follows 
 - You can create any implementation of `TelegramResponse` for sending response
 - Any custom code can be written in `TelegramResponse`, but I strongly recommend using this
   interface only for sending a response to **Telegram**
+- If you pass {@link BotApiMethod} or {@link SendMediaBotMethod} in the constructor of this class,
+  the 'chatId' property will be automatically set (only if it is null). If you manually
+  set 'chatId', nothing happens
 
 ### Exception Handling
 
@@ -500,25 +506,30 @@ created for each update processing.
   lost. Therefore, it is better if you configure the datasource using spring.
 
 - This library is fully based on Spring JPA in working with the database. Therefore, to support
-  different databases (postgres, mongo, etc.), using the `DataSourceAdapter` interface
+  different databases (postgres, mongo, etc.), using the implementations of `DataSourceAdapter`
+  interface
+- If you want to add support for a database that currently is not supported, you should to
+  create entity and create repository extending `PermissionRepository` or `ScenarioRepository`
 
 > **Currently supported `JpaRepository` and `MongoRepository`**
 
-> Note: currently autoconfigure data source, breaks searching for user repositories and
-> entities, so you should manually mark configuration class this way, that spring can pick your
-> repositories and entities
+> Note: To enable auto scan for jpa entities, you should manually pick main interfaces for entities
+> and use `@EntityScan` annotation. To create spring data repository, you need to just implement one
+> of the repository interfaces
 
 ```java
 
-@EnableJpaRepositories(basePackageClasses = Application.class)
-@EntityScan(basePackageClasses = Application.class)
+@EntityScan(basePackageClasses = {Permission.class, PersistScenario.class})
 @Configuration
 public class JpaConfig {
 
 }
 ```
 
-`Application` your main class, or you can pass any class what you want
+```java
+
+public interface PermissionRepository extends JpaPermissionRepository {}
+```
 
 ### Primary Entities
 

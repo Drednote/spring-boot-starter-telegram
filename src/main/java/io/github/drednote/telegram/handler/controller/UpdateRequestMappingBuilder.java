@@ -99,7 +99,7 @@ public class UpdateRequestMappingBuilder {
     if (requestType == null && pattern == null) {
       consumer.accept(new UpdateRequestMapping(DEFAULT_PATTERN, null, Collections.emptySet()));
       consumer.accept(new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, RequestType.MESSAGE,
-          Set.of(MessageType.COMMAND)));
+          Set.of(MessageType.COMMAND), true));
     } else if (requestType == RequestType.MESSAGE) {
       if (!messageTypes.isEmpty()) {
         if (exclusiveMessageType) {

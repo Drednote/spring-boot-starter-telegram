@@ -7,7 +7,7 @@ import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
-import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
