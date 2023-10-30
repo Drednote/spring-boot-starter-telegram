@@ -53,16 +53,30 @@ public class UpdateRequestMapping implements Comparable<UpdateRequestMapping>, R
   private final RequestMappingInfoComparator comparator =
       new RequestMappingInfoComparator(pathMatcher);
 
+  /**
+   * Utility field, just for filter what mapping can be skipped if ambiguous mapping found
+   */
+  @Getter
+  private final boolean optional;
+
   public UpdateRequestMapping(
       @NonNull String pattern, @Nullable RequestType requestType,
-      @NonNull Set<MessageType> messageTypes
+      @NonNull Set<MessageType> messageTypes, boolean optional
   ) {
     Assert.required(pattern, "Pattern");
     Assert.notNull(messageTypes, "MessageTypes");
 
+    this.optional = optional;
     this.pattern = pattern;
     this.requestType = requestType;
     this.messageTypes = messageTypes;
+  }
+
+  public UpdateRequestMapping(
+      @NonNull String pattern, @Nullable RequestType requestType,
+      @NonNull Set<MessageType> messageTypes
+  ) {
+    this(pattern, requestType, messageTypes, false);
   }
 
   /**

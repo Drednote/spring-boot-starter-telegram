@@ -1,6 +1,6 @@
-package io.github.drednote.telegram.datasource.jpa;
+package io.github.drednote.telegram.datasource.permission.jpa;
 
-import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.datasource.permission.Permission;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -42,7 +42,7 @@ public class PermissionEntity implements Permission {
       return false;
     }
     PermissionEntity that = (PermissionEntity) o;
-    return getId() != null && Objects.equals(getId(), that.getId());
+    return id != null && Objects.equals(this.getId(), that.getId());
   }
 
   @Override

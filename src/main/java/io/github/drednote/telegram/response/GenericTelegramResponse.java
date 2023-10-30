@@ -1,11 +1,17 @@
 package io.github.drednote.telegram.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.exception.type.TelegramResponseException;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.InvalidPropertyException;
+import org.springframework.beans.PropertyAccessException;
+import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -28,12 +34,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * response, it will be processed accordingly.
  * <p>
  * It is the main {@code TelegramResponse} implementation that should be used manually in code
- * <p>
- * todo add realization for collection of TelegramResponse
  *
  * @author Ivan Galushko
+ * @implNote If you pass {@link BotApiMethod} or {@link SendMediaBotMethod} as a 'response' of this
+ * class, the 'chatId' property will be automatically set during sending (only if it is null). If
+ * you manually set 'chatId', nothing happens
  */
 public class GenericTelegramResponse extends AbstractTelegramResponse {
+
+  private static final String CHAT_ID = "chatId";
 
   /**
    * The response object to be processed
@@ -67,11 +76,17 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     } else if (response instanceof byte[] bytes) {
       responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
     } else if (response instanceof BotApiMethod<?> botApiMethod) {
+      postProcessApiMethod(botApiMethod, request);
       responseMessage = request.getAbsSender().execute(botApiMethod);
-    } else if (response instanceof SendMediaBotMethod<?>) {
+    } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
+      postProcessApiMethod(sendMediaBotMethod, request);
       responseMessage = tryToSendMedia(request);
     } else if (response instanceof TelegramResponse telegramResponse) {
       telegramResponse.process(request);
+      responseMessage = null;
+    } else if (response instanceof Collection<?> collection
+        && ResponseSetter.elementsIsHandlerResponses(collection)) {
+      new CompositeTelegramResponse((Collection<TelegramResponse>) collection).process(request);
       responseMessage = null;
     } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
       try {
@@ -86,6 +101,25 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     }
     if (responseMessage != null) {
       handleResponseMessage(responseMessage);
+    }
+  }
+
+  private void postProcessApiMethod(Object botApiMethod, UpdateRequest request) {
+    try {
+      var propertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(botApiMethod);
+      if (propertyAccessor.getPropertyValue(CHAT_ID) == null) {
+        Class<?> type = propertyAccessor.getPropertyType(CHAT_ID);
+        if (type != null && Long.class.isAssignableFrom(type)) {
+          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId());
+        } else if (type != null && String.class.isAssignableFrom(type)) {
+          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId().toString());
+        } else {
+          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId().toString());
+        }
+      }
+    } catch (InvalidPropertyException | PropertyAccessException e) {
+      throw new TelegramResponseException(
+          "Cannot set property 'chatId' to bot response. Object: %s".formatted(botApiMethod), e);
     }
   }
 

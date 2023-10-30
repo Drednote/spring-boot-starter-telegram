@@ -1,10 +1,9 @@
 package io.github.drednote.telegram;
 
-import io.github.drednote.telegram.datasource.DataSourceProperties;
 import io.github.drednote.telegram.filter.FilterProperties;
+import io.github.drednote.telegram.handler.UpdateHandlerProperties;
 import io.github.drednote.telegram.menu.MenuProperties;
 import io.github.drednote.telegram.session.SessionProperties;
-import io.github.drednote.telegram.handler.UpdateHandlerProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,7 +14,7 @@ import org.springframework.lang.Nullable;
 @Configuration
 @ConfigurationProperties("drednote.telegram")
 @EnableConfigurationProperties({
-    SessionProperties.class, UpdateHandlerProperties.class, DataSourceProperties.class,
+    SessionProperties.class, UpdateHandlerProperties.class,
     FilterProperties.class, MenuProperties.class
 })
 @Getter
@@ -50,10 +49,6 @@ public class TelegramProperties {
    * Properties of update handlers
    */
   private UpdateHandlerProperties updateHandler = new UpdateHandlerProperties();
-  /**
-   * Datasource properties
-   */
-  private DataSourceProperties dataSource = new DataSourceProperties();
   /**
    * Filters properties
    */

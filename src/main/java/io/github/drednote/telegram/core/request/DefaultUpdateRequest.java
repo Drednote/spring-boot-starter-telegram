@@ -3,7 +3,7 @@ package io.github.drednote.telegram.core.request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
-import io.github.drednote.telegram.datasource.Permission;
+import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.utils.Assert;

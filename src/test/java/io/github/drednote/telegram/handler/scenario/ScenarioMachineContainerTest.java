@@ -3,14 +3,10 @@ package io.github.drednote.telegram.handler.scenario;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.handler.UpdateHandlerProperties;
-import io.github.drednote.telegram.handler.scenario.InMemoryScenarioPersister;
-import io.github.drednote.telegram.handler.scenario.ScenarioMachineContainer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioMachineConfigurerImpl;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-@Disabled
 class ScenarioMachineContainerTest {
 
   ScenarioMachineContainer container;
@@ -23,6 +19,6 @@ class ScenarioMachineContainerTest {
 
   @Test
   void shouldReturnInMemoryDefaultPersister() {
-    assertThat(container.getScenarioPersister()).isInstanceOf(InMemoryScenarioPersister.class);
+    assertThat(container.getScenarioPersister()).isNull();
   }
 }

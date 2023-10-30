@@ -1,15 +1,14 @@
 package io.github.drednote.telegram.handler;
 
+import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
+import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
+import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.controller.ControllerRegistrar;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
 import io.github.drednote.telegram.handler.controller.HandlerMethodPopular;
 import io.github.drednote.telegram.handler.controller.TelegramControllerBeanPostProcessor;
 import io.github.drednote.telegram.handler.controller.TelegramControllerContainer;
-import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
-import io.github.drednote.telegram.datasource.DataSourceAdapter;
-import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
-import io.github.drednote.telegram.handler.scenario.DataSourceScenarioPersister;
-import io.github.drednote.telegram.handler.scenario.InMemoryScenarioPersister;
+import io.github.drednote.telegram.handler.scenario.DefaultScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.ScenarioAdapter;
 import io.github.drednote.telegram.handler.scenario.ScenarioMachineContainer;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
@@ -40,26 +39,21 @@ public class UpdateHandlerAutoConfiguration {
     @ConditionalOnMissingBean
     public ScenarioUpdateHandler scenarioUpdateHandler(
         ObjectProvider<ScenarioAdapter> adapters, UpdateHandlerProperties properties,
-        ObjectProvider<DataSourceAdapter> dataSourceAdapter
+        ScenarioRepositoryAdapter scenarioRepositoryAdapter
     ) {
       ScenarioMachineConfigurerImpl configurer = new ScenarioMachineConfigurerImpl();
       adapters.forEach(scenarioAdapter -> scenarioAdapter.onConfigure(configurer));
 
-      configureMissedPersister(configurer, dataSourceAdapter, properties);
+      configureMissedPersister(configurer, scenarioRepositoryAdapter, properties);
       return new ScenarioUpdateHandler(new ScenarioMachineContainer(configurer, properties));
     }
 
     private void configureMissedPersister(
         ScenarioMachineConfigurerImpl configurer,
-        ObjectProvider<DataSourceAdapter> dataSourceAdapter, UpdateHandlerProperties properties
+        ScenarioRepositoryAdapter scenarioRepositoryAdapter, UpdateHandlerProperties properties
     ) {
       if (configurer.getPersister() == null && properties.isAutoConfigureScenarioPersister()) {
-        DataSourceAdapter adapter = dataSourceAdapter.getIfAvailable();
-        if (adapter != null) {
-          configurer.withPersister(new DataSourceScenarioPersister(adapter));
-        } else {
-          configurer.withPersister(new InMemoryScenarioPersister());
-        }
+        configurer.withPersister(new DefaultScenarioPersister(scenarioRepositoryAdapter));
       }
     }
   }

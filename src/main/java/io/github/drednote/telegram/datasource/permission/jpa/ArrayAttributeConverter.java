@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.datasource.jpa;
+package io.github.drednote.telegram.datasource.permission.jpa;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

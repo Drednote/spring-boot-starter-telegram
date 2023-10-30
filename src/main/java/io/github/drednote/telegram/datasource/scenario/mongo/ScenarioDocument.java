@@ -1,6 +1,6 @@
-package io.github.drednote.telegram.datasource.mongo;
+package io.github.drednote.telegram.datasource.scenario.mongo;
 
-import io.github.drednote.telegram.datasource.ScenarioDB;
+import io.github.drednote.telegram.datasource.scenario.PersistScenario;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class ScenarioDocument implements ScenarioDB {
+public class ScenarioDocument implements PersistScenario {
 
   @Id
   private Long id;
@@ -30,7 +30,7 @@ public class ScenarioDocument implements ScenarioDB {
     if (!(o instanceof ScenarioDocument that)) {
       return false;
     }
-    return getId() != null && Objects.equals(getId(), that.getId());
+    return id != null && Objects.equals(getId(), that.getId());
   }
 
   @Override
