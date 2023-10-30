@@ -600,7 +600,6 @@ Read more about [Telegram Controllers](#controllers).
 | defaultLocale | The default locale for sending responses. | -                                                        |
 | session       | Session properties.                       | [Session properties](#session-properties)                |
 | updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |
-| dataSource    | Datasource properties.                    | [Datasource properties](#datasource-properties)          |
 | filters       | Filters properties.                       | [Filters properties](#filters-properties)                |
 | menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |
 
@@ -631,13 +630,6 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 | scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             |
 | autoConfigureScenarioPersister | Whether to autoconfigure scenarioPersister if none is provided.                                    | true          |
 | serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          |
-
-### Datasource properties
-
-| Name                               | Description                                                                                                                                                         | Default Value |
-|------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| disableAutoGenerateTables          | By default, all tables for JPA datasource are generated with Hibernate (if it exists on classpath). If you don't want to generate them, set this parameter to true. | false         |
-| disableDataSourceAutoConfiguration | Disable all datasource configuration. DataSourceAdapter bean will not be created. The application will work as if there is no datasource.                           | false         |
 
 ### Filters properties
 
