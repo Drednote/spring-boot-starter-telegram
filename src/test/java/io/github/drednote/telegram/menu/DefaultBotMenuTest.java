@@ -14,6 +14,7 @@ import java.util.Map;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -60,17 +61,31 @@ class DefaultBotMenuTest {
 
     defaultBotMenu.updateMenu(absSender);
 
-    verify(absSender).execute(createSetMyCommands(
+    SetMyCommands setMyCommands = createSetMyCommands(
         List.of(new BotCommand("/command", "text")),
-        new BotCommandScopeDefault(), "en")
-    );
-    verify(absSender).execute(createSetMyCommands(
+        new BotCommandScopeDefault(), "en");
+    SetMyCommands setMyCommands2 = createSetMyCommands(
         List.of(
             new BotCommand("/command", "text"),
             new BotCommand("/commandd", "text2")
         ),
-        new BotCommandScopeAllGroupChats(), null)
-    );
+        new BotCommandScopeAllGroupChats(), null);
+
+    var argumentCaptor = ArgumentCaptor.forClass(SetMyCommands.class);
+    verify(absSender, times(2)).execute(argumentCaptor.capture());
+    List<SetMyCommands> result = argumentCaptor.getAllValues();
+
+    for (SetMyCommands myCommands : result) {
+      if (myCommands.getScope() instanceof BotCommandScopeDefault) {
+        assertThat(myCommands.getScope()).isEqualTo(setMyCommands.getScope());
+        assertThat(myCommands.getLanguageCode()).isEqualTo(setMyCommands.getLanguageCode());
+        assertThat(myCommands.getCommands()).containsExactlyInAnyOrderElementsOf(setMyCommands.getCommands());
+      } else {
+        assertThat(myCommands.getScope()).isEqualTo(setMyCommands2.getScope());
+        assertThat(myCommands.getLanguageCode()).isEqualTo(setMyCommands2.getLanguageCode());
+        assertThat(myCommands.getCommands()).containsExactlyInAnyOrderElementsOf(setMyCommands2.getCommands());
+      }
+    }
   }
 
   @Test
