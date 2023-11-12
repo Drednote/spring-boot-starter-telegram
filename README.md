@@ -588,68 +588,80 @@ Read more about [Telegram Controllers](#controllers).
     - `@NonNullApi` and `@NonNullFields`. This means that by default all fields and APIs accept and
       return non-null objects. If it is needed to return a nullable object, then the field or method
       is annotated with `@Nullable`
+- You can use `HasRole` annotation to check controller access
 
 ## Configuration
 
+All settings tables contain 4 columns:
+
+- `Name` - the name of the variable as it is called in the code
+- `Description` - a brief description of what this setting does
+- `Default Value` - the default value of the variable
+- `Required` - whether the variable is required
+
+> If the `Required` field is `true` and the value of the `Default Value` column is not equal to `-`,
+> it means that you don't need to manually set the value for the variable. However, if you manually
+> set it to `null` or any value that can be considered empty, the application will not start
+
 ### Base properties
 
-| Name          | Description                               | Default Value                                            |
-|---------------|-------------------------------------------|----------------------------------------------------------|
-| name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               |
-| token*        | The token of a bot.                       | <b>must be set by user</b>                               |
-| defaultLocale | The default locale for sending responses. | -                                                        |
-| session       | Session properties.                       | [Session properties](#session-properties)                |
-| updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |
-| filters       | Filters properties.                       | [Filters properties](#filters-properties)                |
-| menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |
+| Name          | Description                               | Default Value                                            | Required |
+|---------------|-------------------------------------------|----------------------------------------------------------|----------|
+| name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               | true     |
+| token*        | The token of a bot.                       | <b>must be set by user</b>                               | true     |
+| defaultLocale | The default locale for sending responses. | -                                                        | false    |
+| session       | Session properties.                       | [Session properties](#session-properties)                |          |
+| updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |          |
+| filters       | Filters properties.                       | [Filters properties](#filters-properties)                |          |
+| menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |          |
 
 ### Session properties
 
-| Name              | Description                                                                                                           | Default Value      |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|
-| updateLimit       | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                |
-| updateTimeout     | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 |
-| produceMaxThreads | Max number of threads used for async methods executions (send messages to telegram)                                   | 10                 |
-| consumeMaxThreads | Max number of threads used for consumption messages from a telegram                                                   | 1                  |
-| allowedUpdates    | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  |
-| updateStrategy    | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       |
-| backOffStrategy   | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff |
-| proxyType         | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           |
-| proxyHost         | The proxy host.                                                                                                       | -                  |
-| proxyPort         | The proxy port.                                                                                                       | 0                  |
+| Name              | Description                                                                                                           | Default Value      | Required |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|----------|
+| updateLimit       | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                | true     |
+| updateTimeout     | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 | true     |
+| produceMaxThreads | Max number of threads used for async methods executions (send messages to telegram)                                   | 10                 | true     |
+| consumeMaxThreads | Max number of threads used for consumption messages from a telegram                                                   | 1                  | true     |
+| allowedUpdates    | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  | false    |
+| updateStrategy    | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       | true     |
+| backOffStrategy   | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff | true     |
+| proxyType         | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           | true     |
+| proxyHost         | The proxy host.                                                                                                       | -                  | false    |
+| proxyPort         | The proxy port.                                                                                                       | 0                  | false    |
 
 Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
 ### Update handler properties
 
-| Name                           | Description                                                                                        | Default Value |
-|--------------------------------|----------------------------------------------------------------------------------------------------|---------------|
-| controllerEnabled              | Enabled controller update handling.                                                                | true          |
-| scenarioEnabled                | Enabled scenario update handling.                                                                  | true          |
-| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          |
-| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             |
-| autoConfigureScenarioPersister | Whether to autoconfigure scenarioPersister if none is provided.                                    | true          |
-| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          |
+| Name                           | Description                                                                                        | Default Value | Required |
+|--------------------------------|----------------------------------------------------------------------------------------------------|---------------|----------|
+| controllerEnabled              | Enabled controller update handling.                                                                | true          | true     |
+| scenarioEnabled                | Enabled scenario update handling.                                                                  | true          | true     |
+| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          | true     |
+| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             | false    |
+| autoConfigureScenarioPersister | Whether to autoconfigure scenarioPersister if none is provided.                                    | true          | true     |
+| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          | true     |
 
 ### Filters properties
 
-| Name                         | Description                                                                                                                    | Default Value                                   |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| permission                   | Permission filter properties.                                                                                                  | [Permission properties](#permission-properties) |
-| userRateLimit                | How often each user can perform requests to bot. 0 = no rules.                                                                 | 0                                               |
-| userRateLimitUnit            | The ChronoUnit which will be applied to userRateLimit.                                                                         | SECONDS                                         |
-| userRateLimitCacheExpire     | How long cache with rate limit bucket will not expire. This parameter needed just for delete staled buckets to free up memory. | 1                                               |
-| userRateLimitCacheExpireUnit | The ChronoUnit which will be applied to userRateLimitCacheExpire.                                                              | HOURS                                           |
-| setDefaultAnswer             | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response.              | true                                            |
+| Name                         | Description                                                                                                                    | Default Value                                   | Required |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|----------|
+| permission                   | Permission filter properties.                                                                                                  | [Permission properties](#permission-properties) |          |
+| userRateLimit                | How often each user can perform requests to bot. 0 = no rules.                                                                 | 0                                               | true     |
+| userRateLimitUnit            | The ChronoUnit which will be applied to userRateLimit.                                                                         | SECONDS                                         | true     |
+| userRateLimitCacheExpire     | How long cache with rate limit bucket will not expire. This parameter needed just for delete staled buckets to free up memory. | 1                                               | true     |
+| userRateLimitCacheExpireUnit | The ChronoUnit which will be applied to userRateLimitCacheExpire.                                                              | HOURS                                           | true     |
+| setDefaultAnswer             | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response.              | true                                            | true     |
 
 ### Permission properties
 
-| Name        | Description                                                               | Default Value |
-|-------------|---------------------------------------------------------------------------|---------------|
-| access      | Define who has access to the bot.                                         | ALL           |
-| defaultRole | If a user has no role, this role will be set by default.                  | NONE          |
-| roles       | The list of roles with privileges.                                        | -             |
-| assignRole  | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             |
+| Name        | Description                                                               | Default Value | Required |
+|-------------|---------------------------------------------------------------------------|---------------|----------|
+| access      | Define who has access to the bot.                                         | ALL           | true     |
+| defaultRole | If a user has no role, this role will be set by default.                  | NONE          | true     |
+| roles       | The list of roles with privileges.                                        | -             | false    |
+| assignRole  | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             | false    |
 
 #### Role
 
@@ -665,27 +677,21 @@ public class Role {
 
 ### Menu properties
 
-| Name       | Description                              | Default Value |
-|------------|------------------------------------------|---------------|
-| values     | Map of [name:[CommandCls](#CommandCls)]. | -             |
-| sendPolicy | Send policy.                             | ON_STARTUP    |
+| Name       | Description                                      | Default Value | Required |
+|------------|--------------------------------------------------|---------------|----------|
+| values     | Map of [name:[CommandCls](#Command-properties)]. | -             | false    |
+| sendPolicy | Send policy.                                     | ON_STARTUP    | false    |
 
-#### CommandCls
+#### Command Properties
 
-```java
-public class CommandCls {
-
-  /**
-   * Text for the button. Example: Registration
-   */
-  private String text;
-
-  /**
-   * Command for the button. Example: /register
-   */
-  private String command;
-}
-```
+| Name         | Description                                                                 | Default Value | Required |
+|--------------|-----------------------------------------------------------------------------|---------------|----------|
+| text         | Text for the button.                                                        | -             | true     |
+| command      | Command for the button.                                                     | -             | true     |
+| scope        | Scope of users for which the commands are relevant.                         | DEFAULT       | true     |
+| languageCode | A two-letter ISO 639-1 language code.                                       | -             | false    |
+| userId       | Unique identifier of the target user to who apply commands.                 | -             | false    |
+| chatId       | Unique identifier for the target chat or username of the target supergroup. | -             | false    |
 
 ## Dependencies
 

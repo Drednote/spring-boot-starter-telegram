@@ -1,11 +1,11 @@
 package io.github.drednote.telegram.handler.controller;
 
 import io.github.drednote.telegram.core.ResponseSetter;
-import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.core.annotation.TelegramController;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
+import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -36,6 +36,7 @@ public class ControllerUpdateHandler implements UpdateHandler {
 
   private final HandlerMethodPopular handlerMethodPopular;
   private final HandlerMethodInvoker handlerMethodInvoker;
+  private final RequestValidator validator;
 
   /**
    * Constructs an instance of {@code ControllerUpdateHandler}.
@@ -44,13 +45,18 @@ public class ControllerUpdateHandler implements UpdateHandler {
    *                             from the incoming update request, not null
    * @param handlerMethodInvoker The component responsible for invoking the controller method, not
    *                             null
+   * @param validator            The component responsible for validating UpdateRequest before
+   *                             calling handler method, not null
    */
   public ControllerUpdateHandler(
-      HandlerMethodPopular handlerMethodPopular, HandlerMethodInvoker handlerMethodInvoker
+      HandlerMethodPopular handlerMethodPopular, HandlerMethodInvoker handlerMethodInvoker,
+      RequestValidator validator
   ) {
     Assert.required(handlerMethodPopular, "HandlerMethodPopular");
     Assert.required(handlerMethodInvoker, "HandlerMethodInvoker");
+    Assert.required(validator, "RequestValidator");
 
+    this.validator = validator;
     this.handlerMethodPopular = handlerMethodPopular;
     this.handlerMethodInvoker = handlerMethodInvoker;
   }
@@ -68,6 +74,8 @@ public class ControllerUpdateHandler implements UpdateHandler {
     handlerMethodPopular.populate(request);
     RequestHandler requestHandler = request.getRequestHandler();
     if (requestHandler != null) {
+      // todo think where it should be placed
+      validator.validate(request);
       HandlerMethod handlerMethod = requestHandler.handlerMethod();
       Class<?> parameterType = handlerMethod.getReturnType().getParameterType();
       Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);

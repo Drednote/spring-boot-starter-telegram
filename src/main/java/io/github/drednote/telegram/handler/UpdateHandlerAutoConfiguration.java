@@ -5,7 +5,9 @@ import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.controller.ControllerRegistrar;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
+import io.github.drednote.telegram.handler.controller.CompositeRequestValidator;
 import io.github.drednote.telegram.handler.controller.HandlerMethodPopular;
+import io.github.drednote.telegram.handler.controller.RequestValidator;
 import io.github.drednote.telegram.handler.controller.TelegramControllerBeanPostProcessor;
 import io.github.drednote.telegram.handler.controller.TelegramControllerContainer;
 import io.github.drednote.telegram.handler.scenario.DefaultScenarioPersister;
@@ -13,6 +15,7 @@ import io.github.drednote.telegram.handler.scenario.ScenarioAdapter;
 import io.github.drednote.telegram.handler.scenario.ScenarioMachineContainer;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioMachineConfigurerImpl;
+import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -20,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 
 @AutoConfiguration
 @EnableConfigurationProperties(UpdateHandlerProperties.class)
@@ -70,9 +74,10 @@ public class UpdateHandlerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ControllerUpdateHandler mvcUpdateHandler(
-        HandlerMethodPopular handlerMethodLookup, HandlerMethodInvoker handlerMethodInvoker
+        HandlerMethodPopular handlerMethodLookup, HandlerMethodInvoker handlerMethodInvoker,
+        RequestValidator validator
     ) {
-      return new ControllerUpdateHandler(handlerMethodLookup, handlerMethodInvoker);
+      return new ControllerUpdateHandler(handlerMethodLookup, handlerMethodInvoker, validator);
     }
 
     @Bean
@@ -86,6 +91,12 @@ public class UpdateHandlerAutoConfiguration {
         ControllerRegistrar registrar
     ) {
       return new TelegramControllerBeanPostProcessor(registrar);
+    }
+
+    @Bean
+    @Primary
+    public RequestValidator handlerMethodRequestValidator(List<RequestValidator> validators) {
+      return new CompositeRequestValidator(validators);
     }
   }
 }
