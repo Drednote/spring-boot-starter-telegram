@@ -2,7 +2,6 @@ package io.github.drednote.telegram.menu;
 
 import io.github.drednote.telegram.menu.MenuProperties.SendPolicy;
 import io.github.drednote.telegram.utils.Assert;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -13,8 +12,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
@@ -61,7 +58,7 @@ public class MenuAutoConfiguration implements ApplicationListener<ApplicationRea
   @Bean
   @ConditionalOnMissingBean
   public BotMenu botMenu() {
-    return new BotMenuImpl(properties.getValues());
+    return new DefaultBotMenu(properties.getValues());
   }
 
   /**
@@ -81,12 +78,9 @@ public class MenuAutoConfiguration implements ApplicationListener<ApplicationRea
       if (botMenu.isEmpty()) {
         log.info("Skip menu update due to empty commands list");
       } else {
-        SetMyCommands setMyCommands = new SetMyCommands();
-        List<BotCommand> commands = botMenu.getCommands();
-        setMyCommands.setCommands(commands);
         try {
-          absSender.execute(setMyCommands);
-          log.info("Update menu with commands {}", commands);
+          botMenu.updateMenu(absSender);
+          log.info("Update menu with commands {}", botMenu.getCommands());
         } catch (Exception e) {
           log.error("Skip menu update due to error", e);
         }

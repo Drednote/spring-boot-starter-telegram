@@ -34,7 +34,9 @@ public class TelegramProperties {
    */
   private String token;
   /**
-   * The default locale with which bot will send responses to user chats. Must be two symbols.
+   * The default locale with which bot will send responses to user chats. A two-letter ISO 639-1
+   * language code
+   * <p>
    * Example: en, fr, ru.
    *
    * @see java.util.Locale
