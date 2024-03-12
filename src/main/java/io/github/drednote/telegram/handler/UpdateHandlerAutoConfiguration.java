@@ -95,7 +95,7 @@ public class UpdateHandlerAutoConfiguration {
 
     @Bean
     @Primary
-    public RequestValidator handlerMethodRequestValidator(List<RequestValidator> validators) {
+    public RequestValidator compositeRequestValidator(List<RequestValidator> validators) {
       return new CompositeRequestValidator(validators);
     }
   }

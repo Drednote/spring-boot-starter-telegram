@@ -168,4 +168,8 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
   protected void handleResponseMessage(@NonNull Serializable response) {
     // do something if needed
   }
+
+  public Object getResponse() {
+    return this.response;
+  }
 }
