@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public abstract class AbstractKryoSerializationService<T> {
+public abstract class AbstractKryoSerializationService<T> implements KryoSerializationService<T> {
 
   protected final KryoPool pool;
 
@@ -29,6 +29,7 @@ public abstract class AbstractKryoSerializationService<T> {
     this.pool = new KryoPool.Builder(factory).softReferences().build();
   }
 
+  @Override
   public byte[] serialize(T context) throws IOException {
     try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
       encode(context, bos);
@@ -36,6 +37,7 @@ public abstract class AbstractKryoSerializationService<T> {
     }
   }
 
+  @Override
   public T deserialize(byte[] bytes) {
     Assert.notNull(bytes, "bytes");
     try (Input input = new Input(bytes)) {

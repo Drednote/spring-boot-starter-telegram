@@ -53,7 +53,7 @@ class ResponseSetterTest {
         List.of(EmptyTelegramResponse.INSTANCE, new Object()));
     assertThat(updateRequest.getResponse())
         .isNotNull()
-        .isInstanceOf(GenericTelegramResponse.class);
+        .isInstanceOf(CompositeTelegramResponse.class);
   }
 }
 

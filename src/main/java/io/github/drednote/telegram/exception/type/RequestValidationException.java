@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.exception.type;
 
-public abstract class RequestValidationException extends TelegramException {
+public abstract class RequestValidationException extends TextReturningException {
 
   protected RequestValidationException(String message) {
     super(message);
@@ -13,4 +13,5 @@ public abstract class RequestValidationException extends TelegramException {
   protected RequestValidationException(String message, Throwable cause) {
     super(message, cause);
   }
+
 }

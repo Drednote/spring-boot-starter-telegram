@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.support;
 
-import io.github.drednote.telegram.handler.scenario.ScenarioMonitor;
-import io.github.drednote.telegram.handler.scenario.Step;
+import io.github.drednote.telegram.handler.scenario_deprecated.ScenarioMonitor;
+import io.github.drednote.telegram.handler.scenario_deprecated.Step;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

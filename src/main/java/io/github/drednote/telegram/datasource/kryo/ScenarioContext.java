@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.datasource.kryo;
 
-import io.github.drednote.telegram.handler.scenario.Scenario;
+import io.github.drednote.telegram.handler.scenario_deprecated.Scenario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

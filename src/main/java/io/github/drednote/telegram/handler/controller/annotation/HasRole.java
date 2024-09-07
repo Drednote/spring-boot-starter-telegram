@@ -13,6 +13,8 @@ public @interface HasRole {
 
   String[] value();
 
+  String description() default "";
+
   StrategyMatching strategyMatching() default StrategyMatching.INTERSECTION;
 
   enum StrategyMatching {

@@ -145,25 +145,25 @@ Create your main controller
 @TelegramController
 public class MainController {
 
-  @TelegramCommand("/start")
-  public String onStart(User user) {
-    return "Hello " + user.getFirstName();
-  }
+    @TelegramCommand("/start")
+    public String onStart(User user) {
+        return "Hello " + user.getFirstName();
+    }
 
-  @TelegramMessage
-  public String onMessage(UpdateRequest request) {
-    return "You sent message with types %s".formatted(request.getMessageTypes());
-  }
+    @TelegramMessage
+    public String onMessage(UpdateRequest request) {
+        return "You sent message with types %s".formatted(request.getMessageTypes());
+    }
 
-  @TelegramMessage("My name is {name}")
-  public String onPattern(@TelegramPatternVariable("name") String name) {
-    return "Hello " + name;
-  }
+    @TelegramMessage("My name is {name}")
+    public String onPattern(@TelegramPatternVariable("name") String name) {
+        return "Hello " + name;
+    }
 
-  @TelegramRequest
-  public TelegramResponse onAll(UpdateRequest request) {
-    return new GenericTelegramResponse("Unsupported command");
-  }
+    @TelegramRequest
+    public TelegramResponse onAll(UpdateRequest request) {
+        return new GenericTelegramResponse("Unsupported command");
+    }
 
 }
 ```
@@ -175,9 +175,9 @@ Create your main class
 @SpringBootApplication
 public class Application {
 
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class);
+    }
 }
 ```
 
@@ -257,25 +257,25 @@ the [Quick Start](#quick-start) section:
 @TelegramController
 public class MainController {
 
-  @TelegramCommand("/start")
-  public String onStart(User user) {
-    return "Hello " + user.getFirstName();
-  }
+    @TelegramCommand("/start")
+    public String onStart(User user) {
+        return "Hello " + user.getFirstName();
+    }
 
-  @TelegramMessage
-  public String onMessage(UpdateRequest request) {
-    return "You sent message with types %s".formatted(request.getMessageTypes());
-  }
+    @TelegramMessage
+    public String onMessage(UpdateRequest request) {
+        return "You sent message with types %s".formatted(request.getMessageTypes());
+    }
 
-  @TelegramMessage("My name is {name}")
-  public String onPattern(@TelegramPatternVariable("name") String name) {
-    return "Hello " + name;
-  }
+    @TelegramMessage("My name is {name}")
+    public String onPattern(@TelegramPatternVariable("name") String name) {
+        return "Hello " + name;
+    }
 
-  @TelegramRequest
-  public TelegramResponse onAll(UpdateRequest request) {
-    return new GenericTelegramResponse("Unsupported command");
-  }
+    @TelegramRequest
+    public TelegramResponse onAll(UpdateRequest request) {
+        return new GenericTelegramResponse("Unsupported command");
+    }
 
 }
 ```
@@ -373,24 +373,24 @@ and after they are processed.
 @TelegramScope
 public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter {
 
-  private LocalDateTime startTime;
+    private LocalDateTime startTime;
 
-  @Override
-  public void preFilter(@NonNull UpdateRequest request) {
-    this.startTime = LocalDateTime.now();
-    log.info("Receive request with id {}", request.getId());
-  }
+    @Override
+    public void preFilter(@NonNull UpdateRequest request) {
+        this.startTime = LocalDateTime.now();
+        log.info("Receive request with id {}", request.getId());
+    }
 
-  @Override
-  public void postFilter(@NonNull UpdateRequest request) {
-    log.info("Request with id {} processed for {} ms", request.getId(),
-        ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()));
-  }
+    @Override
+    public void postFilter(@NonNull UpdateRequest request) {
+        log.info("Request with id {} processed for {} ms", request.getId(),
+            ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()));
+    }
 
-  @Override
-  public int getPreOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
-  }
+    @Override
+    public int getPreOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 }
 
 ```
@@ -552,10 +552,10 @@ code, you can find out all the information about the current update. For example
 @TelegramController
 public class Example {
 
-  @TelegramRequest
-  public void onAll(UpdateRequest request) {
-    System.out.printf("request is %s", request);
-  }
+    @TelegramRequest
+    public void onAll(UpdateRequest request) {
+        System.out.printf("request is %s", request);
+    }
 }
 ```
 
@@ -640,7 +640,6 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 | scenarioEnabled                | Enabled scenario update handling.                                                                  | true          | true     |
 | setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          | true     |
 | scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             | false    |
-| autoConfigureScenarioPersister | Whether to autoconfigure scenarioPersister if none is provided.                                    | true          | true     |
 | serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          | true     |
 
 ### Filters properties
@@ -668,10 +667,10 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 ```java
 public class Role {
 
-  /**
-   * Boolean indicating if the role has basic interaction permission and can send requests to bot
-   */
-  private boolean canRead;
+    /**
+     * Boolean indicating if the role has basic interaction permission and can send requests to bot
+     */
+    private boolean canRead;
 }
 ```
 
@@ -684,14 +683,14 @@ public class Role {
 
 #### Command Properties
 
-| Name         | Description                                                                 | Default Value | Required |
-|--------------|-----------------------------------------------------------------------------|---------------|----------|
-| text         | Text for the button.                                                        | -             | true     |
-| command      | Command for the button.                                                     | -             | true     |
-| scope        | Scope of users for which the commands are relevant.                         | DEFAULT       | true     |
-| languageCode | A two-letter ISO 639-1 language code.                                       | -             | false    |
-| userId       | Unique identifier of the target user to who apply commands.                 | -             | false    |
-| chatId       | Unique identifier for the target chat or username of the target supergroup. | -             | false    |
+| Name         | Description                                                                   | Default Value | Required |
+|--------------|-------------------------------------------------------------------------------|---------------|----------|
+| text         | Text for the button.                                                          | -             | true     |
+| command      | Command for the button.                                                       | -             | true     |
+| scopes       | Scopes of users for which the commands are relevant.                          | [DEFAULT]     | true     |
+| languageCode | A two-letter ISO 639-1 language code.                                         | -             | false    |
+| userIds      | Unique identifier of the target users to who apply commands.                  | -             | false    |
+| chatIds      | Unique identifier for the target chats or usernames of the target supergroup. | -             | false    |
 
 ## Dependencies
 

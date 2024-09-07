@@ -11,9 +11,9 @@ import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.handler.scenario.Scenario;
-import io.github.drednote.telegram.handler.scenario.ScenarioAdapter;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import java.util.Set;
 import org.springframework.lang.NonNull;
@@ -153,10 +153,10 @@ public interface UpdateRequest {
    *
    * @return the scenario, or null if no scenario belongs to given chat
    * @see ScenarioUpdateHandler
-   * @see ScenarioAdapter
+   * @see ScenarioConfigurerAdapter
    */
   @Nullable
-  Scenario getScenario();
+  Scenario<?> getScenario();
 
   /**
    * Returns the response that should be sent to Telegram
@@ -210,7 +210,14 @@ public interface UpdateRequest {
    * @apiNote Can only be set once. If a scenario is already set, do nothing
    * @see ScenarioUpdateHandler
    */
-  void setScenario(@Nullable Scenario scenario);
+  void setScenario(@Nullable Scenario<?> scenario);
+
+  /**
+   * @see ResponseSetter#setResponse
+   */
+  default void setResponse(@Nullable Object response) {
+    ResponseSetter.setResponse(this, response);
+  }
 
   /**
    * Sets the response that should be sent to Telegram

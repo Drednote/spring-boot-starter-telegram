@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.utils;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -37,7 +38,7 @@ public interface FieldProvider<T> {
    * @param k   The field value to initialize the provider with
    * @return A new {@code FieldProvider} instance
    */
-  static <K> FieldProvider<K> create(K k) {
+  static <K> FieldProvider<K> create(@Nullable K k) {
     return new FieldProviderImpl<>(k);
   }
 
@@ -76,6 +77,14 @@ public interface FieldProvider<T> {
     if (field != null) {
       consumer.acceptWithException(field);
     }
+  }
+
+  default boolean isExists() {
+    return getField() != null;
+  }
+
+  default Optional<T> toOptional() {
+    return Optional.ofNullable(getField());
   }
 
   /**

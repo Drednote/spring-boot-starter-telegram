@@ -1,18 +1,10 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
-import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.handler.scenario.ActionExecutor;
+public interface ScenarioConfigurer<S> {
 
-@BetaApi
-public sealed interface ScenarioConfigurer permits ScenarioConfigurerImpl {
+    void onConfigure(ScenarioTransitionConfigurer<S> configurer);
 
-  ScenarioConfigurer startCommand(String command);
+    void onConfigure(ScenarioConfigConfigurer<S> configurer);
 
-  ScenarioConfigurer name(String name);
-
-  ScenarioConfigurer action(ActionExecutor action);
-
-  StepConfigurer step();
-
-  ScenarioMachineConfigurer and();
+    void onConfigure(ScenarioStateConfigurer<S> configurer);
 }

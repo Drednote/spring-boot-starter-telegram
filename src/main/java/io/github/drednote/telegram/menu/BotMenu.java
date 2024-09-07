@@ -1,7 +1,9 @@
 package io.github.drednote.telegram.menu;
 
+import io.github.drednote.telegram.menu.DefaultBotMenu.CommandKey;
 import io.github.drednote.telegram.menu.MenuProperties.CommandCls;
 import java.util.List;
+import java.util.Map;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.bots.AbsSender;
@@ -29,11 +31,11 @@ public interface BotMenu {
   void updateMenu(AbsSender absSender) throws TelegramApiException;
 
   /**
-   * Retrieves the list of bot commands contained in the menu.
+   * Retrieves the map of bot commands contained in the menu.
    *
-   * @return The list of bot commands in the menu
+   * @return The map of bot commands in the menu
    */
-  List<CommandCls> getCommands();
+  Map<CommandKey, List<CommandCls>> getCommands();
 
   /**
    * Checks whether the there are no commands to send to Telegram
