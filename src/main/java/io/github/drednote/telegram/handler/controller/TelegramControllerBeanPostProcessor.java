@@ -2,6 +2,7 @@ package io.github.drednote.telegram.handler.controller;
 
 import io.github.drednote.telegram.core.annotation.TelegramController;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestMappingBuilder;
 import io.github.drednote.telegram.utils.Assert;
 import java.lang.reflect.Method;
 import java.util.Map;

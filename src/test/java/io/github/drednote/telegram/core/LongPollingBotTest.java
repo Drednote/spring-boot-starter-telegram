@@ -41,6 +41,8 @@ class LongPollingBotTest {
     updateHandler = Mockito.mock(UpdateHandler.class);
     preUpdateFilter = Mockito.mock(PreUpdateFilter.class);
     postUpdateFilter = Mockito.mock(PostUpdateFilter.class);
+    when(preUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
+    when(postUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
     when(filterProvider.getPreFilters(any())).thenReturn(List.of(preUpdateFilter));
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
     this.longPollingBot = new LongPollingBot(new TelegramProperties(), List.of(updateHandler),

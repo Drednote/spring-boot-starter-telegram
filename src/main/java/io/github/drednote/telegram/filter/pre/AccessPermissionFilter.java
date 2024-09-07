@@ -2,6 +2,7 @@ package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.filter.PermissionProperties.Access;
 import io.github.drednote.telegram.filter.PermissionProperties.Role;
@@ -9,7 +10,6 @@ import io.github.drednote.telegram.response.ForbiddenTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
 /**
@@ -26,7 +26,7 @@ import org.springframework.lang.NonNull;
  * @see PermissionProperties
  * @see Permission
  */
-public class AccessPermissionFilter implements PriorityPreUpdateFilter {
+public class AccessPermissionFilter implements PreUpdateFilter {
 
   private final PermissionProperties permissionProperties;
 
@@ -79,6 +79,6 @@ public class AccessPermissionFilter implements PriorityPreUpdateFilter {
 
   @Override
   public final int getPreOrder() {
-    return Ordered.HIGHEST_PRECEDENCE + 101;
+    return FilterOrder.DEFAULT_PRECEDENCE;
   }
 }

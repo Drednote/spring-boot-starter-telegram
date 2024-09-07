@@ -1,18 +1,14 @@
 package io.github.drednote.telegram.datasource.scenario;
 
-import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
-import org.springframework.lang.Nullable;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioTransitionContext;
+import java.io.IOException;
+import java.util.Optional;
 
-@BetaApi
-public interface ScenarioRepositoryAdapter extends DataSourceAdapter {
+public interface ScenarioRepositoryAdapter<S> extends DataSourceAdapter {
 
-  @Nullable
-  PersistScenario findScenario(Long chatId);
+    Optional<? extends ScenarioContext<S>> findById(String id);
 
-  void saveScenario(PersistScenario persistScenario);
-
-  void deleteScenario(Long chatId);
-
-  Class<? extends PersistScenario> getClazz();
+    void save(ScenarioContext<S> persistContext) throws IOException;
 }

@@ -9,6 +9,7 @@ import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -56,10 +57,9 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   @Override
   public List<PreUpdateFilter> getPreFilters(UpdateRequest request) {
     Assert.notNull(request, "UpdateRequest");
-    return new ArrayList<>(preFilters.stream()
-        .filter(updateFilter -> updateFilter.matches(request))
+    return preFilters.stream()
         .sorted(PreFilterOrderComparator.INSTANCE)
-        .toList());
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   /**
@@ -73,9 +73,8 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
   @Override
   public List<PostUpdateFilter> getPostFilters(UpdateRequest request) {
     Assert.notNull(request, "UpdateRequest");
-    return new ArrayList<>(postFilters.stream()
-        .filter(updateFilter -> updateFilter.matches(request))
+    return postFilters.stream()
         .sorted(PostFilterOrderComparator.INSTANCE)
-        .toList());
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 }

@@ -2,8 +2,8 @@ package io.github.drednote.telegram.core.comparator;
 
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.handler.controller.UpdateRequestMappingBuilder;
-import io.github.drednote.telegram.handler.controller.UpdateRequestMappingBuilder.TelegramRequestMappingMetaData;
+import io.github.drednote.telegram.core.request.UpdateRequestMappingBuilder;
+import io.github.drednote.telegram.core.request.UpdateRequestMappingBuilder.TelegramRequestMappingMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;

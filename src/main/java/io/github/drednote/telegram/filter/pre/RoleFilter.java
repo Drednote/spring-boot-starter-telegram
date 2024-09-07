@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.filter.pre;
 
+import static io.github.drednote.telegram.filter.FilterOrder.DEFAULT_PRECEDENCE;
+
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.Permission.DefaultPermission;
@@ -9,7 +11,6 @@ import io.github.drednote.telegram.utils.Assert;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.User;
 
@@ -85,6 +86,6 @@ public class RoleFilter implements PriorityPreUpdateFilter {
 
   @Override
   public final int getPreOrder() {
-    return Ordered.HIGHEST_PRECEDENCE + 100;
+    return DEFAULT_PRECEDENCE;
   }
 }

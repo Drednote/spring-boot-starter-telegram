@@ -86,7 +86,7 @@ class AbstractUpdateRequestTest {
 
     @Nullable
     @Override
-    public Scenario getScenario() {
+    public Scenario<?> getScenario() {
       return null;
     }
 
@@ -121,7 +121,7 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
-    public void setScenario(@Nullable Scenario scenario) {
+    public void setScenario(@Nullable Scenario<?> scenario) {
 
     }
 

@@ -5,6 +5,8 @@ import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
+import io.github.drednote.telegram.utils.Assert;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.lang.NonNull;
@@ -37,18 +39,17 @@ public abstract class ResponseSetter {
    * @see GenericTelegramResponse
    * @see CompositeTelegramResponse
    */
-  @SuppressWarnings("unchecked")
   public static void setResponse(
       @NonNull UpdateRequest request, @Nullable Object invoked,
       @Nullable Class<?> parameterType
   ) {
+    Assert.notNull(request, "UpdateRequest");
     if (invoked == null || parameterType == null || Void.TYPE.isAssignableFrom(parameterType)) {
       request.setResponse(EmptyTelegramResponse.INSTANCE);
     } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
       request.setResponse((TelegramResponse) invoked);
-    } else if (Collection.class.isAssignableFrom(parameterType)
-        && elementsIsHandlerResponses((Collection<?>) invoked)) {
-      request.setResponse(new CompositeTelegramResponse((List<TelegramResponse>) invoked));
+    } else if (Collection.class.isAssignableFrom(parameterType)) {
+      request.setResponse(new CompositeTelegramResponse(convertIfNeeded(((Collection<?>) invoked))));
     } else {
       request.setResponse(new GenericTelegramResponse(invoked));
     }
@@ -66,17 +67,18 @@ public abstract class ResponseSetter {
   }
 
   /**
-   * Checks if all elements in a collection are instances of {@link TelegramResponse}
    *
-   * @param invoked the collection to check
-   * @return true if all elements are instances of {@code TelegramResponse}, false otherwise
+   * @param invoked the collection
    */
-  public static boolean elementsIsHandlerResponses(Collection<?> invoked) {
+  public static Collection<TelegramResponse> convertIfNeeded(Collection<?> invoked) {
+    Collection<TelegramResponse> responses = new ArrayList<>();
     for (Object o : invoked) {
-      if (!(o instanceof TelegramResponse)) {
-        return false;
+      if (o instanceof TelegramResponse telegramResponse) {
+        responses.add(telegramResponse);
+      } else {
+        responses.add(new GenericTelegramResponse(o));
       }
     }
-    return true;
+    return responses;
   }
 }

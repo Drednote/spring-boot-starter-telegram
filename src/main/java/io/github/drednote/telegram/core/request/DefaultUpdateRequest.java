@@ -33,7 +33,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
   private RequestHandler requestHandler;
 
   @Nullable
-  private Scenario scenario;
+  private Scenario<?> scenario;
 
   @Setter
   @Nullable
@@ -92,7 +92,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
   }
 
   @Override
-  public void setScenario(@Nullable Scenario scenario) {
+  public void setScenario(@Nullable Scenario<?> scenario) {
     if (this.scenario == null) {
       this.scenario = scenario;
     }

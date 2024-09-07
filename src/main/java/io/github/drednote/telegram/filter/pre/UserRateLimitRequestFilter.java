@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.filter.pre;
 
+import static io.github.drednote.telegram.filter.FilterOrder.HIGHEST_PRECEDENCE;
 import static org.apache.commons.lang3.ObjectUtils.max;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -16,7 +17,6 @@ import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.time.Duration;
-import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -106,7 +106,7 @@ public class UserRateLimitRequestFilter implements PriorityPreUpdateFilter {
 
   @Override
   public final int getPreOrder() {
-    return Ordered.HIGHEST_PRECEDENCE + 102;
+    return HIGHEST_PRECEDENCE;
   }
 
   /**

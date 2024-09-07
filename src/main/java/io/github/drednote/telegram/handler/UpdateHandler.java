@@ -4,7 +4,7 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.response.TelegramResponse;
-import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.scenario_deprecated.ScenarioUpdateHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

@@ -53,15 +53,14 @@ class SimpleMessageTelegramResponseTest {
     when(user.getLanguageCode()).thenReturn("en-US");
 
     // Set up the messageSource mock to return a specific message
-    when(messageSource.getMessage(eq("CODE"), eq(null), eq("Default Message"), any(Locale.class)))
+    when(messageSource.resolveResource(eq("CODE"), eq(updateRequest), eq("Default Message")))
         .thenReturn("Localized Message");
 
     // Call the method under test
     String message = handlerResponse.getMessageForLocale(updateRequest);
 
     // Verify the interactions and assertions
-    verify(messageSource).getMessage(eq("CODE"), eq(null), eq("Default Message"),
-        any(Locale.class));
+    verify(messageSource).resolveResource(eq("CODE"), eq(updateRequest), eq("Default Message"));
     assertEquals("Localized Message", message);
   }
 

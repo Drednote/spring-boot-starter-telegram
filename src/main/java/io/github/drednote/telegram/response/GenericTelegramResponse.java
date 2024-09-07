@@ -84,9 +84,8 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     } else if (response instanceof TelegramResponse telegramResponse) {
       telegramResponse.process(request);
       responseMessage = null;
-    } else if (response instanceof Collection<?> collection
-        && ResponseSetter.elementsIsHandlerResponses(collection)) {
-      new CompositeTelegramResponse((Collection<TelegramResponse>) collection).process(request);
+    } else if (response instanceof Collection<?> collection) {
+      new CompositeTelegramResponse(ResponseSetter.convertIfNeeded(collection)).process(request);
       responseMessage = null;
     } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
       try {
@@ -167,5 +166,14 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
    */
   protected void handleResponseMessage(@NonNull Serializable response) {
     // do something if needed
+  }
+
+  public Object getResponse() {
+    return response;
+  }
+
+  @Override
+  public String toString() {
+    return "GenericTelegramResponse{ response=" + response + '}';
   }
 }
