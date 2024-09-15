@@ -10,5 +10,7 @@ public interface ScenarioRepositoryAdapter<S> extends DataSourceAdapter {
 
     Optional<? extends ScenarioContext<S>> findById(String id);
 
+    void changeId(ScenarioContext<S> context, String oldId) throws IOException;
+
     void save(ScenarioContext<S> persistContext) throws IOException;
 }

@@ -2,6 +2,7 @@ package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -37,6 +38,6 @@ public interface PreUpdateFilter extends UpdateFilterMatcher {
    * @return The order in which this pre-update filter should be executed
    */
   default int getPreOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+    return FilterOrder.LOWEST_PRECEDENCE;
   }
 }

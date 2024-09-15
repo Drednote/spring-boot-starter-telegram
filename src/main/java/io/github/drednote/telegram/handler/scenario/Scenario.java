@@ -2,8 +2,6 @@ package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.scenario.data.State;
-import io.github.drednote.telegram.handler.scenario.data.Transition;
-import java.util.List;
 
 public interface Scenario<S> {
 
@@ -18,6 +16,4 @@ public interface Scenario<S> {
     boolean isTerminated();
 
     ScenarioAccessor<S> getAccessor();
-
-    List<? extends Transition<S>> getTransitionsHistory();
 }

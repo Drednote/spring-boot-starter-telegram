@@ -19,4 +19,6 @@ public interface ScenarioConfig<S> {
     List<Transition<S>> getTransitions(State<S> state);
 
     Optional<Transition<S>> findTransition(TransitionContext<S> context);
+
+    ScenarioIdResolver getIdResolver();
 }

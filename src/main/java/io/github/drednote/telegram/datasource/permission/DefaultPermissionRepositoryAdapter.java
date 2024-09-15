@@ -6,19 +6,18 @@ import org.springframework.lang.Nullable;
 
 public class DefaultPermissionRepositoryAdapter implements PermissionRepositoryAdapter {
 
-  @Nullable
   private final PermissionRepository<? extends Permission> repository;
 
   public DefaultPermissionRepositoryAdapter(
-      ObjectProvider<PermissionRepository<? extends Permission>> permissionRepository
+      PermissionRepository<? extends Permission> permissionRepository
   ) {
-    Assert.required(permissionRepository, "PermissionRepository provider");
-    this.repository = permissionRepository.getIfAvailable();
+    Assert.required(permissionRepository, "PermissionRepository");
+    this.repository = permissionRepository;
   }
 
   @Override
   @Nullable
   public Permission findPermission(Long chatId) {
-    return repository != null ? repository.findById(chatId).orElse(null) : null;
+    return repository.findById(chatId).orElse(null);
   }
 }

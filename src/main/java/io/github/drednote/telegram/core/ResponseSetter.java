@@ -45,13 +45,13 @@ public abstract class ResponseSetter {
   ) {
     Assert.notNull(request, "UpdateRequest");
     if (invoked == null || parameterType == null || Void.TYPE.isAssignableFrom(parameterType)) {
-      request.setResponse(EmptyTelegramResponse.INSTANCE);
+      request.getAccessor().setResponse(EmptyTelegramResponse.INSTANCE);
     } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
-      request.setResponse((TelegramResponse) invoked);
+      request.getAccessor().setResponse((TelegramResponse) invoked);
     } else if (Collection.class.isAssignableFrom(parameterType)) {
-      request.setResponse(new CompositeTelegramResponse(convertIfNeeded(((Collection<?>) invoked))));
+      request.getAccessor().setResponse(new CompositeTelegramResponse(convertIfNeeded(((Collection<?>) invoked))));
     } else {
-      request.setResponse(new GenericTelegramResponse(invoked));
+      request.getAccessor().setResponse(new GenericTelegramResponse(invoked));
     }
   }
 

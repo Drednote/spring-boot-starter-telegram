@@ -2,17 +2,15 @@ package io.github.drednote.telegram.handler.scenario.configurer;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
-import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.core.request.UpdateRequestMappingBuilder;
+import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.scenario.Action;
-import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
-import io.github.drednote.telegram.handler.scenario.SimpleScenarioConfig;
+import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.handler.scenario.data.SimpleState;
 import io.github.drednote.telegram.handler.scenario.data.SimpleTransition;
 import io.github.drednote.telegram.handler.scenario.data.State;
 import io.github.drednote.telegram.handler.scenario.data.Transition;
-import io.github.drednote.telegram.handler.scenario.configurer.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.utils.Assert;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.util.ArrayList;
@@ -49,66 +47,59 @@ public class ScenarioBuilder<S> {
 
     public ScenarioData<S> build() {
         Assert.required(initial, "Initial state");
-        Assert.required(resolver, "Scenario id resolver");
 
-        Map<S, SimpleState<S>> uniqueStates = new HashMap<>();
-        Map<State<S>, List<Transition<S>>> states = buildStates(uniqueStates, transitions);
+        Map<State<S>, List<Transition<S>>> states = buildStates(transitions);
 
-        SimpleState<S> initialState = uniqueStates.get(initial);
-        Set<State<S>> terminalStates = this.terminalStates.stream().map(uniqueStates::get).collect(Collectors.toSet());
-
-        if (initialState == null) {
-            throw new IllegalStateException("Initial state is null");
-        }
+        SimpleState<S> initialState = new SimpleState<>(initial);
+        Set<State<S>> terminalStates = this.terminalStates.stream().map(SimpleState::new).collect(Collectors.toSet());
 
         return new ScenarioData<>(
-                new SimpleScenarioConfig<>(initialState, states, terminalStates),
-                FieldProvider.create(this.adapter),
-                resolver
+            initialState, states, terminalStates,
+            FieldProvider.create(this.adapter),
+            resolver
         );
     }
 
     static <S> Map<State<S>, List<Transition<S>>> buildStates(
-            Map<S, SimpleState<S>> uniqueStates, List<TransitionData<S>> transitions
+        List<TransitionData<S>> transitionData
     ) {
+        Set<Transition<S>> allTransitions = new HashSet<>();
         Map<State<S>, List<Transition<S>>> states = new HashMap<>();
-        Map<State<S>, Set<UpdateRequestMapping>> mappings = new HashMap<>();
-        transitions.forEach(t -> {
-            SimpleState<S> source = uniqueStates.computeIfAbsent(t.source(), SimpleState::new);
-            SimpleState<S> target = uniqueStates.computeIfAbsent(t.target(), SimpleState::new);
-            initTarget(target, source, t.actions(), t.request(), mappings);
-            states.computeIfAbsent(source, key -> new ArrayList<>()).add(new SimpleTransition<>(source, target));
+        transitionData.forEach(t -> {
+            SimpleState<S> source = new SimpleState<>(t.source());
+            SimpleState<S> target = new SimpleState<>(t.target());
+            initTarget(target, t.actions(), t.request(), t.callBackQuery());
+            SimpleTransition<S> transition = new SimpleTransition<>(source, target);
+            if (!allTransitions.add(transition)) {
+                throw new IllegalStateException(
+                    "\nAmbiguous transition. Cannot create a new transition because one already exists %s."
+                        .formatted(transition));
+            }
+            states.computeIfAbsent(source, key -> new ArrayList<>()).add(transition);
         });
         return states;
     }
 
     private static <S> void initTarget(
-            SimpleState<S> target, SimpleState<S> source, List<Action> actions, TelegramRequest request,
-            Map<State<S>, Set<UpdateRequestMapping>> mappings
+        SimpleState<S> target, List<Action> actions, TelegramRequest request, boolean callBackQuery
     ) {
-        Set<UpdateRequestMapping> curMappings = mappings.computeIfAbsent(source, key -> new HashSet<>());
+        Set<UpdateRequestMapping> mappings = new HashSet<>();
         UpdateRequestMappingBuilder builder = new UpdateRequestMappingBuilder(request);
-        builder.forEach(mapping -> {
-            if (!curMappings.add(mapping)) {
-                throw buildException(target, mapping);
-            }
-        });
-        if (curMappings.isEmpty()) {
+        builder.forEach(mappings::add);
+        if (mappings.isEmpty()) {
             throw new IllegalStateException("There are no condition to match for state " + target);
         }
         target.setActions(actions);
-        target.setMappings(curMappings);
-    }
-
-    private static <S> IllegalStateException buildException(State<S> state, UpdateRequestMapping mapping) {
-        return new IllegalStateException(
-                "\nAmbiguous mapping. Cannot map to state '" + state + "' mapping \n" +
-                mapping + ": It is already mapped.");
+        target.setMappings(mappings);
+        target.setCallbackQuery(callBackQuery);
     }
 
     public record ScenarioData<S>(
-            ScenarioConfig<S> scenarioConfig,
-            FieldProvider<ScenarioRepositoryAdapter<S>> adapter,
-            ScenarioIdResolver resolver
+        State<S> initialState,
+        Map<State<S>, List<Transition<S>>> states,
+        Set<State<S>> terminalStates,
+        FieldProvider<ScenarioRepositoryAdapter<S>> adapter,
+        @Nullable
+        ScenarioIdResolver resolver
     ) {}
 }

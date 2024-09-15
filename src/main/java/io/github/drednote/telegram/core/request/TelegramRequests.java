@@ -13,4 +13,9 @@ public class TelegramRequests {
         return new TelegramRequestImpl(
             Set.of(patterns), Set.of(RequestType.MESSAGE), Set.of(MessageType.COMMAND), false);
     }
+
+    public static TelegramRequestImpl callbackQuery(String... patterns) {
+        return new TelegramRequestImpl(
+            Set.of(patterns), Set.of(RequestType.CALLBACK_QUERY), Set.of(), false);
+    }
 }

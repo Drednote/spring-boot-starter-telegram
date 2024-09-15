@@ -33,7 +33,7 @@ import org.springframework.web.method.HandlerMethod;
  * @see HandlerMethodInvoker
  * @see ResponseSetter
  */
-@Order(Ordered.HIGHEST_PRECEDENCE + 200)
+@Order(FilterOrder.DEFAULT_PRECEDENCE)
 public class ControllerUpdateHandler implements UpdateHandler {
 
     private final HandlerMethodInvoker handlerMethodInvoker;

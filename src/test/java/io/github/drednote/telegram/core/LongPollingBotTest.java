@@ -15,6 +15,7 @@ import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
+import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.handler.UpdateHandler;
@@ -33,6 +34,7 @@ class LongPollingBotTest {
   private ExceptionHandler exceptionHandler;
   private PreUpdateFilter preUpdateFilter;
   private PostUpdateFilter postUpdateFilter;
+  private ConclusivePostUpdateFilter conclusivePostUpdateFilter;
 
   @BeforeEach
   void setUp() {
@@ -41,12 +43,15 @@ class LongPollingBotTest {
     updateHandler = Mockito.mock(UpdateHandler.class);
     preUpdateFilter = Mockito.mock(PreUpdateFilter.class);
     postUpdateFilter = Mockito.mock(PostUpdateFilter.class);
+    conclusivePostUpdateFilter = Mockito.mock(ConclusivePostUpdateFilter.class);
     when(preUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
     when(postUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
+    when(conclusivePostUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
     when(filterProvider.getPreFilters(any())).thenReturn(List.of(preUpdateFilter));
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
+    when(filterProvider.getConclusivePostFilters(any())).thenReturn(List.of(conclusivePostUpdateFilter));
     this.longPollingBot = new LongPollingBot(new TelegramProperties(), List.of(updateHandler),
-        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource());
+        new ObjectMapper(), exceptionHandler, filterProvider);
   }
 
   @Test
@@ -54,7 +59,7 @@ class LongPollingBotTest {
     TelegramResponse response = Mockito.mock(TelegramResponse.class);
     doAnswer(invocation -> {
       UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
-      request.setResponse(response);
+      request.getAccessor().setResponse(response);
       throw new Exception();
     }).when(updateHandler).onUpdate(any());
 
@@ -84,9 +89,10 @@ class LongPollingBotTest {
   @Test
   void shouldCallResponse() throws Throwable {
     TelegramResponse response = Mockito.mock(TelegramResponse.class);
+    when(response.isExecutePostFilters()).thenReturn(true);
     doAnswer(invocation -> {
       UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
-      request.setResponse(response);
+      request.getAccessor().setResponse(response);
       return null;
     }).when(updateHandler).onUpdate(any());
 
@@ -97,7 +103,7 @@ class LongPollingBotTest {
     verify(exceptionHandler, never()).handle(any());
     verify(preUpdateFilter).preFilter(any());
     verify(postUpdateFilter).postFilter(any());
-    verify(response).process(any());
+    verify(conclusivePostUpdateFilter).postFilter(any());
   }
 
   @Test
@@ -120,11 +126,12 @@ class LongPollingBotTest {
     try (MockedStatic<UpdateRequestContext> mockStatic = Mockito.mockStatic(
         UpdateRequestContext.class)) {
       TelegramResponse response = Mockito.mock(TelegramResponse.class);
+      when(response.isExecutePostFilters()).thenReturn(true);
       doThrow(new Exception()).when(updateHandler).onUpdate(any());
-      doThrow(new RuntimeException()).when(response).process(any());
+      doThrow(new RuntimeException()).when(conclusivePostUpdateFilter).postFilter(any());
       doAnswer(invocation -> {
         UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
-        request.setResponse(response);
+        request.getAccessor().setResponse(response);
         return request;
       }).when(exceptionHandler).handle(any());
 
@@ -135,7 +142,6 @@ class LongPollingBotTest {
       verify(exceptionHandler, times(2)).handle(any());
       verify(preUpdateFilter).preFilter(any());
       verify(postUpdateFilter).postFilter(any());
-      verify(response).process(any());
       mockStatic.verify(() -> UpdateRequestContext.saveRequest(any()));
       mockStatic.verify(() -> UpdateRequestContext.removeRequest(eq(true)));
     }

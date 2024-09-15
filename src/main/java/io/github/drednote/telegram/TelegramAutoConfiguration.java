@@ -61,8 +61,7 @@ public class TelegramAutoConfiguration {
      *                             deserialization
      * @param exceptionHandler     The ExceptionHandler instance for handling exceptions
      * @param updateFilterProvider The UpdateFilterProvider instance for filtering updates
-     * @param messageSource        The TelegramMessageSource instance for retrieving localized
-     *                             messages
+
      * @return The configured Telegram bot instance
      * @throws BeanCreationException When bot token or bot name are missing
      * @apiNote WebHooks not implemented yet
@@ -72,7 +71,7 @@ public class TelegramAutoConfiguration {
     public TelegramLongPollingBot telegramLongPollingBot(
         TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
         ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
+        UpdateFilterProvider updateFilterProvider
     ) {
       if (StringUtils.isBlank(properties.getToken())) {
         throw new BeanCreationException(TELEGRAM_BOT,
@@ -84,7 +83,7 @@ public class TelegramAutoConfiguration {
       }
       if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
         return new LongPollingBot(properties, updateHandlers, objectMapper,
-            exceptionHandler, updateFilterProvider, messageSource);
+            exceptionHandler, updateFilterProvider);
       } else {
         throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
       }

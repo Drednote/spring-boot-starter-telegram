@@ -3,7 +3,7 @@ package io.github.drednote.telegram.handler.scenario.data;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Objects;
 
-public abstract non-sealed class AbstractState<S> implements State<S> {
+public abstract class AbstractState<S> implements State<S> {
 
     protected final S id;
 
@@ -18,7 +18,7 @@ public abstract non-sealed class AbstractState<S> implements State<S> {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -30,7 +30,7 @@ public abstract non-sealed class AbstractState<S> implements State<S> {
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hashCode(id);
     }
 }

@@ -4,22 +4,21 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import io.github.drednote.telegram.core.request.MessageType;
+import io.github.drednote.telegram.core.request.RequestType;
+import io.github.drednote.telegram.core.request.UpdateRequestMapping;
+import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.datasource.kryo.AbstractKryoSerializationService;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleTransitionContext;
 import io.github.drednote.telegram.handler.scenario.persist.StateContext;
-import io.github.drednote.telegram.handler.scenario.persist.TransitionContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializationService<ScenarioContext<S>> {
 
-    private final ScenarioContextSerializer contextSerializer = new ScenarioContextSerializer();
-    private final TransitionSerializer transitionSerializer = new TransitionSerializer();
-    private final StateSerializer stateSerializer = new StateSerializer();
-    private final ListTransitionContextSerializer listTransitionContextSerializer = new ListTransitionContextSerializer();
+    private final ScenarioContextSerializer<S> contextSerializer = new ScenarioContextSerializer<>();
 
     @Override
     protected void doEncode(Kryo kryo, ScenarioContext<S> object, Output output) {
@@ -33,78 +32,41 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
 
     @Override
     protected void configureKryoInstance(Kryo kryo) {
-        kryo.register(ScenarioContext.class, contextSerializer);
-        kryo.register(TransitionContext.class, transitionSerializer);
-        kryo.register(StateContext.class, stateSerializer);
+        kryo.addDefaultSerializer(ScenarioContext.class, contextSerializer);
     }
 
-    private class ScenarioContextSerializer extends Serializer<ScenarioContext<S>> {
-
+    private static class ScenarioContextSerializer<S> extends Serializer<ScenarioContext<S>> {
 
         @Override
-        public void write(Kryo kryo, Output output, ScenarioContext object) {
-            kryo.writeObject(output, object.getId());
-            kryo.writeObject(output, object.getState(), stateSerializer);
-            kryo.writeObject(output, object.getTransitionsHistory(), listTransitionContextSerializer);
+        public void write(Kryo kryo, Output output, ScenarioContext<S> object) {
+            StateContext<S> state = object.state();
+            kryo.writeClassAndObject(output, object.id());
+            kryo.writeClassAndObject(output, state.id());
+            kryo.writeClassAndObject(output, state.callbackQuery());
+            var mappings = state.updateRequestMappings();
+            kryo.writeClassAndObject(output, mappings.size());
+            mappings.forEach(mapping -> {
+                kryo.writeClassAndObject(output, mapping.getPattern());
+                kryo.writeClassAndObject(output, mapping.getRequestType());
+                kryo.writeClassAndObject(output, new HashSet<>(mapping.getMessageTypes()));
+            });
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public ScenarioContext<S> read(Kryo kryo, Input input, Class<ScenarioContext<S>> type) {
-            String id = kryo.readObject(input, String.class);
-            StateContext<S> state = kryo.readObject(input, StateContext.class);
-            List<TransitionContext<S>> transitions = kryo.readObject(
-                input, ArrayList.class, listTransitionContextSerializer);
-            return new SimpleScenarioContext<>(id, state, transitions);
-        }
-    }
-
-    private class ListTransitionContextSerializer extends Serializer<List<TransitionContext<S>>> {
-
-        @Override
-        public void write(Kryo kryo, Output output, List<TransitionContext<S>> object) {
-            kryo.writeObject(output, object.size());
-            object.forEach(context -> kryo.writeObject(output, context, transitionSerializer));
-        }
-
-        @Override
-        public List<TransitionContext<S>> read(Kryo kryo, Input input, Class<List<TransitionContext<S>>> type) {
-            Integer count = kryo.readObject(input, Integer.class);
-            List<TransitionContext<S>> result = new ArrayList<>(count);
-            for (int i = 0; i < count; i++) {
-                result.add(kryo.readObject(input, TransitionContext.class));
+            String id = (String) kryo.readClassAndObject(input);
+            S state = (S) kryo.readClassAndObject(input);
+            boolean callbackQuery = (boolean) kryo.readClassAndObject(input);
+            Integer size = (Integer) kryo.readClassAndObject(input);
+            Set<UpdateRequestMappingAccessor> mappings = new HashSet<>();
+            for (int i = 0; i < size; i++) {
+                String pattern = (String) kryo.readClassAndObject(input);
+                RequestType requestType = (RequestType) kryo.readClassAndObject(input);
+                Set<MessageType> messageTypes = (Set<MessageType>) kryo.readClassAndObject(input);
+                mappings.add(new UpdateRequestMapping(pattern, requestType, messageTypes));
             }
-            return result;
+            return new SimpleScenarioContext<>(id, new SimpleStateContext<>(state, mappings, callbackQuery));
         }
-    }
-
-    private class TransitionSerializer extends Serializer<TransitionContext<S>> {
-
-        @Override
-        public void write(Kryo kryo, Output output, TransitionContext<S> object) {
-            kryo.writeObject(output, object.getSourceContext(), stateSerializer);
-            kryo.writeObject(output, object.getTargetContext(), stateSerializer);
-        }
-
-        @Override
-        public TransitionContext<S> read(Kryo kryo, Input input, Class<TransitionContext<S>> type) {
-            StateContext<S> source = kryo.readObject(input, StateContext.class);
-            StateContext<S> target = kryo.readObject(input, StateContext.class);
-            return new SimpleTransitionContext<>(source, target);
-        }
-    }
-
-    private class StateSerializer extends Serializer<StateContext<S>> {
-
-        @Override
-        public void write(Kryo kryo, Output output, StateContext object) {
-            kryo.writeClassAndObject(output, object.getId());
-        }
-
-        @Override
-        public StateContext<S> read(Kryo kryo, Input input, Class<StateContext<S>> type) {
-            S name = (S) kryo.readClassAndObject(input);
-            return new SimpleStateContext<>(name);
-        }
-
     }
 }

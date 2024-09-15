@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -97,14 +98,20 @@ public class UpdateRequestMappingBuilder {
         }
     }
 
+    public Set<UpdateRequestMapping> build() {
+        Set<UpdateRequestMapping> result = new HashSet<>();
+        forEach(result::add);
+        return result;
+    }
+
     private void process(
-            @Nullable String pattern, @Nullable RequestType requestType,
-            @NonNull Consumer<UpdateRequestMapping> consumer
+        @Nullable String pattern, @Nullable RequestType requestType,
+        @NonNull Consumer<UpdateRequestMapping> consumer
     ) {
         if (requestType == null && pattern == null) {
             consumer.accept(new UpdateRequestMapping(DEFAULT_PATTERN, null, Collections.emptySet()));
             consumer.accept(new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, RequestType.MESSAGE,
-                    Set.of(MessageType.COMMAND), true));
+                Set.of(MessageType.COMMAND), true));
         } else if (requestType == RequestType.MESSAGE) {
             if (!messageTypes.isEmpty()) {
                 if (exclusiveMessageType) {
@@ -123,14 +130,14 @@ public class UpdateRequestMappingBuilder {
     }
 
     private void doProcess(
-            @Nullable String pattern, @Nullable RequestType requestType,
-            @NonNull Set<MessageType> messageTypes,
-            @NonNull Consumer<UpdateRequestMapping> consumer
+        @Nullable String pattern, @Nullable RequestType requestType,
+        @NonNull Set<MessageType> messageTypes,
+        @NonNull Consumer<UpdateRequestMapping> consumer
     ) {
         if (pattern == null) {
             if (requestType == RequestType.MESSAGE && messageTypes.contains(MessageType.COMMAND)) {
                 consumer.accept(
-                        new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
+                    new UpdateRequestMapping(DEFAULT_COMMAND_PATTERN, requestType, messageTypes));
             } else {
                 consumer.accept(new UpdateRequestMapping(DEFAULT_PATTERN, requestType, messageTypes));
             }

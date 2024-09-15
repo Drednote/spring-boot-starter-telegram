@@ -47,7 +47,6 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
   /**
    * The response object to be processed
    */
-  @NonNull
   private final Object response;
 
   /**
@@ -76,10 +75,10 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     } else if (response instanceof byte[] bytes) {
       responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
     } else if (response instanceof BotApiMethod<?> botApiMethod) {
-      postProcessApiMethod(botApiMethod, request);
+//      postProcessApiMethod(botApiMethod, request);
       responseMessage = request.getAbsSender().execute(botApiMethod);
     } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
-      postProcessApiMethod(sendMediaBotMethod, request);
+//      postProcessApiMethod(sendMediaBotMethod, request);
       responseMessage = tryToSendMedia(request);
     } else if (response instanceof TelegramResponse telegramResponse) {
       telegramResponse.process(request);
@@ -99,7 +98,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
       throw new IllegalStateException("Cannot process response %s".formatted(response));
     }
     if (responseMessage != null) {
-      handleResponseMessage(responseMessage);
+      request.getAccessor().addResponseFromTelegram(responseMessage);
     }
   }
 
@@ -157,15 +156,6 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
       return request.getAbsSender().execute(sendVoice);
     }
     return null;
-  }
-
-  /**
-   * Handles the processed response message, allowing for further actions if needed.
-   *
-   * @param response The response message to be handled
-   */
-  protected void handleResponseMessage(@NonNull Serializable response) {
-    // do something if needed
   }
 
   public Object getResponse() {

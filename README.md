@@ -354,10 +354,11 @@ and after they are processed.
     - `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
       the main [Update Handling](#update-handling)
 
-- Also, for convenience, two interfaces are created, which are implemented from `PreUpdateFilter`
-  and `PostUpdateFilter`. These are `PriorityPreUpdateFilter` and `PriorityPostUpdateFilter`
-  respectively. They take precedence over `PreUpdateFilter`/`PostUpdateFilter` and are executed
-  earlier whatever returns **getPreOrder()**/**getPostOrder()**
+- Also, for convenience, two interfaces are created. First one - `PriorityPreUpdateFilter` is implemented
+  from `PreUpdateFilter` and take precedence over `PreUpdateFilter` and is executed earlier whatever returns
+  **getPreOrder()**/**getPostOrder()**.
+  Second one - `ConclusivePostUpdateFilter` is super to `PreUpdateFilter`, and is executed later whatever returns
+  **getPreOrder()**/**getPostOrder()**.
 
 - To add a filter, you need to create a **spring bean** that will implement the `PreUpdateFilter`
   or `PostUpdateFilter` interface.

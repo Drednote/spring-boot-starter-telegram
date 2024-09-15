@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.handler.scenario.persist;
 
-import io.github.drednote.telegram.handler.scenario.data.Transition;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 
@@ -9,11 +8,6 @@ public class SimpleTransitionContext<S> implements TransitionContext<S> {
 
     private final StateContext<S> source;
     private final StateContext<S> target;
-
-    public SimpleTransitionContext(Transition<S> transition) {
-        this.source = new SimpleStateContext<>(transition.getSource());
-        this.target = new SimpleStateContext<>(transition.getTarget());
-    }
 
     @Override
     public StateContext<S> getSourceContext() {

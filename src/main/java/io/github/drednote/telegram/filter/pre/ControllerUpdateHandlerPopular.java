@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.controller.HandlerMethodPopular;
 import io.github.drednote.telegram.utils.Assert;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,11 @@ public class ControllerUpdateHandlerPopular implements PriorityPreUpdateFilter {
 
     @Override
     public void preFilter(UpdateRequest request) {
-        if (request.getScenario() == null) {
-            handlerMethodPopular.populate(request);
-        }
+        handlerMethodPopular.populate(request);
     }
 
+    @Override
+    public int getPreOrder() {
+        return FilterOrder.PRIORITY_PRE_FILTERS.get(this.getClass());
+    }
 }

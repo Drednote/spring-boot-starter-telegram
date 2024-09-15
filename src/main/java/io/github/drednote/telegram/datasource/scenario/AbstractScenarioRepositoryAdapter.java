@@ -22,8 +22,7 @@ public abstract class AbstractScenarioRepositoryAdapter<S> implements ScenarioRe
             ScenarioContext<S> context = serializationService.deserialize(scenarioEntity.getContext());
             return new SimpleScenarioContext<>(
                 scenarioEntity.getId(),
-                context.getState(),
-                context.getTransitionsHistory()
+                context.state()
             );
         });
     }

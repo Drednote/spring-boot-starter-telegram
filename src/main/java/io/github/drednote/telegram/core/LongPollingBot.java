@@ -5,15 +5,16 @@ import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
+import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
-import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -33,6 +34,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 public class LongPollingBot extends TelegramLongPollingBot {
 
+    private static final Logger log = LoggerFactory.getLogger(LongPollingBot.class);
     /**
      * The name of the bot
      */
@@ -57,10 +59,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
      * The update filter provider for managing pre-update handlers and post-update handlers filters
      */
     private final UpdateFilterProvider updateFilterProvider;
-    /**
-     * The message source for retrieving localized messages
-     */
-    private final TelegramMessageSource messageSource;
 
     /**
      * Creates a new instance of the {@code LongPollingBot} class with the provided properties and dependencies
@@ -70,19 +68,17 @@ public class LongPollingBot extends TelegramLongPollingBot {
      * @param objectMapper         the object mapper, not null
      * @param exceptionHandler     the exception handler, not null
      * @param updateFilterProvider the update filter provider, not null
-     * @param messageSource        the message source, not null
      */
     public LongPollingBot(
         TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
         ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
+        UpdateFilterProvider updateFilterProvider
     ) {
         super(properties.getSession().toBotOptions(), properties.getToken());
         Assert.required(updateHandlers, "Collection of UpdateHandlers");
         Assert.required(objectMapper, "ObjectMapper");
         Assert.required(exceptionHandler, "ExceptionHandler");
         Assert.required(updateFilterProvider, "UpdateFilterProvider");
-        Assert.required(messageSource, "TelegramMessageSource");
 
         this.name = properties.getName();
         this.updateHandlers = updateHandlers.stream()
@@ -91,7 +87,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
         this.exceptionHandler = exceptionHandler;
         this.telegramProperties = properties;
         this.updateFilterProvider = updateFilterProvider;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -131,7 +126,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
         } finally {
             try {
                 doPostFilter(request);
-                doAnswer(request);
+                doConclusivePostFilter(request);
             } catch (Exception e) {
                 handleException(request, e);
             }
@@ -149,6 +144,7 @@ public class LongPollingBot extends TelegramLongPollingBot {
         while (request.getResponse() == null && iterator.hasNext()) {
             PreUpdateFilter next = iterator.next();
             if (next.matches(request)) {
+                log.trace("Executing pre filter -> {}", next);
                 next.preFilter(request);
             }
         }
@@ -163,6 +159,22 @@ public class LongPollingBot extends TelegramLongPollingBot {
         List<PostUpdateFilter> filters = updateFilterProvider.getPostFilters(request);
         for (PostUpdateFilter filter : filters) {
             if (filter.matches(request)) {
+                log.trace("Executing post filter -> {}", filter);
+                filter.postFilter(request);
+            }
+        }
+    }
+
+    /**
+     * Performs conclusive post-filtering on the update request
+     *
+     * @param request the update request
+     */
+    private void doConclusivePostFilter(DefaultUpdateRequest request) throws Exception {
+        List<ConclusivePostUpdateFilter> filters = updateFilterProvider.getConclusivePostFilters(request);
+        for (ConclusivePostUpdateFilter filter : filters) {
+            if (filter.matches(request)) {
+                log.trace("Executing conclusive post filter -> {}", filter);
                 filter.postFilter(request);
             }
         }
@@ -179,22 +191,6 @@ public class LongPollingBot extends TelegramLongPollingBot {
             if (request.getResponse() == null) {
                 updateHandler.onUpdate(request);
             }
-        }
-    }
-
-    /**
-     * Answers the update request by processing the response
-     *
-     * @param request the update request
-     * @throws TelegramApiException if an error occurs during processing answer
-     */
-    private void doAnswer(DefaultUpdateRequest request) throws TelegramApiException {
-        TelegramResponse response = request.getResponse();
-        if (response != null) {
-            if (response instanceof SimpleMessageTelegramResponse simpleMessageTelegramResponse) {
-                simpleMessageTelegramResponse.setMessageSource(messageSource);
-            }
-            response.process(new DefaultUpdateRequest(request));
         }
     }
 

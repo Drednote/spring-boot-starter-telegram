@@ -9,6 +9,7 @@ import io.github.drednote.telegram.handler.scenario.persist.SimpleTransitionCont
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,10 +23,11 @@ class ScenarioKryoSerializationServiceTest {
 
     @Test
     void shouldCorrectSerializeAndDeserialize() throws IOException {
-        SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE));
-        SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET));
-        ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target,
-            List.of(new SimpleTransitionContext<>(source, target)));
+        SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
+            Set.of(), false);
+        SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
+            Set.of(), false);
+        ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
 
         byte[] bytes = serializationService.serialize(scenario);
         ScenarioContext<AbstractStateClass<?>> deserialize = serializationService.deserialize(bytes);

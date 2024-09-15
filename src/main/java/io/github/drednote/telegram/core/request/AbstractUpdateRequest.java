@@ -23,7 +23,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
  * @author Ivan Galushko
  */
 @Getter
-public abstract class AbstractUpdateRequest implements UpdateRequest {
+public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequestAccessor {
 
   /**
    * updateId
@@ -82,7 +82,7 @@ public abstract class AbstractUpdateRequest implements UpdateRequest {
       this.requestType = RequestType.CHOSEN_INLINE_QUERY;
     } else if (update.getCallbackQuery() != null) {
       this.user = update.getCallbackQuery().getFrom();
-      this.text = update.getCallbackQuery().getData();
+      this.text = firstNonNull(update.getCallbackQuery().getData(), update.getCallbackQuery().getGameShortName());
       this.chat = null;
       this.requestType = RequestType.CALLBACK_QUERY;
     } else if (update.getShippingQuery() != null) {
@@ -245,6 +245,11 @@ public abstract class AbstractUpdateRequest implements UpdateRequest {
     } else {
       return Long.valueOf(id);
     }
+  }
+
+  @Override
+  public UpdateRequestAccessor getAccessor() {
+    return this;
   }
 
   @NonNull

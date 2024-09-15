@@ -8,11 +8,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 /**
- * This functional interface represents a Telegram response action that can be performed. It defines
- * a method for processing a Telegram response using the provided update request.
+ * This functional interface represents a Telegram response action that can be performed. It defines a method for
+ * processing a Telegram response using the provided update request.
  * <p>
- * After the update processing is complete, it is expected that a response will be sent to the user.
- * To handle this, you can use this class. Here some useful info about it:
+ * After the update processing is complete, it is expected that a response will be sent to the user. To handle this, you
+ * can use this class. Here some useful info about it:
  * <ul>
  *   <li>
  *     <b>Response can only be sent if {@link Update} has a {@code chatId}</b>. So if in {@code Update}
@@ -40,21 +40,24 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * </ul>
  *
  * @author Ivan Galushko
- * @implNote Any custom code can be written in {@code TelegramResponse}, but I strongly recommend
- * using this interface only for sending a response to {@code Telegram}
+ * @implNote Any custom code can be written in {@code TelegramResponse}, but I strongly recommend using this interface
+ * only for sending a response to {@code Telegram}
  * @see ResponseSetter
  * @see GenericTelegramResponse
  * @see SimpleMessageTelegramResponse
  */
-@FunctionalInterface
 public interface TelegramResponse {
 
-  /**
-   * Performs the Telegram response action. The {@code UpdateRequest} here for providing info for
-   * sending response to Telegram API
-   *
-   * @param request The update request, not null
-   * @throws TelegramApiException if the response processing fails
-   */
-  void process(@NonNull UpdateRequest request) throws TelegramApiException;
+    /**
+     * Performs the Telegram response action. The {@code UpdateRequest} here for providing info for sending response to
+     * Telegram API
+     *
+     * @param request The update request, not null
+     * @throws TelegramApiException if the response processing fails
+     */
+    void process(@NonNull UpdateRequest request) throws TelegramApiException;
+
+    default boolean isExecutePostFilters() {
+        return true;
+    }
 }

@@ -1,9 +1,11 @@
 package io.github.drednote.telegram.handler.scenario.persist;
 
+import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.scenario.Scenario;
+import io.github.drednote.telegram.handler.scenario.data.State;
 import io.github.drednote.telegram.utils.FieldProvider;
-import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -15,6 +17,17 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
     public void persist(Scenario<S> context) {
         try {
             adapterProvider.ifExistsWithException(adapter -> adapter.save(convert(context)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void changeId(Scenario<S> context, String newId) {
+        try {
+            String oldId = context.getId();
+            context.getAccessor().setId(newId);
+            adapterProvider.ifExistsWithException(adapter -> adapter.changeId(convert(context), oldId));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -34,12 +47,11 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
     }
 
     private ScenarioContext<S> convert(Scenario<S> scenario) {
-        StateContext<S> stateContext = new SimpleStateContext<>(scenario.getState());
-        List<SimpleTransitionContext<S>> transitionContexts = scenario.getTransitionsHistory().stream()
-            .map(SimpleTransitionContext::new).toList();
-
-        return new SimpleScenarioContext<>(scenario.getId(), stateContext, transitionContexts);
+        State<S> state = scenario.getState();
+        Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getUpdateRequestMappings();
+        StateContext<S> stateContext = new SimpleStateContext<>(
+            state.getId(), requestMappings, state.isCallbackQueryState()
+        );
+        return new SimpleScenarioContext<>(scenario.getId(), stateContext);
     }
-
-
 }

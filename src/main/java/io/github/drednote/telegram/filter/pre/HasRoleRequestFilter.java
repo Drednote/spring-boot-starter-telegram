@@ -40,7 +40,7 @@ public class HasRoleRequestFilter implements PreUpdateFilter {
                         user != null ? user.getUserName() : null,
                         Arrays.toString(hasRole.value()));
                 log.warn(message);
-                request.setResponse(
+                request.getAccessor().setResponse(
                     hasDescription ? new GenericTelegramResponse(description) : ForbiddenTelegramResponse.INSTANCE);
             }
         }

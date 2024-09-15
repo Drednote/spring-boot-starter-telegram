@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.data;
 
 import io.github.drednote.telegram.utils.Assert;
+import java.util.Objects;
 
 public class SimpleTransition<S> implements Transition<S> {
 
@@ -27,9 +28,23 @@ public class SimpleTransition<S> implements Transition<S> {
 
     @Override
     public String toString() {
-        return "SimpleTransition{" +
-               "source=" + source +
-               ", target=" + target +
-               '}';
+        return "Transition - {source = %s, target = %s}".formatted(source, target);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SimpleTransition<?> that = (SimpleTransition<?>) o;
+        return Objects.equals(source, that.source) && Objects.equals(target, that.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, target);
     }
 }

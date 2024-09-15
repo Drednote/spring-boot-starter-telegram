@@ -2,9 +2,11 @@ package io.github.drednote.telegram.filter.post;
 
 import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
+
 
 /**
  * Represents a post-update filter for Telegram update requests.
@@ -23,20 +25,25 @@ import org.springframework.lang.NonNull;
  */
 public interface PostUpdateFilter extends UpdateFilterMatcher {
 
-  /**
-   * Post-filters the incoming Telegram update request after it has been processed by update
-   * handlers
-   *
-   * @param request The incoming Telegram update request to be post-filtered
-   */
-  void postFilter(@NonNull UpdateRequest request);
+    /**
+     * Post-filters the incoming Telegram update request after it has been processed by update
+     * handlers
+     *
+     * @param request The incoming Telegram update request to be post-filtered
+     */
+    void postFilter(@NonNull UpdateRequest request);
 
-  /**
-   * Gets the post-update filter's execution order
-   *
-   * @return The order in which this post-update filter should be executed
-   */
-  default int getPostOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
-  }
+    /**
+     * Gets the post-update filter's execution order
+     *
+     * @return The order in which this post-update filter should be executed
+     */
+    default int getPostOrder() {
+        return FilterOrder.LOWEST_PRECEDENCE;
+    }
+
+    @Override
+    default boolean matches(UpdateRequest request) {
+        return request.getResponse() == null || request.getResponse().isExecutePostFilters();
+    }
 }

@@ -8,6 +8,7 @@ import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.handler.scenario.Scenario;
+import java.io.Serializable;
 import java.util.List;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -96,6 +97,11 @@ class AbstractUpdateRequestTest {
       return null;
     }
 
+    @Override
+    public List<Serializable> getResponseFromTelegram() {
+      return List.of();
+    }
+
     @Nullable
     @Override
     public Throwable getError() {
@@ -139,6 +145,12 @@ class AbstractUpdateRequestTest {
     public void setPermission(@Nullable Permission permission) {
 
     }
+
+    @Override
+    public void addResponseFromTelegram(Serializable response) {
+
+    }
+
   }
 }
 

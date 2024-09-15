@@ -51,7 +51,7 @@ public class TelegramControllerContainer implements HandlerMethodPopular, Contro
           String pattern = mappingInfo.getPattern();
           Map<String, String> templateVariables =
               mappingInfo.getPathMatcher().extractUriTemplateVariables(pattern, text);
-          request.setRequestHandler(
+          request.getAccessor().setRequestHandler(
               new RequestHandler(mappingLookup.get(mappingInfo), templateVariables, pattern));
         });
   }

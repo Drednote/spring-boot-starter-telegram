@@ -13,6 +13,7 @@ import io.github.bucket4j.Refill;
 import io.github.bucket4j.local.LocalBucket;
 import io.github.bucket4j.local.SynchronizationStrategy;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
@@ -83,7 +84,7 @@ public class UserRateLimitRequestFilter implements PriorityPreUpdateFilter {
     if (filterProperties.getUserRateLimit() > 0) {
       LocalBucket bucket = getBucket(chatId);
       if (!bucket.tryConsume(1)) {
-        request.setResponse(TooManyRequestsTelegramResponse.INSTANCE);
+        request.getAccessor().setResponse(TooManyRequestsTelegramResponse.INSTANCE);
       }
     }
   }
@@ -105,8 +106,8 @@ public class UserRateLimitRequestFilter implements PriorityPreUpdateFilter {
   }
 
   @Override
-  public final int getPreOrder() {
-    return HIGHEST_PRECEDENCE;
+  public int getPreOrder() {
+    return FilterOrder.PRIORITY_PRE_FILTERS.get(this.getClass());
   }
 
   /**

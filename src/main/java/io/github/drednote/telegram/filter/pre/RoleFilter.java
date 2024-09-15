@@ -6,8 +6,10 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.Permission.DefaultPermission;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
+import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.PermissionProperties;
 import io.github.drednote.telegram.utils.Assert;
+import io.github.drednote.telegram.utils.FieldProvider;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +30,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
  */
 public class RoleFilter implements PriorityPreUpdateFilter {
 
-  private final PermissionRepositoryAdapter permissionRepositoryAdapter;
+  private final FieldProvider<PermissionRepositoryAdapter> permissionRepositoryAdapter;
   private final PermissionProperties permissionProperties;
 
   /**
@@ -41,7 +43,7 @@ public class RoleFilter implements PriorityPreUpdateFilter {
    *                                  is null
    */
   public RoleFilter(
-      PermissionRepositoryAdapter permissionRepositoryAdapter,
+      FieldProvider<PermissionRepositoryAdapter> permissionRepositoryAdapter,
       PermissionProperties permissionProperties
   ) {
     Assert.required(permissionRepositoryAdapter, "PermissionRepositoryAdapter");
@@ -70,10 +72,14 @@ public class RoleFilter implements PriorityPreUpdateFilter {
     Set<String> roles = new HashSet<>();
     if (user != null) {
       Long id = user.getId();
-      Permission permission = permissionRepositoryAdapter.findPermission(id);
-      if (permission != null && permission.getRoles() != null) {
-        roles.addAll(permission.getRoles());
-      }
+
+      permissionRepositoryAdapter.ifExists(adapter -> {
+        Permission permission = adapter.findPermission(id);
+        if (permission != null && permission.getRoles() != null) {
+          roles.addAll(permission.getRoles());
+        }
+      });
+
       Optional.ofNullable(permissionProperties.getAssignRole().get(id)).ifPresent(roles::addAll);
     }
 
@@ -81,11 +87,11 @@ public class RoleFilter implements PriorityPreUpdateFilter {
       roles.add(permissionProperties.getDefaultRole());
     }
 
-    request.setPermission(new DefaultPermission(request.getChatId(), roles));
+    request.getAccessor().setPermission(new DefaultPermission(request.getChatId(), roles));
   }
 
   @Override
-  public final int getPreOrder() {
-    return DEFAULT_PRECEDENCE;
+  public int getPreOrder() {
+    return FilterOrder.PRIORITY_PRE_FILTERS.get(this.getClass());
   }
 }

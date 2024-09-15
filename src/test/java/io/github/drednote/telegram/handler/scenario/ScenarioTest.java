@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.core.request.UpdateRequestAccessor;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.scenario.data.SimpleState;
@@ -16,7 +17,6 @@ import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContex
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleTransitionContext;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,27 +35,30 @@ class ScenarioTest {
     UpdateRequest updateRequest = Mockito.mock(UpdateRequest.class);
     ScenarioRepositoryAdapter<String> adapter = new MockAdapter<>();
     private SimpleState<String> nextState2;
-    private SimpleTransition<String> transitionFrom1To2;
 
     @BeforeEach
     void setUp() {
         persister = new SimpleScenarioPersister<>(FieldProvider.create(adapter));
+        when(updateRequest.getAccessor()).thenReturn(Mockito.mock(UpdateRequestAccessor.class));
 
         Map<State<String>, List<Transition<String>>> states = new HashMap<>();
 
         SimpleState<String> initialState = new SimpleState<>("1");
-        initialState.setMappings(Set.of(new UpdateRequestMapping("**", null, Set.of())));
-        nextState2 = new SimpleState<>("2", Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())));
+        nextState2 = new SimpleState<>("2");
         SimpleState<String> nextState3 = new SimpleState<>("3",
-            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())));
+            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())), false);
         SimpleState<String> nextState4 = new SimpleState<>("4",
-            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())));
+            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())), false);
 
-        transitionFrom1To2 = new SimpleTransition<>(initialState, nextState2);
-        states.put(initialState, List.of(transitionFrom1To2, new SimpleTransition<>(initialState, nextState3)));
+        SimpleTransition<String> transitionFrom1To2 = new SimpleTransition<>(initialState,
+            new SimpleState<>("2", Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false));
+        states.put(initialState, List.of(
+            transitionFrom1To2, new SimpleTransition<>(initialState, nextState3)));
         states.put(nextState2, List.of(new SimpleTransition<>(nextState2, nextState4)));
 
-        factory = new SimpleScenarioFactory<>(new SimpleScenarioConfig<>(initialState, states), persister);
+        factory = new SimpleScenarioFactory<>(
+            new SimpleScenarioConfig<>(initialState, states, new SimpleScenarioIdResolver(FieldProvider.empty())),
+            persister);
 
         when(updateRequest.getRequestType()).thenReturn(RequestType.MESSAGE);
     }
@@ -76,7 +79,8 @@ class ScenarioTest {
     void shouldCorrectChooseNextStateIfPersisterNotEmpty() throws IOException {
         String id = "2";
         adapter.save(new SimpleScenarioContext<>(id,
-            new SimpleStateContext<>(nextState2), List.of(new SimpleTransitionContext<>(transitionFrom1To2))));
+            new SimpleStateContext<>(nextState2.getId(),
+                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false)));
 
         Scenario<String> scenario = factory.create(id);
         persister.restore(scenario, id);
@@ -97,8 +101,13 @@ class ScenarioTest {
         }
 
         @Override
+        public void changeId(ScenarioContext<S> context, String oldId) throws IOException {
+
+        }
+
+        @Override
         public void save(ScenarioContext<S> persistContext) {
-            context.put(persistContext.getId(), persistContext);
+            context.put(persistContext.id(), persistContext);
         }
     }
 }

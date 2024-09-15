@@ -81,11 +81,11 @@ public class DefaultExceptionHandler implements ExceptionHandler {
           scenarioException);
     } else if (throwable instanceof TextReturningException textReturningException) {
       log.warn(textReturningException.getMessage());
-      request.setResponse(new GenericTelegramResponse(textReturningException.getMessage()));
+      request.getAccessor().setResponse(new GenericTelegramResponse(textReturningException.getMessage()));
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {
-        request.setResponse(InternalErrorTelegramResponse.INSTANCE);
+        request.getAccessor().setResponse(InternalErrorTelegramResponse.INSTANCE);
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);
     }

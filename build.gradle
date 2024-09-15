@@ -25,7 +25,9 @@ repositories {
 }
 
 dependencies {
-    api 'org.telegram:telegrambots:6.8.0'
+//    api 'org.telegram:telegrambots-longpolling:7.10.0'
+//    api 'org.telegram:telegrambots-client:7.10.0'
+    api 'org.telegram:telegrambots:6.9.7.1'
     api 'com.esotericsoftware:kryo:4.0.3'
     api 'org.springframework.boot:spring-boot-starter'
     api 'org.springframework:spring-web'

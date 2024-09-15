@@ -19,7 +19,8 @@ import org.springframework.util.PathMatcher;
  *
  * @author Ivan Galushko
  */
-public class UpdateRequestMapping implements Comparable<UpdateRequestMapping>, RequestMatcher {
+public class UpdateRequestMapping implements
+    Comparable<UpdateRequestMapping>, RequestMatcher, UpdateRequestMappingAccessor {
 
   /**
    * The pattern associated with the mapping
