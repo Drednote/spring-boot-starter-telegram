@@ -28,7 +28,7 @@ class ScenarioBuilderTest {
         TelegramRequest requestMock = Mockito.mock(TelegramRequest.class);
 
         // Создание списка действий
-        List<Action> actions = Collections.singletonList(Mockito.mock(Action.class));
+        List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
         TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, false);
@@ -47,8 +47,8 @@ class ScenarioBuilderTest {
         builder.forEach(mappings::add);
         SimpleState<String> state1 = new SimpleState<>("state1");
         SimpleState<String> state2Null = new SimpleState<>("state2");
-        SimpleState<String> state2 = new SimpleState<>("state2", mappings, false);
-        SimpleState<String> state3 = new SimpleState<>("state3", mappings, false);
+        SimpleState<String> state2 = new SimpleState<>("state2", mappings);
+        SimpleState<String> state3 = new SimpleState<>("state3", mappings);
 
         // Проверка переходов из state1 в state2 и из state2 в state3
         assertEquals(1, result.get(state1).size());
@@ -80,7 +80,7 @@ class ScenarioBuilderTest {
         TelegramRequest requestMock = Mockito.mock(TelegramRequest.class);
 
         // Создание списка действий
-        List<Action> actions = Collections.singletonList(Mockito.mock(Action.class));
+        List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData с одинаковым source
         TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, false);
@@ -101,7 +101,7 @@ class ScenarioBuilderTest {
         TelegramRequest requestMock2 = TelegramRequests.text("Hello");
 
         // Создание списка действий
-        List<Action> actions = Collections.singletonList(Mockito.mock(Action.class));
+        List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
         TransitionData<String> transition1 = new TransitionData<>("state1", "state3", actions, requestMock, false);
@@ -120,9 +120,9 @@ class ScenarioBuilderTest {
         List<Transition<String>> transitions2 = result.get(new SimpleState<>("state2"));
 
         assertThat(transitions1).hasSize(1);
-        assertThat(transitions1.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings1, false));
+        assertThat(transitions1.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings1));
 
         assertThat(transitions2).hasSize(1);
-        assertThat(transitions2.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings2, false));
+        assertThat(transitions2.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings2));
     }
 }

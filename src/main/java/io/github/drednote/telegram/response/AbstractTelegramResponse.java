@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.response;
 
+import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
+
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -28,6 +30,7 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId);
         sendMessage.setText(string);
+        sendMessage.setParseMode(MARKDOWN);
         return absSender.execute(sendMessage);
     }
 }

@@ -1,9 +1,10 @@
 package io.github.drednote.telegram.response;
 
+import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.exception.type.TelegramResponseException;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -43,6 +44,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class GenericTelegramResponse extends AbstractTelegramResponse {
 
   private static final String CHAT_ID = "chatId";
+  private static final String PARSE_MODE = "parseMode";
 
   /**
    * The response object to be processed
@@ -75,10 +77,10 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     } else if (response instanceof byte[] bytes) {
       responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
     } else if (response instanceof BotApiMethod<?> botApiMethod) {
-//      postProcessApiMethod(botApiMethod, request);
+      postProcessApiMethod(botApiMethod, request);
       responseMessage = request.getAbsSender().execute(botApiMethod);
     } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
-//      postProcessApiMethod(sendMediaBotMethod, request);
+      postProcessApiMethod(sendMediaBotMethod, request);
       responseMessage = tryToSendMedia(request);
     } else if (response instanceof TelegramResponse telegramResponse) {
       telegramResponse.process(request);
@@ -105,19 +107,13 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
   private void postProcessApiMethod(Object botApiMethod, UpdateRequest request) {
     try {
       var propertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(botApiMethod);
-      if (propertyAccessor.getPropertyValue(CHAT_ID) == null) {
-        Class<?> type = propertyAccessor.getPropertyType(CHAT_ID);
-        if (type != null && Long.class.isAssignableFrom(type)) {
-          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId());
-        } else if (type != null && String.class.isAssignableFrom(type)) {
-          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId().toString());
-        } else {
-          propertyAccessor.setPropertyValue(CHAT_ID, request.getChatId().toString());
+      if (propertyAccessor.getPropertyValue(PARSE_MODE) == null) {
+        Class<?> type = propertyAccessor.getPropertyType(PARSE_MODE);
+        if (type != null && String.class.isAssignableFrom(type)) {
+          propertyAccessor.setPropertyValue(PARSE_MODE, MARKDOWN);
         }
       }
-    } catch (InvalidPropertyException | PropertyAccessException e) {
-      throw new TelegramResponseException(
-          "Cannot set property 'chatId' to bot response. Object: %s".formatted(botApiMethod), e);
+    } catch (InvalidPropertyException | PropertyAccessException ignored) {
     }
   }
 

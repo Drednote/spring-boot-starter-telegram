@@ -51,7 +51,7 @@ class LongPollingBotTest {
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
     when(filterProvider.getConclusivePostFilters(any())).thenReturn(List.of(conclusivePostUpdateFilter));
     this.longPollingBot = new LongPollingBot(new TelegramProperties(), List.of(updateHandler),
-        new ObjectMapper(), exceptionHandler, filterProvider);
+        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource());
   }
 
   @Test
@@ -104,6 +104,7 @@ class LongPollingBotTest {
     verify(preUpdateFilter).preFilter(any());
     verify(postUpdateFilter).postFilter(any());
     verify(conclusivePostUpdateFilter).postFilter(any());
+    verify(response).process(any());
   }
 
   @Test
@@ -128,7 +129,7 @@ class LongPollingBotTest {
       TelegramResponse response = Mockito.mock(TelegramResponse.class);
       when(response.isExecutePostFilters()).thenReturn(true);
       doThrow(new Exception()).when(updateHandler).onUpdate(any());
-      doThrow(new RuntimeException()).when(conclusivePostUpdateFilter).postFilter(any());
+      doThrow(new RuntimeException()).when(response).process(any());
       doAnswer(invocation -> {
         UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
         request.getAccessor().setResponse(response);
@@ -142,6 +143,7 @@ class LongPollingBotTest {
       verify(exceptionHandler, times(2)).handle(any());
       verify(preUpdateFilter).preFilter(any());
       verify(postUpdateFilter).postFilter(any());
+      verify(response).process(any());
       mockStatic.verify(() -> UpdateRequestContext.saveRequest(any()));
       mockStatic.verify(() -> UpdateRequestContext.removeRequest(eq(true)));
     }

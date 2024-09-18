@@ -9,15 +9,16 @@ import org.springframework.lang.NonNull;
 
 
 /**
- * Represents a conclusive post-update filter for Telegram update requests.
+ * Represents a conclusive post-update filter for Telegram update requests. <b>It executed after sending response to
+ * telegram</b>
  *
  * <p>This interface extends the {@link UpdateFilterMatcher} interface and is responsible for
- * performing post-filtering actions on an incoming Telegram update request after it has been
- * processed by update handlers.
+ * performing post-filtering actions on an incoming Telegram update request after it has been processed by update
+ * handlers and after sending response to telegram.
  *
  * <p>The {@link #getPostOrder()} method specifies the order in which this post-update filter
- * should be executed relative to other post-update filters. A lower value indicates a higher
- * priority, and the default order is set to {@link Ordered#LOWEST_PRECEDENCE}.
+ * should be executed relative to other post-update filters. A lower value indicates a higher priority, and the default
+ * order is set to {@link Ordered#LOWEST_PRECEDENCE}.
  *
  * @author Ivan Galushko
  * @apiNote <b>Can be Telegram Scope for keeping context during update handler</b>

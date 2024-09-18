@@ -4,7 +4,6 @@ import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.core.request.UpdateRequestMappingBuilder;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
-import io.github.drednote.telegram.handler.scenario.Action;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.handler.scenario.data.SimpleState;
@@ -66,9 +65,9 @@ public class ScenarioBuilder<S> {
         Set<Transition<S>> allTransitions = new HashSet<>();
         Map<State<S>, List<Transition<S>>> states = new HashMap<>();
         transitionData.forEach(t -> {
-            SimpleState<S> source = new SimpleState<>(t.source());
-            SimpleState<S> target = new SimpleState<>(t.target());
-            initTarget(target, t.actions(), t.request(), t.callBackQuery());
+            SimpleState<S> source = new SimpleState<>(t.getSource());
+            SimpleState<S> target = new SimpleState<>(t.getTarget());
+            initTarget(target, t);
             SimpleTransition<S> transition = new SimpleTransition<>(source, target);
             if (!allTransitions.add(transition)) {
                 throw new IllegalStateException(
@@ -81,17 +80,19 @@ public class ScenarioBuilder<S> {
     }
 
     private static <S> void initTarget(
-        SimpleState<S> target, List<Action> actions, TelegramRequest request, boolean callBackQuery
+        SimpleState<S> target, TransitionData<S> transition
     ) {
+        TelegramRequest request = transition.getRequest();
         Set<UpdateRequestMapping> mappings = new HashSet<>();
         UpdateRequestMappingBuilder builder = new UpdateRequestMappingBuilder(request);
         builder.forEach(mappings::add);
         if (mappings.isEmpty()) {
             throw new IllegalStateException("There are no condition to match for state " + target);
         }
-        target.setActions(actions);
+        target.setActions(transition.getActions());
         target.setMappings(mappings);
-        target.setCallbackQuery(callBackQuery);
+        target.setCallbackQueryState(transition.isCallBackQuery());
+        target.setOverrideGlobalScenarioId(transition.isOverrideGlobalScenarioId());
     }
 
     public record ScenarioData<S>(

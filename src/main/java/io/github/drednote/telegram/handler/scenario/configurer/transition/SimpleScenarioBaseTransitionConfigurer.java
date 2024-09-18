@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.lang.Nullable;
 
-public abstract class SimpleScenarioBaseTransitionConfigurer<T extends ScenarioBaseTransitionConfigurer<T, S>, S>
-    implements ScenarioBaseTransitionConfigurer<T, S> {
+public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransitionConfigurer<C, S>, S>
+    implements ScenarioBaseTransitionConfigurer<C, S> {
 
-    protected final List<Action> actions = new ArrayList<>();
+    protected final List<Action<S>> actions = new ArrayList<>();
     protected final ScenarioBuilder<S> builder;
     @Nullable
     protected S source;
@@ -20,38 +20,44 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<T extends ScenarioB
     protected S target;
     @Nullable
     protected TelegramRequest request;
-    protected boolean callBackQuery;
+    protected boolean overrideGlobalScenarioId = false;
 
     protected SimpleScenarioBaseTransitionConfigurer(ScenarioBuilder<S> builder) {
         this.builder = builder;
     }
 
     @Override
-    public T source(S source) {
+    public C source(S source) {
         Assert.notNull(source, "Source");
         this.source = source;
-        return (T) this;
+        return (C) this;
     }
 
     @Override
-    public T target(S target) {
+    public C target(S target) {
         Assert.notNull(target, "Target");
         this.target = target;
-        return (T) this;
+        return (C) this;
     }
 
     @Override
-    public T action(Action action) {
+    public C action(Action<S> action) {
         Assert.notNull(action, "Action");
         this.actions.add(action);
-        return (T) this;
+        return (C) this;
     }
 
     @Override
-    public T telegramRequest(TelegramRequest telegramRequest) {
+    public C telegramRequest(TelegramRequest telegramRequest) {
         Assert.notNull(telegramRequest, "TelegramRequest");
         this.request = telegramRequest;
-        return (T) this;
+        return (C) this;
+    }
+
+    @Override
+    public C overrideGlobalScenarioId() {
+        this.overrideGlobalScenarioId = true;
+        return (C) this;
     }
 
     @Override
@@ -59,7 +65,13 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<T extends ScenarioB
         Assert.required(source, "Source");
         Assert.required(target, "Target");
         Assert.required(request, "TelegramRequest");
-        builder.addTransition(new TransitionData<>(source, target, actions, request, callBackQuery));
+        TransitionData<S> transition = new TransitionData<>(source, target, actions, request, overrideGlobalScenarioId);
+        beforeAnd(transition);
+        builder.addTransition(transition);
         return new SimpleScenarioTransitionConfigurer<>(builder);
+    }
+
+    protected void beforeAnd(TransitionData<S> data) {
+        // nothing in default impl
     }
 }

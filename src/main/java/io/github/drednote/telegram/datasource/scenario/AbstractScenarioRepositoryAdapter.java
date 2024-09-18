@@ -2,7 +2,6 @@ package io.github.drednote.telegram.datasource.scenario;
 
 import io.github.drednote.telegram.datasource.kryo.KryoSerializationService;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +17,7 @@ public abstract class AbstractScenarioRepositoryAdapter<S> implements ScenarioRe
 
     @Override
     public Optional<? extends ScenarioContext<S>> findById(String id) {
-        return read(id).map(scenarioEntity -> {
-            ScenarioContext<S> context = serializationService.deserialize(scenarioEntity.getContext());
-            return new SimpleScenarioContext<>(
-                scenarioEntity.getId(),
-                context.state()
-            );
-        });
+        return read(id).map(scenarioEntity -> serializationService.deserialize(scenarioEntity.getContext()));
     }
 
     @Override

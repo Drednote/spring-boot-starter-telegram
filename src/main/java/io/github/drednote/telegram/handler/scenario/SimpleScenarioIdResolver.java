@@ -48,14 +48,13 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
     }
 
     @Override
-    public void saveNewId(UpdateRequest request, String id) {
-        if (request.getRequestType() == RequestType.CALLBACK_QUERY) {
-            return;
+    public void saveNewId(UpdateRequest request, String id, boolean force) {
+        if (request.getRequestType() != RequestType.CALLBACK_QUERY || force) {
+            Long chatId = request.getChatId();
+            adapterProvider.toOptional().ifPresentOrElse(
+                adapter -> adapter.save(id, chatId),
+                () -> inMemoryMap.put(chatId, id)
+            );
         }
-        Long chatId = request.getChatId();
-        adapterProvider.toOptional().ifPresentOrElse(
-            adapter -> adapter.save(id, chatId),
-            () -> inMemoryMap.put(chatId, id)
-        );
     }
 }

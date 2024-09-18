@@ -6,5 +6,6 @@ import java.util.Set;
 public record SimpleStateContext<S>(
     S id,
     Set<? extends UpdateRequestMappingAccessor> updateRequestMappings,
-    boolean callbackQuery
+    boolean callbackQuery,
+    boolean overrideGlobalScenarioId
 ) implements StateContext<S> {}

@@ -14,9 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
+    private static final Logger log = LoggerFactory.getLogger(SimpleScenario.class);
     private final ScenarioConfig<S> config;
     private final ScenarioPersister<S> persister;
 
@@ -38,17 +42,25 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
             return false;
         }
         synchronized (this) {
-            findTransition(request).ifPresent(transition -> {
-                State<S> target = transition.getTarget();
+            Optional<Transition<S>> optionalSTransition = findTransition(request);
+            if (optionalSTransition.isEmpty()) {
+                return false;
+            }
+            Transition<S> transition = optionalSTransition.get();
+            State<S> target = transition.getTarget();
 
-                var context = new SimpleActionContext(request);
+            var context = new SimpleActionContext<>(request, transition);
+            try {
                 Object response = target.execute(context);
-
                 ResponseSetter.setResponse(request, response);
-                this.state = target;
+            } catch (Exception e) {
+                log.error("Unhandled exception", e);
+                return false;
+            }
 
-                persister.persist(this);
-            });
+            this.state = target;
+
+            persister.persist(this);
         }
         return true;
     }
@@ -80,10 +92,16 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
         }
 
         synchronized (this) {
-            StateContext<S> stateContext = context.state();
-            Set<? extends UpdateRequestMappingAccessor> mappings = stateContext.updateRequestMappings();
-            state = new SimpleState<>(stateContext.id(), convert(mappings), stateContext.callbackQuery());
+            state = convertToState(context.state());
         }
+    }
+
+    private @NonNull SimpleState<S> convertToState(StateContext<S> stateContext) {
+        Set<? extends UpdateRequestMappingAccessor> mappings = stateContext.updateRequestMappings();
+        SimpleState<S> simpleState = new SimpleState<>(stateContext.id(), convert(mappings));
+        simpleState.setCallbackQueryState(stateContext.callbackQuery());
+        simpleState.setOverrideGlobalScenarioId(stateContext.overrideGlobalScenarioId());
+        return simpleState;
     }
 
     private Set<UpdateRequestMapping> convert(Set<? extends UpdateRequestMappingAccessor> mappings) {

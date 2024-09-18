@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
+import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 
 public class SimpleScenarioInlineMessageTransitionConfigurer<S>
     extends SimpleScenarioBaseTransitionConfigurer<ScenarioInlineMessageTransitionConfigurer<S>, S>
@@ -8,6 +9,10 @@ public class SimpleScenarioInlineMessageTransitionConfigurer<S>
 
     public SimpleScenarioInlineMessageTransitionConfigurer(ScenarioBuilder<S> builder) {
         super(builder);
-        this.callBackQuery = true;
+    }
+
+    @Override
+    protected void beforeAnd(TransitionData<S> data) {
+        data.setCallBackQuery(true);
     }
 }

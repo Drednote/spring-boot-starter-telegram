@@ -15,6 +15,7 @@ import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 import io.github.drednote.telegram.handler.scenario.persist.StateContext;
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.lang.NonNull;
 
 public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializationService<ScenarioContext<S>> {
 
@@ -26,6 +27,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected ScenarioContext<S> doDecode(Kryo kryo, Input input) {
         return kryo.readObject(input, ScenarioContext.class);
     }
@@ -41,8 +43,13 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
         public void write(Kryo kryo, Output output, ScenarioContext<S> object) {
             StateContext<S> state = object.state();
             kryo.writeClassAndObject(output, object.id());
+            writeState(kryo, output, state);
+        }
+
+        private void writeState(Kryo kryo, Output output, StateContext<S> state) {
             kryo.writeClassAndObject(output, state.id());
             kryo.writeClassAndObject(output, state.callbackQuery());
+            kryo.writeClassAndObject(output, state.overrideGlobalScenarioId());
             var mappings = state.updateRequestMappings();
             kryo.writeClassAndObject(output, mappings.size());
             mappings.forEach(mapping -> {
@@ -53,11 +60,17 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public ScenarioContext<S> read(Kryo kryo, Input input, Class<ScenarioContext<S>> type) {
             String id = (String) kryo.readClassAndObject(input);
+            SimpleStateContext<S> stateContext = readState(kryo, input);
+            return new SimpleScenarioContext<>(id, stateContext);
+        }
+
+        @SuppressWarnings("unchecked")
+        private @NonNull SimpleStateContext<S> readState(Kryo kryo, Input input) {
             S state = (S) kryo.readClassAndObject(input);
             boolean callbackQuery = (boolean) kryo.readClassAndObject(input);
+            boolean overrideGlobalScenarioId = (boolean) kryo.readClassAndObject(input);
             Integer size = (Integer) kryo.readClassAndObject(input);
             Set<UpdateRequestMappingAccessor> mappings = new HashSet<>();
             for (int i = 0; i < size; i++) {
@@ -66,7 +79,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
                 Set<MessageType> messageTypes = (Set<MessageType>) kryo.readClassAndObject(input);
                 mappings.add(new UpdateRequestMapping(pattern, requestType, messageTypes));
             }
-            return new SimpleScenarioContext<>(id, new SimpleStateContext<>(state, mappings, callbackQuery));
+            return new SimpleStateContext<>(state, mappings, callbackQuery, overrideGlobalScenarioId);
         }
     }
 }

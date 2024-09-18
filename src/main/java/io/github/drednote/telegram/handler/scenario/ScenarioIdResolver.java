@@ -8,5 +8,5 @@ public interface ScenarioIdResolver {
 
     String generateId(UpdateRequest request);
 
-    void saveNewId(UpdateRequest request, String id);
+    void saveNewId(UpdateRequest request, String id, boolean force);
 }

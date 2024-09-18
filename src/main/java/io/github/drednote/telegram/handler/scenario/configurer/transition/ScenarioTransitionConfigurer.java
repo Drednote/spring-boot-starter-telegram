@@ -5,4 +5,6 @@ public interface ScenarioTransitionConfigurer<S> {
     ScenarioExternalTransitionConfigurer<S> withExternal();
 
     ScenarioInlineMessageTransitionConfigurer<S> withCreateInlineMessage();
+
+    ScenarioRollbackTransitionConfigurer<S> withRollback();
 }

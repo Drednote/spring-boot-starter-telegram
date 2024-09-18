@@ -1,12 +1,10 @@
 package io.github.drednote.telegram.filter;
 
-import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
 import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.post.ScenarioIdUpdateFilter;
-import io.github.drednote.telegram.filter.post.SendResponseFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
 import io.github.drednote.telegram.filter.pre.HasRoleRequestFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
@@ -74,16 +72,6 @@ public class FiltersAutoConfiguration {
     @ConditionalOnMissingBean
     public HasRoleRequestFilter hasRoleRequestFilter() {
         return new HasRoleRequestFilter();
-    }
-
-    /**
-     * @param messageSource The TelegramMessageSource instance for retrieving localized messages
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public SendResponseFilter sendResponseConclusivePostUpdateFilter(
-        TelegramMessageSource messageSource) {
-        return new SendResponseFilter(messageSource);
     }
 
     @Bean

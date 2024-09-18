@@ -31,7 +31,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
                 lock.writeLock().lock(id, lockMs);
                 boolean sendEvent = scenario.sendEvent(request);
                 if (sendEvent) {
-                    idResolver.saveNewId(request, id);
+                    idResolver.saveNewId(request, id, scenario.getState().isOverrideGlobalScenarioId());
                 }
             } finally {
                 lock.writeLock().unlock(id);

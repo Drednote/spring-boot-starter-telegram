@@ -9,5 +9,7 @@ public interface StateContext<S> {
 
     boolean callbackQuery();
 
+    boolean overrideGlobalScenarioId();
+
     Set<? extends UpdateRequestMappingAccessor> updateRequestMappings();
 }

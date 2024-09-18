@@ -7,6 +7,7 @@ import io.github.drednote.telegram.handler.scenario.data.State;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 
 @RequiredArgsConstructor
 public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
@@ -48,10 +49,14 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
 
     private ScenarioContext<S> convert(Scenario<S> scenario) {
         State<S> state = scenario.getState();
-        Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getUpdateRequestMappings();
-        StateContext<S> stateContext = new SimpleStateContext<>(
-            state.getId(), requestMappings, state.isCallbackQueryState()
-        );
+        StateContext<S> stateContext = convertToStateContext(state);
         return new SimpleScenarioContext<>(scenario.getId(), stateContext);
+    }
+
+    private @NonNull StateContext<S> convertToStateContext(State<S> state) {
+        Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getUpdateRequestMappings();
+        return new SimpleStateContext<>(
+            state.getId(), requestMappings, state.isCallbackQueryState(), state.isOverrideGlobalScenarioId()
+        );
     }
 }

@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
@@ -21,18 +23,23 @@ public class SimpleState<S> extends AbstractState<S> {
     private Set<UpdateRequestMapping> mappings;
 
     @Nullable
-    private List<Action> actions;
+    private List<Action<S>> actions;
 
-    private boolean callbackQuery;
+    @Getter
+    @Setter
+    private boolean callbackQueryState = false;
+
+    @Getter
+    @Setter
+    private boolean overrideGlobalScenarioId = false;
 
     public SimpleState(S id) {
         super(id);
     }
 
-    public SimpleState(S id, Set<UpdateRequestMapping> mappings, boolean callbackQuery) {
+    public SimpleState(S id, Set<UpdateRequestMapping> mappings) {
         super(id);
         this.mappings = mappings;
-        this.callbackQuery = callbackQuery;
     }
 
     @Override
@@ -44,7 +51,7 @@ public class SimpleState<S> extends AbstractState<S> {
     }
 
     @Override
-    public Object execute(ActionContext context) {
+    public Object execute(ActionContext<S> context) {
         if (actions == null) {
             return null;
         }
@@ -57,24 +64,15 @@ public class SimpleState<S> extends AbstractState<S> {
     }
 
     @Nullable
-    public List<Action> getActions() {
+    public List<Action<S>> getActions() {
         return actions;
-    }
-
-    @Override
-    public boolean isCallbackQueryState() {
-        return callbackQuery;
-    }
-
-    public void setCallbackQuery(boolean callbackQuery) {
-        this.callbackQuery = callbackQuery;
     }
 
     public void setMappings(Set<UpdateRequestMapping> mappings) {
         this.mappings = new HashSet<>(mappings);
     }
 
-    public void setActions(List<Action> actions) {
+    public void setActions(List<Action<S>> actions) {
         this.actions = new ArrayList<>(actions);
     }
 
@@ -104,7 +102,7 @@ public class SimpleState<S> extends AbstractState<S> {
     }
 
     @Override
-    public Set<? extends UpdateRequestMappingAccessor> getUpdateRequestMappings() {
+    public Set<UpdateRequestMappingAccessor> getUpdateRequestMappings() {
         if (mappings == null) {
             return Collections.emptySet();
         }

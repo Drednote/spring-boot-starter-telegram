@@ -66,8 +66,8 @@ public class UpdateHandlerAutoConfiguration {
         ) {
             ScenarioBuilder<S> builder = new ScenarioBuilder<>();
             adapter.onConfigure(new SimpleScenarioStateConfigurer<>(builder));
-            adapter.onConfigure(new SimpleScenarioTransitionConfigurer<>(builder));
             adapter.onConfigure(new SimpleScenarioConfigConfigurer<>(builder));
+            adapter.onConfigure(new SimpleScenarioTransitionConfigurer<>(builder));
             ScenarioData<S> data = builder.build();
 
             ScenarioIdResolver resolver = data.resolver() == null

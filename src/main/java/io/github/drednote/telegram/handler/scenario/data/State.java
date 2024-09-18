@@ -5,11 +5,13 @@ import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.handler.scenario.Action;
 import java.util.Set;
 
-public interface State<S> extends RequestMatcher, Action {
+public interface State<S> extends RequestMatcher, Action<S> {
 
     S getId();
 
     boolean isCallbackQueryState();
 
-    Set<? extends UpdateRequestMappingAccessor> getUpdateRequestMappings();
+    boolean isOverrideGlobalScenarioId();
+
+    Set<UpdateRequestMappingAccessor> getUpdateRequestMappings();
 }

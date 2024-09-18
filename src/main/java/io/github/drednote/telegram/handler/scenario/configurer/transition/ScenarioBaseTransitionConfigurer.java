@@ -3,15 +3,17 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.Action;
 
-public interface ScenarioBaseTransitionConfigurer<T extends ScenarioBaseTransitionConfigurer<T, S>, S> {
+public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransitionConfigurer<C, S>, S> {
 
-    T source(S source);
+    C source(S source);
 
-    T target(S target);
+    C target(S target);
 
-    T action(Action action);
+    C action(Action<S> action);
 
-    T telegramRequest(TelegramRequest telegramRequest);
+    C telegramRequest(TelegramRequest telegramRequest);
+
+    C overrideGlobalScenarioId();
 
     ScenarioTransitionConfigurer<S> and();
 }
