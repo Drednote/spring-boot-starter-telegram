@@ -6,7 +6,6 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.exception.type.TextReturningException;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
 import io.github.drednote.telegram.response.InternalErrorTelegramResponse;
-import io.github.drednote.telegram.handler.scenario_deprecated.ScenarioException;
 import io.github.drednote.telegram.utils.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,10 +74,6 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     if (throwable instanceof TelegramApiException telegramApiException) {
       log.error("Cannot send response {} for request '{}' to telegram, cause: ",
           request.getResponse(), request.getId(), telegramApiException);
-    } else if (throwable instanceof ScenarioException scenarioException) {
-      // do something
-      log.error("For UpdateRequest {} error occurred during update handling", request,
-          scenarioException);
     } else if (throwable instanceof TextReturningException textReturningException) {
       log.warn(textReturningException.getMessage());
       request.getAccessor().setResponse(new GenericTelegramResponse(textReturningException.getMessage()));

@@ -86,7 +86,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
       telegramResponse.process(request);
       responseMessage = null;
     } else if (response instanceof Collection<?> collection) {
-      new CompositeTelegramResponse(ResponseSetter.convertIfNeeded(collection)).process(request);
+      ResponseSetter.convertCollectionToResponse(collection).process(request);
       responseMessage = null;
     } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
       try {

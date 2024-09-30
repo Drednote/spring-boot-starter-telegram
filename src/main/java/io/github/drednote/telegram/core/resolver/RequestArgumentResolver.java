@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.core.resolver;
 
-import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.springframework.core.MethodParameter;
@@ -22,7 +21,7 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
 
     Class<?> paramType = parameter.getParameterType();
     if (UpdateRequest.class.isAssignableFrom(paramType)) {
-      return new DefaultUpdateRequest(request);
+      return request;
     } else if (TelegramBot.class.isAssignableFrom(paramType)) {
       return request.getAbsSender();
     } else if (Throwable.class.isAssignableFrom(paramType)) {

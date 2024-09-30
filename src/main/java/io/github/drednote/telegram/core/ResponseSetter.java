@@ -3,12 +3,12 @@ package io.github.drednote.telegram.core;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.EmptyTelegramResponse;
+import io.github.drednote.telegram.response.FluxTelegramResponse;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -49,7 +49,9 @@ public abstract class ResponseSetter {
     } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
       request.getAccessor().setResponse((TelegramResponse) invoked);
     } else if (Collection.class.isAssignableFrom(parameterType)) {
-      request.getAccessor().setResponse(new CompositeTelegramResponse(convertIfNeeded(((Collection<?>) invoked))));
+      request.getAccessor().setResponse(convertCollectionToResponse(((Collection<?>) invoked)));
+    } else if (parameterType.getName().equals("reactor.core.publisher.Flux")) {
+      request.getAccessor().setResponse(new FluxTelegramResponse(invoked));
     } else {
       request.getAccessor().setResponse(new GenericTelegramResponse(invoked));
     }
@@ -70,7 +72,7 @@ public abstract class ResponseSetter {
    *
    * @param invoked the collection
    */
-  public static Collection<TelegramResponse> convertIfNeeded(Collection<?> invoked) {
+  public static CompositeTelegramResponse convertCollectionToResponse(Collection<?> invoked) {
     Collection<TelegramResponse> responses = new ArrayList<>();
     for (Object o : invoked) {
       if (o instanceof TelegramResponse telegramResponse) {
@@ -79,6 +81,6 @@ public abstract class ResponseSetter {
         responses.add(new GenericTelegramResponse(o));
       }
     }
-    return responses;
+    return new CompositeTelegramResponse(responses);
   }
 }
