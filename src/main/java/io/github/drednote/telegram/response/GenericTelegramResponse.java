@@ -15,7 +15,7 @@ import org.springframework.beans.PropertyAccessException;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;

@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.core.request;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 /**
  * The {@code MessageType} enum represents the type of {@link Update}'s message.

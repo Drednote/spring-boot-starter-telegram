@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.filter.pre;
 
-import static io.github.drednote.telegram.filter.FilterOrder.HIGHEST_PRECEDENCE;
 import static org.apache.commons.lang3.ObjectUtils.max;
 
 import com.github.benmanes.caffeine.cache.Cache;

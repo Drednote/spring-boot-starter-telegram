@@ -4,7 +4,7 @@ plugins {
     id 'signing'
     id 'jacoco'
     id "com.adarshr.test-logger" version "3.2.0"
-    id 'org.springframework.boot' version '3.1.0'
+    id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
@@ -25,14 +25,13 @@ repositories {
 }
 
 dependencies {
-//    api 'org.telegram:telegrambots-longpolling:7.10.0'
-//    api 'org.telegram:telegrambots-client:7.10.0'
-    api 'org.telegram:telegrambots:6.9.7.1'
+    api 'org.telegram:telegrambots-longpolling:7.10.0'
+    api 'org.telegram:telegrambots-client:7.10.0'
     api 'com.esotericsoftware:kryo:4.0.3'
-    api 'org.springframework.boot:spring-boot-starter'
-    api 'org.springframework:spring-web'
+    api 'org.springframework.boot:spring-boot-starter-web'
     api 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
     api 'com.github.ben-manes.caffeine:caffeine'
+    api 'org.apache.httpcomponents.client5:httpclient5'
 
     // data
     compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
@@ -42,12 +41,12 @@ dependencies {
     compileOnly 'org.springframework.statemachine:spring-statemachine-core:4.0.0'
     compileOnly 'org.springframework.statemachine:spring-statemachine-data-jpa:4.0.0'
 
-
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     testImplementation 'org.projectlombok:lombok'

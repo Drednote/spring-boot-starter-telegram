@@ -4,9 +4,9 @@ import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Abstract base class for implementing custom Telegram response actions.
@@ -25,11 +25,9 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
      */
     protected Message sendString(String string, UpdateRequest request)
         throws TelegramApiException {
-        AbsSender absSender = request.getAbsSender();
+        TelegramClient absSender = request.getAbsSender();
         Long chatId = request.getChatId();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
-        sendMessage.setText(string);
+        SendMessage sendMessage = new SendMessage(chatId.toString(), string);
         sendMessage.setParseMode(MARKDOWN);
         return absSender.execute(sendMessage);
     }

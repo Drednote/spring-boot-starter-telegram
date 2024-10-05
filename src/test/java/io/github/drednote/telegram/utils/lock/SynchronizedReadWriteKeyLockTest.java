@@ -1,8 +1,8 @@
 package io.github.drednote.telegram.utils.lock;
 
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;

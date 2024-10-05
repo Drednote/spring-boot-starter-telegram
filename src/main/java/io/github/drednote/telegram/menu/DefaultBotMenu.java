@@ -12,8 +12,8 @@ import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Implementation of the {@link BotMenu} interface for managing bot commands.
@@ -71,7 +71,7 @@ public final class DefaultBotMenu implements BotMenu {
     }
 
     @Override
-    public void updateMenu(AbsSender absSender) throws TelegramApiException {
+    public void updateMenu(TelegramClient absSender) throws TelegramApiException {
         for (var entry : commands.entrySet()) {
             List<CommandCls> commandList = entry.getValue();
             if (commandList.isEmpty()) {
@@ -89,14 +89,13 @@ public final class DefaultBotMenu implements BotMenu {
     }
 
     private void doExecute(
-        AbsSender absSender, CommandKey commandKey, List<CommandCls> commandList, BotCommandScope scope
+        TelegramClient absSender, CommandKey commandKey, List<CommandCls> commandList, BotCommandScope scope
     ) throws TelegramApiException {
         List<BotCommand> botCommands = commandList.stream()
             .map(commandCls -> new BotCommand(commandCls.getCommand(), commandCls.getText()))
             .toList();
 
-        SetMyCommands setMyCommands = new SetMyCommands();
-        setMyCommands.setCommands(botCommands);
+        SetMyCommands setMyCommands = new SetMyCommands(botCommands);
         setMyCommands.setScope(scope);
         setMyCommands.setLanguageCode(commandKey.languageCode);
 

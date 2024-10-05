@@ -9,19 +9,22 @@ import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.handler.UpdateHandlerAutoConfiguration;
+import io.github.drednote.telegram.handler.UpdateHandlerProperties;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandlerTest.TestController;
 import io.github.drednote.telegram.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
+import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 @SpringBootTest(classes = {
     UpdateHandlerAutoConfiguration.class, TestController.class, CoreAutoConfiguration.class
@@ -37,6 +40,11 @@ class ControllerUpdateHandlerTest {
 
     @Autowired
     HandlerMethodPopular popular;
+
+    @MockBean
+    UpdateHandlerProperties updateHandlerProperties;
+    @MockBean
+    SessionProperties sessionProperties;
 
     @Test
     void shouldCallRegister() throws Exception {

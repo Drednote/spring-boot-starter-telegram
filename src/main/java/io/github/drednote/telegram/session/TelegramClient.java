@@ -1,13 +1,12 @@
 package io.github.drednote.telegram.session;
 
-import java.io.IOException;
 import java.util.List;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 /**
  * Interface representing a Telegram client for interacting with the Telegram API.
@@ -15,34 +14,35 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
  * @author Ivan Galushko
  * @see Update
  */
+@HttpExchange(
+    contentType = "application/json",
+    accept = "application/json"
+)
 public interface TelegramClient {
 
-  /**
-   * Retrieves updates from the Telegram Bot API.
-   *
-   * <p>This method sends a GET request to the "getUpdates" endpoint of the Telegram Bot API
-   * using the provided bot token. It allows specifying optional parameters such as offset, limit,
-   * timeout, and allowed updates.
-   *
-   * <p>This method may throw exceptions related to network errors or Telegram API request
-   * failures.
-   *
-   * @param token          The bot token used for authentication
-   * @param offset         The offset of the first update to be retrieved
-   * @param limit          The maximum number of updates to be retrieved
-   * @param timeout        The maximum time in seconds for long polling
-   * @param allowedUpdates A list of allowed update types
-   * @return A list of {@link Update} instances representing the retrieved updates
-   * @throws IOException                 If an I/O error occurs during the API request
-   * @throws TelegramApiRequestException If an error occurs while making a request to the Telegram
-   *                                     API
-   */
-  @GetMapping("/bot{token}/getUpdates")
-  List<Update> getUpdates(
-      @PathVariable("token") String token,
-      @RequestParam(value = "offset", required = false) @Nullable Integer offset,
-      @RequestParam(value = "limit", required = false) @Nullable Integer limit,
-      @RequestParam(value = "timeout", required = false) @Nullable Integer timeout,
-      @RequestParam(value = "allowed_updates", required = false) @Nullable List<String> allowedUpdates
-  ) throws IOException, TelegramApiRequestException;
+    /**
+     * Retrieves updates from the Telegram Bot API.
+     *
+     * <p>This method sends a GET request to the "getUpdates" endpoint of the Telegram Bot API
+     * using the provided bot token. It allows specifying optional parameters such as offset, limit,
+     * timeout, and allowed updates.
+     *
+     * <p>This method may throw exceptions related to network errors or Telegram API request
+     * failures.
+     *
+     * @param token          The bot token used for authentication
+     * @param offset         The offset of the first update to be retrieved
+     * @param limit          The maximum number of updates to be retrieved
+     * @param timeout        The maximum time in seconds for long polling
+     * @param allowedUpdates A list of allowed update types
+     * @return A list of {@link Update} instances representing the retrieved updates
+     */
+    @GetExchange("/bot{token}/getUpdates")
+    UpdateResponse getUpdates(
+        @PathVariable("token") String token,
+        @RequestParam(value = "offset", required = false) @Nullable Integer offset,
+        @RequestParam(value = "limit", required = false) @Nullable Integer limit,
+        @RequestParam(value = "timeout", required = false) @Nullable Integer timeout,
+        @RequestParam(value = "allowed_updates", required = false) @Nullable List<String> allowedUpdates
+    );
 }

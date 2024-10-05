@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
+import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 @RequiredArgsConstructor
 public class SimpleScenarioIdResolver implements ScenarioIdResolver {

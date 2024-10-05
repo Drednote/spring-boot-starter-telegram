@@ -7,7 +7,7 @@ import io.github.drednote.telegram.handler.scenario.ScenarioAccessor;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 public class ScenarioIdUpdateFilter implements ConclusivePostUpdateFilter {
 

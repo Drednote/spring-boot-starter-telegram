@@ -621,30 +621,38 @@ All settings tables contain 4 columns:
 
 ### Session properties
 
-| Name              | Description                                                                                                           | Default Value      | Required |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------|--------------------|----------|
-| updateLimit       | Limits the number of updates to be retrieved. Values between 1-100 are accepted                                       | 100                | true     |
-| updateTimeout     | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only                  | 50                 | true     |
-| produceMaxThreads | Max number of threads used for async methods executions (send messages to telegram)                                   | 10                 | true     |
-| consumeMaxThreads | Max number of threads used for consumption messages from a telegram                                                   | 1                  | true     |
-| allowedUpdates    | A JSON-serialized list of update types to receive. See RequestType for available update types.                        | -                  | false    |
-| updateStrategy    | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING       | true     |
-| backOffStrategy   | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff | true     |
-| proxyType         | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY           | true     |
-| proxyHost         | The proxy host.                                                                                                       | -                  | false    |
-| proxyPort         | The proxy port.                                                                                                       | 0                  | false    |
+| Name                    | Description                                                                                                           | Default Value                                     | Required |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|----------|
+| maxUserParallelRequests | Max number of threads used for consumption messages from a telegram for concrete user. 0 - no restrictions            | 1                                                 | true     |
+| consumeMaxThreads       | Max number of threads used for consumption messages from a telegram                                                   | 1                                                 | true     |
+| updateStrategy          | The strategy to receive updates from Telegram API. Long polling or webhooks.                                          | LONG_POLLING                                      | true     |
+| backOffStrategy         | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor | ExponentialBackOff                                | true     |
+| proxyType               | The proxy type for executing requests to Telegram API.                                                                | NO_PROXY                                          | true     |
+| proxyUrl                | The proxy url in format `host:port` or if auth needed `host:port:username:password`.                                  | -                                                 | false    |
+| cacheLiveDuration       | Cache lifetime used in `DefaultTelegramBotSession`                                                                    | 1                                                 | true     |
+| cacheLiveDurationUnit   | The `TimeUnit` which will be applied to `cacheLiveDuration`                                                           | hours                                             | true     |
+| longPolling             | LongPolling properties.                                                                                               | [LongPolling properties](#Longpolling-properties) | false    |
+
+#### LongPolling properties
+
+| Name           | Description                                                                                          | Default Value | Required |
+|----------------|------------------------------------------------------------------------------------------------------|---------------|----------|
+| updateLimit    | Limits the number of updates to be retrieved. Values between 1-100 are accepted                      | 100           | true     |
+| updateTimeout  | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only | 50            | true     |
+| allowedUpdates | A JSON-serialized list of update types to receive. See RequestType for available update types.       | -             | false    |
 
 Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
 
 ### Update handler properties
 
-| Name                           | Description                                                                                        | Default Value | Required |
-|--------------------------------|----------------------------------------------------------------------------------------------------|---------------|----------|
-| controllerEnabled              | Enabled controller update handling.                                                                | true          | true     |
-| scenarioEnabled                | Enabled scenario update handling.                                                                  | true          | true     |
-| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response. | true          | true     |
-| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit. | 0             | false    |
-| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.            | true          | true     |
+| Name                           | Description                                                                                                                          | Default Value | Required |
+|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------|----------|
+| controllerEnabled              | Enabled controller update handling.                                                                                                  | true          | true     |
+| scenarioEnabled                | Enabled scenario update handling.                                                                                                    | true          | true     |
+| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response.                                   | true          | true     |
+| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit.                                   | 0             | false    |
+| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.                                              | true          | true     |
+| enabledWarningForScenario      | Throws an error with a warning about using scenario safe only when getMaxThreadsPerUser is set to 1, if value set to different value | true          | true     |
 
 ### Filters properties
 
@@ -702,17 +710,19 @@ public class Role {
 
 These dependencies will automatically be included in your project
 
-`org.telegram:telegrambots`
+`org.telegram:telegrambots-longpolling`
 
-`org.springframework.boot:spring-boot-starter`
+`org.telegram:telegrambots-client`
 
-`org.springframework:spring-web`
+`org.springframework.boot:spring-boot-starter-web`
 
 `com.esotericsoftware:kryo`
 
 `com.github.vladimir-bukhtoyarov:bucket4j-core`
 
 `com.github.ben-manes.caffeine:caffeine`
+
+`org.apache.httpcomponents.client5:httpclient5`
 
 ### Optional
 

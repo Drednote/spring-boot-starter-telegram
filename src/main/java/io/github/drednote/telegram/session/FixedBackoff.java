@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.session;
 
-import org.telegram.telegrambots.meta.generics.BackOff;
+import org.telegram.telegrambots.longpolling.interfaces.BackOff;
 
 /**
  * Implementation of the {@link BackOff} interface that provides a fixed backoff interval.

@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * The {@code DefaultUpdateRequest} class is default implementation of the {@link UpdateRequest} interface
@@ -24,7 +24,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 @Getter
 public class DefaultUpdateRequest extends AbstractUpdateRequest {
 
-    private final AbsSender absSender;
+    private final TelegramClient absSender;
     private final TelegramProperties properties;
     private final ObjectMapper objectMapper;
     private final List<Serializable> responseFromTelegram = new ArrayList<>();
@@ -58,7 +58,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
      * @param properties the Telegram properties.
      */
     public DefaultUpdateRequest(
-        Update update, AbsSender absSender, TelegramProperties properties, ObjectMapper objectMapper
+        Update update, TelegramClient absSender, TelegramProperties properties, ObjectMapper objectMapper
     ) {
         super(update);
         Assert.required(absSender, "AbsSender");

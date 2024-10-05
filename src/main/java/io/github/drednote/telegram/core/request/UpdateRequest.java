@@ -21,19 +21,17 @@ import java.util.List;
 import java.util.Set;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.bots.TelegramWebhookBot;
-import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.api.objects.chat.Chat;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * The {@code UpdateRequest} interface represents a request received from
  * <a href="https://core.telegram.org/bots/api">Telegram API</a> as an {@link Update}.
- * Implementations of this interface provide getters and setters to access and modify the various properties of the
- * request.
+ * Implementations of this interface provide getters and setters to access and modify the various
+ * properties of the request.
  *
  * @author Ivan Galushko
  */
@@ -69,11 +67,11 @@ public interface UpdateRequest {
     /**
      * Returns the types of message contained in the request
      * <p>
-     * In case if a type of message cannot correctly be determined, then will be return an empty set Typically, this
-     * shows something went wrong
+     * In case if a type of message cannot correctly be determined, then will be return an empty set
+     * Typically, this shows something went wrong
      *
-     * @return the types of message, or an empty set if the request is not a message or the message types cannot be
-     * determined
+     * @return the types of message, or an empty set if the request is not a message or the message
+     * types cannot be determined
      */
     @NonNull
     Set<MessageType> getMessageTypes();
@@ -81,8 +79,8 @@ public interface UpdateRequest {
     /**
      * Returns the text of the message or of the request
      * <p>
-     * if {@link #getRequestType()} == {@link RequestType#MESSAGE} and a field 'text' is empty, than can be field
-     * 'caption' if it presents
+     * if {@link #getRequestType()} == {@link RequestType#MESSAGE} and a field 'text' is empty, than
+     * can be field 'caption' if it presents
      *
      * @return the text of the message or of the request. Return null if {@link Update} has no text
      * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
@@ -136,11 +134,9 @@ public interface UpdateRequest {
      * Returns the abstract sender used to send responses
      *
      * @return the abstract sender
-     * @see TelegramLongPollingBot
-     * @see TelegramWebhookBot
      */
     @NonNull
-    AbsSender getAbsSender();
+    TelegramClient getAbsSender();
 
     /**
      * Returns the permission of the user executing the request
@@ -165,7 +161,8 @@ public interface UpdateRequest {
      * Returns the response that should be sent to Telegram
      *
      * @return the response, or null if no one {@link UpdateHandler} or
-     * {@link PreUpdateFilter}/{@link PostUpdateFilter}/{@link ConclusivePostUpdateFilter} set response
+     * {@link PreUpdateFilter}/{@link PostUpdateFilter}/{@link ConclusivePostUpdateFilter} set
+     * response
      * @see ResponseSetter
      */
     @Nullable

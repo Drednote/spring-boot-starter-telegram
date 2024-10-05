@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 class AbstractUpdateRequestTest {
 
@@ -75,7 +75,7 @@ class AbstractUpdateRequestTest {
 
     @NonNull
     @Override
-    public AbsSender getAbsSender() {
+    public TelegramClient getAbsSender() {
       return null;
     }
 

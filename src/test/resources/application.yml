@@ -4,10 +4,10 @@ drednote:
     name: simple
     session:
       update-strategy: long_polling
-      max-threads: 10
-      update-limit: 90
-      update-timeout: 40
+      long-polling:
+        update-limit: 90
+        update-timeout: 40
       back-off-strategy: io.github.drednote.telegram.session.FixedBackoff
-      proxy-type: socks4
-      proxy-host: hostProxy
-      proxy-port: 8080
+      proxy-type: http
+      proxy-url: "hostProxy:8080"
+      consume-max-threads: 10

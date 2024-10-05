@@ -18,15 +18,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
- * The {@code LongPollingBot} class extends the {@code TelegramLongPollingBot} class and serves as the main bot
- * implementation for handling updates. The bot overrides the `onUpdateReceived()` method to handle incoming updates.
- * Within the {@link #onUpdateReceived} method, a {@link DefaultUpdateRequest} is created to encapsulate the
- * {@link Update}. The request is then processed through a series of steps: pre-filtering, handling, post-filtering, and
+ * The {@code DefaultTelegramBot} class extends the {@code TelegramLongPollingBot} class and
+ * serves as the main bot implementation for handling updates. The bot overrides the
+ * `onUpdateReceived()` method to handle incoming updates. Within the {@link #onUpdateReceived}
+ * method, a {@link DefaultUpdateRequest} is created to encapsulate the {@link Update}. The request
+ * is then processed through a series of steps: pre-filtering, handling, post-filtering, and
  * answering. Any exceptions thrown during processing are handled by the exception handler
  *
  * @author Ivan Galushko
@@ -34,9 +35,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * @see ExceptionHandler
  * @see UpdateFilterProvider
  */
-public class LongPollingBot extends TelegramLongPollingBot {
+public class DefaultTelegramBot implements TelegramBot {
 
-    private static final Logger log = LoggerFactory.getLogger(LongPollingBot.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultTelegramBot.class);
     /**
      * The name of the bot
      */
@@ -65,9 +66,11 @@ public class LongPollingBot extends TelegramLongPollingBot {
      * The message source for retrieving localized messages
      */
     private final TelegramMessageSource messageSource;
+    private final TelegramClient telegramClient;
 
     /**
-     * Creates a new instance of the {@code LongPollingBot} class with the provided properties and dependencies
+     * Creates a new instance of the {@code DefaultTelegramBot} class with the provided
+     * properties and dependencies
      *
      * @param properties           the Telegram properties, not null
      * @param updateHandlers       the collection of update handlers, not null
@@ -76,18 +79,20 @@ public class LongPollingBot extends TelegramLongPollingBot {
      * @param updateFilterProvider the update filter provider, not null
      * @param messageSource        the message source, not null
      */
-    public LongPollingBot(
+    public DefaultTelegramBot(
         TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
         ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
+        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource,
+        TelegramClient telegramClient
     ) {
-        super(properties.getSession().toBotOptions(), properties.getToken());
         Assert.required(updateHandlers, "Collection of UpdateHandlers");
         Assert.required(objectMapper, "ObjectMapper");
         Assert.required(exceptionHandler, "ExceptionHandler");
         Assert.required(updateFilterProvider, "UpdateFilterProvider");
         Assert.required(messageSource, "TelegramMessageSource");
+        Assert.required(telegramClient, "TelegramClient");
 
+        this.telegramClient = telegramClient;
         this.name = properties.getName();
         this.updateHandlers = updateHandlers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
@@ -99,19 +104,19 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Handles the received update. Creates a {@link  DefaultUpdateRequest} to encapsulate the {@link Update}. Processes
-     * the request through pre-filtering, handling, post-filtering, and answering. Handle any exceptions thrown during
-     * processing.
+     * Handles the received update. Creates a {@link  DefaultUpdateRequest} to encapsulate the
+     * {@link Update}. Processes the request through pre-filtering, handling, post-filtering, and
+     * answering. Handle any exceptions thrown during processing.
      * <p>
-     * Before processing saves request to context, for further usage. After processing delete request from context and
-     * spring beans too if any were created
+     * Before processing saves request to context, for further usage. After processing delete
+     * request from context and spring beans too if any were created
      *
      * @param update the received update, not null
      */
     @Override
     public void onUpdateReceived(Update update) {
         DefaultUpdateRequest request = new DefaultUpdateRequest(
-            update, this, telegramProperties, objectMapper);
+            update, telegramClient, telegramProperties, objectMapper);
         try {
             UpdateRequestContext.saveRequest(request);
             doReceive(request);
@@ -121,8 +126,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Performs the processing of the received update. Executes pre-filtering, handling, post-filtering, and answering.
-     * Handle any exceptions thrown during processing
+     * Performs the processing of the received update. Executes pre-filtering, handling,
+     * post-filtering, and answering. Handle any exceptions thrown during processing
      *
      * @param request the update request
      */
@@ -181,7 +186,8 @@ public class LongPollingBot extends TelegramLongPollingBot {
      * @param request the update request
      */
     private void doConclusivePostFilter(DefaultUpdateRequest request) throws Exception {
-        List<ConclusivePostUpdateFilter> filters = updateFilterProvider.getConclusivePostFilters(request);
+        List<ConclusivePostUpdateFilter> filters = updateFilterProvider.getConclusivePostFilters(
+            request);
         for (ConclusivePostUpdateFilter filter : filters) {
             if (filter.matches(request)) {
                 log.trace("Executing conclusive post filter -> {}", filter);
@@ -232,10 +238,5 @@ public class LongPollingBot extends TelegramLongPollingBot {
             request.setResponse(null);
         }
         exceptionHandler.handle(request);
-    }
-
-    @Override
-    public String getBotUsername() {
-        return name;
     }
 }

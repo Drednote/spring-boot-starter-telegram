@@ -26,10 +26,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 
-class LongPollingBotTest {
+class DefaultTelegramBotTest {
 
-  private LongPollingBot longPollingBot;
+  private DefaultTelegramBot defaultTelegramBot;
   private UpdateHandler updateHandler;
   private ExceptionHandler exceptionHandler;
   private PreUpdateFilter preUpdateFilter;
@@ -50,8 +51,8 @@ class LongPollingBotTest {
     when(filterProvider.getPreFilters(any())).thenReturn(List.of(preUpdateFilter));
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
     when(filterProvider.getConclusivePostFilters(any())).thenReturn(List.of(conclusivePostUpdateFilter));
-    this.longPollingBot = new LongPollingBot(new TelegramProperties(), List.of(updateHandler),
-        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource());
+    this.defaultTelegramBot = new DefaultTelegramBot(new TelegramProperties(), List.of(updateHandler),
+        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource(), new OkHttpTelegramClient(""));
   }
 
   @Test
@@ -63,7 +64,7 @@ class LongPollingBotTest {
       throw new Exception();
     }).when(updateHandler).onUpdate(any());
 
-    assertThatNoException().isThrownBy(() -> longPollingBot.onUpdateReceived(
+    assertThatNoException().isThrownBy(() -> defaultTelegramBot.onUpdateReceived(
         UpdateBuilder._default("Hello").message()));
 
     verify(updateHandler).onUpdate(any());
@@ -77,7 +78,7 @@ class LongPollingBotTest {
   void shouldCallFiltersAndNotFailIfErrorInPreFilters() throws Throwable {
     doThrow(new RuntimeException()).when(preUpdateFilter).preFilter(any());
 
-    assertThatNoException().isThrownBy(() -> longPollingBot.onUpdateReceived(
+    assertThatNoException().isThrownBy(() -> defaultTelegramBot.onUpdateReceived(
         UpdateBuilder._default("Hello").message()));
 
     verify(updateHandler, never()).onUpdate(any());
@@ -96,7 +97,7 @@ class LongPollingBotTest {
       return null;
     }).when(updateHandler).onUpdate(any());
 
-    assertThatNoException().isThrownBy(() -> longPollingBot.onUpdateReceived(
+    assertThatNoException().isThrownBy(() -> defaultTelegramBot.onUpdateReceived(
         UpdateBuilder._default("Hello").message()));
 
     verify(updateHandler).onUpdate(any());
@@ -112,7 +113,7 @@ class LongPollingBotTest {
     TelegramResponse response = Mockito.mock(TelegramResponse.class);
     doThrow(new RuntimeException()).when(postUpdateFilter).postFilter(any());
 
-    assertThatNoException().isThrownBy(() -> longPollingBot.onUpdateReceived(
+    assertThatNoException().isThrownBy(() -> defaultTelegramBot.onUpdateReceived(
         UpdateBuilder._default("Hello").message()));
 
     verify(updateHandler).onUpdate(any());
@@ -136,7 +137,7 @@ class LongPollingBotTest {
         return request;
       }).when(exceptionHandler).handle(any());
 
-      assertThatNoException().isThrownBy(() -> longPollingBot.onUpdateReceived(
+      assertThatNoException().isThrownBy(() -> defaultTelegramBot.onUpdateReceived(
           UpdateBuilder._default("Hello").message()));
 
       verify(updateHandler).onUpdate(any());

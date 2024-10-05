@@ -24,18 +24,18 @@ import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeChatAdministrators;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeChatMember;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 class DefaultBotMenuTest {
 
     @Nullable
     private DefaultBotMenu defaultBotMenu;
-    AbsSender absSender;
+    TelegramClient absSender;
 
     @BeforeEach
     void setUp() {
-        absSender = Mockito.mock(AbsSender.class);
+        absSender = Mockito.mock(TelegramClient.class);
     }
 
     @Test
@@ -149,8 +149,7 @@ class DefaultBotMenuTest {
     public SetMyCommands createSetMyCommands(
         @NonNull List<BotCommand> botCommands, BotCommandScope scope, @Nullable String languageCode
     ) {
-        SetMyCommands setMyCommands = new SetMyCommands();
-        setMyCommands.setCommands(botCommands);
+        SetMyCommands setMyCommands = new SetMyCommands(botCommands);
         setMyCommands.setScope(scope);
         setMyCommands.setLanguageCode(languageCode);
         return setMyCommands;

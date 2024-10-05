@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Interface representing a bot menu containing a list of bot commands that can be sent to Telegram
@@ -28,7 +28,7 @@ public interface BotMenu {
    * @param absSender sender
    * @throws TelegramApiException in case of error during sending
    */
-  void updateMenu(AbsSender absSender) throws TelegramApiException;
+  void updateMenu(TelegramClient absSender) throws TelegramApiException;
 
   /**
    * Retrieves the map of bot commands contained in the menu.

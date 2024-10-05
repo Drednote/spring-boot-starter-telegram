@@ -61,16 +61,16 @@ public class MenuProperties {
          */
         private Set<ScopeCommand> scopes = Set.of(ScopeCommand.DEFAULT);
         /**
-         * A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope,
-         * for whose language there are no dedicated commands
+         * A two-letter ISO 639-1 language code. If empty, commands will be applied to all users
+         * from the given scope, for whose language there are no dedicated commands
          * <p>
          * Example: ru, en
          */
         @Nullable
         private String languageCode;
         /**
-         * Unique identifier of the target user to who apply commands. Only applicable if {@link #scopes} equals to
-         * {@link ScopeCommand#CHAT_MEMBER}
+         * Unique identifier of the target user to who apply commands. Only applicable if
+         * {@link #scopes} equals to {@link ScopeCommand#CHAT_MEMBER}
          */
         private Set<Long> userIds = Set.of();
         /**
@@ -104,7 +104,8 @@ public class MenuProperties {
                 throw new IllegalArgumentException(
                     "For bot command with scope CHAT_MEMBER must be specified userId parameter");
             }
-            if ((scopes.contains(ScopeCommand.CHAT_MEMBER) || scopes.contains(ScopeCommand.CHAT_ADMINISTRATORS)
+            if ((scopes.contains(ScopeCommand.CHAT_MEMBER) || scopes.contains(
+                ScopeCommand.CHAT_ADMINISTRATORS)
                  || scopes.contains(ScopeCommand.CHAT)) && isInvalidSet(chatIds)) {
                 throw new IllegalArgumentException(
                     "For bot command with scope CHAT_MEMBER, CHAT_ADMINISTRATORS "
@@ -149,28 +150,17 @@ public class MenuProperties {
         /**
          * @see BotCommandScopeChatMember
          */
-        CHAT_MEMBER(it -> {
-            BotCommandScopeChatMember scope = new BotCommandScopeChatMember();
-            scope.setChatId(it.chatId());
-            scope.setUserId(it.userId());
-            return scope;
-        }, true, true),
+        CHAT_MEMBER(it -> new BotCommandScopeChatMember(it.chatId().toString(), it.userId()), true,
+            true),
         /**
          * @see BotCommandScopeChatAdministrators
          */
-        CHAT_ADMINISTRATORS(it -> {
-            BotCommandScopeChatAdministrators scope = new BotCommandScopeChatAdministrators();
-            scope.setChatId(it.chatId());
-            return scope;
-        }, true, false),
+        CHAT_ADMINISTRATORS(it -> new BotCommandScopeChatAdministrators(it.chatId().toString()),
+            true, false),
         /**
          * @see BotCommandScopeChat
          */
-        CHAT(it -> {
-            BotCommandScopeChat scope = new BotCommandScopeChat();
-            scope.setChatId(it.chatId());
-            return scope;
-        }, true, false),
+        CHAT(it -> new BotCommandScopeChat(it.chatId().toString()), true, false),
         /**
          * @see BotCommandScopeAllPrivateChats
          */

@@ -13,9 +13,9 @@ import org.springframework.core.annotation.AliasFor;
  * The {@code TelegramMessage} annotation is a specialized form of the {@link TelegramRequest}
  * annotation that is used to define mappings for handling Telegram update requests related to
  * message. This annotation simplifies the process of creating message-related mappings by
- * automatically setting the {@link RequestType#MESSAGE} request type.
+ * automatically setting the messages like request type.
  * <p>
- * Methods annotated with {@code TelegramMessage} will be invoked when incoming message updates
+ * Methods annotated with {@code TelegramAnyMessage} will be invoked when incoming message updates
  * match the specified criteria, allowing the controller to process those updates accordingly.
  * <p>
  * This annotation is meant to be used at the method level and is particularly useful for methods
@@ -27,7 +27,7 @@ import org.springframework.core.annotation.AliasFor;
  * @TelegramController
  * public class MyTelegramController {
  *
- *     @TelegramMessage(pattern = "hello")
+ *     @TelegramAnyMessage(pattern = "hello")
  *     public void handleHelloMessage(UpdateRequest update) {
  *         // Handle hello message logic
  *     }
@@ -36,11 +36,6 @@ import org.springframework.core.annotation.AliasFor;
  * </pre>
  * In the above example, the {@code handleHelloMessage} method will be invoked when an incoming
  * message update matches the pattern {@code "hello"}.
- * <p>
- * <b>Since v0.3.0, this annotation is used to receive messages only with the
- * {@link RequestType#MESSAGE}. To receive others types like {@code EDITED_MESSAGE} or
- * {@code BUSINESS_MESSAGE}, you can use {@link TelegramAnyMessage}
- * </b>
  *
  * @author Ivan Galushko
  * @see TelegramController
@@ -49,8 +44,12 @@ import org.springframework.core.annotation.AliasFor;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@TelegramRequest(requestType = RequestType.MESSAGE)
-public @interface TelegramMessage {
+@TelegramRequest(exclusiveMessageType = false, requestType = {
+    RequestType.MESSAGE, RequestType.EDITED_MESSAGE, RequestType.CHANEL_POST,
+    RequestType.EDITED_CHANEL_POST, RequestType.BUSINESS_MESSAGE,
+    RequestType.EDITED_BUSINESS_MESSAGE
+})
+public @interface TelegramAnyMessage {
 
     /**
      * @see TelegramRequest#value
@@ -69,10 +68,4 @@ public @interface TelegramMessage {
      */
     @AliasFor(value = "messageType", annotation = TelegramRequest.class)
     MessageType[] messageType() default {};
-
-    /**
-     * @see TelegramRequest#exclusiveMessageType
-     */
-    @AliasFor(value = "exclusiveMessageType", annotation = TelegramRequest.class)
-    boolean exclusiveMessageType() default false;
 }

@@ -8,6 +8,7 @@ import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
 import io.github.drednote.telegram.response.InternalErrorTelegramResponse;
+import io.github.drednote.telegram.session.SessionProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,20 +36,24 @@ public class UpdateHandlerProperties {
      */
     private boolean scenarioEnabled = true;
     /**
-     * If exception is occurred and no handler has processed it, set {@link InternalErrorTelegramResponse} as response
+     * If exception is occurred and no handler has processed it, set
+     * {@link InternalErrorTelegramResponse} as response
      *
      * @see DefaultExceptionHandler
      */
     private boolean setDefaultErrorAnswer = true;
     /**
-     * A time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit
-     */
-    private long scenarioLockMs = 0L;
-    /**
-     * By default, java pojo objects will be serialized with Jackson to json in {@link GenericTelegramResponse}. Set
-     * this parameter to false, if you want to disable this behavior
+     * By default, java pojo objects will be serialized with Jackson to json in
+     * {@link GenericTelegramResponse}. Set this parameter to false, if you want to disable this
+     * behavior
      *
      * @see GenericTelegramResponse
      */
     private boolean serializeJavaObjectWithJackson = true;
+    /**
+     * If scenario is enabled and {@link SessionProperties#getMaxThreadsPerUser} is set value other
+     * than 1, throws an error with a warning about using scenario safe only when
+     * getMaxThreadsPerUser is set to 1.
+     */
+    private boolean enabledWarningForScenario = true;
 }

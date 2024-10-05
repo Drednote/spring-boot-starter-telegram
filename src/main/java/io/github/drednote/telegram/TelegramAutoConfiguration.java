@@ -2,7 +2,8 @@ package io.github.drednote.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.core.CoreAutoConfiguration;
-import io.github.drednote.telegram.core.LongPollingBot;
+import io.github.drednote.telegram.core.DefaultTelegramBot;
+import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
 import io.github.drednote.telegram.exception.ExceptionHandler;
@@ -24,15 +25,15 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.generics.TelegramBot;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Autoconfiguration class for configuring various aspects of a Telegram bot application.
  *
  * <p>This class provides automatic configuration for different components and features of a
- * Telegram bot application, including bot configuration, message source configuration, and more. It utilizes properties
- * defined in the application's configuration to customize the behavior of the bot.
+ * Telegram bot application, including bot configuration, message source configuration, and more. It
+ * utilizes properties defined in the application's configuration to customize the behavior of the
+ * bot.
  */
 @ImportAutoConfiguration({
     SessionAutoConfiguration.class, UpdateHandlerAutoConfiguration.class,
@@ -55,21 +56,25 @@ public class TelegramAutoConfiguration {
          * Configures a bean for the Telegram bot instance.
          *
          * @param properties           Configuration properties for the Telegram bot
-         * @param updateHandlers       Collection of update handlers for processing incoming updates
-         * @param objectMapper         The ObjectMapper instance used for serialization and deserialization
+         * @param updateHandlers       Collection of update handlers for processing incoming
+         *                             updates
+         * @param objectMapper         The ObjectMapper instance used for serialization and
+         *                             deserialization
          * @param exceptionHandler     The ExceptionHandler instance for handling exceptions
          * @param updateFilterProvider The UpdateFilterProvider instance for filtering updates
-         * @param messageSource        The TelegramMessageSource instance for retrieving localized messages
+         * @param messageSource        The TelegramMessageSource instance for retrieving localized
+         *                             messages
          * @return The configured Telegram bot instance
          * @throws BeanCreationException When bot token or bot name are missing
          * @apiNote WebHooks not implemented yet
          */
-        @Bean(destroyMethod = "onClosing")
+        @Bean
         @ConditionalOnMissingBean(TelegramBot.class)
-        public TelegramLongPollingBot telegramLongPollingBot(
+        public TelegramBot telegramLongPollingBot(
             TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-            UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource
+            UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource,
+            TelegramClient telegramClient
         ) {
             if (StringUtils.isBlank(properties.getToken())) {
                 throw new BeanCreationException(TELEGRAM_BOT,
@@ -80,8 +85,8 @@ public class TelegramAutoConfiguration {
                     "Consider specify drednote.telegram.name");
             }
             if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
-                return new LongPollingBot(properties, updateHandlers, objectMapper,
-                    exceptionHandler, updateFilterProvider, messageSource);
+                return new DefaultTelegramBot(properties, updateHandlers, objectMapper,
+                    exceptionHandler, updateFilterProvider, messageSource, telegramClient);
             } else {
                 throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
             }
@@ -107,7 +112,8 @@ public class TelegramAutoConfiguration {
             messageSource.setBasename("classpath:telegram-messages");
             messageSource.setDefaultEncoding("UTF-8");
             if (properties.getDefaultLocale() != null) {
-                messageSource.setDefaultLocale(Locale.forLanguageTag(properties.getDefaultLocale()));
+                messageSource.setDefaultLocale(
+                    Locale.forLanguageTag(properties.getDefaultLocale()));
             }
             return messageSource;
         }

@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.core.MethodParameter;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.generics.TelegramBot;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 class RequestArgumentResolverTest {
 
@@ -21,7 +21,7 @@ class RequestArgumentResolverTest {
 
   @ParameterizedTest
   @ValueSource(classes = {
-      UpdateRequest.class, TelegramBot.class,
+      UpdateRequest.class, TelegramClient.class,
       Throwable.class, String.class, Long.class
   })
   void shouldNotThrowExceptionAndResolve(Class<?> clazz) {

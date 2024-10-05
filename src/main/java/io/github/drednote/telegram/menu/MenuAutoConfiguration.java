@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Autoconfiguration class for managing bot menus and commands.
@@ -21,7 +21,7 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
  * application's ready event and manage bot menu updates based on the provided properties.
  *
  * <p>When the application is ready, this class updates the bot menu with commands if the send
- * policy is set to {@link SendPolicy#ON_STARTUP}. It uses an {@link AbsSender} to send the commands
+ * policy is set to {@link SendPolicy#ON_STARTUP}. It uses an {@link TelegramClient} to send the commands
  * to the bot.
  *
  * @author Ivan Galushko
@@ -35,11 +35,11 @@ public class MenuAutoConfiguration implements ApplicationListener<ApplicationRea
   private static final Logger log = LoggerFactory.getLogger(MenuAutoConfiguration.class);
 
   private final MenuProperties properties;
-  private final AbsSender absSender;
+  private final TelegramClient absSender;
   private final ObjectProvider<BotMenu> menuProvider;
 
   public MenuAutoConfiguration(
-      MenuProperties properties, AbsSender absSender, ObjectProvider<BotMenu> menuProvider
+      MenuProperties properties, TelegramClient absSender, ObjectProvider<BotMenu> menuProvider
   ) {
     Assert.required(properties, "MenuProperties");
     Assert.required(absSender, "AbsSender");
@@ -66,7 +66,7 @@ public class MenuAutoConfiguration implements ApplicationListener<ApplicationRea
    *
    * <p>This method is triggered when the application is ready. If the send policy is set to
    * {@link SendPolicy#ON_STARTUP}, it retrieves the bot menu from the menu provider and sends the
-   * menu commands to the bot using an {@link AbsSender}. If the menu is empty, a log message is
+   * menu commands to the bot using an {@link TelegramClient}. If the menu is empty, a log message is
    * generated.
    *
    * @param event The application ready event
