@@ -16,6 +16,9 @@ jobs:
           java-version: ${{ vars.JAVA_VERSION }}
           cache: 'gradle'
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
         run: ./gradlew --build-cache build
 
