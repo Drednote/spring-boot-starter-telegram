@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
 /**
  * Properties for filters
@@ -28,18 +29,21 @@ public class FilterProperties {
    *
    * @see AccessPermissionFilter
    */
+  @NonNull
   private PermissionProperties permission = new PermissionProperties();
   /**
    * How often each user can perform requests to bot. 0 = no rules
    *
    * @see UserRateLimitRequestFilter
    */
+  @NonNull
   private long userRateLimit = 0L;
   /**
    * The {@link ChronoUnit} which will be applied to {@link #userRateLimit}
    *
    * @see UserRateLimitRequestFilter
    */
+  @NonNull
   private ChronoUnit userRateLimitUnit = ChronoUnit.SECONDS;
   /**
    * How long cache with rate limit bucket will not expire. This parameter needed just for delete
@@ -50,12 +54,14 @@ public class FilterProperties {
    * {@code #userRateLimit}
    * @see UserRateLimitRequestFilter
    */
+  @NonNull
   private long userRateLimitCacheExpire = 1L;
   /**
    * The {@link ChronoUnit} which will be applied to {@link #userRateLimitCacheExpire}
    *
    * @see UserRateLimitRequestFilter
    */
+  @NonNull
   private ChronoUnit userRateLimitCacheExpireUnit = ChronoUnit.HOURS;
   /**
    * If at the end of update handling and post filtering, the response is null, set
@@ -63,6 +69,7 @@ public class FilterProperties {
    *
    * @see NotHandledUpdateFilter
    */
+  @NonNull
   private boolean setDefaultAnswer = true;
 
 }

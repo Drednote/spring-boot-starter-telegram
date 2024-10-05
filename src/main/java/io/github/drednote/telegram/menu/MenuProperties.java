@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.menu;
 
 import io.github.drednote.telegram.menu.DefaultBotMenu.CommandKey;
+import io.github.drednote.telegram.utils.Assert;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScope;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeAllChatAdministrators;
@@ -37,6 +39,7 @@ public class MenuProperties {
     /**
      * Send policy
      */
+    @NonNull
     private SendPolicy sendPolicy = SendPolicy.ON_STARTUP;
 
     @Getter
@@ -47,11 +50,13 @@ public class MenuProperties {
         /**
          * Text for the button. Example: Registration
          */
+        @NonNull
         private String text;
 
         /**
          * Command for the button. Example: /register
          */
+        @NonNull
         private String command;
         /**
          * Field describing the scope of users for which the commands are relevant. Defaults to
@@ -59,6 +64,7 @@ public class MenuProperties {
          *
          * @see ScopeCommand
          */
+        @NonNull
         private Set<ScopeCommand> scopes = Set.of(ScopeCommand.DEFAULT);
         /**
          * A two-letter ISO 639-1 language code. If empty, commands will be applied to all users
@@ -72,6 +78,7 @@ public class MenuProperties {
          * Unique identifier of the target user to who apply commands. Only applicable if
          * {@link #scopes} equals to {@link ScopeCommand#CHAT_MEMBER}
          */
+        @NonNull
         private Set<Long> userIds = Set.of();
         /**
          * Unique identifier for the target chat or username of the target supergroup (in the format
@@ -80,10 +87,12 @@ public class MenuProperties {
          * Only applicable if {@link #scopes} equals to {@link ScopeCommand#CHAT_MEMBER},
          * {@link ScopeCommand#CHAT_ADMINISTRATORS} or {@link ScopeCommand#CHAT}
          */
+        @NonNull
         private Set<Long> chatIds = Set.of();
 
         public void setCommand(@Nullable String command) {
-            if (command != null && !command.isBlank()) {
+            Assert.notNull(command, "command");
+            if (!command.isBlank()) {
                 this.command = (command.startsWith("/") ? "" : "/") + command;
             }
         }

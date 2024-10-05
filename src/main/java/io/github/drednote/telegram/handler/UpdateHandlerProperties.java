@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
 @Configuration
 @ConfigurationProperties("drednote.telegram.update-handler")
@@ -27,6 +28,7 @@ public class UpdateHandlerProperties {
      * @see TelegramRequest
      * @see ControllerUpdateHandler
      */
+    @NonNull
     private boolean controllerEnabled = true;
     /**
      * Enabled scenario update handling
@@ -34,6 +36,7 @@ public class UpdateHandlerProperties {
      * @see ScenarioConfigurerAdapter
      * @see ScenarioUpdateHandler
      */
+    @NonNull
     private boolean scenarioEnabled = true;
     /**
      * If exception is occurred and no handler has processed it, set
@@ -41,6 +44,7 @@ public class UpdateHandlerProperties {
      *
      * @see DefaultExceptionHandler
      */
+    @NonNull
     private boolean setDefaultErrorAnswer = true;
     /**
      * By default, java pojo objects will be serialized with Jackson to json in
@@ -49,11 +53,13 @@ public class UpdateHandlerProperties {
      *
      * @see GenericTelegramResponse
      */
+    @NonNull
     private boolean serializeJavaObjectWithJackson = true;
     /**
      * If scenario is enabled and {@link SessionProperties#getMaxThreadsPerUser} is set value other
      * than 1, throws an error with a warning about using scenario safe only when
      * getMaxThreadsPerUser is set to 1.
      */
+    @NonNull
     private boolean enabledWarningForScenario = true;
 }

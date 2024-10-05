@@ -101,11 +101,6 @@ class ScenarioTest {
         }
 
         @Override
-        public void changeId(ScenarioContext<S> context, String oldId) throws IOException {
-
-        }
-
-        @Override
         public void save(ScenarioContext<S> persistContext) {
             context.put(persistContext.id(), persistContext);
         }

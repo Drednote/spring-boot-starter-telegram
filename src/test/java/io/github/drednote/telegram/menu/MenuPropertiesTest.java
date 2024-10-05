@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.menu;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
@@ -23,10 +24,26 @@ class MenuPropertiesTest {
         "null, validText",
         "validText, null",
     }, nullValues = "null")
-    void shouldThrowExceptionIfBaseFieldsInvalid(String command, String text) {
+    void shouldThrowExceptionIfBaseFieldsInvalid(@Nullable String command, @Nullable String text) {
         CommandCls commandCls = new CommandCls();
-        commandCls.setCommand(command);
-        commandCls.setText(text);
+        try {
+            commandCls.setCommand(command);
+        } catch (IllegalArgumentException e) {
+            if (command == null) {
+                assertThat(e).isNotNull();
+            } else {
+                assertThat(e).isNull();
+            }
+        }
+        try {
+            commandCls.setText(text);
+        } catch (NullPointerException e) {
+            if (text == null) {
+                assertThat(e).isNotNull();
+            } else {
+                assertThat(e).isNull();
+            }
+        }
         assertThatThrownBy(commandCls::validate).isInstanceOf(IllegalArgumentException.class);
     }
 

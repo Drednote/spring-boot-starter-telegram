@@ -155,7 +155,7 @@ public class MainController {
         return "You sent message with types %s".formatted(request.getMessageTypes());
     }
 
-    @TelegramMessage("My name is {name}")
+    @TelegramMessage("My name is {name:.*}")
     public String onPattern(@TelegramPatternVariable("name") String name) {
         return "Hello " + name;
     }
@@ -267,7 +267,7 @@ public class MainController {
         return "You sent message with types %s".formatted(request.getMessageTypes());
     }
 
-    @TelegramMessage("My name is {name}")
+    @TelegramMessage("My name is {name:.*}")
     public String onPattern(@TelegramPatternVariable("name") String name) {
         return "Hello " + name;
     }
@@ -329,6 +329,7 @@ define and customize the behavior of your scenarios.
 Here example of a configuring scenario, for additional info you can see javadocs.
 
 ```java
+
 @Configuration
 @RequiredArgsConstructor
 public class ScenarioConfig extends ScenarioConfigurerAdapter<Enum<?>> {
@@ -346,7 +347,7 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<Enum<?>> {
             .source(State.INITIAL).target(State.TEST)
             .telegramRequest(command("/test"))
             .action(context -> "Test")
-            
+
             .and().withRollback()
             .source(ASSISTANT_CHOICE).target(GET_SETTINGS)
             .telegramRequest(callbackQuery(SettingsKeyboardButton.GET_CURRENT))
@@ -395,15 +396,13 @@ and after they are processed.
       the main [Update Handling](#update-handling)
     - `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
       the main [Update Handling](#update-handling)
+    - `ConclusivePostUpdateFilter` - **spring beans** that implement this interface will be called *
+      *after**
+      the response is sent to telegram. [see](#response-processing)
 
-- Also, for convenience, two interfaces are created. First one - `PriorityPreUpdateFilter` is
-  implemented
-  from `PreUpdateFilter` and take precedence over `PreUpdateFilter` and is executed earlier whatever
-  returns
-  **getPreOrder()**/**getPostOrder()**.
-  Second one - `ConclusivePostUpdateFilter` is super to `PreUpdateFilter`, and is executed later
-  whatever returns
-  **getPreOrder()**/**getPostOrder()**.
+- Also, for convenience, one interface are created. First one - `PriorityPreUpdateFilter` is
+  implemented from `PreUpdateFilter` and take precedence over `PreUpdateFilter` and is executed
+  earlier whatever returns **getPreOrder()**.
 
 - To add a filter, you need to create a **spring bean** that will implement the `PreUpdateFilter`
   or `PostUpdateFilter` interface.
@@ -469,6 +468,12 @@ handle this, there is a component called **Response Processing**, which follows 
       simple words will do `objectMapper.writeValueAsString(response)`
     - For more information on wrapping rules, see the `ResponseSetter` and `GenericTelegramResponse`
       classes
+
+> The exception is three types of response - `Collection<?>`, `Stream<?>`, `Flux<?>`. For handling
+> these types of response are created three additional implementations
+> of `TelegramResponse` - `CompositeTelegramResponse`, `FluxTelegramResponse`
+> and `StreamTelegramResponse`
+
 - You can create any implementation of `TelegramResponse` for sending response
 - Any custom code can be written in `TelegramResponse`, but I strongly recommend using this
   interface only for sending a response to **Telegram**
@@ -501,7 +506,7 @@ To provide maximum flexibility when calling custom code through the reflection m
 parameters for any method are calculated dynamically according to the following rules:
 
 > If you need to add support for your custom argument, you need to create **spring bean** and
-> implement `HandlerMethodArgumentResolver` interface
+> implement `io.github.drednote.telegram.core.resolver.HandlerMethodArgumentResolver` interface
 
 #### Java types
 
@@ -555,9 +560,10 @@ created for each update processing.
   different databases (postgres, mongo, etc.), using the implementations of `DataSourceAdapter`
   interface
 - If you want to add support for a database that currently is not supported, you should to
-  create entity and create repository extending `PermissionRepository` or `ScenarioRepository`
+  create entity and create repository extending `PermissionRepository`, `ScenarioRepository`
+  or `ScenarioIdRepository`
 
-> **Currently supported `JpaRepository` and `MongoRepository`**
+> **Currently supported `JpaRepository`**
 
 > Note: To enable auto scan for jpa entities, you should manually pick main interfaces for entities
 > and use `@EntityScan` annotation. To create spring data repository, you need to just implement one
