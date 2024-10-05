@@ -1,24 +1,21 @@
 package io.github.drednote.telegram.handler.scenario;
 
+
 import io.github.drednote.telegram.handler.scenario.data.SimpleState;
 import io.github.drednote.telegram.handler.scenario.data.State;
 import io.github.drednote.telegram.handler.scenario.data.Transition;
-import io.github.drednote.telegram.handler.scenario.persist.StateContext;
-import io.github.drednote.telegram.handler.scenario.persist.TransitionContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SimpleScenarioConfig<S> implements ScenarioConfig<S> {
 
     private final State<S> initial;
     private final Map<State<S>, List<Transition<S>>> states;
-    private final List<State<S>> allStates;
     private final ScenarioIdResolver idResolver;
     private final Set<State<S>> terminateStates;
 
@@ -28,16 +25,19 @@ public class SimpleScenarioConfig<S> implements ScenarioConfig<S> {
     ) {
         this.initial = initial;
         this.states = states;
-        this.allStates = states.values().stream()
+        List<State<S>> allStates = states.values().stream()
             .flatMap(Collection::stream)
             .map(Transition::getTarget)
+            .map(target -> ((State<S>) new SimpleState<>(target.getId())))
             .toList();
+        Set<State<S>> terminalStatesFull = new HashSet<>(terminalStates);
+        for (State<S> emptyState : allStates) {
+            if (getTransitions(emptyState).isEmpty()) {
+                terminalStatesFull.add(emptyState);
+            }
+        }
         this.idResolver = idResolver;
-        Set<State<S>> terminateStates = this.allStates.stream()
-            .filter(state -> !states.containsKey(state))
-            .collect(Collectors.toSet());
-        terminateStates.addAll(terminalStates);
-        this.terminateStates = Collections.unmodifiableSet(terminateStates);
+        this.terminateStates = terminalStatesFull;
     }
 
     public SimpleScenarioConfig(
@@ -58,31 +58,12 @@ public class SimpleScenarioConfig<S> implements ScenarioConfig<S> {
     }
 
     @Override
-    public Optional<State<S>> findState(StateContext<S> context) {
-        return allStates.stream()
-            .filter(state ->
-                state.getId().equals(context.id()) &&
-                state.getUpdateRequestMappings().equals(context.updateRequestMappings())
-            ).findFirst();
-    }
-
-    @Override
     public List<Transition<S>> getTransitions(State<S> state) {
         List<Transition<S>> transitions = states.get(state);
         if (transitions == null) {
             return Collections.emptyList();
         }
         return new ArrayList<>(transitions);
-    }
-
-    @Override
-    public Optional<Transition<S>> findTransition(TransitionContext<S> context) {
-        S sourceId = context.getSourceContext().id();
-        S targetId = context.getTargetContext().id();
-        return states.get(new SimpleState<>(sourceId))
-            .stream()
-            .filter(transition -> transition.getTarget().equals(new SimpleState<>(targetId)))
-            .findFirst();
     }
 
     @Override

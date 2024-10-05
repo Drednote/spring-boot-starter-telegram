@@ -39,6 +39,6 @@ public interface ConclusivePostUpdateFilter extends UpdateFilterMatcher {
      * @return The order in which this post-update filter should be executed
      */
     default int getPostOrder() {
-        return FilterOrder.LOWEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

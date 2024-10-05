@@ -36,7 +36,7 @@ public class SimpleScenarioRollbackTransitionConfigurer<S>
         Assert.required(rollbackTelegramRequest, "RollbackTelegramRequest");
 
         TransitionData<S> transition = new TransitionData<>(
-            target, source, rollbackActions, rollbackTelegramRequest, false
+            target, source, rollbackActions, rollbackTelegramRequest
         );
         builder.addTransition(transition);
     }

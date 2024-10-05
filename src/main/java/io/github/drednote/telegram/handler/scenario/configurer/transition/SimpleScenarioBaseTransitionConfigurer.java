@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.lang.Nullable;
 
+/**
+ * An abstract base class for configuring scenario transitions.
+ *
+ * @param <C> the type of the concrete configurer
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
 public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransitionConfigurer<C, S>, S>
     implements ScenarioBaseTransitionConfigurer<C, S> {
 
@@ -20,8 +27,12 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioB
     protected S target;
     @Nullable
     protected TelegramRequest request;
-    protected boolean overrideGlobalScenarioId = false;
 
+    /**
+     * Constructs a SimpleScenarioBaseTransitionConfigurer with a ScenarioBuilder.
+     *
+     * @param builder the builder used for configuring scenarios
+     */
     protected SimpleScenarioBaseTransitionConfigurer(ScenarioBuilder<S> builder) {
         this.builder = builder;
     }
@@ -55,22 +66,21 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioB
     }
 
     @Override
-    public C overrideGlobalScenarioId() {
-        this.overrideGlobalScenarioId = true;
-        return (C) this;
-    }
-
-    @Override
     public ScenarioTransitionConfigurer<S> and() {
         Assert.required(source, "Source");
         Assert.required(target, "Target");
         Assert.required(request, "TelegramRequest");
-        TransitionData<S> transition = new TransitionData<>(source, target, actions, request, overrideGlobalScenarioId);
+        TransitionData<S> transition = new TransitionData<>(source, target, actions, request);
         beforeAnd(transition);
         builder.addTransition(transition);
         return new SimpleScenarioTransitionConfigurer<>(builder);
     }
 
+    /**
+     * Hook for additional processing before adding a transition.
+     *
+     * @param data the transition data to process
+     */
     protected void beforeAnd(TransitionData<S> data) {
         // nothing in default impl
     }

@@ -48,8 +48,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
 
         private void writeState(Kryo kryo, Output output, StateContext<S> state) {
             kryo.writeClassAndObject(output, state.id());
-            kryo.writeClassAndObject(output, state.callbackQuery());
-            kryo.writeClassAndObject(output, state.overrideGlobalScenarioId());
+            kryo.writeClassAndObject(output, state.responseMessageProcessing());
             var mappings = state.updateRequestMappings();
             kryo.writeClassAndObject(output, mappings.size());
             mappings.forEach(mapping -> {
@@ -69,8 +68,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
         @SuppressWarnings("unchecked")
         private @NonNull SimpleStateContext<S> readState(Kryo kryo, Input input) {
             S state = (S) kryo.readClassAndObject(input);
-            boolean callbackQuery = (boolean) kryo.readClassAndObject(input);
-            boolean overrideGlobalScenarioId = (boolean) kryo.readClassAndObject(input);
+            boolean responseMessageProcessing = (boolean) kryo.readClassAndObject(input);
             Integer size = (Integer) kryo.readClassAndObject(input);
             Set<UpdateRequestMappingAccessor> mappings = new HashSet<>();
             for (int i = 0; i < size; i++) {
@@ -79,7 +77,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
                 Set<MessageType> messageTypes = (Set<MessageType>) kryo.readClassAndObject(input);
                 mappings.add(new UpdateRequestMapping(pattern, requestType, messageTypes));
             }
-            return new SimpleStateContext<>(state, mappings, callbackQuery, overrideGlobalScenarioId);
+            return new SimpleStateContext<>(state, mappings, responseMessageProcessing);
         }
     }
 }

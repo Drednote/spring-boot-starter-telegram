@@ -20,7 +20,7 @@ public class ScenarioUpdateHandler implements UpdateHandler {
             final String id = scenario.getId();
             boolean sendEvent = scenario.sendEvent(request);
             if (sendEvent) {
-                idResolver.saveNewId(request, id, scenario.getState().isOverrideGlobalScenarioId());
+                idResolver.saveNewId(request, id);
             }
         }
     }

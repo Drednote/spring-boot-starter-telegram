@@ -38,10 +38,10 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
     @Override
     public boolean sendEvent(UpdateRequest request) {
-        if (isTerminated()) {
-            return false;
-        }
         synchronized (this) {
+            if (isTerminated()) {
+                return false;
+            }
             Optional<Transition<S>> optionalSTransition = findTransition(request);
             if (optionalSTransition.isEmpty()) {
                 return false;
@@ -59,10 +59,8 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
             }
 
             this.state = target;
-
-            persister.persist(this);
+            return true;
         }
-        return true;
     }
 
     @Override
@@ -72,7 +70,8 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
     @Override
     public boolean isTerminated() {
-        return config.getTransitions(new SimpleState<>(state.getId())).isEmpty();
+        SimpleState<S> emptyState = new SimpleState<>(state.getId());
+        return config.getTerminateStates().contains(emptyState);
     }
 
     private Optional<Transition<S>> findTransition(UpdateRequest request) {
@@ -99,17 +98,18 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
     private @NonNull SimpleState<S> convertToState(StateContext<S> stateContext) {
         Set<? extends UpdateRequestMappingAccessor> mappings = stateContext.updateRequestMappings();
         SimpleState<S> simpleState = new SimpleState<>(stateContext.id(), convert(mappings));
-        simpleState.setCallbackQueryState(stateContext.callbackQuery());
-        simpleState.setOverrideGlobalScenarioId(stateContext.overrideGlobalScenarioId());
+        simpleState.setResponseMessageProcessing(stateContext.responseMessageProcessing());
         return simpleState;
     }
 
-    private Set<UpdateRequestMapping> convert(Set<? extends UpdateRequestMappingAccessor> mappings) {
+    private Set<UpdateRequestMapping> convert(
+        Set<? extends UpdateRequestMappingAccessor> mappings) {
         return mappings.stream().map(mapping -> {
             if (mapping instanceof UpdateRequestMapping updateRequestMapping) {
                 return updateRequestMapping;
             }
-            return new UpdateRequestMapping(mapping.getPattern(), mapping.getRequestType(), mapping.getMessageTypes());
+            return new UpdateRequestMapping(mapping.getPattern(), mapping.getRequestType(),
+                mapping.getMessageTypes());
         }).collect(Collectors.toSet());
     }
 

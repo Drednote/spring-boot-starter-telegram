@@ -38,6 +38,6 @@ public interface PreUpdateFilter extends UpdateFilterMatcher {
    * @return The order in which this pre-update filter should be executed
    */
   default int getPreOrder() {
-    return FilterOrder.LOWEST_PRECEDENCE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

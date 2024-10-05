@@ -24,27 +24,10 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
     }
 
     @Override
-    public void changeId(Scenario<S> context, String newId) {
-        try {
-            String oldId = context.getId();
-            context.getAccessor().setId(newId);
-            adapterProvider.ifExistsWithException(adapter -> adapter.changeId(convert(context), oldId));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Scenario<S> restore(Scenario<S> scenario, String scenarioId) {
-        return adapterProvider.toOptional()
+    public void restore(Scenario<S> scenario, String scenarioId) {
+        adapterProvider.toOptional()
             .flatMap(adapter -> adapter.findById(scenarioId))
-            .map(context -> doRestore(context, scenario))
-            .orElse(scenario);
-    }
-
-    private Scenario<S> doRestore(ScenarioContext<S> context, Scenario<S> scenario) {
-        scenario.getAccessor().resetScenario(context);
-        return scenario;
+            .ifPresent(context -> scenario.getAccessor().resetScenario(context));
     }
 
     private ScenarioContext<S> convert(Scenario<S> scenario) {
@@ -54,9 +37,9 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
     }
 
     private @NonNull StateContext<S> convertToStateContext(State<S> state) {
-        Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getUpdateRequestMappings();
+        Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getMappings();
         return new SimpleStateContext<>(
-            state.getId(), requestMappings, state.isCallbackQueryState(), state.isOverrideGlobalScenarioId()
+            state.getId(), requestMappings, state.isResponseMessageProcessing()
         );
     }
 }

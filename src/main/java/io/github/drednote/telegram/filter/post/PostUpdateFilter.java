@@ -2,7 +2,6 @@ package io.github.drednote.telegram.filter.post;
 
 import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
@@ -38,7 +37,7 @@ public interface PostUpdateFilter extends UpdateFilterMatcher {
      * @return The order in which this post-update filter should be executed
      */
     default int getPostOrder() {
-        return FilterOrder.LOWEST_PRECEDENCE;
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override

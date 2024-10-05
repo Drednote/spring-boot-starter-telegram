@@ -3,6 +3,7 @@ package io.github.drednote.telegram.filter;
 import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
+import io.github.drednote.telegram.filter.post.PostFilterOrderComparator;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreFilterOrderComparator;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.core.OrderComparator;
 
 /**
  * Default implementation of the {@link UpdateFilterProvider} interface.
@@ -76,7 +76,7 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
     public List<PostUpdateFilter> getPostFilters(UpdateRequest request) {
         Assert.notNull(request, "UpdateRequest");
         return postFilters.stream()
-            .sorted(OrderComparator.INSTANCE)
+            .sorted(PostFilterOrderComparator.INSTANCE)
             .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -84,7 +84,7 @@ public class DefaultUpdateFilterProvider implements UpdateFilterProvider {
     public List<ConclusivePostUpdateFilter> getConclusivePostFilters(UpdateRequest request) {
         Assert.notNull(request, "UpdateRequest");
         return conclusivePostFilters.stream()
-            .sorted(OrderComparator.INSTANCE)
+            .sorted(PostFilterOrderComparator.INSTANCE)
             .collect(Collectors.toCollection(ArrayList::new));
     }
 }

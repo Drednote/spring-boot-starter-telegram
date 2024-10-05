@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
-import io.github.drednote.telegram.filter.post.ScenarioIdUpdateFilter;
+import io.github.drednote.telegram.filter.post.ScenarioIdPersistFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
 import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
@@ -41,7 +41,7 @@ public final class FilterOrder {
 
     // ------- Orders for conclusive post filters ------- //
     public static final Map<Class<? extends ConclusivePostUpdateFilter>, Integer> CONCLUSIVE_POST_FILTERS = Map.of(
-        ScenarioIdUpdateFilter.class, FilterOrder.HIGHEST_PRECEDENCE
+        ScenarioIdPersistFilter.class, FilterOrder.HIGHEST_PRECEDENCE
     );
 
     private FilterOrder() {

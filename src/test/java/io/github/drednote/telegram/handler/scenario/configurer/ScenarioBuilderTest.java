@@ -31,8 +31,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, false);
-        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock, false);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock);
+        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock);
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 
@@ -61,11 +61,11 @@ class ScenarioBuilderTest {
 
         // Проверка наличия действий и маппингов
 
-        assertThat(((SimpleState<String>) result.get(state1).get(0).getSource()).getMappings()).isNull();
-        assertThat(((SimpleState<String>) result.get(state1).get(0).getTarget()).getMappings()).isNotNull();
+        assertThat(result.get(state1).get(0).getSource().getMappings()).isEmpty();
+        assertThat(result.get(state1).get(0).getTarget().getMappings()).isNotEmpty();
 
-        assertThat(((SimpleState<String>) result.get(state2Null).get(0).getSource()).getMappings()).isNull();
-        assertThat(((SimpleState<String>) result.get(state2Null).get(0).getTarget()).getMappings()).isNotNull();
+        assertThat(result.get(state2Null).get(0).getSource().getMappings()).isEmpty();
+        assertThat(result.get(state2Null).get(0).getTarget().getMappings()).isNotEmpty();
 
         assertThat(((SimpleState<String>) result.get(state1).get(0).getSource()).getActions()).isNull();
         assertThat(((SimpleState<String>) result.get(state1).get(0).getTarget()).getActions()).isNotNull();
@@ -83,8 +83,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData с одинаковым source
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, false);
-        TransitionData<String> transition2 = new TransitionData<>("state1", "state2", actions, requestMock, false);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock);
+        TransitionData<String> transition2 = new TransitionData<>("state1", "state2", actions, requestMock);
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 
@@ -104,8 +104,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state3", actions, requestMock, false);
-        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock2, false);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state3", actions, requestMock);
+        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock2);
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 

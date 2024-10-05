@@ -20,7 +20,6 @@ import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 import io.github.drednote.telegram.utils.FieldProvider;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +80,7 @@ class ScenarioTest {
         String id = "2";
         adapter.save(new SimpleScenarioContext<>(id,
             new SimpleStateContext<>(nextState2.getId(),
-                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false, false)));
+                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false)));
 
         Scenario<String> scenario = factory.create(id);
         persister.restore(scenario, id);

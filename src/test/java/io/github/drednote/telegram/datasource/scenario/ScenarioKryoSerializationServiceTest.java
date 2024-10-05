@@ -5,17 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleTransitionContext;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 
 class ScenarioKryoSerializationServiceTest {
@@ -25,9 +21,9 @@ class ScenarioKryoSerializationServiceTest {
     @Test
     void shouldCorrectSerializeAndDeserialize() throws IOException {
         SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
-            Set.of(), false, false);
+            Set.of(), false);
         SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
-            Set.of(), false, false);
+            Set.of(), false);
         ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
 
         byte[] bytes = serializationService.serialize(scenario);

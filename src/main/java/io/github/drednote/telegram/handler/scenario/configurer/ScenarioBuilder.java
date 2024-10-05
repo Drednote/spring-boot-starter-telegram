@@ -91,8 +91,7 @@ public class ScenarioBuilder<S> {
         }
         target.setActions(transition.getActions());
         target.setMappings(mappings);
-        target.setCallbackQueryState(transition.isCallBackQuery());
-        target.setOverrideGlobalScenarioId(transition.isOverrideGlobalScenarioId());
+        target.setResponseMessageProcessing(transition.isResponseMessageProcessing());
     }
 
     public record ScenarioData<S>(

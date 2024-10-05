@@ -5,9 +5,7 @@ import io.github.drednote.telegram.datasource.scenario.AbstractScenarioRepositor
 import io.github.drednote.telegram.datasource.scenario.ScenarioEntity;
 import io.github.drednote.telegram.datasource.scenario.ScenarioKryoSerializationService;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-import java.io.IOException;
 import java.util.Optional;
-import org.springframework.transaction.annotation.Transactional;
 
 public class JpaScenarioRepositoryAdapter<S> extends AbstractScenarioRepositoryAdapter<S> {
 
@@ -41,12 +39,5 @@ public class JpaScenarioRepositoryAdapter<S> extends AbstractScenarioRepositoryA
         transitionContext.setState(persistContext.state().id().toString());
         transitionContext.setContext(context);
         return transitionContext;
-    }
-
-    @Override
-    @Transactional
-    public void changeId(ScenarioContext<S> context, String id) throws IOException {
-        jpaScenarioRepository.deleteById(id);
-        save(context);
     }
 }

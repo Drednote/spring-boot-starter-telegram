@@ -6,6 +6,7 @@ import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
+import io.github.drednote.telegram.utils.Assert;
 
 /**
  * The {@code ScenarioUpdateHandlerPopular} class implements the {@link PriorityPreUpdateFilter} interface and is
@@ -30,6 +31,10 @@ public class ScenarioUpdateHandlerPopular<S> implements PriorityPreUpdateFilter 
         ScenarioPersister<S> persister,
         ScenarioFactory<S> scenarioFactory, ScenarioIdResolver scenarioIdResolver
     ) {
+        Assert.required(persister, "ScenarioPersister");
+        Assert.required(scenarioFactory, "ScenarioFactory");
+        Assert.required(scenarioIdResolver, "ScenarioIdResolver");
+
         this.persister = persister;
         this.scenarioFactory = scenarioFactory;
         this.scenarioIdResolver = scenarioIdResolver;

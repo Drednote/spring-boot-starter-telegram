@@ -21,8 +21,8 @@ public class SimpleScenarioTransitionConfigurer<S> implements ScenarioTransition
     }
 
     @Override
-    public ScenarioInlineMessageTransitionConfigurer<S> withCreateInlineMessage() {
-        return new SimpleScenarioInlineMessageTransitionConfigurer<>(builder);
+    public ScenarioResponseMessageTransitionConfigurer<S> withResponseMessageProcessing() {
+        return new SimpleScenarioResponseMessageTransitionConfigurer<>(builder);
     }
 
     @Override
@@ -38,7 +38,6 @@ public class SimpleScenarioTransitionConfigurer<S> implements ScenarioTransition
         private final S target;
         private final List<Action<S>> actions;
         private final TelegramRequest request;
-        private final boolean overrideGlobalScenarioId;
-        private boolean callBackQuery = false;
+        private boolean responseMessageProcessing = false;
     }
 }
