@@ -49,6 +49,8 @@ public class UpdateHandlerAutoConfiguration {
             && updateHandlerProperties.isScenarioEnabled()
             && updateHandlerProperties.isEnabledWarningForScenario()) {
             String msg = """
+                
+                
                 You enabled scenario and also set the drednote.telegram.session.MaxThreadsPerUser \
                 value to be different from 1.
                 This is unsafe, since all the scenario code is written in such a way \
@@ -56,7 +58,9 @@ public class UpdateHandlerAutoConfiguration {
                 Consider disable the scenario handling, \
                 or set drednote.telegram.session.MaxThreadsPerUser to 1.
 
-                You can disable this warning by setting drednote.telegram.update-handler.enabledWarningForScenario to false""";
+                You can disable this warning by setting drednote.telegram.update-handler.enabledWarningForScenario to false
+                
+                """;
             throw new BeanCreationException(msg);
         }
     }

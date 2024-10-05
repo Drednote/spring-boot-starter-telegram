@@ -3,11 +3,11 @@ package io.github.drednote.telegram.response;
 import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.InvalidPropertyException;
@@ -43,123 +43,135 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 public class GenericTelegramResponse extends AbstractTelegramResponse {
 
-  private static final String CHAT_ID = "chatId";
-  private static final String PARSE_MODE = "parseMode";
+    private static final String CHAT_ID = "chatId";
+    private static final String PARSE_MODE = "parseMode";
 
-  /**
-   * The response object to be processed
-   */
-  private final Object response;
+    /**
+     * The response object to be processed
+     */
+    private final Object response;
 
-  /**
-   * Creates a new instance of GenericTelegramResponse with the specified response object.
-   *
-   * @param response The response object to be processed
-   */
-  public GenericTelegramResponse(@NonNull Object response) {
-    Assert.required(response, "Response");
-    this.response = response;
-  }
-
-  /**
-   * Processes the Telegram response. Depending on the type of response, it will be sent to the
-   * chat.
-   *
-   * @param request The UpdateRequest containing the update and sender information
-   * @throws TelegramApiException if an error occurs while sending the response
-   */
-  @Override
-  public void process(UpdateRequest request) throws TelegramApiException {
-    Assert.notNull(request, "UpdateRequest");
-    Serializable responseMessage;
-    if (response instanceof String str) {
-      responseMessage = sendString(str, request);
-    } else if (response instanceof byte[] bytes) {
-      responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
-    } else if (response instanceof BotApiMethod<?> botApiMethod) {
-      postProcessApiMethod(botApiMethod, request);
-      responseMessage = request.getAbsSender().execute(botApiMethod);
-    } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
-      postProcessApiMethod(sendMediaBotMethod, request);
-      responseMessage = tryToSendMedia(request);
-    } else if (response instanceof TelegramResponse telegramResponse) {
-      telegramResponse.process(request);
-      responseMessage = null;
-    } else if (response instanceof Collection<?> collection) {
-      ResponseSetter.convertCollectionToResponse(collection).process(request);
-      responseMessage = null;
-    } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
-      try {
-        String stringResponse = request.getObjectMapper().writeValueAsString(response);
-        String truncated = truncateQuotes(stringResponse);
-        responseMessage = sendString(truncated, request);
-      } catch (JsonProcessingException e) {
-        throw new IllegalStateException("Cannot serialize response", e);
-      }
-    } else {
-      throw new IllegalStateException("Cannot process response %s".formatted(response));
+    /**
+     * Creates a new instance of GenericTelegramResponse with the specified response object.
+     *
+     * @param response The response object to be processed
+     */
+    public GenericTelegramResponse(@NonNull Object response) {
+        Assert.required(response, "Response");
+        this.response = response;
     }
-    if (responseMessage != null) {
-      request.getAccessor().addResponseFromTelegram(responseMessage);
-    }
-  }
 
-  private void postProcessApiMethod(Object botApiMethod, UpdateRequest request) {
-    try {
-      var propertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(botApiMethod);
-      if (propertyAccessor.getPropertyValue(PARSE_MODE) == null) {
-        Class<?> type = propertyAccessor.getPropertyType(PARSE_MODE);
-        if (type != null && String.class.isAssignableFrom(type)) {
-          propertyAccessor.setPropertyValue(PARSE_MODE, MARKDOWN);
+    /**
+     * Processes the Telegram response. Depending on the type of response, it will be sent to the
+     * chat.
+     *
+     * @param request The UpdateRequest containing the update and sender information
+     * @throws TelegramApiException if an error occurs while sending the response
+     */
+    @Override
+    public void process(UpdateRequest request) throws TelegramApiException {
+        Assert.notNull(request, "UpdateRequest");
+        Serializable responseMessage;
+        if (response instanceof String str) {
+            responseMessage = sendString(str, request);
+        } else if (response instanceof byte[] bytes) {
+            responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
+        } else if (response instanceof BotApiMethod<?> botApiMethod) {
+            postProcessApiMethod(botApiMethod, request);
+            responseMessage = request.getAbsSender().execute(botApiMethod);
+        } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
+            postProcessApiMethod(sendMediaBotMethod, request);
+            responseMessage = tryToSendMedia(request);
+        } else if (response instanceof TelegramResponse telegramResponse) {
+            telegramResponse.process(request);
+            responseMessage = null;
+        } else if (response instanceof Collection<?> collection) {
+            convertCollectionToResponse(collection).process(request);
+            responseMessage = null;
+        } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
+            try {
+                String stringResponse = request.getObjectMapper().writeValueAsString(response);
+                String truncated = truncateQuotes(stringResponse);
+                responseMessage = sendString(truncated, request);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Cannot serialize response", e);
+            }
+        } else {
+            throw new IllegalStateException("Cannot process response %s".formatted(response));
         }
-      }
-    } catch (InvalidPropertyException | PropertyAccessException ignored) {
+        if (responseMessage != null) {
+            request.getAccessor().addResponseFromTelegram(responseMessage);
+        }
     }
-  }
 
-  private String truncateQuotes(String stringResponse) {
-    if (!StringUtils.isBlank(stringResponse) && (stringResponse.startsWith("\"")
-        && stringResponse.endsWith("\""))) {
-      return stringResponse.substring(1, stringResponse.length() - 1);
+    private void postProcessApiMethod(Object botApiMethod, UpdateRequest request) {
+        try {
+            var propertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(botApiMethod);
+            if (propertyAccessor.getPropertyValue(PARSE_MODE) == null) {
+                Class<?> type = propertyAccessor.getPropertyType(PARSE_MODE);
+                if (type != null && String.class.isAssignableFrom(type)) {
+                    propertyAccessor.setPropertyValue(PARSE_MODE, MARKDOWN);
+                }
+            }
+        } catch (InvalidPropertyException | PropertyAccessException ignored) {
+        }
     }
-    return stringResponse;
-  }
 
-  @Nullable
-  private Serializable tryToSendMedia(UpdateRequest request) throws TelegramApiException {
-    if (response instanceof SendAnimation sendAnimation) {
-      return request.getAbsSender().execute(sendAnimation);
+    private String truncateQuotes(String stringResponse) {
+        if (!StringUtils.isBlank(stringResponse) && (stringResponse.startsWith("\"")
+                                                     && stringResponse.endsWith("\""))) {
+            return stringResponse.substring(1, stringResponse.length() - 1);
+        }
+        return stringResponse;
     }
-    if (response instanceof SendAudio sendAudio) {
-      return request.getAbsSender().execute(sendAudio);
-    }
-    if (response instanceof SendDocument sendDocument) {
-      return request.getAbsSender().execute(sendDocument);
-    }
-    if (response instanceof SendPhoto sendPhoto) {
-      return request.getAbsSender().execute(sendPhoto);
-    }
-    if (response instanceof SendSticker sendSticker) {
-      return request.getAbsSender().execute(sendSticker);
-    }
-    if (response instanceof SendVideo sendVideo) {
-      return request.getAbsSender().execute(sendVideo);
-    }
-    if (response instanceof SendVideoNote sendVideoNote) {
-      return request.getAbsSender().execute(sendVideoNote);
-    }
-    if (response instanceof SendVoice sendVoice) {
-      return request.getAbsSender().execute(sendVoice);
-    }
-    return null;
-  }
 
-  public Object getResponse() {
-    return response;
-  }
+    @Nullable
+    private Serializable tryToSendMedia(UpdateRequest request) throws TelegramApiException {
+        if (response instanceof SendAnimation sendAnimation) {
+            return request.getAbsSender().execute(sendAnimation);
+        }
+        if (response instanceof SendAudio sendAudio) {
+            return request.getAbsSender().execute(sendAudio);
+        }
+        if (response instanceof SendDocument sendDocument) {
+            return request.getAbsSender().execute(sendDocument);
+        }
+        if (response instanceof SendPhoto sendPhoto) {
+            return request.getAbsSender().execute(sendPhoto);
+        }
+        if (response instanceof SendSticker sendSticker) {
+            return request.getAbsSender().execute(sendSticker);
+        }
+        if (response instanceof SendVideo sendVideo) {
+            return request.getAbsSender().execute(sendVideo);
+        }
+        if (response instanceof SendVideoNote sendVideoNote) {
+            return request.getAbsSender().execute(sendVideoNote);
+        }
+        if (response instanceof SendVoice sendVoice) {
+            return request.getAbsSender().execute(sendVoice);
+        }
+        return null;
+    }
 
-  @Override
-  public String toString() {
-    return "GenericTelegramResponse{ response=" + response + '}';
-  }
+    private static CompositeTelegramResponse convertCollectionToResponse(Collection<?> invoked) {
+        Collection<TelegramResponse> responses = new ArrayList<>();
+        for (Object o : invoked) {
+            if (o instanceof TelegramResponse telegramResponse) {
+                responses.add(telegramResponse);
+            } else {
+                responses.add(new GenericTelegramResponse(o));
+            }
+        }
+        return new CompositeTelegramResponse(responses);
+    }
+
+    public Object getResponse() {
+        return response;
+    }
+
+    @Override
+    public String toString() {
+        return "GenericTelegramResponse{ response=" + response + '}';
+    }
 }

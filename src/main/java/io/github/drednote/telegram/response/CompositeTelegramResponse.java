@@ -22,7 +22,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CompositeTelegramResponse implements TelegramResponse {
 
-  private final List<TelegramResponse> invoked;
+  private final List<?> invoked;
 
   /**
    * Constructs a {@code CompositeTelegramResponse} with a collection of invoked TelegramResponse
@@ -30,11 +30,12 @@ public class CompositeTelegramResponse implements TelegramResponse {
    *
    * @param invoked The collection of {@code TelegramResponse} instances to be invoked
    */
-  public CompositeTelegramResponse(Collection<TelegramResponse> invoked) {
+  public CompositeTelegramResponse(Collection<?> invoked) {
     Assert.required(invoked, "Collection of TelegramResponse");
     this.invoked = invoked.stream()
         .filter(handlerResponse -> handlerResponse != this)
-        .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
+        .sorted(AnnotationAwareOrderComparator.INSTANCE)
+        .toList();
   }
 
   /**
@@ -45,8 +46,8 @@ public class CompositeTelegramResponse implements TelegramResponse {
    */
   @Override
   public void process(UpdateRequest request) throws TelegramApiException {
-    for (TelegramResponse response : invoked) {
-      response.process(request);
+    for (Object response : invoked) {
+      new GenericTelegramResponse(response).process(request);
     }
   }
 }

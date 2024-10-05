@@ -5,10 +5,11 @@ import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.EmptyTelegramResponse;
 import io.github.drednote.telegram.response.FluxTelegramResponse;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
+import io.github.drednote.telegram.response.StreamTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Stream;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -49,9 +50,11 @@ public abstract class ResponseSetter {
     } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
       request.getAccessor().setResponse((TelegramResponse) invoked);
     } else if (Collection.class.isAssignableFrom(parameterType)) {
-      request.getAccessor().setResponse(convertCollectionToResponse(((Collection<?>) invoked)));
+      request.getAccessor().setResponse(new CompositeTelegramResponse((Collection<?>) invoked));
     } else if (parameterType.getName().equals("reactor.core.publisher.Flux")) {
       request.getAccessor().setResponse(new FluxTelegramResponse(invoked));
+    } else if (Stream.class.isAssignableFrom(parameterType)) {
+      request.getAccessor().setResponse(new StreamTelegramResponse((Stream<?>) invoked));
     } else {
       request.getAccessor().setResponse(new GenericTelegramResponse(invoked));
     }
@@ -66,21 +69,5 @@ public abstract class ResponseSetter {
    */
   public static void setResponse(UpdateRequest request, @Nullable Object invoked) {
     setResponse(request, invoked, invoked != null ? invoked.getClass() : null);
-  }
-
-  /**
-   *
-   * @param invoked the collection
-   */
-  public static CompositeTelegramResponse convertCollectionToResponse(Collection<?> invoked) {
-    Collection<TelegramResponse> responses = new ArrayList<>();
-    for (Object o : invoked) {
-      if (o instanceof TelegramResponse telegramResponse) {
-        responses.add(telegramResponse);
-      } else {
-        responses.add(new GenericTelegramResponse(o));
-      }
-    }
-    return new CompositeTelegramResponse(responses);
   }
 }
