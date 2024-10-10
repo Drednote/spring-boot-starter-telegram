@@ -94,7 +94,7 @@ class DefaultTelegramUpdateProcessorTest {
     }
 
     @Test
-    void shouldExecuteUpdateOnlyOneOthersRejectedByRateLimit() {
+    void shouldExecuteUpdateOnlyOneOthersRejectedByRateLimit() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(1500);
         filterProperties.setUserRateLimit(2000);
         sessionProperties.setMaxThreadsPerUser(5);
@@ -102,11 +102,13 @@ class DefaultTelegramUpdateProcessorTest {
             telegramBot, telegramClient);
         List<Update> generate = generate(5, 1L);
         doAnswer(answer -> {
-            Thread.sleep(1300);
+            Thread.sleep(20);
             return null;
         }).when(telegramBot).onUpdateReceived(any());
 
         session.process(generate);
+
+        Thread.sleep(50);
 
         verify(telegramBot, times(1)).onUpdateReceived(any());
     }
