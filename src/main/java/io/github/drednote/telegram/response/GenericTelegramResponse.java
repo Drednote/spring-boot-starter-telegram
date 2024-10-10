@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.response;
 
-import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
@@ -10,9 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.InvalidPropertyException;
-import org.springframework.beans.PropertyAccessException;
-import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
@@ -77,10 +72,8 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
         } else if (response instanceof byte[] bytes) {
             responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
         } else if (response instanceof BotApiMethod<?> botApiMethod) {
-            postProcessApiMethod(botApiMethod, request);
             responseMessage = request.getAbsSender().execute(botApiMethod);
-        } else if (response instanceof SendMediaBotMethod<?> sendMediaBotMethod) {
-            postProcessApiMethod(sendMediaBotMethod, request);
+        } else if (response instanceof SendMediaBotMethod<?>) {
             responseMessage = tryToSendMedia(request);
         } else if (response instanceof TelegramResponse telegramResponse) {
             telegramResponse.process(request);
@@ -101,19 +94,6 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
         }
         if (responseMessage != null) {
             request.getAccessor().addResponseFromTelegram(responseMessage);
-        }
-    }
-
-    private void postProcessApiMethod(Object botApiMethod, UpdateRequest request) {
-        try {
-            var propertyAccessor = PropertyAccessorFactory.forDirectFieldAccess(botApiMethod);
-            if (propertyAccessor.getPropertyValue(PARSE_MODE) == null) {
-                Class<?> type = propertyAccessor.getPropertyType(PARSE_MODE);
-                if (type != null && String.class.isAssignableFrom(type)) {
-                    propertyAccessor.setPropertyValue(PARSE_MODE, MARKDOWN);
-                }
-            }
-        } catch (InvalidPropertyException | PropertyAccessException ignored) {
         }
     }
 

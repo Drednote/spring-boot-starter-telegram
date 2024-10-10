@@ -2,7 +2,7 @@ package io.github.drednote.telegram.filter;
 
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
-import io.github.drednote.telegram.filter.pre.UserRateLimitRequestFilter;
+import io.github.drednote.telegram.session.UserRateLimitRequestFilter;
 import io.github.drednote.telegram.response.NotHandledTelegramResponse;
 import java.time.temporal.ChronoUnit;
 import lombok.Getter;

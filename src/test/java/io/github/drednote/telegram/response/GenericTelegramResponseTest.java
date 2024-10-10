@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.response;
 
-import static org.telegram.telegrambots.meta.api.methods.ParseMode.MARKDOWN;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
@@ -30,7 +28,7 @@ class GenericTelegramResponseTest {
 
     response.process(request);
     SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(), text);
-    sendMessage.setParseMode(MARKDOWN);
+    sendMessage.setParseMode(null);
     Mockito.verify(absSender).execute(sendMessage);
   }
 
@@ -46,7 +44,7 @@ class GenericTelegramResponseTest {
     response.process(request);
     SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(),
         new String(text, StandardCharsets.UTF_8));
-    sendMessage.setParseMode(MARKDOWN);
+    sendMessage.setParseMode(null);
     Mockito.verify(absSender).execute(sendMessage);
   }
 
@@ -87,7 +85,7 @@ class GenericTelegramResponseTest {
 
     response.process(request);
     SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(), "text = 1");
-    sendMessage.setParseMode(MARKDOWN);
+    sendMessage.setParseMode(null);
     Mockito.verify(absSender).execute(sendMessage);
   }
 

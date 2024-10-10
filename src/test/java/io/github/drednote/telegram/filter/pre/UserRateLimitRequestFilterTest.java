@@ -2,13 +2,12 @@ package io.github.drednote.telegram.filter.pre;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
+import io.github.drednote.telegram.session.UserRateLimitRequestFilter;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
-import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class UserRateLimitRequestFilterTest {
 
   @Test
-  void testPreFilterWithOnceAccess() {
+  void testFilterWithOnceAccess() {
     FilterProperties filterProperties = new FilterProperties();
     filterProperties.setUserRateLimitUnit(ChronoUnit.MINUTES);
     filterProperties.setUserRateLimit(10L);
@@ -26,13 +25,13 @@ class UserRateLimitRequestFilterTest {
     DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
-    filter.preFilter(request);
+    filter.filter(request.getUser().getId());
 
     assertNull(request.getResponse());
   }
 
   @Test
-  void testPreFilterWithInvalidDuration() throws InterruptedException {
+  void testFilterWithInvalidDuration() throws InterruptedException {
     FilterProperties filterProperties = new FilterProperties();
     filterProperties.setUserRateLimitUnit(ChronoUnit.SECONDS);
     filterProperties.setUserRateLimit(100L);
@@ -42,15 +41,13 @@ class UserRateLimitRequestFilterTest {
     DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
-    filter.preFilter(request);
+    assertThat(filter.filter(request.getUser().getId())).isTrue();
     Thread.sleep(50);
-    filter.preFilter(request);
-
-    assertSame(TooManyRequestsTelegramResponse.INSTANCE, request.getResponse());
+    assertThat(filter.filter(request.getUser().getId())).isFalse();
   }
 
   @Test
-  void testPreFilterWithValidDuration() throws InterruptedException {
+  void testFilterWithValidDuration() throws InterruptedException {
     FilterProperties filterProperties = new FilterProperties();
     filterProperties.setUserRateLimitUnit(ChronoUnit.MILLIS);
     filterProperties.setUserRateLimit(10L);
@@ -60,9 +57,9 @@ class UserRateLimitRequestFilterTest {
     DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
-    filter.preFilter(request);
+    filter.filter(request.getUser().getId());
     Thread.sleep(50);
-    filter.preFilter(request);
+    filter.filter(request.getUser().getId());
 
     assertNull(request.getResponse());
   }
@@ -82,9 +79,9 @@ class UserRateLimitRequestFilterTest {
     DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
         UpdateUtils.createEmpty());
 
-    filter.preFilter(request);
+    filter.filter(request.getUser().getId());
     Thread.sleep(50);
-    filter.preFilter(request);
+    filter.filter(request.getUser().getId());
     assertThat(key.get()).isEqualTo(2L);
   }
 }

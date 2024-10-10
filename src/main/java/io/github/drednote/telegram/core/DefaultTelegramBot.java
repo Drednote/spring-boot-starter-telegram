@@ -9,6 +9,7 @@ import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.handler.UpdateHandler;
+import io.github.drednote.telegram.response.AbstractTelegramResponse;
 import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
@@ -23,12 +24,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
- * The {@code DefaultTelegramBot} class extends the {@code TelegramLongPollingBot} class and
- * serves as the main bot implementation for handling updates. The bot overrides the
- * `onUpdateReceived()` method to handle incoming updates. Within the {@link #onUpdateReceived}
- * method, a {@link DefaultUpdateRequest} is created to encapsulate the {@link Update}. The request
- * is then processed through a series of steps: pre-filtering, handling, post-filtering, and
- * answering. Any exceptions thrown during processing are handled by the exception handler
+ * The {@code DefaultTelegramBot} class extends the {@code TelegramBot} class and serves as the main
+ * bot implementation for handling updates. The bot overrides the `onUpdateReceived()` method to
+ * handle incoming updates. Within the {@link #onUpdateReceived} method, a
+ * {@link DefaultUpdateRequest} is created to encapsulate the {@link Update}. The request is then
+ * processed through a series of steps: pre-filtering, handling, post-filtering, and answering. Any
+ * exceptions thrown during processing are handled by the exception handler
  *
  * @author Ivan Galushko
  * @see UpdateHandler
@@ -69,8 +70,8 @@ public class DefaultTelegramBot implements TelegramBot {
     private final TelegramClient telegramClient;
 
     /**
-     * Creates a new instance of the {@code DefaultTelegramBot} class with the provided
-     * properties and dependencies
+     * Creates a new instance of the {@code DefaultTelegramBot} class with the provided properties
+     * and dependencies
      *
      * @param properties           the Telegram properties, not null
      * @param updateHandlers       the collection of update handlers, not null
@@ -221,6 +222,10 @@ public class DefaultTelegramBot implements TelegramBot {
         if (response != null) {
             if (response instanceof SimpleMessageTelegramResponse simpleMessageTelegramResponse) {
                 simpleMessageTelegramResponse.setMessageSource(messageSource);
+            }
+            if (response instanceof AbstractTelegramResponse abstractTelegramResponse) {
+                abstractTelegramResponse.setParseMode(
+                    telegramProperties.getUpdateHandler().getParseMode());
             }
             response.process(request);
         }
