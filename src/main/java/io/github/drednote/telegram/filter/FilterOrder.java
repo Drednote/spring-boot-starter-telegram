@@ -8,7 +8,6 @@ import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PriorityPreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
-import io.github.drednote.telegram.filter.pre.UserRateLimitRequestFilter;
 import java.util.Map;
 import org.springframework.core.Ordered;
 
@@ -24,7 +23,7 @@ public final class FilterOrder {
 
     // ------- Orders for priority pre filters ------- //
     public static final Map<Class<? extends PriorityPreUpdateFilter>, Integer> PRIORITY_PRE_FILTERS = Map.of(
-        UserRateLimitRequestFilter.class, FilterOrder.HIGHEST_PRECEDENCE,
+//        UserRateLimitRequestFilter.class, FilterOrder.HIGHEST_PRECEDENCE,
         RoleFilter.class, FilterOrder.HIGHEST_PRECEDENCE + 100,
         ScenarioUpdateHandlerPopular.class, FilterOrder.HIGHEST_PRECEDENCE + 200,
         ControllerUpdateHandlerPopular.class, FilterOrder.HIGHEST_PRECEDENCE + 300

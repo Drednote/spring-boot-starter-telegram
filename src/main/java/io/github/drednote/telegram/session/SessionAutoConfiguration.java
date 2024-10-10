@@ -2,6 +2,7 @@ package io.github.drednote.telegram.session;
 
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.TelegramBot;
+import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.session.SessionProperties.ProxyType;
 import io.github.drednote.telegram.session.SessionProperties.ProxyUrl;
 import java.lang.reflect.InvocationTargetException;
@@ -47,7 +48,6 @@ public class SessionAutoConfiguration {
      * Configures a bean for the Telegram bot session using long polling. And starts session
      *
      * @param telegramClient The Telegram client used to interact with the Telegram API
-     * @param bot            The Telegram bot instance
      * @param properties     Configuration properties for the session
      * @return The configured Telegram bot session
      */
@@ -59,16 +59,15 @@ public class SessionAutoConfiguration {
         matchIfMissing = true
     )
     @ConditionalOnMissingBean
-    @ConditionalOnSingleCandidate(TelegramBot.class)
     public TelegramBotSession longPollingTelegramBotSession(
-        TelegramClient telegramClient, TelegramBot bot, SessionProperties properties,
-        TelegramProperties telegramProperties
+        TelegramClient telegramClient, SessionProperties properties,
+        TelegramProperties telegramProperties, TelegramUpdateProcessor processor
     ) {
         try {
             Class<? extends BackOff> backOffClazz = properties.getBackOffStrategy();
             BackOff backOff = backOffClazz.getDeclaredConstructor().newInstance();
             LongPollingSession session = new LongPollingSession(
-                telegramClient, properties, telegramProperties, backOff, bot);
+                telegramClient, properties, telegramProperties, backOff, processor);
             session.start();
             return session;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -96,6 +95,17 @@ public class SessionAutoConfiguration {
         throw new UnsupportedOperationException("Webhooks not implemented yet");
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnSingleCandidate(TelegramBot.class)
+    public TelegramUpdateProcessor telegramUpdateProcessor(
+        SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
+        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient
+    ) {
+        return new DefaultTelegramUpdateProcessor(
+            properties, filterProperties, telegramBot, telegramClient);
+    }
+
     /**
      * Configures a bean for the Telegram client to interact with the Telegram API.
      *
@@ -118,7 +128,8 @@ public class SessionAutoConfiguration {
         additionalSettings.accept(builder);
 
         RestClient restClient = builder
-            .baseUrl(TelegramUrl.DEFAULT_URL.getSchema() + "://" + TelegramUrl.DEFAULT_URL.getHost())
+            .baseUrl(
+                TelegramUrl.DEFAULT_URL.getSchema() + "://" + TelegramUrl.DEFAULT_URL.getHost())
             .build();
 
         RestClientAdapter adapter = RestClientAdapter.create(restClient);

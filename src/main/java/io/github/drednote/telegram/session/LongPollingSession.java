@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.session;
 
 import io.github.drednote.telegram.TelegramProperties;
-import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * <p>This class implements the {@link TelegramBotSession} interface to provide methods for
  * starting and stopping a long polling session with the Telegram Bot API. It utilizes a
  * {@link TelegramClient} to fetch updates from the Telegram server and processes them using a
- * {@link TelegramBot}.
+ * {@link TelegramUpdateProcessor}.
  *
  * <p>The class is responsible for scheduling and executing the polling loop, processing updates,
  * and handling exceptions that may occur during the session and not caught with exception handling
@@ -30,10 +29,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *
  * @author Ivan Galushko
  * @see TelegramClient
- * @see TelegramBot
+ * @see TelegramUpdateProcessor
  * @see SessionProperties
  */
-public class LongPollingSession extends DefaultTelegramBotSession implements Runnable {
+public class LongPollingSession implements TelegramBotSession, Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(LongPollingSession.class);
 
@@ -43,6 +42,7 @@ public class LongPollingSession extends DefaultTelegramBotSession implements Run
     protected final SessionProperties sessionProperties;
     protected final TelegramProperties telegramProperties;
     private final BackOff backOff;
+    private final TelegramUpdateProcessor processor;
 
     private int lastReceivedUpdate = 0;
 
@@ -63,14 +63,15 @@ public class LongPollingSession extends DefaultTelegramBotSession implements Run
     public LongPollingSession(
         TelegramClient telegramClient, SessionProperties properties,
         TelegramProperties telegramProperties, BackOff backOff,
-        TelegramBot bot
+        TelegramUpdateProcessor processor
     ) {
-        super(properties, bot);
         Assert.required(telegramClient, "TelegramClient");
         Assert.required(properties, "SessionProperties");
         Assert.required(telegramProperties, "TelegramProperties");
         Assert.required(backOff, "BackOff");
+        Assert.required(processor, "TelegramUpdateProcessor");
 
+        this.processor = processor;
         this.backOff = backOff;
         this.telegramProperties = telegramProperties;
         this.sessionProperties = properties;
@@ -128,7 +129,7 @@ public class LongPollingSession extends DefaultTelegramBotSession implements Run
                     .map(Update::getUpdateId)
                     .max(Integer::compareTo)
                     .orElse(0);
-                processUpdates(updates);
+                processor.process(updates);
             }
         } catch (Exception global) {
             log.error(global.getLocalizedMessage(), global);

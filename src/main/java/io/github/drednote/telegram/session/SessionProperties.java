@@ -36,23 +36,29 @@ public class SessionProperties {
     @NonNull
     private int consumeMaxThreads = 10;
     /**
+     * Limits the number of updates to be store in memory queue for update processing. 0 - no limit.
+     * Defaults to (consumeMaxThreads * 1.5).
+     */
+    @NonNull
+    private int maxMessagesInQueue = 15;
+    /**
      * Max number of threads used for consumption messages from a telegram for concrete user. 0 - no
      * restrictions.
      */
     @NonNull
     private int maxThreadsPerUser = 1;
     /**
-     * Cache lifetime used in {@link DefaultTelegramBotSession}. This parameter needed just for
+     * Cache lifetime used in {@link DefaultTelegramUpdateProcessor}. This parameter needed just to
      * delete staled buckets to free up memory
      *
-     * @see DefaultTelegramBotSession
+     * @see DefaultTelegramUpdateProcessor
      */
     @NonNull
     private int cacheLiveDuration = 1;
     /**
      * The {@link TimeUnit} which will be applied to {@link #cacheLiveDuration}
      *
-     * @see DefaultTelegramBotSession
+     * @see DefaultTelegramUpdateProcessor
      */
     @NonNull
     private TimeUnit cacheLiveDurationUnit = TimeUnit.HOURS;
@@ -123,11 +129,6 @@ public class SessionProperties {
          */
         @NonNull
         private int updateTimeout = 50;
-        /**
-         * Limits the number of updates to be store in memory queue for update processing.
-         */
-        @NonNull
-        private int maxMessagesInQueue = 50;
         /**
          * A JSON-serialized list of the update types you want your bot to receive. For example,
          * specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of

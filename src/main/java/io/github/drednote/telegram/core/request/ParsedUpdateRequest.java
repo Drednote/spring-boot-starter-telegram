@@ -19,13 +19,16 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  */
 public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
-    public ParsedUpdateRequest(Update update) {
+    private final TelegramClient telegramClient;
+
+    public ParsedUpdateRequest(Update update, TelegramClient telegramClient) {
         super(update);
+        this.telegramClient = telegramClient;
     }
 
     @Override
     public TelegramClient getAbsSender() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
+        return telegramClient;
     }
 
     @Override

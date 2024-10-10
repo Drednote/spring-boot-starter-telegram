@@ -9,7 +9,6 @@ import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
 import io.github.drednote.telegram.filter.pre.HasRoleRequestFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
-import io.github.drednote.telegram.filter.pre.UserRateLimitRequestFilter;
 import io.github.drednote.telegram.handler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.utils.FieldProvider;
 import org.springframework.beans.factory.ObjectProvider;
@@ -54,12 +53,6 @@ public class FiltersAutoConfiguration {
     @ConditionalOnMissingBean
     public AccessPermissionFilter accessPermissionFilter(PermissionProperties permissionProperties) {
         return new AccessPermissionFilter(permissionProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public UserRateLimitRequestFilter concurrentUserRequestFilter(FilterProperties properties) {
-        return new UserRateLimitRequestFilter(properties);
     }
 
     @Bean
