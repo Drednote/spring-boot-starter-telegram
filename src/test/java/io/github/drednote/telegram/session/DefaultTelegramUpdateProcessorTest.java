@@ -60,7 +60,7 @@ class DefaultTelegramUpdateProcessorTest {
     void shouldWaitIfMaxQueueSizeExceed() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(100);
         session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
-            telegramBot, telegramClient);
+            telegramBot, telegramClient, null);
 
         List<Update> generate = generate(50);
         doAnswer(answer -> {
@@ -79,7 +79,7 @@ class DefaultTelegramUpdateProcessorTest {
     void shouldExecuteUpdateOnlyOneOthersRejected() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(1500);
         session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
-            telegramBot, telegramClient);
+            telegramBot, telegramClient, null);
         List<Update> generate = generate(5, 1L);
         doAnswer(answer -> {
             Thread.sleep(100);
@@ -99,7 +99,7 @@ class DefaultTelegramUpdateProcessorTest {
         filterProperties.setUserRateLimit(2000);
         sessionProperties.setMaxThreadsPerUser(5);
         session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
-            telegramBot, telegramClient);
+            telegramBot, telegramClient, null);
         List<Update> generate = generate(5, 1L);
         doAnswer(answer -> {
             Thread.sleep(20);

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import io.github.drednote.telegram.core.TelegramBot;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.core.request.ParsedUpdateRequest;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
@@ -49,6 +50,8 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
     private final UserRateLimitRequestFilter userRateLimitRequestFilter;
     private final TelegramClient telegramClient;
     private final ReadWriteLock limitLock = new ReentrantReadWriteLock();
+    @Nullable
+    private final TelegramMessageSource messageSource;
 
     /**
      * Constructs a {@code DefaultTelegramUpdateProcessor} with specified properties and Telegram
@@ -64,13 +67,15 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
      */
     public DefaultTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
-        TelegramClient telegramClient, ThreadFactory threadFactory
+        TelegramClient telegramClient, ThreadFactory threadFactory,
+        @Nullable TelegramMessageSource messageSource
     ) {
         super(properties, threadFactory);
         Assert.required(telegramBot, "TelegramBot");
         Assert.required(filterProperties, "FilterProperties");
         Assert.required(telegramClient, "TelegramClient");
 
+        this.messageSource = messageSource;
         this.telegramClient = telegramClient;
         this.telegramBot = telegramBot;
         this.maxThreadsPerUser = properties.getMaxThreadsPerUser();
@@ -107,10 +112,10 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
      */
     public DefaultTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
-        TelegramClient telegramClient
+        TelegramClient telegramClient, @Nullable TelegramMessageSource messageSource
     ) {
         this(properties, filterProperties, telegramBot, telegramClient,
-            Executors.defaultThreadFactory());
+            Executors.defaultThreadFactory(), messageSource);
     }
 
     /**
@@ -216,6 +221,7 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
         }
         updateRequests.iterator().forEachRemaining(request -> {
             try {
+                TooManyRequestsTelegramResponse.INSTANCE.setMessageSource(messageSource);
                 TooManyRequestsTelegramResponse.INSTANCE.process(request);
             } catch (Exception e) {
                 log.error("Cannot process response to telegram for request {}", request, e);

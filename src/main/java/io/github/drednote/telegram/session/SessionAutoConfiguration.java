@@ -2,6 +2,7 @@ package io.github.drednote.telegram.session;
 
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.TelegramBot;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.session.SessionProperties.ProxyType;
 import io.github.drednote.telegram.session.SessionProperties.ProxyUrl;
@@ -100,10 +101,11 @@ public class SessionAutoConfiguration {
     @ConditionalOnSingleCandidate(TelegramBot.class)
     public TelegramUpdateProcessor telegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
-        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient
+        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient,
+        TelegramMessageSource messageSource
     ) {
         return new DefaultTelegramUpdateProcessor(
-            properties, filterProperties, telegramBot, telegramClient);
+            properties, filterProperties, telegramBot, telegramClient, messageSource);
     }
 
     /**
