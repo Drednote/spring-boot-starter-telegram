@@ -4,6 +4,8 @@ import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
+import io.github.drednote.telegram.exception.type.ScenarioException;
+import io.github.drednote.telegram.handler.scenario.ScenarioEventResult.SimpleScenarioEventResult;
 import io.github.drednote.telegram.handler.scenario.data.SimpleState;
 import io.github.drednote.telegram.handler.scenario.data.State;
 import io.github.drednote.telegram.handler.scenario.data.Transition;
@@ -37,14 +39,16 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
     }
 
     @Override
-    public boolean sendEvent(UpdateRequest request) {
+    public ScenarioEventResult sendEvent(UpdateRequest request) {
         synchronized (this) {
             if (isTerminated()) {
-                return false;
+                return new SimpleScenarioEventResult(false,
+                    new ScenarioException("Scenario has been terminated"));
             }
             Optional<Transition<S>> optionalSTransition = findTransition(request);
             if (optionalSTransition.isEmpty()) {
-                return false;
+                return new SimpleScenarioEventResult(false,
+                    new ScenarioException("Transition not found"));
             }
             Transition<S> transition = optionalSTransition.get();
             State<S> target = transition.getTarget();
@@ -54,12 +58,12 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
                 Object response = target.execute(context);
                 ResponseSetter.setResponse(request, response);
             } catch (Exception e) {
-                log.error("Unhandled exception", e);
-                return false;
+                return new SimpleScenarioEventResult(false,
+                    new ScenarioException("During scenario event unhandled exception happened", e));
             }
 
             this.state = target;
-            return true;
+            return new SimpleScenarioEventResult(true, null);
         }
     }
 

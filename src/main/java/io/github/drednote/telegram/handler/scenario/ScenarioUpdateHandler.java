@@ -13,14 +13,19 @@ import org.springframework.core.annotation.Order;
 public class ScenarioUpdateHandler implements UpdateHandler {
 
     @Override
-    public void onUpdate(UpdateRequest request) {
+    public void onUpdate(UpdateRequest request) throws Exception {
         Scenario<?> scenario = request.getScenario();
         if (scenario != null) {
-            ScenarioIdResolver idResolver = scenario.getAccessor().getIdResolver();
-            final String id = scenario.getId();
-            boolean sendEvent = scenario.sendEvent(request);
-            if (sendEvent) {
+            ScenarioEventResult eventResult = scenario.sendEvent(request);
+            if (eventResult.success()) {
+                String id = scenario.getId();
+                ScenarioIdResolver idResolver = scenario.getAccessor().getIdResolver();
                 idResolver.saveNewId(request, id);
+            } else {
+                Exception exception = eventResult.exception();
+                if (exception != null) {
+                    throw exception;
+                }
             }
         }
     }
