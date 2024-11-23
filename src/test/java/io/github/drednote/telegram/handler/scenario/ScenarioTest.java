@@ -69,9 +69,9 @@ class ScenarioTest {
         Scenario<String> scenario = factory.create(id);
         persister.restore(scenario, id);
 
-        boolean sendEvent = scenario.sendEvent(updateRequest);
+        ScenarioEventResult sendEvent = scenario.sendEvent(updateRequest);
 
-        assertThat(sendEvent).isTrue();
+        assertThat(sendEvent.success()).isTrue();
         assertThat(scenario.getState().getId()).isEqualTo("3");
     }
 
@@ -85,9 +85,9 @@ class ScenarioTest {
         Scenario<String> scenario = factory.create(id);
         persister.restore(scenario, id);
 
-        boolean sendEvent = scenario.sendEvent(updateRequest);
+        ScenarioEventResult sendEvent = scenario.sendEvent(updateRequest);
 
-        assertThat(sendEvent).isTrue();
+        assertThat(sendEvent.success()).isTrue();
         assertThat(scenario.getState().getId()).isEqualTo("4");
     }
 

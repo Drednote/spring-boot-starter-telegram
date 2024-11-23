@@ -499,6 +499,9 @@ handling. Here are some important rules to keep in mind:
   process
 - Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
   parameters as defined in the [Argument resolving](#argument-resolving) section
+- Methods marked with `@TelegramExceptionHandler` annotation can return any object, as a result. The
+  response processing mechanism is detailed in the [Response Processing](#response-processing)
+  section
 
 ### Argument resolving
 

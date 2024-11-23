@@ -29,9 +29,9 @@ public interface Scenario<S> {
      * Sends an event to the scenario.
      *
      * @param request the update request to be processed
-     * @return true if the event was successfully handled, false otherwise
+     * @return the result of event handling.
      */
-    boolean sendEvent(UpdateRequest request);
+    ScenarioEventResult sendEvent(UpdateRequest request);
 
     /**
      * Checks if the scenario matches the specified update request.
