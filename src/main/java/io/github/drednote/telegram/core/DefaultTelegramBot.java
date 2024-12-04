@@ -70,8 +70,7 @@ public class DefaultTelegramBot implements TelegramBot {
     private final TelegramClient telegramClient;
 
     /**
-     * Creates a new instance of the {@code DefaultTelegramBot} class with the provided properties
-     * and dependencies
+     * Creates a new instance of the {@code DefaultTelegramBot} class with the provided properties and dependencies
      *
      * @param properties           the Telegram properties, not null
      * @param updateHandlers       the collection of update handlers, not null
@@ -105,12 +104,12 @@ public class DefaultTelegramBot implements TelegramBot {
     }
 
     /**
-     * Handles the received update. Creates a {@link  DefaultUpdateRequest} to encapsulate the
-     * {@link Update}. Processes the request through pre-filtering, handling, post-filtering, and
-     * answering. Handle any exceptions thrown during processing.
+     * Handles the received update. Creates a {@link  DefaultUpdateRequest} to encapsulate the {@link Update}. Processes
+     * the request through pre-filtering, handling, post-filtering, and answering. Handle any exceptions thrown during
+     * processing.
      * <p>
-     * Before processing saves request to context, for further usage. After processing delete
-     * request from context and spring beans too if any were created
+     * Before processing saves request to context, for further usage. After processing delete request from context and
+     * spring beans too if any were created
      *
      * @param update the received update, not null
      */
@@ -127,8 +126,8 @@ public class DefaultTelegramBot implements TelegramBot {
     }
 
     /**
-     * Performs the processing of the received update. Executes pre-filtering, handling,
-     * post-filtering, and answering. Handle any exceptions thrown during processing
+     * Performs the processing of the received update. Executes pre-filtering, handling, post-filtering, and answering.
+     * Handle any exceptions thrown during processing
      *
      * @param request the update request
      */
@@ -141,7 +140,20 @@ public class DefaultTelegramBot implements TelegramBot {
         } finally {
             try {
                 doPostFilter(request);
-                doAnswer(request);
+                try {
+                    doAnswer(request);
+                } catch (TelegramApiException e) {
+                    handleException(request, e);
+                } catch (Exception e) {
+                    handleException(request, e);
+                    if (request.getResponse() != null) {
+                        try {
+                            doAnswer(request);
+                        } catch (Exception ex) {
+                            handleException(request, ex);
+                        }
+                    }
+                }
                 doConclusivePostFilter(request);
             } catch (Exception e) {
                 handleException(request, e);

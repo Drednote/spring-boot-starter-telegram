@@ -31,6 +31,8 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
     protected final Integer id;
     protected final Update origin;
     protected final Long chatId;
+    @Nullable
+    protected final Long userId;
     protected final RequestType requestType;
 
     protected final Set<MessageType> messageTypes;
@@ -156,6 +158,7 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
         }
         this.chatId = resolveChatId();
         this.messageTypes = parseMessageType();
+        this.userId = user != null ? user.getId() : null;
     }
 
     private static RequestType parseMessageType(Update origin) {
@@ -191,6 +194,7 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
         this.chat = request.getChat();
         this.user = request.getUser();
         this.text = request.getText();
+        this.userId = request.getUserId();
     }
 
     @NonNull

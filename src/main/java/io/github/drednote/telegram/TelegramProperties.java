@@ -22,7 +22,10 @@ import org.springframework.lang.Nullable;
 @Getter
 @Setter
 public class TelegramProperties {
-
+  /**
+   * Enable the bot. Default: true
+   */
+  private boolean enabled = true;
   /**
    * The name of a bot. Example: TheBestBot.
    * <p>
