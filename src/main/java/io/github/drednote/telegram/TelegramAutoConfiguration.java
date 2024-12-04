@@ -44,6 +44,16 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @AutoConfiguration
 public class TelegramAutoConfiguration {
 
+    private static final String TELEGRAM_BOT = "TelegramBot";
+
+    public TelegramAutoConfiguration(TelegramProperties properties) {
+        if (StringUtils.isBlank(properties.getToken())) {
+            throw new BeanCreationException(TELEGRAM_BOT,
+                "If you want to use telegram bot library consider specify a drednote.telegram.token or disable creating "
+                + "telegram bot by setting a drednote.telegram.enabled to false");
+        }
+    }
+
     /**
      * Autoconfiguration class for configuring the Telegram bot instance.
      */
@@ -79,10 +89,6 @@ public class TelegramAutoConfiguration {
             if (StringUtils.isBlank(properties.getToken())) {
                 throw new BeanCreationException(TELEGRAM_BOT,
                     "Consider specify drednote.telegram.token");
-            }
-            if (StringUtils.isBlank(properties.getName())) {
-                throw new BeanCreationException(TELEGRAM_BOT,
-                    "Consider specify drednote.telegram.name");
             }
             if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
                 return new DefaultTelegramBot(properties, updateHandlers, objectMapper,

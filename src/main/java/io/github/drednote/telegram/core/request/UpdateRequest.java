@@ -57,6 +57,14 @@ public interface UpdateRequest {
     Long getChatId();
 
     /**
+     * Returns the ID of the user associated with the update
+     *
+     * @return the ID of the user
+     */
+    @Nullable
+    Long getUserId();
+
+    /**
      * Returns the type of the request
      *
      * @return the type of the request
