@@ -138,6 +138,11 @@ drednote.telegram.name=<Your bot name>
 drednote.telegram.token=<Your bot token>
 ```
 
+Or disable the autoconfiguration with
+```properties
+drednote.telegram.enabled=false
+```
+
 Create your main controller
 
 ```java
