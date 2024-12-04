@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -31,10 +32,12 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * Autoconfiguration class for configuring various aspects of a Telegram bot application.
  *
  * <p>This class provides automatic configuration for different components and features of a
- * Telegram bot application, including bot configuration, message source configuration, and more. It
- * utilizes properties defined in the application's configuration to customize the behavior of the
+ * Telegram bot application, including bot configuration, message source configuration, and more.
+ * You can disable the Autoconfiguration with the property {@code dreadnote.telegram.enabled}.
+ * It utilizes properties defined in the application's configuration to customize the behavior of the
  * bot.
  */
+@ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled" )
 @ImportAutoConfiguration({
     SessionAutoConfiguration.class, UpdateHandlerAutoConfiguration.class,
     ExceptionHandlerAutoConfiguration.class, DataSourceAutoConfiguration.class,
@@ -70,6 +73,7 @@ public class TelegramAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(TelegramBot.class)
+        @ConditionalOnProperty(name = "drednote.telegram.token")
         public TelegramBot telegramLongPollingBot(
             TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
