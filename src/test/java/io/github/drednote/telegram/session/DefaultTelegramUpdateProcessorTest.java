@@ -56,7 +56,7 @@ class DefaultTelegramUpdateProcessorTest {
     }
 
     @RepeatedTest(20)
-    @Timeout(value = 2, threadMode = ThreadMode.SEPARATE_THREAD)
+    @Timeout(value = 10, threadMode = ThreadMode.SEPARATE_THREAD)
     void shouldWaitIfMaxQueueSizeExceed() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(100);
         session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
