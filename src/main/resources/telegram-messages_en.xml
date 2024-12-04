@@ -1,0 +1,8 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+  <entry key="response.forbidden">You do not have access to this resource</entry>
+  <entry key="response.internalError">Oops, something went wrong, please try again later</entry>
+  <entry key="response.notHandled">Unknown command or text, try something else</entry>
+  <entry key="response.tooManyRequests">Too many requests. Please try later</entry>
+</properties>

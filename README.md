@@ -138,10 +138,8 @@ drednote.telegram.name=<Your bot name>
 drednote.telegram.token=<Your bot token>
 ```
 
-Or disable the autoconfiguration with
-```properties
-drednote.telegram.enabled=false
-```
+> If you want, you can disable the autoconfiguring telegram bot by setting `drednote.telegram.enabled` to false. This
+> will prevent the automatic creation of any beans.
 
 Create your main controller
 
@@ -667,7 +665,8 @@ All settings tables contain 4 columns:
 
 | Name          | Description                               | Default Value                                            | Required |
 |---------------|-------------------------------------------|----------------------------------------------------------|----------|
-| name*         | The name of a bot. Example: TheBestBot.   | <b>must be set by user</b>                               | true     |
+| enabled       | Enable the bot.                           | true                                                     | false    |
+| name          | The name of a bot. Example: TheBestBot.   |                                                          | false    |
 | token*        | The token of a bot.                       | <b>must be set by user</b>                               | true     |
 | defaultLocale | The default locale for sending responses. | -                                                        | false    |
 | session       | Session properties.                       | [Session properties](#session-properties)                |          |

@@ -37,7 +37,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * It utilizes properties defined in the application's configuration to customize the behavior of the
  * bot.
  */
-@ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled" )
+@ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ImportAutoConfiguration({
     SessionAutoConfiguration.class, UpdateHandlerAutoConfiguration.class,
     ExceptionHandlerAutoConfiguration.class, DataSourceAutoConfiguration.class,
@@ -46,6 +46,16 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @EnableConfigurationProperties(TelegramProperties.class)
 @AutoConfiguration
 public class TelegramAutoConfiguration {
+
+    private static final String TELEGRAM_BOT = "TelegramBot";
+
+    public TelegramAutoConfiguration(TelegramProperties properties) {
+        if (StringUtils.isBlank(properties.getToken())) {
+            throw new BeanCreationException(TELEGRAM_BOT,
+                "If you want to use telegram bot library consider specify a drednote.telegram.token or disable creating "
+                + "telegram bot by setting a drednote.telegram.enabled to false");
+        }
+    }
 
     /**
      * Autoconfiguration class for configuring the Telegram bot instance.
@@ -73,7 +83,6 @@ public class TelegramAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(TelegramBot.class)
-        @ConditionalOnProperty(name = "drednote.telegram.token")
         public TelegramBot telegramLongPollingBot(
             TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
@@ -83,10 +92,6 @@ public class TelegramAutoConfiguration {
             if (StringUtils.isBlank(properties.getToken())) {
                 throw new BeanCreationException(TELEGRAM_BOT,
                     "Consider specify drednote.telegram.token");
-            }
-            if (StringUtils.isBlank(properties.getName())) {
-                throw new BeanCreationException(TELEGRAM_BOT,
-                    "Consider specify drednote.telegram.name");
             }
             if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
                 return new DefaultTelegramBot(properties, updateHandlers, objectMapper,
