@@ -37,7 +37,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * It utilizes properties defined in the application's configuration to customize the behavior of the
  * bot.
  */
-@ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled" )
+@ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ImportAutoConfiguration({
     SessionAutoConfiguration.class, UpdateHandlerAutoConfiguration.class,
     ExceptionHandlerAutoConfiguration.class, DataSourceAutoConfiguration.class,
@@ -83,7 +83,6 @@ public class TelegramAutoConfiguration {
          */
         @Bean
         @ConditionalOnMissingBean(TelegramBot.class)
-        @ConditionalOnProperty(name = "drednote.telegram.token")
         public TelegramBot telegramLongPollingBot(
             TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
