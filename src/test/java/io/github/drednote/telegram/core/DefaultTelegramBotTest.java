@@ -129,11 +129,13 @@ class DefaultTelegramBotTest {
         UpdateRequestContext.class)) {
       TelegramResponse response = Mockito.mock(TelegramResponse.class);
       when(response.isExecutePostFilters()).thenReturn(true);
-      doThrow(new Exception()).when(updateHandler).onUpdate(any());
+      doThrow(new IllegalStateException()).when(updateHandler).onUpdate(any());
       doThrow(new RuntimeException()).when(response).process(any());
       doAnswer(invocation -> {
         UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
-        request.getAccessor().setResponse(response);
+        if (request.getError() instanceof IllegalStateException) {
+          request.getAccessor().setResponse(response);
+        }
         return request;
       }).when(exceptionHandler).handle(any());
 
