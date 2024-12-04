@@ -19,6 +19,7 @@ public class SimpleActionContext<S> implements ActionContext<S> {
 
     private final UpdateRequest updateRequest;
     private final Transition<S> transition;
+    private final Map<String, Object> props;
 
     /**
      * Retrieves the template variables extracted from the {@code UpdateRequest} based on the
@@ -38,6 +39,11 @@ public class SimpleActionContext<S> implements ActionContext<S> {
             res.putAll(variables);
         }
         return res;
+    }
+
+    @Override
+    public Map<String, Object> getProps() {
+        return props;
     }
 
     /**

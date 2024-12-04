@@ -5,7 +5,9 @@ import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.Action;
 import io.github.drednote.telegram.handler.scenario.ActionContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +19,8 @@ public class SimpleState<S> extends AbstractState<S> {
 
     @Nullable
     private List<Action<S>> actions;
+    @Setter
+    private Map<String, Object> props;
 
     @Getter
     @Setter
@@ -24,10 +28,12 @@ public class SimpleState<S> extends AbstractState<S> {
 
     public SimpleState(S id) {
         super(id, null);
+        this.props = new HashMap<>();
     }
 
-    public SimpleState(S id, Set<UpdateRequestMapping> mappings) {
+    public SimpleState(S id, Set<UpdateRequestMapping> mappings, Map<String, Object> props) {
         super(id, mappings);
+        this.props = props;
     }
 
     @Override
@@ -39,11 +45,16 @@ public class SimpleState<S> extends AbstractState<S> {
     }
 
     @Override
-    public Object execute(ActionContext<S> context) {
+    public Object execute(ActionContext<S> context) throws Exception {
         if (actions == null) {
             return null;
         }
-        return actions.stream().map(action -> action.execute(context)).toList();
+        List<Object> list = new ArrayList<>();
+        for (Action<S> action : actions) {
+            Object execute = action.execute(context);
+            list.add(execute);
+        }
+        return list;
     }
 
     @Nullable
@@ -53,5 +64,10 @@ public class SimpleState<S> extends AbstractState<S> {
 
     public void setActions(List<Action<S>> actions) {
         this.actions = new ArrayList<>(actions);
+    }
+
+    @Override
+    public Map<String, Object> getProps() {
+        return props;
     }
 }

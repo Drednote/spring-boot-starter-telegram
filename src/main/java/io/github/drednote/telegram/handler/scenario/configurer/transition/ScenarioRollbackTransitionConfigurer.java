@@ -2,13 +2,15 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.Action;
+import io.github.drednote.telegram.handler.scenario.ActionContext;
+import java.util.Map;
 
 /**
  * Interface for configuring rollback transitions in scenarios.
  * <p>
- * During this configurer will be created a new one transition with a reverse direction. For
- * example, you create A → B transition, there will be created B → A transition with personal
- * telegramRequest matching and action (you should specify it).
+ * During this configurer will be created a new one transition with a reverse direction. For example, you create A → B
+ * transition, there will be created B → A transition with personal telegramRequest matching and action (you should
+ * specify it).
  *
  * @param <S> the type of the scenario
  * @author Ivan Galushko
@@ -32,4 +34,12 @@ public interface ScenarioRollbackTransitionConfigurer<S> extends
      */
     ScenarioRollbackTransitionConfigurer<S> rollbackTelegramRequest(
         TelegramRequest telegramRequest);
+
+    /**
+     * Sets the additional props to be used during the rollback.
+     *
+     * @param props additional props to pass to {@link Action} in {@link ActionContext}
+     * @return the current instance of {@link ScenarioRollbackTransitionConfigurer}
+     */
+    ScenarioRollbackTransitionConfigurer<S> rollbackProps(Map<String, Object> props);
 }

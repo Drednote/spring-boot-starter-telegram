@@ -12,7 +12,9 @@ import io.github.drednote.telegram.handler.scenario.data.Transition;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.persist.StateContext;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,8 +54,9 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
             }
             Transition<S> transition = optionalSTransition.get();
             State<S> target = transition.getTarget();
+            Map<String, Object> props = target.getProps();
 
-            var context = new SimpleActionContext<>(request, transition);
+            var context = new SimpleActionContext<>(request, transition, new HashMap<>(props));
             try {
                 Object response = target.execute(context);
                 ResponseSetter.setResponse(request, response);
@@ -101,7 +104,7 @@ public class SimpleScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
     private @NonNull SimpleState<S> convertToState(StateContext<S> stateContext) {
         Set<? extends UpdateRequestMappingAccessor> mappings = stateContext.updateRequestMappings();
-        SimpleState<S> simpleState = new SimpleState<>(stateContext.id(), convert(mappings));
+        SimpleState<S> simpleState = new SimpleState<>(stateContext.id(), convert(mappings), stateContext.props());
         simpleState.setResponseMessageProcessing(stateContext.responseMessageProcessing());
         return simpleState;
     }

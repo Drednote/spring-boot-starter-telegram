@@ -14,6 +14,7 @@ import io.github.drednote.telegram.handler.scenario.data.SimpleState;
 import io.github.drednote.telegram.handler.scenario.data.Transition;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,8 +32,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock);
-        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, new HashMap<>());
+        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock, new HashMap<>());
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 
@@ -47,8 +48,8 @@ class ScenarioBuilderTest {
         builder.forEach(mappings::add);
         SimpleState<String> state1 = new SimpleState<>("state1");
         SimpleState<String> state2Null = new SimpleState<>("state2");
-        SimpleState<String> state2 = new SimpleState<>("state2", mappings);
-        SimpleState<String> state3 = new SimpleState<>("state3", mappings);
+        SimpleState<String> state2 = new SimpleState<>("state2", mappings, new HashMap<>());
+        SimpleState<String> state3 = new SimpleState<>("state3", mappings, new HashMap<>());
 
         // Проверка переходов из state1 в state2 и из state2 в state3
         assertEquals(1, result.get(state1).size());
@@ -83,8 +84,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData с одинаковым source
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock);
-        TransitionData<String> transition2 = new TransitionData<>("state1", "state2", actions, requestMock);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state2", actions, requestMock, new HashMap<>());
+        TransitionData<String> transition2 = new TransitionData<>("state1", "state2", actions, requestMock, new HashMap<>());
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 
@@ -104,8 +105,8 @@ class ScenarioBuilderTest {
         List<Action<String>> actions = Collections.singletonList(Mockito.mock(Action.class));
 
         // Создание TransitionData
-        TransitionData<String> transition1 = new TransitionData<>("state1", "state3", actions, requestMock);
-        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock2);
+        TransitionData<String> transition1 = new TransitionData<>("state1", "state3", actions, requestMock, new HashMap<>());
+        TransitionData<String> transition2 = new TransitionData<>("state2", "state3", actions, requestMock2, new HashMap<>());
 
         List<TransitionData<String>> transitionDataList = Arrays.asList(transition1, transition2);
 
@@ -120,9 +121,9 @@ class ScenarioBuilderTest {
         List<Transition<String>> transitions2 = result.get(new SimpleState<>("state2"));
 
         assertThat(transitions1).hasSize(1);
-        assertThat(transitions1.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings1));
+        assertThat(transitions1.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings1, new HashMap<>()));
 
         assertThat(transitions2).hasSize(1);
-        assertThat(transitions2.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings2));
+        assertThat(transitions2.get(0).getTarget()).isEqualTo(new SimpleState<>("state3", mappings2, new HashMap<>()));
     }
 }

@@ -6,7 +6,9 @@ import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.lang.Nullable;
 
 /**
@@ -27,6 +29,7 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioB
     protected S target;
     @Nullable
     protected TelegramRequest request;
+    protected Map<String, Object> props = new HashMap<>();
 
     /**
      * Constructs a SimpleScenarioBaseTransitionConfigurer with a ScenarioBuilder.
@@ -66,11 +69,19 @@ public abstract class SimpleScenarioBaseTransitionConfigurer<C extends ScenarioB
     }
 
     @Override
+    public C props(Map<String, Object> props) {
+        Assert.notNull(props, "Props");
+        this.props = props;
+        return (C) this;
+    }
+
+    @Override
     public ScenarioTransitionConfigurer<S> and() {
         Assert.required(source, "Source");
         Assert.required(target, "Target");
         Assert.required(request, "TelegramRequest");
-        TransitionData<S> transition = new TransitionData<>(source, target, actions, request);
+        Assert.required(props, "Props");
+        TransitionData<S> transition = new TransitionData<>(source, target, actions, request, props);
         beforeAnd(transition);
         builder.addTransition(transition);
         return new SimpleScenarioTransitionConfigurer<>(builder);
