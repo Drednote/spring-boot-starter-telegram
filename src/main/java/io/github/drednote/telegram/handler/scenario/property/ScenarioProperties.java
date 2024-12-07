@@ -32,6 +32,7 @@ public class ScenarioProperties {
         private TransitionType type = TransitionType.External;
         private String source;
         private String target;
+        private List<Node> graph = new ArrayList<>();
         /**
          * Only if type == Rollback.
          */
@@ -39,11 +40,20 @@ public class ScenarioProperties {
         private Rollback rollback;
 
         private Map<String, Object> props = new HashMap<>();
-        private List<Scenario> children = new ArrayList<>();
+        private Map<String, Scenario> steps = new HashMap<>();
 
         public enum TransitionType {
             Rollback, ResponseMessageProcessing, External
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Node {
+
+        private String id;
+        private List<Node> children = new ArrayList<>();
+
     }
 
     @Getter

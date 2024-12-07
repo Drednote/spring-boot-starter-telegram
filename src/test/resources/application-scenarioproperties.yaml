@@ -19,8 +19,13 @@ drednote:
                   value: telegram-settings_get
               - - text: change
                   value: telegram-settings_change
-          children:
-            - type: Rollback
+          graph:
+            - id: get
+              children:
+                - id: test
+          steps:
+            get:
+              type: Rollback
               request:
                 patterns: [telegram-settings_get]
                 requestTypes: [CALLBACK_QUERY]
@@ -34,6 +39,26 @@ drednote:
                 request:
                   patterns: [rollback]
                   requestTypes: [CALLBACK_QUERY]
+              props:
+                text: 'settings:'
+                keyboard:
+                  - - text: back
+                      value: rollback
+            test:
+              type: Rollback
+              request:
+                patterns: [ telegram-settings_test ]
+                requestTypes: [ CALLBACK_QUERY ]
+              action-references:
+                - "TestScenarioFactory#name3"
+              source: GET_TELEGRAM_SETTINGS
+              target: TEST_TELEGRAM_SETTINGS
+              rollback:
+                action-references:
+                  - "test_name"
+                request:
+                  patterns: [ rollback ]
+                  requestTypes: [ CALLBACK_QUERY ]
               props:
                 text: 'settings:'
                 keyboard:

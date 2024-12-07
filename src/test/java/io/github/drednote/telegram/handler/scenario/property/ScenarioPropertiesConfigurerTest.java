@@ -52,9 +52,10 @@ class ScenarioPropertiesConfigurerTest {
         ScenarioBuilder<Object> scenarioBuilder = new ScenarioBuilder<>();
         scenarioBuilder.setInitial(StateEnum.INITIAL);
         configurer.configure(scenarioBuilder);
+
         ScenarioData<Object> build = scenarioBuilder.build();
         assertThat(build).isNotNull();
-        assertThat(build.states()).hasSize(3);
+        assertThat(build.states()).hasSize(4);
         for (Entry<State<Object>, List<Transition<Object>>> entry : build.states().entrySet()) {
             if (entry.getKey().getId().equals(StateEnum.INITIAL)) {
                 assertThat(entry.getValue()).hasSize(1);

@@ -480,9 +480,6 @@ handle this, there is a component called **Response Processing**, which follows 
 - You can create any implementation of `TelegramResponse` for sending response
 - Any custom code can be written in `TelegramResponse`, but I strongly recommend using this
   interface only for sending a response to **Telegram**
-- If you pass {@link BotApiMethod} or {@link SendMediaBotMethod} in the constructor of this class,
-  the 'chatId' property will be automatically set (only if it is null). If you manually
-  set 'chatId', nothing happens
 
 ### Exception Handling
 

@@ -7,6 +7,7 @@ import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.scenario.Action;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Node;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Request;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Rollback;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Scenario;
@@ -46,18 +47,24 @@ public class ScenarioPropertiesConfigurer {
                     throw new IllegalArgumentException("First transition cannot be of 'Rollback' type");
                 }
                 TransitionData<S> transitionData = configureTransition(scenarioBuilder, scenario, null);
-                for (Scenario child : scenario.getChildren()) {
-                    doConfigure(scenarioBuilder, transitionData, child);
-                }
+                scenario.getGraph().forEach(node -> {
+                    doConfigure(scenarioBuilder, transitionData, scenario, node);
+                });
             });
         }
     }
 
-    public <S> void doConfigure(ScenarioBuilder<S> scenarioBuilder, TransitionData<S> parent, Scenario scenario) {
-        TransitionData<S> transitionData = configureTransition(scenarioBuilder, scenario, parent);
-        for (Scenario child : scenario.getChildren()) {
-            doConfigure(scenarioBuilder, transitionData, child);
+    private <S> void doConfigure(
+        ScenarioBuilder<S> scenarioBuilder, TransitionData<S> parent, Scenario scenario, Node node
+    ) {
+        Scenario child = scenario.getSteps().get(node.getId());
+        if (child == null) {
+            throw new IllegalArgumentException("Step '" + node.getId() + "' does not exist");
         }
+        TransitionData<S> transitionData = configureTransition(scenarioBuilder, child, parent);
+        node.getChildren().forEach(childNode -> {
+            doConfigure(scenarioBuilder, transitionData, scenario, childNode);
+        });
     }
 
     @NotNull
@@ -67,7 +74,7 @@ public class ScenarioPropertiesConfigurer {
         Request request = scenario.getRequest();
         Set<String> actionClassName = scenario.getActionReferences();
         String target = scenario.getTarget();
-        Object source = parent != null ? scenario.getSource(): scenarioBuilder.getInitial();
+        Object source = parent != null ? scenario.getSource() : scenarioBuilder.getInitial();
 
         Assert.required(target, "Target state");
         Assert.required(source, "Source state");
@@ -109,7 +116,8 @@ public class ScenarioPropertiesConfigurer {
             if (handlerMethod == null) {
                 throw new IllegalArgumentException("Action class name" + name + " not found");
             }
-            InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(handlerMethod, "ScenarioFactory");
+            InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(handlerMethod,
+                "ScenarioFactory");
             response.add(invocableHandlerMethod::invoke);
         }
         return response;
