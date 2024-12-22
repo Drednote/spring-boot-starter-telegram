@@ -142,13 +142,5 @@ public enum RequestType {
      *
      * @see Update#getPaidMediaPurchased()
      */
-    PAID_MEDIA_PURCHASED,
-    /**
-     * Bot was added in a chat
-     */
-    ENTERED_CHAT,
-    /**
-     * Bot was deleted from a chat
-     */
-    LEFT_CHAT
+    PAID_MEDIA_PURCHASED
 }
