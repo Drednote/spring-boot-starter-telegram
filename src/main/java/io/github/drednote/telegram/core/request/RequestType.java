@@ -142,5 +142,9 @@ public enum RequestType {
      *
      * @see Update#getPaidMediaPurchased()
      */
-    PAID_MEDIA_PURCHASED
+    PAID_MEDIA_PURCHASED,
+    /**
+     * Represents me a chat member updated update
+     */
+    MY_CHAT_MEMBER_UPDATED
 }
