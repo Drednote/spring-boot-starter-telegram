@@ -154,7 +154,7 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
             this.user = null;
             this.text = null;
             this.chat = update.getMyChatMember().getChat();
-            this.requestType = RequestType.CHAT_MEMBER_UPDATED;
+            this.requestType = RequestType.MY_CHAT_MEMBER_UPDATED;
         }
         // this condition is unreachable
         else {
