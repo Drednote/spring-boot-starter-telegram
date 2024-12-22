@@ -150,6 +150,11 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
             this.text = null;
             this.chat = null;
             this.requestType = RequestType.PAID_MEDIA_PURCHASED;
+        } else if(update.getMyChatMember() != null) {
+            this.user = null;
+            this.text = null;
+            this.chat = update.getMyChatMember().getChat();
+            this.requestType = "left".equals(update.getMyChatMember().getOldChatMember().getStatus()) ? RequestType.ENTERED_CHAT : RequestType.LEFT_CHAT;
         }
         // this condition is unreachable
         else {
