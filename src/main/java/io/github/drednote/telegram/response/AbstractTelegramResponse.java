@@ -36,4 +36,8 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
     public void setParseMode(ParseMode parseMode) {
         this.parseMode = parseMode;
     }
+
+    public ParseMode getParseMode() {
+        return parseMode;
+    }
 }
