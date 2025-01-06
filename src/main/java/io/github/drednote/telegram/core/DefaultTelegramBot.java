@@ -9,7 +9,6 @@ import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.handler.UpdateHandlerProperties;
 import io.github.drednote.telegram.response.AbstractTelegramResponse;
 import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
@@ -237,7 +236,7 @@ public class DefaultTelegramBot implements TelegramBot {
                 simpleMessageTelegramResponse.setMessageSource(messageSource);
             }
             if (response instanceof AbstractTelegramResponse abstractTelegramResponse) {
-                if (abstractTelegramResponse.getParseMode() == UpdateHandlerProperties.ParseMode.NO) {
+                if (abstractTelegramResponse.getParseMode() == null) {
                     abstractTelegramResponse.setParseMode(
                             telegramProperties.getUpdateHandler().getParseMode()
                     );
