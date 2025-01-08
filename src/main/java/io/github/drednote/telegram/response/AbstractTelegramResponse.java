@@ -2,6 +2,7 @@ package io.github.drednote.telegram.response;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandlerProperties.ParseMode;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -14,7 +15,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  */
 public abstract class AbstractTelegramResponse implements TelegramResponse {
 
-    protected ParseMode parseMode = ParseMode.NO;
+    @Nullable
+    protected ParseMode parseMode = null;
 
     /**
      * Sends a text message to the specified chat using the provided string
@@ -29,11 +31,18 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         TelegramClient absSender = request.getAbsSender();
         Long chatId = request.getChatId();
         SendMessage sendMessage = new SendMessage(chatId.toString(), string);
-        sendMessage.setParseMode(parseMode.getValue());
+        if (parseMode != null) {
+            sendMessage.setParseMode(parseMode.getValue());
+        }
         return absSender.execute(sendMessage);
     }
 
     public void setParseMode(ParseMode parseMode) {
         this.parseMode = parseMode;
+    }
+
+    @Nullable
+    public ParseMode getParseMode() {
+        return parseMode;
     }
 }
