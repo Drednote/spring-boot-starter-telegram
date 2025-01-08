@@ -236,8 +236,11 @@ public class DefaultTelegramBot implements TelegramBot {
                 simpleMessageTelegramResponse.setMessageSource(messageSource);
             }
             if (response instanceof AbstractTelegramResponse abstractTelegramResponse) {
-                abstractTelegramResponse.setParseMode(
-                    telegramProperties.getUpdateHandler().getParseMode());
+                if (abstractTelegramResponse.getParseMode() == null) {
+                    abstractTelegramResponse.setParseMode(
+                            telegramProperties.getUpdateHandler().getParseMode()
+                    );
+                }
             }
             response.process(request);
         }
