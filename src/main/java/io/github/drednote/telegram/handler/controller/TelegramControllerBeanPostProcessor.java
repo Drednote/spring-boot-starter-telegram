@@ -41,7 +41,7 @@ public class TelegramControllerBeanPostProcessor implements BeanPostProcessor {
    * identifies annotated methods and registers them using the {@link ControllerRegistrar}.
    */
   @Override
-  public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
+  public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName)
       throws BeansException {
     Class<?> targetClass = AopUtils.getTargetClass(bean);
     TelegramController telegramController = AnnotationUtils.findAnnotation(targetClass,

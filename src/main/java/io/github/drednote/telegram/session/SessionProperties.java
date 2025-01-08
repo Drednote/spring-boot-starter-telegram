@@ -108,9 +108,12 @@ public class SessionProperties {
     @RequiredArgsConstructor
     public static class ProxyUrl {
 
+        @NonNull
         private final String host;
         private final int port;
+        @Nullable
         private String userName;
+        @Nullable
         private char[] password;
     }
 

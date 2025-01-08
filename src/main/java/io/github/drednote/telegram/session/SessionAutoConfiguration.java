@@ -160,6 +160,7 @@ public class SessionAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public org.telegram.telegrambots.meta.generics.TelegramClient absSender(
         SessionProperties properties, TelegramProperties telegramProperties) {
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();

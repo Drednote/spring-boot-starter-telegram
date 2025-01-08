@@ -3,7 +3,7 @@ drednote:
     scenario:
       values:
         telegram-settings:
-          type: ResponseMessageProcessing
+          type: Response_message_processing
           request:
             patterns: [/telegramsettings]
             requestTypes: [MESSAGE]

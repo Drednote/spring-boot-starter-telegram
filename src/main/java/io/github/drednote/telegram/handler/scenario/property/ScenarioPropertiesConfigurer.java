@@ -43,7 +43,7 @@ public class ScenarioPropertiesConfigurer {
         if (values != null) {
             values.forEach((key, scenario) -> {
                 Assert.required(scenario, "Scenario");
-                if (scenario.getType() == TransitionType.Rollback) {
+                if (scenario.getType() == TransitionType.ROLLBACK) {
                     throw new IllegalArgumentException("First transition cannot be of 'Rollback' type");
                 }
                 TransitionData<S> transitionData = configureTransition(scenarioBuilder, scenario, null);
@@ -88,9 +88,9 @@ public class ScenarioPropertiesConfigurer {
             source, target, action, telegramRequest, scenario.getProps()
         );
 
-        if (scenario.getType() == TransitionType.ResponseMessageProcessing) {
+        if (scenario.getType() == TransitionType.RESPONSE_MESSAGE_PROCESSING) {
             transitionData.setResponseMessageProcessing(true);
-        } else if (scenario.getType() == TransitionType.Rollback) {
+        } else if (scenario.getType() == TransitionType.ROLLBACK) {
             Rollback rollback = firstNonNull(scenario.getRollback(), scenarioProperties.getDefaultRollback());
             if (parent == null || rollback == null) {
                 throw new IllegalArgumentException(
@@ -114,7 +114,7 @@ public class ScenarioPropertiesConfigurer {
         for (String name : actionReference) {
             HandlerMethod handlerMethod = scenarioFactoryResolver.resolveAction(name);
             if (handlerMethod == null) {
-                throw new IllegalArgumentException("Action class name" + name + " not found");
+                throw new IllegalArgumentException("Action class name '" + name + "' not found");
             }
             InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(handlerMethod,
                 "ScenarioFactory");

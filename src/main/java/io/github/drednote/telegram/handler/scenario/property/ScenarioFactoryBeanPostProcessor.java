@@ -32,7 +32,7 @@ public class ScenarioFactoryBeanPostProcessor implements BeanPostProcessor {
      * methods and registers them using the {@link ScenarioFactoryContainer}.
      */
     @Override
-    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName)
+    public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName)
         throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
         TelegramScenario scenarioFactory = AnnotationUtils.findAnnotation(targetClass, TelegramScenario.class);

@@ -3,6 +3,7 @@ package io.github.drednote.telegram.handler.scenario.property;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
@@ -22,8 +23,8 @@ public class ScenarioFactoryContainer implements ScenarioFactoryResolver {
         HandlerMethod existingHandler = mappingLookup.get(name);
         if (existingHandler != null) {
             throw new IllegalStateException(
-                "\nAmbiguous mapping. Cannot map '" + handlerMethod.getBean() + "' method \n" +
-                handlerMethod + "\nto " + name + ": There is already '" +
+                "\nAmbiguous mapping. Cannot map '" + bean + "' method \n" +
+                method + "\nto " + name + ": There is already '" +
                 existingHandler.getBean() + "' bean method\n" + existingHandler + " mapped.");
         } else {
             mappingLookup.put(name, handlerMethod);
@@ -38,7 +39,7 @@ public class ScenarioFactoryContainer implements ScenarioFactoryResolver {
             if (action.fullName()) {
                 name = handlerMethod.toString();
             } else {
-                name = bean.getClass().getSimpleName() + "#" + method.getName();
+                name = AopProxyUtils.ultimateTargetClass(bean).getSimpleName() + "#" + method.getName();
             }
         } else {
             name = action.value();
