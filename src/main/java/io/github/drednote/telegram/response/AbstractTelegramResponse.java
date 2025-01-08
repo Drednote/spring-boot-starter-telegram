@@ -31,8 +31,9 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         TelegramClient absSender = request.getAbsSender();
         Long chatId = request.getChatId();
         SendMessage sendMessage = new SendMessage(chatId.toString(), string);
-        if (parseMode == null) parseMode = ParseMode.NO;
-        sendMessage.setParseMode(parseMode.getValue());
+        if (parseMode != null) {
+            sendMessage.setParseMode(parseMode.getValue());
+        }
         return absSender.execute(sendMessage);
     }
 
