@@ -120,6 +120,10 @@ dependencies {
 
 ## Usage
 
+### Examples
+
+Code examples you can find in the example's folder.
+
 ### Quick Start
 
 Add to `application.yml` your bot token and specify the name of bot
@@ -662,7 +666,7 @@ All settings tables contain 4 columns:
 
 | Name          | Description                               | Default Value                                            | Required |
 |---------------|-------------------------------------------|----------------------------------------------------------|----------|
-| enabled       | Enable the bot.                           | true                                                     | false    |
+| enabled       | Enable the bot.                           | true                                                     | true     |
 | name          | The name of a bot. Example: TheBestBot.   |                                                          | false    |
 | token*        | The token of a bot.                       | <b>must be set by user</b>                               | true     |
 | defaultLocale | The default locale for sending responses. | -                                                        | false    |
@@ -684,6 +688,7 @@ All settings tables contain 4 columns:
 | proxyUrl                | The proxy url in format `host:port` or if auth needed `host:port:username:password`.                                                 | -                                                 | false    |
 | cacheLiveDuration       | Cache lifetime used in `DefaultTelegramBotSession`                                                                                   | 1                                                 | true     |
 | cacheLiveDurationUnit   | The `TimeUnit` which will be applied to `cacheLiveDuration`                                                                          | hours                                             | true     |
+| autoSessionStart        | Automatically start session when spring context loaded.                                                                              | true                                              | true     |
 | longPolling             | LongPolling properties.                                                                                                              | [LongPolling properties](#Longpolling-properties) | false    |
 
 #### LongPolling properties
@@ -703,7 +708,7 @@ Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</
 | controllerEnabled              | Enabled controller update handling.                                                                                                  | true          | true     |
 | scenarioEnabled                | Enabled scenario update handling.                                                                                                    | true          | true     |
 | setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response.                                   | true          | true     |
-| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit.                                   | 0             | false    |
+| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit.                                   | 0             | true     |
 | serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.                                              | true          | true     |
 | enabledWarningForScenario      | Throws an error with a warning about using scenario safe only when getMaxThreadsPerUser is set to 1, if value set to different value | true          | true     |
 

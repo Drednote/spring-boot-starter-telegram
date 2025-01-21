@@ -36,20 +36,19 @@ public class SessionProperties {
     @NonNull
     private int consumeMaxThreads = 10;
     /**
-     * Limits the number of updates to be store in memory queue for update processing. 0 - no limit.
-     * Defaults to (consumeMaxThreads * 1.5).
+     * Limits the number of updates to be store in memory queue for update processing. 0 - no limit. Defaults to
+     * (consumeMaxThreads * 1.5).
      */
     @NonNull
     private int maxMessagesInQueue = 15;
     /**
-     * Max number of threads used for consumption messages from a telegram for concrete user. 0 - no
-     * restrictions.
+     * Max number of threads used for consumption messages from a telegram for concrete user. 0 - no restrictions.
      */
     @NonNull
     private int maxThreadsPerUser = 1;
     /**
-     * Cache lifetime used in {@link DefaultTelegramUpdateProcessor}. This parameter needed just to
-     * delete staled buckets to free up memory
+     * Cache lifetime used in {@link DefaultTelegramUpdateProcessor}. This parameter needed just to delete staled
+     * buckets to free up memory
      *
      * @see DefaultTelegramUpdateProcessor
      */
@@ -82,6 +81,12 @@ public class SessionProperties {
      */
     @NonNull
     private ProxyType proxyType = ProxyType.NO_PROXY;
+    /**
+     * Automatically start session when spring context loaded. If you set this parameter to false, you will be needed to
+     * manually call the {@link TelegramBotSession#start()} to start the session and start to consume messages from
+     * the Telegram.
+     */
+    private boolean autoSessionStart = true;
 
     /**
      * Proxy url in format host:port or if auth needed host:port:username:password.
@@ -127,17 +132,16 @@ public class SessionProperties {
         @NonNull
         private int updateLimit = 100;
         /**
-         * Timeout in seconds for long polling. Should be positive, short polling (0) should be used
-         * for testing purposes only
+         * Timeout in seconds for long polling. Should be positive, short polling (0) should be used for testing
+         * purposes only
          */
         @NonNull
         private int updateTimeout = 50;
         /**
-         * A JSON-serialized list of the update types you want your bot to receive. For example,
-         * specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of
-         * these types. See {@link RequestType} for a complete list of available update types.
-         * Specify an empty list to receive all update types except chat_member (default). If not
-         * specified, the previous setting will be used
+         * A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”,
+         * “edited_channel_post”, “callback_query”] to only receive updates of these types. See {@link RequestType} for
+         * a complete list of available update types. Specify an empty list to receive all update types except
+         * chat_member (default). If not specified, the previous setting will be used
          */
         @Nullable
         private List<String> allowedUpdates;

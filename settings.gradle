@@ -1,1 +1,3 @@
 rootProject.name = 'spring-boot-starter-telegram'
+
+include 'examples:get-started', 'examples:scenario-from-file', 'examples:scenario', 'examples:controllers'

@@ -1,0 +1,3 @@
+drednote:
+  telegram:
+    token: ${BOT_TOKEN}

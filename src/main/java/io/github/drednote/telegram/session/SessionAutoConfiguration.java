@@ -23,8 +23,11 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.Builder;
@@ -67,10 +70,8 @@ public class SessionAutoConfiguration {
         try {
             Class<? extends BackOff> backOffClazz = properties.getBackOffStrategy();
             BackOff backOff = backOffClazz.getDeclaredConstructor().newInstance();
-            LongPollingSession session = new LongPollingSession(
+            return new LongPollingSession(
                 telegramClient, properties, telegramProperties, backOff, processor);
-            session.start();
-            return session;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new BeanCreationException("Cannot initiate BackOff", e);
@@ -94,6 +95,16 @@ public class SessionAutoConfiguration {
     @ConditionalOnMissingBean
     public TelegramBotSession webhooksTelegramBotSession() {
         throw new UnsupportedOperationException("Webhooks not implemented yet");
+    }
+
+    @EventListener(value = ApplicationReadyEvent.class)
+    public void onStartUp(ApplicationReadyEvent event) {
+        ConfigurableApplicationContext context = event.getApplicationContext();
+        SessionProperties properties = context.getBean(SessionProperties.class);
+        if (properties.isAutoSessionStart()) {
+            TelegramBotSession session = context.getBean(TelegramBotSession.class);
+            session.start();
+        }
     }
 
     @Bean
