@@ -4,6 +4,7 @@ import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.Action;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +39,7 @@ public class SimpleScenarioTransitionConfigurer<S> implements ScenarioTransition
         private final S target;
         private final List<Action<S>> actions;
         private final TelegramRequest request;
+        private final Map<String, Object> props;
         private boolean responseMessageProcessing = false;
     }
 }

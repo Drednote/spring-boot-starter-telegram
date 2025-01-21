@@ -13,14 +13,22 @@ import org.springframework.web.method.HandlerMethod;
  */
 public class InvocableHandlerMethod extends HandlerMethod {
 
+  private final String beanType;
+
   /**
    * Creates a new instance of the {@code InvocableHandlerMethod} class with the given handler
    * method.
    *
    * @param handlerMethod the handler method to invoke, not null
    */
+  public InvocableHandlerMethod(HandlerMethod handlerMethod, String beanType) {
+    super(handlerMethod);
+      this.beanType = beanType;
+  }
+
   public InvocableHandlerMethod(HandlerMethod handlerMethod) {
     super(handlerMethod);
+    this.beanType = "TelegramController";
   }
 
   /**
@@ -62,8 +70,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
     Class<?> targetBeanClass = targetBean.getClass();
     if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
       String text = "The mapped handler method class '" + methodDeclaringClass.getName() +
-          "' is not an instance of the actual TelegramController bean class '" +
-          targetBeanClass.getName() + "'. If the TelegramController requires proxying " +
+          "' is not an instance of the actual " + beanType + " bean class '" +
+          targetBeanClass.getName() + "'. If the " + beanType + " requires proxying " +
           "(e.g. due to @Transactional), please use class-based proxying.";
       throw new IllegalStateException(formatInvokeError(text, args));
     }
@@ -72,6 +80,6 @@ public class InvocableHandlerMethod extends HandlerMethod {
   @NonNull
   @Override
   protected String formatInvokeError(String text, Object[] args) {
-    return super.formatInvokeError(text, args).replace("Controller", "TelegramController");
+    return super.formatInvokeError(text, args).replace("Controller", beanType);
   }
 }

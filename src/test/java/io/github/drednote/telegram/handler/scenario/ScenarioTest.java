@@ -46,12 +46,12 @@ class ScenarioTest {
         SimpleState<String> initialState = new SimpleState<>("1");
         nextState2 = new SimpleState<>("2");
         SimpleState<String> nextState3 = new SimpleState<>("3",
-            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())));
+            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())), new HashMap<>());
         SimpleState<String> nextState4 = new SimpleState<>("4",
-            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())));
+            Set.of(new UpdateRequestMapping("**", RequestType.MESSAGE, Set.of())), new HashMap<>());
 
         SimpleTransition<String> transitionFrom1To2 = new SimpleTransition<>(initialState,
-            new SimpleState<>("2", Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of()))));
+            new SimpleState<>("2", Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), new HashMap<>()));
         states.put(initialState, List.of(
             transitionFrom1To2, new SimpleTransition<>(initialState, nextState3)));
         states.put(nextState2, List.of(new SimpleTransition<>(nextState2, nextState4)));
@@ -80,7 +80,7 @@ class ScenarioTest {
         String id = "2";
         adapter.save(new SimpleScenarioContext<>(id,
             new SimpleStateContext<>(nextState2.getId(),
-                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false)));
+                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false, new HashMap<>())));
 
         Scenario<String> scenario = factory.create(id);
         persister.restore(scenario, id);

@@ -63,7 +63,6 @@ public class TelegramAutoConfiguration {
     @AutoConfiguration
     public static class BotConfig {
 
-        private static final String TELEGRAM_BOT = "TelegramBot";
 
         /**
          * Configures a bean for the Telegram bot instance.

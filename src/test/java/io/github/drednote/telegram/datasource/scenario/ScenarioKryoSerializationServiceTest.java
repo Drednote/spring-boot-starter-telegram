@@ -6,6 +6,9 @@ import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -21,9 +24,9 @@ class ScenarioKryoSerializationServiceTest {
     @Test
     void shouldCorrectSerializeAndDeserialize() throws IOException {
         SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
-            Set.of(), false);
+            Set.of(), false, new HashMap<>());
         SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
-            Set.of(), false);
+            Set.of(), false, Map.of("1", BigDecimal.ONE));
         ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
 
         byte[] bytes = serializationService.serialize(scenario);

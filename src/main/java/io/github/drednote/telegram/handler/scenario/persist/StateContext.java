@@ -2,6 +2,7 @@ package io.github.drednote.telegram.handler.scenario.persist;
 
 import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.handler.scenario.data.State;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -18,4 +19,6 @@ public interface StateContext<S> {
     boolean responseMessageProcessing();
 
     Set<? extends UpdateRequestMappingAccessor> updateRequestMappings();
+
+    Map<String, Object> props();
 }

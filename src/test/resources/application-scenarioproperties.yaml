@@ -1,0 +1,66 @@
+drednote:
+  telegram:
+    scenario:
+      values:
+        telegram-settings:
+          type: Response_message_processing
+          request:
+            patterns: [/telegramsettings]
+            requestTypes: [MESSAGE]
+            messageTypes: [COMMAND]
+          action-references:
+            - "io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurerTest$TestScenarioFactory#name(ActionContext)"
+          #source: will be automatically put here because of this source is Initial
+          target: TELEGRAM_CHOICE
+          props:
+            text: 'choose:'
+            keyboard:
+              - - text: get
+                  value: telegram-settings_get
+              - - text: change
+                  value: telegram-settings_change
+          graph:
+            - id: get
+              children:
+                - id: test
+          steps:
+            get:
+              type: Rollback
+              request:
+                patterns: [telegram-settings_get]
+                requestTypes: [CALLBACK_QUERY]
+              action-references:
+                - "TestScenarioFactory#name3"
+              source: TELEGRAM_CHOICE
+              target: GET_TELEGRAM_SETTINGS
+              rollback:
+                action-references:
+                  - "test_name"
+                request:
+                  patterns: [rollback]
+                  requestTypes: [CALLBACK_QUERY]
+              props:
+                text: 'settings:'
+                keyboard:
+                  - - text: back
+                      value: rollback
+            test:
+              type: Rollback
+              request:
+                patterns: [ telegram-settings_test ]
+                requestTypes: [ CALLBACK_QUERY ]
+              action-references:
+                - "TestScenarioFactory#name3"
+              source: GET_TELEGRAM_SETTINGS
+              target: TEST_TELEGRAM_SETTINGS
+              rollback:
+                action-references:
+                  - "test_name"
+                request:
+                  patterns: [ rollback ]
+                  requestTypes: [ CALLBACK_QUERY ]
+              props:
+                text: 'settings:'
+                keyboard:
+                  - - text: back
+                      value: rollback

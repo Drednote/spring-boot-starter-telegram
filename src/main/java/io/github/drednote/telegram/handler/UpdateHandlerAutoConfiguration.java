@@ -13,6 +13,7 @@ import io.github.drednote.telegram.handler.controller.TelegramControllerBeanPost
 import io.github.drednote.telegram.handler.controller.TelegramControllerContainer;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.scenario.SimpleScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.SimpleScenarioIdResolver;
@@ -25,6 +26,10 @@ import io.github.drednote.telegram.handler.scenario.configurer.transition.Simple
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioPersister;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryBeanPostProcessor;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryContainer;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryResolver;
+import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurer;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.utils.FieldProvider;
 import org.springframework.beans.factory.BeanCreationException;
@@ -38,7 +43,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@EnableConfigurationProperties(UpdateHandlerProperties.class)
+@EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class UpdateHandlerAutoConfiguration {
 
@@ -57,7 +62,7 @@ public class UpdateHandlerAutoConfiguration {
                 that it implies sequential processing within one user.
                 Consider disable the scenario handling, \
                 or set drednote.telegram.session.MaxThreadsPerUser to 1.
-
+                
                 You can disable this warning by setting drednote.telegram.update-handler.enabledWarningForScenario to false
                 
                 """;
@@ -84,14 +89,28 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
+        public ScenarioFactoryBeanPostProcessor scenarioFactoryBeanPostProcessor(ScenarioFactoryContainer container) {
+            return new ScenarioFactoryBeanPostProcessor(container);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public ScenarioFactoryContainer scenarioFactoryContainer() {
+            return new ScenarioFactoryContainer();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
         public <S> ScenarioUpdateHandlerPopular<S> scenarioUpdateHandlerPopular(
-            ScenarioConfigurerAdapter<S> adapter,
-            @Autowired(required = false) ScenarioIdRepositoryAdapter scenarioIdAdapter
+            ScenarioConfigurerAdapter<S> adapter, ScenarioProperties scenarioProperties,
+            @Autowired(required = false) ScenarioIdRepositoryAdapter scenarioIdAdapter,
+            ScenarioFactoryResolver scenarioFactoryResolver
         ) {
             ScenarioBuilder<S> builder = new ScenarioBuilder<>();
             adapter.onConfigure(new SimpleScenarioStateConfigurer<>(builder));
             adapter.onConfigure(new SimpleScenarioConfigConfigurer<>(builder));
             adapter.onConfigure(new SimpleScenarioTransitionConfigurer<>(builder));
+            new ScenarioPropertiesConfigurer(scenarioProperties, scenarioFactoryResolver).configure(builder);
             ScenarioData<S> data = builder.build();
 
             ScenarioIdResolver resolver = data.resolver() == null

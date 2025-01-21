@@ -13,6 +13,7 @@ import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 import io.github.drednote.telegram.handler.scenario.persist.StateContext;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.lang.NonNull;
@@ -56,6 +57,7 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
                 kryo.writeClassAndObject(output, mapping.getRequestType());
                 kryo.writeClassAndObject(output, new HashSet<>(mapping.getMessageTypes()));
             });
+            kryo.writeClassAndObject(output, new HashMap<>(state.props()));
         }
 
         @Override
@@ -77,7 +79,8 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
                 Set<MessageType> messageTypes = (Set<MessageType>) kryo.readClassAndObject(input);
                 mappings.add(new UpdateRequestMapping(pattern, requestType, messageTypes));
             }
-            return new SimpleStateContext<>(state, mappings, responseMessageProcessing);
+            HashMap<String, Object> props = (HashMap<String, Object>) kryo.readClassAndObject(input);
+            return new SimpleStateContext<>(state, mappings, responseMessageProcessing, props);
         }
     }
 }

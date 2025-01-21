@@ -41,4 +41,6 @@ public interface ActionContext<S> {
      * @return a map of template variable names to their corresponding values
      */
     Map<String, String> getTemplateVariables();
+
+    Map<String, Object> getProps();
 }

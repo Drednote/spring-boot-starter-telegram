@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 
@@ -26,6 +27,7 @@ public class ScenarioBuilder<S> {
 
     @Nullable
     @Setter
+    @Getter
     private S initial;
     @Nullable
     @Setter
@@ -92,6 +94,7 @@ public class ScenarioBuilder<S> {
         target.setActions(transition.getActions());
         target.setMappings(mappings);
         target.setResponseMessageProcessing(transition.isResponseMessageProcessing());
+        target.setProps(transition.getProps());
     }
 
     public record ScenarioData<S>(

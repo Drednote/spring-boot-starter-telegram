@@ -15,6 +15,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 @Configuration
 @ConfigurationProperties("drednote.telegram.update-handler")
@@ -78,6 +79,7 @@ public class UpdateHandlerProperties {
         MARKDOWN_V2("MarkdownV2"),
         HTML("html");
 
+        @Nullable
         private final String value;
     }
 }

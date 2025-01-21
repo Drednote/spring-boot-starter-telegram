@@ -19,5 +19,5 @@ public interface Action<S> {
      * @return an optional result of the action execution, or null if there is no result
      */
     @Nullable
-    Object execute(ActionContext<S> context);
+    Object execute(ActionContext<S> context) throws Exception;
 }

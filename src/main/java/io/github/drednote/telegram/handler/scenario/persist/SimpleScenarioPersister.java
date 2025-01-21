@@ -39,7 +39,7 @@ public class SimpleScenarioPersister<S> implements ScenarioPersister<S> {
     private @NonNull StateContext<S> convertToStateContext(State<S> state) {
         Set<? extends UpdateRequestMappingAccessor> requestMappings = state.getMappings();
         return new SimpleStateContext<>(
-            state.getId(), requestMappings, state.isResponseMessageProcessing()
+            state.getId(), requestMappings, state.isResponseMessageProcessing(), state.getProps()
         );
     }
 }
