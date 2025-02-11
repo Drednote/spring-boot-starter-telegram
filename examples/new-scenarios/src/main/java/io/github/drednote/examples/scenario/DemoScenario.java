@@ -27,6 +27,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .asFinal()
                 .state("SCENARIO_1_ERROR")
                 .execute(ctx -> System.out.println("11"))
+                .on(ctx -> true)
                 .transitionTo("SCENARIO_1_START")
                 .build();
     }

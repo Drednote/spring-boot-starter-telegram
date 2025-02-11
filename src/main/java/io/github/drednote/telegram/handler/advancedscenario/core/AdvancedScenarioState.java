@@ -96,6 +96,9 @@ public class AdvancedScenarioState {
         }
 
         public AdvancedScenarioStateBuilder transitionTo(String nextState) {
+            if (condition == null) {
+                throw new IllegalStateException("Condition must be specified before transition.");
+            }
             state.transitions.put(condition, nextState);
             this.transitionState = nextState;
             return this;
