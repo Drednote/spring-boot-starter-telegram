@@ -8,15 +8,10 @@ import io.github.drednote.telegram.filter.pre.AdvancedScenarioUpdateHandlerPopul
 import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
-import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
-import io.github.drednote.telegram.handler.controller.ControllerRegistrar;
-import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
-import io.github.drednote.telegram.handler.controller.HandlerMethodPopular;
-import io.github.drednote.telegram.handler.controller.TelegramControllerBeanPostProcessor;
-import io.github.drednote.telegram.handler.controller.TelegramControllerContainer;
+import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.controller.*;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties;
 import io.github.drednote.telegram.handler.scenario.SimpleScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.SimpleScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
@@ -28,10 +23,7 @@ import io.github.drednote.telegram.handler.scenario.configurer.transition.Simple
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioPersister;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryBeanPostProcessor;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryContainer;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryResolver;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurer;
+import io.github.drednote.telegram.handler.scenario.property.*;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.utils.FieldProvider;
 import org.springframework.beans.factory.BeanCreationException;
@@ -43,8 +35,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Arrays;
 
 @AutoConfiguration
 @EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
@@ -82,6 +72,12 @@ public class UpdateHandlerAutoConfiguration {
             matchIfMissing = true
     )
     public static class AdvancedScenarioAutoConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
+            return new AdvancedScenarioUpdateHandler();
+        }
 
         @Bean
         @ConditionalOnMissingBean
