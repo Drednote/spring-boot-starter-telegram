@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AdvancedScenarioManager {
-    private final Map<String, AdvancedScenarioMainClass> scenarios = new HashMap<>();
+    private final Map<String, AdvancedScenario> scenarios = new HashMap<>();
     @Getter
     private String currentScenarioName;
 
     public AdvancedScenarioManager() {}
 
-    public void addScenario(String name, AdvancedScenarioMainClass scenario) {
+    public void addScenario(String name, AdvancedScenario scenario) {
         scenarios.put(name, scenario);
     }
 
@@ -23,13 +23,13 @@ public class AdvancedScenarioManager {
         this.currentScenarioName = scenarioName;
     }
 
-    public AdvancedScenarioMainClass getCurrentScenario() {
+    public AdvancedScenario getCurrentScenario() {
         return scenarios.get(currentScenarioName);
     }
 
     public void process(UserScenarioContext context) {
         while (!context.isEnd) {
-            AdvancedScenarioMainClass currentScenario = getCurrentScenario();
+            AdvancedScenario currentScenario = getCurrentScenario();
             if (currentScenario == null) {
                 throw new RuntimeException("Current scenario not found: " + currentScenarioName);
             }

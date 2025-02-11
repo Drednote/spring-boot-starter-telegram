@@ -3,6 +3,7 @@ package io.github.drednote.telegram.core.request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
@@ -42,6 +43,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    public AdvancedScenarioManager getAdvancedScenarioManager() {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
     public TelegramResponse getResponse() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
@@ -73,6 +79,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     public void setScenario(@Nullable Scenario<?> scenario) {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
+    public void setAdvancedScenarioManager(AdvancedScenarioManager advancedScenarioManager) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 

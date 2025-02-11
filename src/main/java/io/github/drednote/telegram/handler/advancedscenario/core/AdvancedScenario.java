@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AdvancedScenarioMainClass {
+public class AdvancedScenario {
     private final String startStateName;
     @Getter
     private Map<String, AdvancedScenarioState> states = new HashMap<>();
@@ -17,11 +17,11 @@ public class AdvancedScenarioMainClass {
     @Getter
     private String globalErrorTransitionState;
 
-    public static AdvancedScenarioClassBuilder create(String startStateName) {
-        return new AdvancedScenarioClassBuilder(startStateName);
+    public static AdvancedScenarioBuilder create(String startStateName) {
+        return new AdvancedScenarioBuilder(startStateName);
     }
 
-    public AdvancedScenarioMainClass(String startStateName, Map<String, AdvancedScenarioState> states) {
+    public AdvancedScenario(String startStateName, Map<String, AdvancedScenarioState> states) {
         this.startStateName = startStateName;
         this.states = states;
         this.currentState = startStateName; // Begin from the start's state
@@ -68,18 +68,18 @@ public class AdvancedScenarioMainClass {
         }
     }
 
-    public static class AdvancedScenarioClassBuilder {
-        private final AdvancedScenarioMainClass scenario;
+    public static class AdvancedScenarioBuilder {
+        private final AdvancedScenario scenario;
 
-        public AdvancedScenarioClassBuilder(String startStateName) {
-            this.scenario = new AdvancedScenarioMainClass(startStateName, new HashMap<>());
+        public AdvancedScenarioBuilder(String startStateName) {
+            this.scenario = new AdvancedScenario(startStateName, new HashMap<>());
         }
 
         public AdvancedScenarioState.AdvancedScenarioStateBuilder state(String name) {
             return new AdvancedScenarioState.AdvancedScenarioStateBuilder(name, scenario);
         }
 
-        public AdvancedScenarioClassBuilder globalErrorTransitionTo(String globalErrorState) {
+        public AdvancedScenarioBuilder globalErrorTransitionTo(String globalErrorState) {
             scenario.setGlobalErrorTransitionState(globalErrorState);
             return this;
         }

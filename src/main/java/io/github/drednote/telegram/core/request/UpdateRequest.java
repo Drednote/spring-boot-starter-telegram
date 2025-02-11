@@ -10,6 +10,8 @@ import io.github.drednote.telegram.filter.post.PostUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
 import io.github.drednote.telegram.handler.UpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
 import io.github.drednote.telegram.handler.controller.ControllerUpdateHandler;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
@@ -164,6 +166,16 @@ public interface UpdateRequest {
      */
     @Nullable
     Scenario<?> getScenario();
+
+    /**
+     * Returns the advanced scenario manager associated with the request
+     *
+     * @return the advanced scenario manager, or null if no scenario belongs to given chat
+     * @see AdvancedScenarioUpdateHandler
+     * @see !!!!!!! ScenarioConfigurerAdapter TODO: FIX!!!!!!!!!!
+     */
+    @Nullable
+    AdvancedScenarioManager getAdvancedScenarioManager();
 
     /**
      * Returns the response that should be sent to Telegram

@@ -3,13 +3,16 @@ package io.github.drednote.telegram.core.request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
@@ -38,6 +41,9 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     @Nullable
     private Scenario<?> scenario;
 
+    @Nullable
+    private AdvancedScenarioManager advancedScenarioManager;
+
     @Setter
     @Nullable
     private TelegramResponse response;
@@ -58,7 +64,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
      * @param properties the Telegram properties.
      */
     public DefaultUpdateRequest(
-        Update update, TelegramClient absSender, TelegramProperties properties, ObjectMapper objectMapper
+            Update update, TelegramClient absSender, TelegramProperties properties, ObjectMapper objectMapper
     ) {
         super(update);
         Assert.required(absSender, "AbsSender");
@@ -87,6 +93,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
         this.objectMapper = request.getObjectMapper();
         this.error = request.getError();
         this.permission = request.getPermission();
+        this.advancedScenarioManager = request.getAdvancedScenarioManager();
     }
 
     @Override
@@ -98,6 +105,13 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     public void setScenario(@Nullable Scenario<?> scenario) {
         if (this.scenario == null) {
             this.scenario = scenario;
+        }
+    }
+
+    @Override
+    public void setAdvancedScenarioManager(@Nullable AdvancedScenarioManager advancedScenarioManager) {
+        if (this.advancedScenarioManager == null) {
+            this.advancedScenarioManager = advancedScenarioManager;
         }
     }
 
@@ -119,4 +133,5 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     public void addResponseFromTelegram(Serializable response) {
         this.responseFromTelegram.add(response);
     }
+
 }

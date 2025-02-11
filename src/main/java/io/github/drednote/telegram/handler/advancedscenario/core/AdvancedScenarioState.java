@@ -71,9 +71,9 @@ public class AdvancedScenarioState {
         private final AdvancedScenarioState state;
         private Condition condition;
         private String transitionState;
-        private AdvancedScenarioMainClass advancedScenarioClass;
+        private AdvancedScenario advancedScenarioClass;
 
-        public AdvancedScenarioStateBuilder(String name, AdvancedScenarioMainClass advancedScenarioClass) {
+        public AdvancedScenarioStateBuilder(String name, AdvancedScenario advancedScenarioClass) {
             this.name = name;
             this.states = advancedScenarioClass.getStates();
             this.advancedScenarioClass = advancedScenarioClass;
@@ -96,9 +96,6 @@ public class AdvancedScenarioState {
         }
 
         public AdvancedScenarioStateBuilder transitionTo(String nextState) {
-            if (condition == null) {
-                throw new IllegalStateException("Condition must be specified before transition.");
-            }
             state.transitions.put(condition, nextState);
             this.transitionState = nextState;
             return this;
@@ -145,7 +142,7 @@ public class AdvancedScenarioState {
         }
 
 
-        public AdvancedScenarioMainClass build() {
+        public AdvancedScenario build() {
             return advancedScenarioClass;
         }
     }
