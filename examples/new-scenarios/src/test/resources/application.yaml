@@ -1,0 +1,5 @@
+drednote:
+  telegram:
+    token: test
+    session:
+      auto-session-start: false

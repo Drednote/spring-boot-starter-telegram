@@ -1,0 +1,9 @@
+spring:
+  main:
+    web-application-type: none
+  application:
+    name: assistant-bot
+
+drednote:
+  telegram:
+    token: ${BOT_TOKEN}
