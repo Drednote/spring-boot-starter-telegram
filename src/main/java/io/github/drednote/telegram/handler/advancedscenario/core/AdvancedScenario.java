@@ -43,7 +43,7 @@ public class AdvancedScenario {
         return currentStateObj.getConditions();
     }
 
-    public void process(UserScenarioContext context) {
+    public String process(UserScenarioContext context) {
         while (!context.isEnd) {
             AdvancedScenarioState state = states.get(currentState);
             if (state == null) {
@@ -67,6 +67,7 @@ public class AdvancedScenario {
                 }
             }
         }
+        return currentState;
     }
 
     public static class AdvancedScenarioBuilder {

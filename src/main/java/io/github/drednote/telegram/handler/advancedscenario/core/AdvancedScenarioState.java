@@ -10,13 +10,16 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class AdvancedScenarioState {
     @Getter
 
-    private List<TelegramRequest> transitions = new ArrayList<>();
+    private List<TelegramRequest> conditiones = new ArrayList<>();
     private String defaultTransitionState;
     @Getter
     @Setter
@@ -34,7 +37,7 @@ public class AdvancedScenarioState {
     }
 
     public List<TelegramRequest> getConditions() {
-        return transitions;
+        return conditiones;
     }
 
     public boolean isFinal() {
@@ -48,7 +51,7 @@ public class AdvancedScenarioState {
     public String execute(UserScenarioContext context) {
         try {
             if (executeAction != null) {
-                executeAction.execute(context);
+                context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
             }
             return defaultTransitionState;
         } catch (Exception e) {
@@ -96,7 +99,7 @@ public class AdvancedScenarioState {
                 throw new IllegalStateException("Condition must be specified before transition.");
             }
             state.currentStateName = nextState;
-            state.transitions.addAll(conditions);
+            state.conditiones.addAll(conditions);
             this.transitionState = nextState;
             state.defaultTransitionState = nextState;
             return this;

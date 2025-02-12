@@ -2,10 +2,11 @@ package io.github.drednote.telegram.handler.advancedscenario;
 
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.core.request.*;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioState;
 import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
@@ -13,11 +14,11 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @BetaApi
 @Slf4j
@@ -37,24 +38,16 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
             Optional<IAdvancedScenarioEntity> advancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
             UserScenarioContext context = new UserScenarioContext(request, advancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null));
 
-            String scenarioName = advancedScenarioEntity.map(IAdvancedScenarioEntity::getScenarioName).orElse(null);
-
-            if (scenarioName != null) {
-                request.getAdvancedScenarioManager().setCurrentScenario(scenarioName).process(context);
-            }
-            @NotNull List<UpdateRequestMapping> handlerMethods = request.getAdvancedScenarioManager().getActiveHandlers().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList();
-            for (UpdateRequestMapping handlerMethod : handlerMethods) {
-                if (handlerMethod.matches(request)) {
-                    ResponseSetter.setResponse(request, SendMessage.builder().chatId(request.getChatId()).text("handlerMethod: " + handlerMethod).build());
-
+            @NotNull List<AdvancedScenario> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
+            for (AdvancedScenario advancedActiveScenario : advancedActiveScenarios) {
+                for (UpdateRequestMapping handlerMethod : advancedActiveScenario.getActiveConditions().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList()) {
+                    if (handlerMethod.matches(request)) {
+                        advancedActiveScenario.process(context);
+                    }
                 }
             }
-          /*  for(UpdateRequestMapping handlerMethod : handlerMethods){
-                Object invoked = handlerMethodInvoker.invoke(request, handlerMethod);
-                ResponseSetter.setResponse(request, invoked, parameterType);
-            }*/
-
         }
+        ResponseSetter.setResponse(request, null);
     }
 
     private static UpdateRequestMapping fromTelegramRequest(@NonNull TelegramRequest request) {
