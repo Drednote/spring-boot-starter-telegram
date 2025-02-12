@@ -38,11 +38,12 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
             Optional<IAdvancedScenarioEntity> advancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
             UserScenarioContext context = new UserScenarioContext(request, advancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null));
 
-            @NotNull List<AdvancedScenario> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
-            for (AdvancedScenario advancedActiveScenario : advancedActiveScenarios) {
+            @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
+            for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
                 for (UpdateRequestMapping handlerMethod : advancedActiveScenario.getActiveConditions().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList()) {
                     if (handlerMethod.matches(request)) {
-                        advancedActiveScenario.process(context);
+                       Enum<?> status = advancedActiveScenario.process(context);
+                       System.out.println(status);
                     }
                 }
             }

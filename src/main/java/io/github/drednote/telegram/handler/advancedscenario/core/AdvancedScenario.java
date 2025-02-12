@@ -43,7 +43,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public E process(UserScenarioContext<E> context) {
+    public E process(UserScenarioContext context) {
         while (!context.isEnd) {
             AdvancedScenarioState<E> state = states.get(currentState);
             if (state == null) {

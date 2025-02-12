@@ -114,7 +114,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             return this;
         }
 
-        public AdvancedScenarioStateBuilder<E> execute(Action<E> action) {
+        public AdvancedScenarioStateBuilder<E> execute(Action action) {
             state.setExecuteAction(action);
             return this;
         }
@@ -140,8 +140,8 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     @FunctionalInterface
-    public interface Action<E> {
-        BotApiMethod<?> execute(UserScenarioContext<E> context);
+    public interface Action {
+        BotApiMethod<?> execute(UserScenarioContext context);
     }
 
     @NotNull

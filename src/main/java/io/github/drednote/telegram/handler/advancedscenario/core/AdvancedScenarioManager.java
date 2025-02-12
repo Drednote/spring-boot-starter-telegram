@@ -6,13 +6,13 @@ import java.util.*;
 
 @Getter
 public class AdvancedScenarioManager {
-    private final Map<String, AdvancedScenario> scenarios = new HashMap<>();
+    private final Map<String, AdvancedScenario<?>> scenarios = new HashMap<>();
     private String currentScenarioName;
 
     public AdvancedScenarioManager() {
     }
 
-    public void addScenario(String name, AdvancedScenario scenario) {
+    public void addScenario(String name, AdvancedScenario<?> scenario) {
         scenarios.put(name, scenario);
     }
 
@@ -24,13 +24,15 @@ public class AdvancedScenarioManager {
         return this;
     }
 
-    public AdvancedScenario getCurrentScenario() {
+    public AdvancedScenario<?> getCurrentScenario() {
         return scenarios.get(currentScenarioName);
     }
 
-    public List<AdvancedScenario> getActiveScenarios() {
-        return Optional.ofNullable(currentScenarioName)
-                .map(name -> List.of(getCurrentScenario()))
-                .orElseGet(() -> new ArrayList<>(scenarios.values()));
+    public List<AdvancedScenario<?>> getActiveScenarios() {
+        if (currentScenarioName != null) {
+            AdvancedScenario<?> scenario = getCurrentScenario();
+            return scenario != null ? List.of(scenario) : Collections.emptyList();
+        }
+        return new ArrayList<>(scenarios.values());
     }
 }

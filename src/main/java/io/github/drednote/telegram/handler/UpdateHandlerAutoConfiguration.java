@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.handler;
 
+import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
@@ -94,6 +95,7 @@ public class UpdateHandlerAutoConfiguration {
             return new AdvancedScenarioConfigurationBeanPostProcessor();
         }
 
+        @TelegramScope
         @Bean
         @ConditionalOnMissingBean
         public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor) {
