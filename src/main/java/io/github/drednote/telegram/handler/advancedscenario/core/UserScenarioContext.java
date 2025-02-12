@@ -3,9 +3,9 @@ package io.github.drednote.telegram.handler.advancedscenario.core;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import lombok.Getter;
 
-public class UserScenarioContext {
+public class UserScenarioContext<E> {
     public boolean isEnd = false;
-    public String nextScenario;
+    public E nextScenario;
     @Getter
     private UpdateRequest updateRequest;
 

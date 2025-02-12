@@ -16,23 +16,23 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class AdvancedScenarioState {
+public class AdvancedScenarioState<E extends Enum<E>> {
     @Getter
 
-    private List<TelegramRequest> conditiones = new ArrayList<>();
-    private String defaultTransitionState;
+    private final List<TelegramRequest> conditiones = new ArrayList<>();
+    private E defaultTransitionState;
     @Getter
     @Setter
-    private String elseErrorState;
+    private E elseErrorState;
     @Setter
-    private String exceptionTransitionState;
+    private E exceptionTransitionState;
     private boolean isFinal;
     @Setter
     private Action executeAction;
 
-    private String currentStateName;
+    private E currentStateName;
 
-    public AdvancedScenarioState(String currentStateName) {
+    public AdvancedScenarioState(E currentStateName) {
         this.currentStateName = currentStateName;
     }
 
@@ -48,7 +48,7 @@ public class AdvancedScenarioState {
         this.isFinal = isFinal;
     }
 
-    public String execute(UserScenarioContext context) {
+    public E execute(UserScenarioContext context) {
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
@@ -65,28 +65,28 @@ public class AdvancedScenarioState {
         }
     }
 
-    public static class AdvancedScenarioStateBuilder {
-        private final String name;
-        private final Map<String, AdvancedScenarioState> states;
-        private final AdvancedScenarioState state;
+    public static class AdvancedScenarioStateBuilder<E extends Enum<E>> {
+        private final E statusName;
+        private final Map<E, AdvancedScenarioState<E>> states;
+        private final AdvancedScenarioState<E> state;
         private List<TelegramRequest> conditions = new ArrayList<>();
-        private String transitionState;
-        private AdvancedScenario advancedScenarioClass;
+        private E transitionState;
+        private final AdvancedScenario<E> advancedScenarioClass;
 
-        public AdvancedScenarioStateBuilder(String name, AdvancedScenario advancedScenarioClass) {
-            this.name = name;
+        public AdvancedScenarioStateBuilder(E statusName, AdvancedScenario<E> advancedScenarioClass) {
+            this.statusName = statusName;
             this.states = advancedScenarioClass.getStates();
             this.advancedScenarioClass = advancedScenarioClass;
-            this.state = new AdvancedScenarioState(name);
-            states.put(name, state);
+            this.state = new AdvancedScenarioState<>(statusName);
+            states.put(statusName, state);
         }
 
-        public AdvancedScenarioStateBuilder on(TelegramRequest condition) {
+        public AdvancedScenarioStateBuilder<E> on(TelegramRequest condition) {
             this.conditions.add(condition);
             return this;
         }
 
-        public AdvancedScenarioStateBuilder or(TelegramRequest additionalCondition) {
+        public AdvancedScenarioStateBuilder<E> or(TelegramRequest additionalCondition) {
             if (this.conditions.isEmpty()) {
                 throw new IllegalStateException("Use .on first!");
             }
@@ -94,7 +94,7 @@ public class AdvancedScenarioState {
             return this;
         }
 
-        public AdvancedScenarioStateBuilder transitionTo(String nextState) {
+        public AdvancedScenarioStateBuilder<E> transitionTo(E nextState) {
             if (this.conditions.isEmpty()) {
                 throw new IllegalStateException("Condition must be specified before transition.");
             }
@@ -106,7 +106,7 @@ public class AdvancedScenarioState {
         }
 
 
-        public AdvancedScenarioStateBuilder elseErrorTo(String errorState) {
+        public AdvancedScenarioStateBuilder<E> elseErrorTo(E errorState) {
             if (transitionState == null) {
                 throw new IllegalStateException("Transition state must be specified before elseErrorTo.");
             }
@@ -114,34 +114,34 @@ public class AdvancedScenarioState {
             return this;
         }
 
-        public AdvancedScenarioStateBuilder execute(Action action) {
+        public AdvancedScenarioStateBuilder<E> execute(Action<E> action) {
             state.setExecuteAction(action);
             return this;
         }
 
-        public AdvancedScenarioStateBuilder asFinal() {
+        public AdvancedScenarioStateBuilder<E> asFinal() {
             state.setFinal(true);
             return this;
         }
 
-        public AdvancedScenarioStateBuilder transitionToScenario(String scenarioName) {
+        public AdvancedScenarioStateBuilder<E> transitionToScenario(String scenarioName) {
             //state.setExecuteAction(ctx -> ctx.nextScenario = scenarioName);
             return this;
         }
 
-        public AdvancedScenarioState.AdvancedScenarioStateBuilder state(String name) {
-            return new AdvancedScenarioState.AdvancedScenarioStateBuilder(name, advancedScenarioClass);
+        public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E statusName) {
+            return new AdvancedScenarioState.AdvancedScenarioStateBuilder<>(statusName, advancedScenarioClass);
         }
 
 
-        public AdvancedScenario build() {
+        public AdvancedScenario<E> build() {
             return advancedScenarioClass;
         }
     }
 
     @FunctionalInterface
-    public interface Action {
-        BotApiMethod execute(UserScenarioContext context);
+    public interface Action<E> {
+        BotApiMethod<?> execute(UserScenarioContext<E> context);
     }
 
     @NotNull

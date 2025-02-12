@@ -8,27 +8,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AdvancedScenario {
-    private final String startStateName;
+public class AdvancedScenario<E extends Enum<E>> {
+    private final E startState;
     @Getter
-    private Map<String, AdvancedScenarioState> states = new HashMap<>();
+    private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
     @Getter
-    private String currentState;
+    private E currentState;
     @Setter
     @Getter
-    private String globalErrorTransitionState;
+    private E globalErrorTransitionState;
 
-    public static AdvancedScenarioBuilder create(String startStateName) {
-        return new AdvancedScenarioBuilder(startStateName);
+    public static <T extends Enum<T>> AdvancedScenarioBuilder<T> create(T startStateName) {
+        return new AdvancedScenarioBuilder<>(startStateName);
     }
 
-    public AdvancedScenario(String startStateName, Map<String, AdvancedScenarioState> states) {
-        this.startStateName = startStateName;
+    public AdvancedScenario(E startState, Map<E, AdvancedScenarioState<E>> states) {
+        this.startState = startState;
         this.states = states;
-        this.currentState = startStateName; // Begin from the start's state
+        this.currentState = startState; // Begin from the start's state
     }
 
-    public void setCurrentState(String stateName) {
+    public void setCurrentState(E stateName) {
         if (!states.containsKey(stateName)) {
             throw new IllegalArgumentException("State not found: " + stateName);
         }
@@ -36,52 +36,53 @@ public class AdvancedScenario {
     }
 
     public List<TelegramRequest> getActiveConditions() {
-        AdvancedScenarioState currentStateObj = states.get(currentState);
+        AdvancedScenarioState<E> currentStateObj = states.get(currentState);
         if (currentStateObj == null) {
             throw new RuntimeException("Current state not found: " + currentState);
         }
         return currentStateObj.getConditions();
     }
 
-    public String process(UserScenarioContext context) {
+    public E process(UserScenarioContext<E> context) {
         while (!context.isEnd) {
-            AdvancedScenarioState state = states.get(currentState);
+            AdvancedScenarioState<E> state = states.get(currentState);
             if (state == null) {
                 throw new RuntimeException("State not found: " + currentState);
             }
 
             try {
-                String nextState = state.execute(context);
+                E nextState = state.execute(context);
                 if (state.isFinal()) {
                     context.isEnd = true;
                 } else {
-                    currentState = nextState;
+                    return nextState;
                 }
             } catch (RuntimeException e) {
                 if (state.getElseErrorState() != null) {
-                    currentState = state.getElseErrorState();
+                    return state.getElseErrorState();
                 } else if (globalErrorTransitionState != null) {
-                    currentState = globalErrorTransitionState;
+                    return globalErrorTransitionState;
                 } else {
                     throw e;
                 }
             }
         }
-        return currentState;
+
+        return null;
     }
 
-    public static class AdvancedScenarioBuilder {
-        private final AdvancedScenario scenario;
+    public static class AdvancedScenarioBuilder<E extends Enum<E>> {
+        private final AdvancedScenario<E> scenario;
 
-        public AdvancedScenarioBuilder(String startStateName) {
-            this.scenario = new AdvancedScenario(startStateName, new HashMap<>());
+        public AdvancedScenarioBuilder(E startStateName) {
+            this.scenario = new AdvancedScenario<E>(startStateName, new HashMap<>());
         }
 
-        public AdvancedScenarioState.AdvancedScenarioStateBuilder state(String name) {
-            return new AdvancedScenarioState.AdvancedScenarioStateBuilder(name, scenario);
+        public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E stateName) {
+            return new AdvancedScenarioState.AdvancedScenarioStateBuilder<>(stateName, scenario);
         }
 
-        public AdvancedScenarioBuilder globalErrorTransitionTo(String globalErrorState) {
+        public AdvancedScenarioBuilder<E> globalErrorTransitionTo(E globalErrorState) {
             scenario.setGlobalErrorTransitionState(globalErrorState);
             return this;
         }
