@@ -1,19 +1,22 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
+import io.github.drednote.telegram.core.request.MessageType;
+import io.github.drednote.telegram.core.request.RequestType;
+import io.github.drednote.telegram.core.request.TelegramRequest;
+import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class AdvancedScenarioState {
     @Getter
-    private final String name;
-    private final Map<Condition, String> transitions = new HashMap<>();
-    private String defaultTransition;
+
+    private List<TelegramRequest> transitions = new ArrayList<>();
+    private String defaultTransitionState;
     @Getter
     @Setter
     private String elseErrorState;
@@ -23,12 +26,14 @@ public class AdvancedScenarioState {
     @Setter
     private Action executeAction;
 
-    public AdvancedScenarioState(String name) {
-        this.name = name;
+    private String currentStateName;
+
+    public AdvancedScenarioState(String currentStateName) {
+        this.currentStateName = currentStateName;
     }
 
-    public List<Condition> getConditions() {
-        return new ArrayList<>(transitions.keySet());
+    public List<TelegramRequest> getConditions() {
+        return transitions;
     }
 
     public boolean isFinal() {
@@ -44,23 +49,14 @@ public class AdvancedScenarioState {
             if (executeAction != null) {
                 executeAction.execute(context);
             }
-
-            for (Map.Entry<Condition, String> entry : transitions.entrySet()) {
-                if (entry.getKey().test(context)) {
-                    return entry.getValue();
-                }
-            }
-
+            return defaultTransitionState;
+        } catch (Exception e) {
             if (elseErrorState != null) {
                 return elseErrorState;
-            }
-
-            return defaultTransition;
-        } catch (Exception e) {
-            if (exceptionTransitionState != null) {
+            } else if (exceptionTransitionState != null) {
                 return exceptionTransitionState;
             } else {
-                throw new RuntimeException("Unhandled exception in state " + name, e);
+                throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
         }
     }
@@ -69,7 +65,7 @@ public class AdvancedScenarioState {
         private final String name;
         private final Map<String, AdvancedScenarioState> states;
         private final AdvancedScenarioState state;
-        private Condition condition;
+        private List<TelegramRequest> conditions = new ArrayList<>();
         private String transitionState;
         private AdvancedScenario advancedScenarioClass;
 
@@ -81,26 +77,27 @@ public class AdvancedScenarioState {
             states.put(name, state);
         }
 
-        public AdvancedScenarioStateBuilder on(Condition condition) {
-            this.condition = condition;
+        public AdvancedScenarioStateBuilder on(TelegramRequest condition) {
+            this.conditions.add(condition);
             return this;
         }
 
-        public AdvancedScenarioStateBuilder or(Condition additionalCondition) {
-            if (this.condition == null) {
-                this.condition = additionalCondition;
-            } else {
-                this.condition = combineConditions(this.condition, additionalCondition);
+        public AdvancedScenarioStateBuilder or(TelegramRequest additionalCondition) {
+            if (this.conditions.isEmpty()) {
+                throw new IllegalStateException("Use .on first!");
             }
+            this.conditions.add(additionalCondition);
             return this;
         }
 
         public AdvancedScenarioStateBuilder transitionTo(String nextState) {
-            if (condition == null) {
+            if (this.conditions.isEmpty()) {
                 throw new IllegalStateException("Condition must be specified before transition.");
             }
-            state.transitions.put(condition, nextState);
+            state.currentStateName = nextState;
+            state.transitions.addAll(conditions);
             this.transitionState = nextState;
+            state.defaultTransitionState = nextState;
             return this;
         }
 
@@ -133,30 +130,21 @@ public class AdvancedScenarioState {
         }
 
 
-        private static Condition combineConditions(Condition... conditions) {
-            return ctx -> {
-                for (Condition condition : conditions) {
-                    if (condition.test(ctx)) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-        }
-
-
         public AdvancedScenario build() {
             return advancedScenarioClass;
         }
     }
 
     @FunctionalInterface
-    public interface Condition {
-        boolean test(UserScenarioContext context);
-    }
-
-    @FunctionalInterface
     public interface Action {
         void execute(UserScenarioContext context);
+    }
+
+    @NotNull
+    private static TelegramRequestImpl getTelegramRequest(
+            @Nullable String pattern, @Nullable RequestType requestType, @Nullable MessageType messageType
+    ) {
+        return new TelegramRequestImpl(pattern != null ? Set.of(pattern) : Set.of(), requestType != null ? Set.of(requestType) : Set.of(),
+                messageType != null ? Set.of(messageType) : Set.of(), true);
     }
 }

@@ -9,6 +9,8 @@ import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioStorage;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
 import io.github.drednote.telegram.handler.controller.*;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
@@ -75,8 +77,14 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
+        public IAdvancedScenarioStorage advancedScenarioStorage() {
+            return new InMemoryAdvancedScenarioStorage();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
         public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
-            return new AdvancedScenarioUpdateHandler();
+            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage());
         }
 
         @Bean

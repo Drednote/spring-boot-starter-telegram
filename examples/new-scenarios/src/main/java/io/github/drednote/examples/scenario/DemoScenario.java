@@ -10,14 +10,14 @@ public class DemoScenario implements IAdvancedScenarioConfig {
     public AdvancedScenario getScenario() {
         return AdvancedScenario.create("SCENARIO_1_START")
                 .state("SCENARIO_1_START")
-                .on(ctx -> true)
+                .on(null)
                 .transitionTo("SCENARIO_1_SHOW_MENU")
                 .elseErrorTo("SCENARIO_1_ERROR")
                 .state("SCENARIO_1_SHOW_MENU")
                 .execute(ctx -> System.out.println("11"))
-                .on(ctx -> true)
+                .on(null)
                 .transitionToScenario("SCENARIO_2") // Переход к SCENARIO_2
-                .on(ctx -> true)
+                .on(null)
                 .transitionTo("SCENARIO_1_EXIT")
                 .elseErrorTo("SCENARIO_1_ERROR")
                 .state("SCENARIO_1_EXIT")
@@ -27,7 +27,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .asFinal()
                 .state("SCENARIO_1_ERROR")
                 .execute(ctx -> System.out.println("11"))
-                .on(ctx -> true)
+                .on(null)
                 .transitionTo("SCENARIO_1_START")
                 .build();
     }

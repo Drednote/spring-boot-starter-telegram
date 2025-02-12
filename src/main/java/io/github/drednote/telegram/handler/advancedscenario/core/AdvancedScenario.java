@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
+import io.github.drednote.telegram.core.request.TelegramRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +35,7 @@ public class AdvancedScenario {
         this.currentState = stateName;
     }
 
-    public List<AdvancedScenarioState.Condition> getActiveConditions() {
+    public List<TelegramRequest> getActiveConditions() {
         AdvancedScenarioState currentStateObj = states.get(currentState);
         if (currentStateObj == null) {
             throw new RuntimeException("Current state not found: " + currentState);

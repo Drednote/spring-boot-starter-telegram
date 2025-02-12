@@ -1,26 +1,32 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
+import io.github.drednote.telegram.core.request.TelegramRequest;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Getter
 public class AdvancedScenarioManager {
     private final Map<String, AdvancedScenario> scenarios = new HashMap<>();
-    @Getter
     private String currentScenarioName;
 
-    public AdvancedScenarioManager() {}
+    public AdvancedScenarioManager() {
+    }
 
     public void addScenario(String name, AdvancedScenario scenario) {
         scenarios.put(name, scenario);
     }
 
-    public void setCurrentScenario(String scenarioName) {
+    public AdvancedScenarioManager setCurrentScenario(String scenarioName) {
         if (!scenarios.containsKey(scenarioName)) {
             throw new IllegalArgumentException("Scenario not found: " + scenarioName);
         }
         this.currentScenarioName = scenarioName;
+        return this;
     }
 
     public AdvancedScenario getCurrentScenario() {
@@ -45,5 +51,13 @@ public class AdvancedScenarioManager {
                 throw e;
             }
         }
+    }
+
+    public List<TelegramRequest> getActiveHandlers() {
+        return Optional.ofNullable(currentScenarioName)
+                .map(name -> getCurrentScenario().getActiveConditions())
+                .orElseGet(() -> scenarios.values().stream()
+                        .flatMap(scenario -> scenario.getActiveConditions().stream())
+                        .collect(Collectors.toList()));
     }
 }
