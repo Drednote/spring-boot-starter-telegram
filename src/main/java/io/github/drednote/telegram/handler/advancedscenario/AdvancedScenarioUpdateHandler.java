@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,12 +25,10 @@ import java.util.stream.Collectors;
 public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     private final IAdvancedScenarioStorage storage;
-    private final HandlerMethodInvoker handlerMethodInvoker;
 
-    public AdvancedScenarioUpdateHandler(IAdvancedScenarioStorage storage, HandlerMethodInvoker handlerMethodInvoker) {
+    public AdvancedScenarioUpdateHandler(IAdvancedScenarioStorage storage) {
         super();
         this.storage = storage;
-        this.handlerMethodInvoker = handlerMethodInvoker;
     }
 
     @Override
@@ -46,7 +45,8 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
             @NotNull List<UpdateRequestMapping> handlerMethods = request.getAdvancedScenarioManager().getActiveHandlers().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList();
             for (UpdateRequestMapping handlerMethod : handlerMethods) {
                 if (handlerMethod.matches(request)) {
-                    System.out.println("handlerMethod: " + handlerMethod);
+                    ResponseSetter.setResponse(request, SendMessage.builder().chatId(request.getChatId()).text("handlerMethod: " + handlerMethod).build());
+
                 }
             }
           /*  for(UpdateRequestMapping handlerMethod : handlerMethods){
