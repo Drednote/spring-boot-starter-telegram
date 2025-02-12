@@ -8,16 +8,15 @@ import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The {@code DefaultUpdateRequest} class is default implementation of the {@link UpdateRequest} interface
@@ -93,7 +92,6 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
         this.objectMapper = request.getObjectMapper();
         this.error = request.getError();
         this.permission = request.getPermission();
-        this.advancedScenarioManager = request.getAdvancedScenarioManager();
     }
 
     @Override

@@ -168,16 +168,6 @@ public interface UpdateRequest {
     Scenario<?> getScenario();
 
     /**
-     * Returns the advanced scenario manager associated with the request
-     *
-     * @return the advanced scenario manager, or null if no scenario belongs to given chat
-     * @see AdvancedScenarioUpdateHandler
-     * @see !!!!!!! ScenarioConfigurerAdapter TODO: FIX!!!!!!!!!!
-     */
-    @Nullable
-    AdvancedScenarioManager getAdvancedScenarioManager();
-
-    /**
      * Returns the response that should be sent to Telegram
      *
      * @return the response, or null if no one {@link UpdateHandler} or

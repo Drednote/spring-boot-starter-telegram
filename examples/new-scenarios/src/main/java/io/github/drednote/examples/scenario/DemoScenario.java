@@ -1,14 +1,19 @@
 package io.github.drednote.examples.scenario;
 
-import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioState;
 import io.github.drednote.telegram.handler.advancedscenario.core.annotations.AdvancedScenarioController;
 import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-@AdvancedScenarioController(name = "SCENARIO_1")
+@AdvancedScenarioController
 public class DemoScenario implements IAdvancedScenarioConfig {
+
+    @Override
+    public String getName() {
+        return "SCENARIO_1";
+    }
+
     @Override
     public AdvancedScenario<State> getScenario() {
         return AdvancedScenario.create(State.SCENARIO_1_START)

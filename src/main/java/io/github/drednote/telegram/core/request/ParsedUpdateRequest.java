@@ -7,11 +7,12 @@ import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenari
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
-import java.util.List;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * The implementation of {@link UpdateRequest} needed only for parsing {@link Update}
@@ -39,11 +40,6 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     public Scenario<?> getScenario() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
-    }
-
-    @Override
-    public AdvancedScenarioManager getAdvancedScenarioManager() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 

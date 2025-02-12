@@ -1,15 +1,7 @@
 package io.github.drednote.telegram.handler.advancedscenario.core.annotations;
 
-import io.github.drednote.telegram.core.annotation.BetaApi;
-import org.springframework.stereotype.Component;
+import io.github.drednote.telegram.core.annotation.TelegramScope;
 
-import java.lang.annotation.*;
-
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Component
-@BetaApi
+@TelegramScope
 public @interface AdvancedScenarioController {
-    String name();
 }
