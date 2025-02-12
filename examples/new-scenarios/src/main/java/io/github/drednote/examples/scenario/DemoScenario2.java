@@ -6,13 +6,8 @@ import io.github.drednote.telegram.handler.advancedscenario.core.annotations.Adv
 import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-@AdvancedScenarioController
+@AdvancedScenarioController(name = "SCENARIO_2")
 public class DemoScenario2 implements IAdvancedScenarioConfig {
-    @Override
-    public String getName() {
-        return "SCENARIO_2";
-    }
-
     @Override
     public AdvancedScenario<State2> getScenario() {
         return AdvancedScenario.create(State2.SCENARIO_2_START)

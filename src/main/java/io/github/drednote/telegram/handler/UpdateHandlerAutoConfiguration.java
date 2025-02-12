@@ -4,12 +4,13 @@ import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
+import io.github.drednote.telegram.filter.pre.AdvancedScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
+import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioStorage;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
-import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 import io.github.drednote.telegram.handler.controller.*;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
@@ -36,8 +37,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 @AutoConfiguration
 @EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
@@ -85,9 +84,22 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler(List<IAdvancedScenarioConfig> scenariosConfig) {
-            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), scenariosConfig);
+        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
+            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage());
         }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor() {
+            return new AdvancedScenarioConfigurationBeanPostProcessor();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor) {
+            return new AdvancedScenarioUpdateHandlerPopular(scenarioFactoryBeanPostProcessor.getScenarios());
+        }
+
     }
 
     @AutoConfiguration
