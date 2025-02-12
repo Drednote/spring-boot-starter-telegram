@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.Nullable;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 
 import java.util.*;
 
@@ -121,7 +122,7 @@ public class AdvancedScenarioState {
         }
 
         public AdvancedScenarioStateBuilder transitionToScenario(String scenarioName) {
-            state.setExecuteAction(ctx -> ctx.nextScenario = scenarioName);
+            //state.setExecuteAction(ctx -> ctx.nextScenario = scenarioName);
             return this;
         }
 
@@ -137,11 +138,11 @@ public class AdvancedScenarioState {
 
     @FunctionalInterface
     public interface Action {
-        void execute(UserScenarioContext context);
+        BotApiMethod execute(UserScenarioContext context);
     }
 
     @NotNull
-    private static TelegramRequestImpl getTelegramRequest(
+    public static TelegramRequestImpl getTelegramRequest(
             @Nullable String pattern, @Nullable RequestType requestType, @Nullable MessageType messageType
     ) {
         return new TelegramRequestImpl(pattern != null ? Set.of(pattern) : Set.of(), requestType != null ? Set.of(requestType) : Set.of(),

@@ -81,10 +81,11 @@ public class UpdateHandlerAutoConfiguration {
             return new InMemoryAdvancedScenarioStorage();
         }
 
+
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
-            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage());
+        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler(HandlerMethodInvoker handlerMethodInvoker) {
+            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), handlerMethodInvoker);
         }
 
         @Bean
