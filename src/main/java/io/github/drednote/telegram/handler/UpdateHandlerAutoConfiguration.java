@@ -12,6 +12,7 @@ import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConf
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioFactory;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioEntityDTO;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioStorage;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
@@ -43,6 +44,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
 @AutoConfiguration
 @EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
@@ -83,8 +88,8 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public IAdvancedActiveScenarioFactory advancedActiveScenarioFactory(ApplicationContext context) {
-            return new InMemoryAdvancedActiveScenarioFactory(context);
+        public IAdvancedActiveScenarioFactory advancedActiveScenarioFactory() {
+            return new InMemoryAdvancedActiveScenarioFactory();
         }
 
         @Bean
@@ -96,8 +101,8 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler(ApplicationContext context) {
-            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), advancedActiveScenarioFactory(context));
+        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
+            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), advancedActiveScenarioFactory());
         }
 
         @Bean

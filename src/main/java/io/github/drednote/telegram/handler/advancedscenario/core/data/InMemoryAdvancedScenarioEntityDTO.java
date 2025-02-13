@@ -16,8 +16,8 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InMemoryAdvancedScenarioEntityDTO implements IAdvancedScenarioEntity {
-    private String userId;
-    private String chatId;
+    private Long userId;
+    private Long chatId;
     private Instant changeDate = Instant.now();
     private Optional<List<IAdvancedActiveScenarioEntity>> activeScenarios;
     private Optional<String> data;

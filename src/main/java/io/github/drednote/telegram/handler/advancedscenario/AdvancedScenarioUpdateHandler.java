@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
 
+import java.time.Instant;
 import java.util.*;
 
 @BetaApi
@@ -46,24 +47,18 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                         Enum<?> status = advancedActiveScenario.process(context);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);
                         System.out.println(scenarioName + " - " + status);
-                        optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity -> {
-                            // Get the current list of active scenarios
-                            Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
 
+                        IAdvancedScenarioEntity advancedScenarioEntity = optionalAdvancedScenarioEntity.orElse(null);
+
+                        if (advancedScenarioEntity != null) {
+                          Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
                             // Create or retrieve the list of active scenarios
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
-
-                            // Create a new active scenario
-                            IAdvancedActiveScenarioEntity newActiveScenario = createNewActiveScenario(scenarioName, status);
-
-                            // Add the new scenario to the list
-                            activeScenarios.add(newActiveScenario);
-
-                            // Update the list of active scenarios in the entity
-                            updateActiveScenarios(advancedScenarioEntity, activeScenarios);
-                            this.storage.save(advancedScenarioEntity);
-                        });
-
+                            createOrUpdateActiveScenario(activeScenarios, scenarioName, status);
+                        } else {
+                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, status))), Optional.of(""));
+                        }
+                        this.storage.save(advancedScenarioEntity);
                     }
                 }
             }
@@ -72,12 +67,17 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
     }
 
     private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, Enum<?> status) {
-        IAdvancedActiveScenarioEntity newActiveScenario = activeScenarioFactory.create(scenarioName, status);
-        return newActiveScenario;
+        return activeScenarioFactory.createActiveScenarioEntity(scenarioName, status);
     }
 
-    private void updateActiveScenarios(IAdvancedScenarioEntity advancedScenarioEntity, List<IAdvancedActiveScenarioEntity> activeScenarios) {
-        advancedScenarioEntity.setActiveScenarios(Optional.of(activeScenarios));
+    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, Enum<?> status) {
+        IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
+        if (existingActiveScenario != null) {
+            existingActiveScenario.setStatusName(status.toString());
+            return existingActiveScenario;
+        } else {
+            return activeScenarioFactory.createActiveScenarioEntity(scenarioName, status);
+        }
     }
 
     private static UpdateRequestMapping fromTelegramRequest(@NonNull TelegramRequest request) {

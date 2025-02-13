@@ -2,18 +2,24 @@ package io.github.drednote.telegram.handler.advancedscenario.core.data;
 
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
 import org.springframework.context.ApplicationContext;
 
-public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveScenarioFactory {
-    private final ApplicationContext context; // Контекст для создания бина вручную
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
 
-    public InMemoryAdvancedActiveScenarioFactory(ApplicationContext context) {
-        this.context = context;
+public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveScenarioFactory {
+
+    public InMemoryAdvancedActiveScenarioFactory() {}
+
+    @Override
+    public IAdvancedActiveScenarioEntity createActiveScenarioEntity(String scenarioName, Enum<?> status) {
+        return new InMemoryAdvancedActiveScenarioEntity(scenarioName, status.toString());
     }
 
     @Override
-    public IAdvancedActiveScenarioEntity create(String scenarioName, Enum<?> status) {
-        // Получаем бин и создаем новый объект через Spring
-        return context.getBean(InMemoryAdvancedActiveScenarioEntity.class, scenarioName, status.toString());
+    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<List<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data) {
+        return new InMemoryAdvancedScenarioEntityDTO(userId, chatId, changeDate, activeScenarios, data);
     }
 }

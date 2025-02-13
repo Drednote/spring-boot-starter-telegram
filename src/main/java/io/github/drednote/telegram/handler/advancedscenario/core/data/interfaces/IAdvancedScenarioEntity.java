@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IAdvancedScenarioEntity {
-    String getUserId();
+    Long getUserId();
 
-    String getChatId();
+    Long getChatId();
 
     Instant getChangeDate();
 
