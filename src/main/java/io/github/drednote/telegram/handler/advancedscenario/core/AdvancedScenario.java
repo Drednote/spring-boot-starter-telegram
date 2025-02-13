@@ -18,6 +18,8 @@ public class AdvancedScenario<E extends Enum<E>> {
     @Getter
     private E globalErrorTransitionState;
 
+    private Class<E> enumClass;
+
     public static <T extends Enum<T>> AdvancedScenarioBuilder<T> create(T startStateName) {
         return new AdvancedScenarioBuilder<>(startStateName);
     }
@@ -28,7 +30,8 @@ public class AdvancedScenario<E extends Enum<E>> {
         this.currentState = startState; // Begin from the start's state
     }
 
-    public void setCurrentState(E stateName) {
+    public void setCurrentState(String stateNameString) {
+        E stateName = Enum.valueOf(enumClass, stateNameString);
         if (!states.containsKey(stateName)) {
             throw new IllegalArgumentException("State not found: " + stateName);
         }
@@ -44,31 +47,28 @@ public class AdvancedScenario<E extends Enum<E>> {
     }
 
     public E process(UserScenarioContext context) {
-        while (!context.isEnd) {
-            AdvancedScenarioState<E> state = states.get(currentState);
-            if (state == null) {
-                throw new RuntimeException("State not found: " + currentState);
-            }
 
-            try {
-                E nextState = state.execute(context);
-                if (state.isFinal()) {
-                    context.isEnd = true;
-                } else {
-                    return nextState;
-                }
-            } catch (RuntimeException e) {
-                if (state.getElseErrorState() != null) {
-                    return state.getElseErrorState();
-                } else if (globalErrorTransitionState != null) {
-                    return globalErrorTransitionState;
-                } else {
-                    throw e;
-                }
-            }
+        AdvancedScenarioState<E> state = states.get(currentState);
+        if (state == null) {
+            throw new RuntimeException("State not found: " + currentState);
         }
 
-        return null;
+        try {
+            E nextState = state.execute(context);
+            if (state.isFinal()) {
+                return startState;
+            } else {
+                return nextState;
+            }
+        } catch (RuntimeException e) {
+            if (state.getElseErrorState() != null) {
+                return state.getElseErrorState();
+            } else if (globalErrorTransitionState != null) {
+                return globalErrorTransitionState;
+            } else {
+                throw e;
+            }
+        }
     }
 
     public static class AdvancedScenarioBuilder<E extends Enum<E>> {
@@ -79,6 +79,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         }
 
         public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E stateName) {
+            if (scenario.enumClass == null) scenario.enumClass = (Class<E>) stateName.getClass();
             return new AdvancedScenarioState.AdvancedScenarioStateBuilder<>(stateName, scenario);
         }
 

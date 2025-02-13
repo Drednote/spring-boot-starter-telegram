@@ -3,15 +3,16 @@ package io.github.drednote.telegram.handler.advancedscenario.core;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import lombok.Getter;
 
+import java.util.Optional;
+
+@Getter
 public class UserScenarioContext {
-    public boolean isEnd = false;
-    @Getter
     private UpdateRequest updateRequest;
 
     //@Getter
     // private JSONObject data;
 
-    public UserScenarioContext(UpdateRequest updateRequest, String data) {
+    public UserScenarioContext(UpdateRequest updateRequest, Optional<String> data) {
         //this.data = data != null ? new JSONObject(data) : new JSONObject();
         this.updateRequest = updateRequest;
     }

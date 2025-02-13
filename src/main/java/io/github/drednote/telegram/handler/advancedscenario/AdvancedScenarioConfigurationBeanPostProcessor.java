@@ -51,6 +51,6 @@ public class AdvancedScenarioConfigurationBeanPostProcessor implements BeanPostP
         ));
     }
 
-    public record AdvancedScenarioInfo(String name, AdvancedScenario scenario) {
+    public record AdvancedScenarioInfo(String name, AdvancedScenario<?> scenario) {
     }
 }

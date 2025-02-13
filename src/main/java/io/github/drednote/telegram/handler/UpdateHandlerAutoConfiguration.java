@@ -10,7 +10,11 @@ import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioEntity;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioStorage;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
 import io.github.drednote.telegram.handler.controller.*;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
@@ -37,6 +41,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
@@ -78,6 +83,12 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
+        public IAdvancedActiveScenarioFactory advancedActiveScenarioFactory(ApplicationContext context) {
+            return new InMemoryAdvancedActiveScenarioFactory(context);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
         public IAdvancedScenarioStorage advancedScenarioStorage() {
             return new InMemoryAdvancedScenarioStorage();
         }
@@ -85,8 +96,8 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler() {
-            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage());
+        public AdvancedScenarioUpdateHandler advancedScenarioUpdateHandler(ApplicationContext context) {
+            return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), advancedActiveScenarioFactory(context));
         }
 
         @Bean
