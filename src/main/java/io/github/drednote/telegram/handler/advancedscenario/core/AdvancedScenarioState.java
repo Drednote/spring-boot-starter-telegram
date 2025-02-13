@@ -52,13 +52,16 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
+                return new NextState<>(defaultTransitionState, nextScenario, true);
+            }else{
+                return new NextState<>(defaultTransitionState, nextScenario, false);
             }
-            return new NextState<>(defaultTransitionState, nextScenario);
+
         } catch (Exception e) {
             if (elseErrorState != null) {
-                return new NextState<>(elseErrorState, nextScenario);
+                return new NextState<>(elseErrorState, nextScenario, true);
             } else if (exceptionTransitionState != null) {
-                return new NextState<>(exceptionTransitionState, nextScenario);
+                return new NextState<>(exceptionTransitionState, nextScenario, true);
             } else {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
@@ -93,7 +96,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             state.currentStateName = nextState;
             state.conditiones.addAll(conditions);
             this.transitionState = nextState;
-            state.defaultTransitionState = nextState;
+            conditions = new ArrayList<>();
             return this;
         }
 
@@ -119,10 +122,12 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         public AdvancedScenarioStateBuilder<E> transitionToScenario(String scenarioName) {
             state.nextScenario = scenarioName;
             state.conditiones.addAll(conditions);
+            conditions = new ArrayList<>();
             return this;
         }
 
         public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E statusName) {
+            state.defaultTransitionState = statusName;
             return new AdvancedScenarioState.AdvancedScenarioStateBuilder<>(statusName, advancedScenarioClass);
         }
 

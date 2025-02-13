@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class NextState<T extends Enum<T>> {
     private T scenarioState;
     private String nextScenario;
+    private Boolean executed;
 }
