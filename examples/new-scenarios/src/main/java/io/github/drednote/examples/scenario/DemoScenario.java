@@ -16,6 +16,8 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_1_START state").build())
                 .on(AdvancedScenarioState.getTelegramRequest("/hello", null, null))
                 .transitionTo(State.SCENARIO_1_SHOW_MENU)
+                .on(AdvancedScenarioState.getTelegramRequest("/exit", null, null))
+                .transitionTo(State.SCENARIO_1_EXIT)
                 .elseErrorTo(State.SCENARIO_1_ERROR)
                 .state(State.SCENARIO_1_SHOW_MENU)
                 .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Moved to SCENARIO_2 state").build())
