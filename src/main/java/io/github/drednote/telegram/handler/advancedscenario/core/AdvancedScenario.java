@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AdvancedScenario<E extends Enum<E>> {
+    @Getter
     private final E startState;
     @Getter
     private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
@@ -18,6 +19,7 @@ public class AdvancedScenario<E extends Enum<E>> {
     @Getter
     private E globalErrorTransitionState;
 
+    @Getter
     private Class<E> enumClass;
 
     public static <T extends Enum<T>> AdvancedScenarioBuilder<T> create(T startStateName) {
@@ -46,7 +48,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public E process(UserScenarioContext context) {
+    public NextState<E> process(UserScenarioContext context) {
 
         AdvancedScenarioState<E> state = states.get(currentState);
         if (state == null) {
@@ -54,17 +56,17 @@ public class AdvancedScenario<E extends Enum<E>> {
         }
 
         try {
-            E nextState = state.execute(context);
+            NextState<E> nextState = state.execute(context);
             if (state.isFinal()) {
-                return startState;
+                return new NextState<>(startState, null);
             } else {
                 return nextState;
             }
         } catch (RuntimeException e) {
             if (state.getElseErrorState() != null) {
-                return state.getElseErrorState();
+                return new NextState<>(state.getElseErrorState(), null);
             } else if (globalErrorTransitionState != null) {
-                return globalErrorTransitionState;
+                return new NextState<>(globalErrorTransitionState, null);
             } else {
                 throw e;
             }

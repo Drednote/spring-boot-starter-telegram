@@ -29,6 +29,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     @Setter
     private Action executeAction;
 
+    private String nextScenario;
     private E currentStateName;
 
     public AdvancedScenarioState(E currentStateName) {
@@ -47,17 +48,17 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         this.isFinal = isFinal;
     }
 
-    public E execute(UserScenarioContext context) {
+    public NextState<E> execute(UserScenarioContext context) {
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
             }
-            return defaultTransitionState;
+            return new NextState<>(defaultTransitionState, nextScenario);
         } catch (Exception e) {
             if (elseErrorState != null) {
-                return elseErrorState;
+                return new NextState<>(elseErrorState, nextScenario);
             } else if (exceptionTransitionState != null) {
-                return exceptionTransitionState;
+                return new NextState<>(exceptionTransitionState, nextScenario);
             } else {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
@@ -82,14 +83,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
         public AdvancedScenarioStateBuilder<E> on(TelegramRequest condition) {
             this.conditions.add(condition);
-            return this;
-        }
-
-        public AdvancedScenarioStateBuilder<E> or(TelegramRequest additionalCondition) {
-            if (this.conditions.isEmpty()) {
-                throw new IllegalStateException("Use .on first!");
-            }
-            this.conditions.add(additionalCondition);
             return this;
         }
 
@@ -124,7 +117,8 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         }
 
         public AdvancedScenarioStateBuilder<E> transitionToScenario(String scenarioName) {
-            //state.setExecuteAction(ctx -> ctx.nextScenario = scenarioName);
+            state.nextScenario = scenarioName;
+            state.conditiones.addAll(conditions);
             return this;
         }
 

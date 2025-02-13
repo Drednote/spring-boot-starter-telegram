@@ -6,6 +6,8 @@ import io.github.drednote.telegram.core.request.*;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
+import io.github.drednote.telegram.handler.advancedscenario.core.NextState;
 import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
@@ -25,6 +27,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     private final IAdvancedScenarioStorage storage;
     private final IAdvancedActiveScenarioFactory activeScenarioFactory;
+    private AdvancedScenarioManager advancedScenarioManager;
 
     public AdvancedScenarioUpdateHandler(IAdvancedScenarioStorage storage, IAdvancedActiveScenarioFactory activeScenarioFactory) {
         super();
@@ -35,18 +38,21 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
     @Override
     public void onUpdate(UpdateRequest request) {
         if (request.getAdvancedScenarioManager() != null && !request.getAdvancedScenarioManager().getScenarios().isEmpty()) {
+            advancedScenarioManager = request.getAdvancedScenarioManager();
             Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
             UserScenarioContext context = new UserScenarioContext(request, optionalAdvancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null));
             optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity1 -> request.getAdvancedScenarioManager().setActiveScenarios(advancedScenarioEntity1.getActiveScenarios()));
 
             @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
             for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
-                List<UpdateRequestMapping> updateRequestMappings = advancedActiveScenario.getActiveConditions().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList();
+                List<UpdateRequestMapping> updateRequestMappings = new ArrayList<>();
+                for (TelegramRequest telegramRequest : advancedActiveScenario.getActiveConditions()) {
+                    updateRequestMappings.add(fromTelegramRequest(telegramRequest));
+                }
                 for (UpdateRequestMapping handlerMethod : updateRequestMappings) {
                     if (handlerMethod.matches(request)) {
-                        Enum<?> status = advancedActiveScenario.process(context);
+                        NextState<?> nextState = advancedActiveScenario.process(context);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);
-                        System.out.println(scenarioName + " - " + status);
 
                         IAdvancedScenarioEntity advancedScenarioEntity = optionalAdvancedScenarioEntity.orElse(null);
 
@@ -54,9 +60,9 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                             Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
                             // Create or retrieve the list of active scenarios
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
-                            createOrUpdateActiveScenario(activeScenarios, scenarioName, status);
+                            createOrUpdateActiveScenario(activeScenarios, scenarioName, nextState);
                         } else {
-                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, status))), Optional.of(""));
+                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextState))), Optional.of(""));
                         }
                         this.storage.save(advancedScenarioEntity);
                     }
@@ -66,19 +72,31 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
         ResponseSetter.setResponse(request, null);
     }
 
-    private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, Enum<?> status) {
-        return activeScenarioFactory.createActiveScenarioEntity(scenarioName, status);
+    private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, NextState<?> nextState) {
+        return activeScenarioFactory.createActiveScenarioEntity(nextState.getNextScenario() != null ? nextState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextState));
     }
 
-    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, Enum<?> status) {
+    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, NextState<?> nextState) {
         IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
         if (existingActiveScenario != null) {
-            existingActiveScenario.setStatusName(status.toString());
+            if (nextState.getNextScenario() != null) {
+                existingActiveScenario.setScenarioName(nextState.getNextScenario());
+            }
+            existingActiveScenario.setStatusName(findStateFromNewScenarioIfNeeded(nextState).toString());
             return existingActiveScenario;
         } else {
-            return activeScenarioFactory.createActiveScenarioEntity(scenarioName, status);
+            return activeScenarioFactory.createActiveScenarioEntity(nextState.getNextScenario() != null ? nextState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextState));
         }
     }
+
+    private Enum<?> findStateFromNewScenarioIfNeeded(NextState<?> nextState) {
+        if (nextState.getScenarioState() == null) {
+            return advancedScenarioManager.findScenarioByName(nextState.getNextScenario()).getStartState();
+        } else {
+            return nextState.getScenarioState();
+        }
+    }
+
 
     private static UpdateRequestMapping fromTelegramRequest(TelegramRequest request) {
         String pattern = request.getPatterns().stream().findFirst().orElse(null);

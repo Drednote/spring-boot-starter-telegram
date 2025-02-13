@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
-import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
 import lombok.Getter;
 
 import java.util.*;
@@ -38,6 +37,10 @@ public class AdvancedScenarioManager {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public AdvancedScenario<?> findScenarioByName(String name) {
+        return scenarios.get(name);
     }
 
     public List<AdvancedScenario<?>> getActiveScenarios() {
