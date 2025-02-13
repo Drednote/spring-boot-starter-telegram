@@ -52,7 +52,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
-                return new NextState<>(defaultTransitionState, nextScenario, true);
+                return new NextState<>(currentStateName, nextScenario, true);
             }else{
                 return new NextState<>(defaultTransitionState, nextScenario, false);
             }
