@@ -7,7 +7,6 @@ import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 
 import java.util.ArrayList;
@@ -146,7 +145,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
     @NotNull
     public static TelegramRequestImpl getTelegramRequest(
-            @Nullable String pattern, @Nullable RequestType requestType, @Nullable MessageType messageType
+            String pattern, RequestType requestType, MessageType messageType
     ) {
         return new TelegramRequestImpl(pattern != null ? Set.of(pattern) : Set.of(), requestType != null ? Set.of(requestType) : Set.of(),
                 messageType != null ? Set.of(messageType) : Set.of(), true);

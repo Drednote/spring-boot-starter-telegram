@@ -11,7 +11,6 @@ import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
@@ -42,7 +41,8 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
             @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
             for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
-                for (UpdateRequestMapping handlerMethod : advancedActiveScenario.getActiveConditions().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList()) {
+                List<UpdateRequestMapping> updateRequestMappings = advancedActiveScenario.getActiveConditions().stream().map(AdvancedScenarioUpdateHandler::fromTelegramRequest).toList();
+                for (UpdateRequestMapping handlerMethod : updateRequestMappings) {
                     if (handlerMethod.matches(request)) {
                         Enum<?> status = advancedActiveScenario.process(context);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);
@@ -51,7 +51,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                         IAdvancedScenarioEntity advancedScenarioEntity = optionalAdvancedScenarioEntity.orElse(null);
 
                         if (advancedScenarioEntity != null) {
-                          Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
+                            Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
                             // Create or retrieve the list of active scenarios
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
                             createOrUpdateActiveScenario(activeScenarios, scenarioName, status);
@@ -80,10 +80,10 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
         }
     }
 
-    private static UpdateRequestMapping fromTelegramRequest(@NonNull TelegramRequest request) {
+    private static UpdateRequestMapping fromTelegramRequest(TelegramRequest request) {
         String pattern = request.getPatterns().stream().findFirst().orElse(null);
-        RequestType requestType = request.getRequestTypes().stream().findFirst().orElse(null);
-        MessageType messageType = request.getMessageTypes().stream().findFirst().orElse(null);
+        RequestType requestType = request.getRequestTypes().stream().findFirst().orElse(RequestType.MESSAGE);
+        MessageType messageType = request.getMessageTypes().stream().findFirst().orElse(MessageType.COMMAND);
 
         // Create a Set with a single element if messageType is not null, otherwise an empty Set
         Set<MessageType> messageTypes = messageType != null ? Set.of(messageType) : Collections.emptySet();
