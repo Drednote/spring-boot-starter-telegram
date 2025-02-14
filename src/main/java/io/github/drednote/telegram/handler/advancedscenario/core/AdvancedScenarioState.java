@@ -46,7 +46,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public NextState<E> execute(UserScenarioContext context) {
-        TransitionStates<E> currentTransitionState = conditiones.get(context.getTelegramRequest());
+        TransitionStates<E> currentTransitionState = findTransitionStatesByRequest(context.getTelegramRequest());
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
@@ -62,6 +62,16 @@ public class AdvancedScenarioState<E extends Enum<E>> {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
         }
+    }
+
+    private TransitionStates<E> findTransitionStatesByRequest(TelegramRequest request) {
+        for (Map.Entry<List<TelegramRequest>, TransitionStates<E>> entry : conditiones.entrySet()) {
+            List<TelegramRequest> keyList = entry.getKey();
+            if (keyList.contains(request)) { // Проверяем, содержит ли список данный TelegramRequest
+                return entry.getValue(); // Возвращаем соответствующее TransitionStates<E>
+            }
+        }
+        return null; // Если ничего не найдено, возвращаем null
     }
 
     public static class AdvancedScenarioStateBuilder<E extends Enum<E>> {

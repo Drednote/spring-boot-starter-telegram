@@ -5,7 +5,10 @@ import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.*;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.handler.advancedscenario.core.*;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
+import io.github.drednote.telegram.handler.advancedscenario.core.NextState;
+import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
@@ -38,7 +41,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
         if (request.getAdvancedScenarioManager() != null && !request.getAdvancedScenarioManager().getScenarios().isEmpty()) {
             advancedScenarioManager = request.getAdvancedScenarioManager();
             Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
-            UserScenarioContext context = new UserScenarioContext(request, Objects.requireNonNull(optionalAdvancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null)));
+            UserScenarioContext context = new UserScenarioContext(request, optionalAdvancedScenarioEntity.flatMap(IAdvancedScenarioEntity::getData));
             optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity1 -> request.getAdvancedScenarioManager().setActiveScenarios(advancedScenarioEntity1.getActiveScenarios()));
 
             @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
