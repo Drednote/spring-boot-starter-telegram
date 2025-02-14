@@ -14,7 +14,6 @@ import java.util.Map;
 public class AdvancedScenario<E extends Enum<E>> {
     private final E startState;
     private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
-    private E currentState;
     @Setter
     private E globalErrorTransitionState;
 
@@ -30,18 +29,11 @@ public class AdvancedScenario<E extends Enum<E>> {
     public AdvancedScenario(E startState, Map<E, AdvancedScenarioState<E>> states) {
         this.startState = startState;
         this.states = states;
-        this.currentState = startState; // Begin from the start's state
     }
 
-    public void setCurrentState(String stateNameString) {
-        E stateName = Enum.valueOf(enumClass, stateNameString);
-        if (!states.containsKey(stateName)) {
-            throw new IllegalArgumentException("State not found: " + stateName);
-        }
-        this.currentState = stateName;
-    }
 
-    public List<TelegramRequest> getActiveConditions() {
+    public List<TelegramRequest> getActiveConditions(String currentStateStr) {
+        E currentState = currentStateStr == null ? startState : Enum.valueOf(enumClass, currentStateStr);
         AdvancedScenarioState<E> currentStateObj = states.get(currentState);
         if (currentStateObj == null) {
             throw new RuntimeException("Current state not found: " + currentState);
@@ -49,8 +41,8 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public NextActualState<E> process(UserScenarioContext context) {
-
+    public synchronized NextActualState<E> process(UserScenarioContext context, String currentStateStr) {
+        E currentState = currentStateStr == null ? startState : Enum.valueOf(enumClass, currentStateStr);
         AdvancedScenarioState<E> state = states.get(currentState);
         if (state == null) {
             throw new RuntimeException("State not found: " + currentState);
@@ -61,7 +53,7 @@ public class AdvancedScenario<E extends Enum<E>> {
             // was transferred from another scenario need to execute current execution
             if (context.getTelegramRequest() == null) {
                 state.justExecuteAction(context);
-                return new NextActualState<>(currentState, currentScenarioName);
+                return new NextActualState<>(Enum.valueOf(enumClass, currentState.toString()), currentScenarioName);
             }
 
             TransitionAndNextState<E> transitionAndNextState = state.getNextStatus(context);
@@ -74,7 +66,6 @@ public class AdvancedScenario<E extends Enum<E>> {
                 return transitionAndNextState.getNextActualState();
             }
             if (state.isFinal()) {
-                currentState = startState;
                 context.setIsFinished(true);
                 return new NextActualState<>(startState, null);
             } else {
@@ -90,7 +81,6 @@ public class AdvancedScenario<E extends Enum<E>> {
                 state = states.get(errorState);
                 state.justExecuteAction(context);
                 if (state.isFinal()) {
-                    currentState = startState;
                     context.setIsFinished(true);
                     return new NextActualState<>(startState, null);
                 } else {

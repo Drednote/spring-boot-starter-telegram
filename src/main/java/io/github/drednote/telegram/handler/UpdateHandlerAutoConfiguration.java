@@ -8,14 +8,15 @@ import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAda
 import io.github.drednote.telegram.filter.pre.AdvancedScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
-import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioBeanRegistrator;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioUpdateHandler;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedActiveScenarioFactory;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioEntityDTO;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.InMemoryAdvancedScenarioStorage;
+import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
-import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 import io.github.drednote.telegram.handler.controller.*;
 import io.github.drednote.telegram.handler.scenario.ScenarioConfig;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
@@ -35,7 +36,6 @@ import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.utils.FieldProvider;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -45,7 +45,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @AutoConfiguration
 @EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
@@ -103,11 +105,16 @@ public class UpdateHandlerAutoConfiguration {
             return new AdvancedScenarioUpdateHandler(advancedScenarioStorage(), advancedActiveScenarioFactory());
         }
 
-        @TelegramScope
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(List<IAdvancedScenarioConfig> advancedScenarioConfigs) {
-            return new AdvancedScenarioUpdateHandlerPopular(advancedScenarioConfigs);
+        public AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor() {
+            return new AdvancedScenarioConfigurationBeanPostProcessor();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor) {
+            return new AdvancedScenarioUpdateHandlerPopular(scenarioFactoryBeanPostProcessor.getScenarios());
         }
 
     }

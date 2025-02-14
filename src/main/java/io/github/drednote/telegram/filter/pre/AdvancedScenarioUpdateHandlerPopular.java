@@ -4,25 +4,24 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.advancedscenario.AdvancedScenarioConfigurationBeanPostProcessor;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
-import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 
 import java.util.List;
 
 public class AdvancedScenarioUpdateHandlerPopular implements PriorityPreUpdateFilter {
-    private final List<IAdvancedScenarioConfig> advancedScenarioConfigs;
+    private final List<AdvancedScenarioConfigurationBeanPostProcessor.AdvancedScenarioInfo> scenarios;
 
-    public AdvancedScenarioUpdateHandlerPopular(List<IAdvancedScenarioConfig> advancedScenarioConfigs) {
-        this.advancedScenarioConfigs = advancedScenarioConfigs;
+    public AdvancedScenarioUpdateHandlerPopular(List<AdvancedScenarioConfigurationBeanPostProcessor.AdvancedScenarioInfo> scenarios) {
+        this.scenarios = scenarios;
     }
 
 
     @Override
     public void preFilter(UpdateRequest request) {
-        if (!this.advancedScenarioConfigs.isEmpty()) {
+        if (!this.scenarios.isEmpty()) {
             AdvancedScenarioManager advancedScenarioManager = new AdvancedScenarioManager();
-          /*  for (AdvancedScenarioConfigurationBeanPostProcessor.AdvancedScenarioInfo scenarioInfo : this.advancedScenarioConfigs) {
+            for (AdvancedScenarioConfigurationBeanPostProcessor.AdvancedScenarioInfo scenarioInfo : this.scenarios) {
                 advancedScenarioManager.addScenario(scenarioInfo.name(), scenarioInfo.scenario());
-            }*/
+            }
             request.getAccessor().setAdvancedScenarioManager(advancedScenarioManager);
         }
     }
