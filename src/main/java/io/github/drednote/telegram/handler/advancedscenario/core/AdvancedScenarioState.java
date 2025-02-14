@@ -4,11 +4,14 @@ import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.NextTransitionStateException;
+import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionStates;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +21,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     @Getter
 
     private Map<List<TelegramRequest>, TransitionStates<E>> conditiones = new HashMap<>();
-    private E defaultTransitionState;
 
     private boolean isFinal;
     @Setter
@@ -45,19 +47,36 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         this.isFinal = isFinal;
     }
 
-    public NextState<E> execute(UserScenarioContext context) {
+    public TransitionAndNextState<E> getNextStatus(UserScenarioContext context) {
         TransitionStates<E> currentTransitionState = findTransitionStatesByRequest(context.getTelegramRequest());
+        return new TransitionAndNextState<>(currentTransitionState, new NextActualState<>(currentTransitionState.getDefaultTransitionState(), currentTransitionState.getToAnotherScenario()));
+    }
+
+    public void justExecuteAction(UserScenarioContext context) {
+        if (executeAction != null) {
+            try {
+                context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new RuntimeException("No execution action exist in " + currentStateName);
+        }
+    }
+
+    public NextActualState<E> executeActionAndReturnTransition(TransitionStates<E> transitionStates, UserScenarioContext context) {
+
         try {
             if (executeAction != null) {
-                context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
-                return new NextState<>(currentTransitionState.getDefaultTransitionState(), currentTransitionState.getToAnotherScenario(), true);
+                BotApiMethod<?> actionResult = executeAction.execute(context);
+                context.getUpdateRequest().getAbsSender().execute(actionResult);
+                return new NextActualState<>(transitionStates.getDefaultTransitionState(), transitionStates.getToAnotherScenario());
             } else {
-                return new NextState<>(defaultTransitionState, currentTransitionState.getToAnotherScenario(), false);
+                throw new RuntimeException("No execution action exist in " + currentStateName);
             }
-
         } catch (Exception e) {
-            if (currentTransitionState.getElseErrorState() != null) {
-                return new NextState<>(currentTransitionState.getElseErrorState(), currentTransitionState.getToAnotherScenario(), true);
+            if (transitionStates.getElseErrorState() != null) {
+                throw new NextTransitionStateException(transitionStates.getElseErrorState());
             } else {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
@@ -110,7 +129,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             if (this.conditions.isEmpty()) {
                 throw new IllegalStateException("Condition must be specified before transition.");
             }
-            state.currentStateName = nextState;
             this.transitionState = nextState;
             this.currentTransitionState = new TransitionStates<>(transitionState);
             state.conditiones.put(conditions, currentTransitionState);
@@ -146,7 +164,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         }
 
         public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E statusName) {
-            state.defaultTransitionState = statusName;
             return new AdvancedScenarioState.AdvancedScenarioStateBuilder<>(statusName, advancedScenarioClass);
         }
 

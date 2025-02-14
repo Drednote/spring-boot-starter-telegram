@@ -1,6 +1,8 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
+import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.NextTransitionStateException;
+import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,18 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class AdvancedScenario<E extends Enum<E>> {
-    @Getter
     private final E startState;
-    @Getter
     private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
-    @Getter
     private E currentState;
     @Setter
-    @Getter
     private E globalErrorTransitionState;
 
-    @Getter
+    @Setter
+    private String currentScenarioName;
+
     private Class<E> enumClass;
 
     public static <T extends Enum<T>> AdvancedScenarioBuilder<T> create(T startStateName) {
@@ -48,7 +49,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public NextState<E> process(UserScenarioContext context) {
+    public NextActualState<E> process(UserScenarioContext context) {
 
         AdvancedScenarioState<E> state = states.get(currentState);
         if (state == null) {
@@ -56,20 +57,41 @@ public class AdvancedScenario<E extends Enum<E>> {
         }
 
         try {
-            NextState<E> nextState = state.execute(context);
 
-            while (!nextState.getExecuted()) {
-                state = states.get(nextState.getScenarioState());
-                nextState = state.execute(context);
+            // was transferred from another scenario need to execute current execution
+            if (context.getTelegramRequest() == null) {
+                state.justExecuteAction(context);
+                return new NextActualState<>(currentState, currentScenarioName);
+            }
+
+            TransitionAndNextState<E> transitionAndNextState = state.getNextStatus(context);
+            NextActualState<E> nextActualState;
+            if (transitionAndNextState != null && transitionAndNextState.getNextActualState().getNextScenario() == null) {
+                state = states.get(transitionAndNextState.getNextActualState().getScenarioState());
+                nextActualState = state.executeActionAndReturnTransition(transitionAndNextState.getTransitionStates(), context);
+            } else {
+                assert transitionAndNextState != null;
+                return transitionAndNextState.getNextActualState();
             }
             if (state.isFinal()) {
-                return new NextState<>(startState, null, true);
+                context.setIsFinished(true);
+                return new NextActualState<>(startState, null);
             } else {
-                return nextState;
+                return nextActualState;
             }
-        } catch (RuntimeException e) {
+        } catch (NextTransitionStateException e) {
+            if (e.getErrorState() != null) {
+                state = states.get(e.getErrorState());
+                state.justExecuteAction(context);
+                return new NextActualState<>(Enum.valueOf(enumClass, e.getErrorState().toString()), null);
+            } else {
+                throw e;
+            }
+        } catch (Exception e) {
             if (globalErrorTransitionState != null) {
-                return new NextState<>(globalErrorTransitionState, null, true);
+                state = states.get(globalErrorTransitionState);
+                state.justExecuteAction(context);
+                return new NextActualState<>(globalErrorTransitionState, null);
             } else {
                 throw e;
             }

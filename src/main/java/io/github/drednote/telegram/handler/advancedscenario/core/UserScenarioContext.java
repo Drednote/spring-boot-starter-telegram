@@ -11,6 +11,9 @@ import java.util.Optional;
 @Getter
 public class UserScenarioContext {
     private UpdateRequest updateRequest;
+
+    @Setter
+    private Boolean isFinished;
     @Setter
     private TelegramRequest telegramRequest;
     private JSONObject data;

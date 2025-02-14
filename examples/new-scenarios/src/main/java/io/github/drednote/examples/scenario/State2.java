@@ -5,4 +5,5 @@ public enum State2 {
     SCENARIO_2_SHOW_MENU,
     SCENARIO_2_ERROR,
     SCENARIO_2_EXIT,
+    SCENARIO_2_FINAL,
 }

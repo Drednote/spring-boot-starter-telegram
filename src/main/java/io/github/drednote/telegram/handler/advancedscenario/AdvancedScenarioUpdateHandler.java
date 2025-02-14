@@ -7,7 +7,7 @@ import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
-import io.github.drednote.telegram.handler.advancedscenario.core.NextState;
+import io.github.drednote.telegram.handler.advancedscenario.core.NextActualState;
 import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
@@ -53,7 +53,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                 for (RequestMappingPair requestMappingPair : requestMappings) {
                     if (requestMappingPair.getUpdateRequestMapping().matches(request)) {
                         context.setTelegramRequest(requestMappingPair.getTelegramRequest());
-                        NextState<?> nextState = advancedActiveScenario.process(context);
+                        NextActualState<?> nextActualState = processOfObtainingNextActState(advancedActiveScenario, context);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);
 
                         IAdvancedScenarioEntity advancedScenarioEntity = optionalAdvancedScenarioEntity.orElse(null);
@@ -62,9 +62,9 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                             Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
                             // Create or retrieve the list of active scenarios
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
-                            createOrUpdateActiveScenario(activeScenarios, scenarioName, nextState);
+                            createOrUpdateActiveScenario(activeScenarios, scenarioName, nextActualState);
                         } else {
-                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextState))), Optional.of(context.getData().toString()));
+                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextActualState))), Optional.of(context.getData().toString()));
                         }
                         this.storage.save(advancedScenarioEntity);
                     }
@@ -74,28 +74,59 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
         ResponseSetter.setResponse(request, null);
     }
 
-    private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, NextState<?> nextState) {
-        return activeScenarioFactory.createActiveScenarioEntity(nextState.getNextScenario() != null ? nextState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextState));
-    }
-
-    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, NextState<?> nextState) {
-        IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
-        if (existingActiveScenario != null) {
-            if (nextState.getNextScenario() != null) {
-                existingActiveScenario.setScenarioName(nextState.getNextScenario());
-            }
-            existingActiveScenario.setStatusName(findStateFromNewScenarioIfNeeded(nextState).toString());
-            return existingActiveScenario;
+    /**
+     * Getting next active state and scenario to save in DB
+     *
+     * @param advancedActiveScenario
+     * @param context
+     * @return
+     */
+    private NextActualState<?> processOfObtainingNextActState(AdvancedScenario<?> advancedActiveScenario, UserScenarioContext context) {
+        NextActualState<?> nextActualState = advancedActiveScenario.process(context);
+        if (nextActualState.getNextScenario() != null && !Objects.equals(nextActualState.getNextScenario(), advancedActiveScenario.getCurrentScenarioName())) {
+            AdvancedScenario<?> nextAdvancedActiveScenario = advancedScenarioManager.findScenarioByName(nextActualState.getNextScenario());
+            context.setTelegramRequest(null);
+            return nextAdvancedActiveScenario.process(context);
         } else {
-            return activeScenarioFactory.createActiveScenarioEntity(nextState.getNextScenario() != null ? nextState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextState));
+            return nextActualState;
         }
     }
 
-    private Enum<?> findStateFromNewScenarioIfNeeded(NextState<?> nextState) {
-        if (nextState.getScenarioState() == null) {
-            return advancedScenarioManager.findScenarioByName(nextState.getNextScenario()).getStartState();
+    /**
+     * Create new active scenario entity for DB saving
+     * @param scenarioName
+     * @param nextActualState
+     * @return
+     */
+    private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, NextActualState<?> nextActualState) {
+        return activeScenarioFactory.createActiveScenarioEntity(nextActualState.getNextScenario() != null ? nextActualState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextActualState));
+    }
+
+    /**
+     * Create new or update active scenario entity for DB saving
+     * @param activeScenarioEntities
+     * @param scenarioName
+     * @param nextActualState
+     * @return
+     */
+    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, NextActualState<?> nextActualState) {
+        IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
+        if (existingActiveScenario != null) {
+            if (nextActualState.getNextScenario() != null) {
+                existingActiveScenario.setScenarioName(nextActualState.getNextScenario());
+            }
+            existingActiveScenario.setStatusName(findStateFromNewScenarioIfNeeded(nextActualState).toString());
+            return existingActiveScenario;
         } else {
-            return nextState.getScenarioState();
+            return activeScenarioFactory.createActiveScenarioEntity(nextActualState.getNextScenario() != null ? nextActualState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextActualState));
+        }
+    }
+
+    private Enum<?> findStateFromNewScenarioIfNeeded(NextActualState<?> nextActualState) {
+        if (nextActualState.getScenarioState() == null) {
+            return advancedScenarioManager.findScenarioByName(nextActualState.getNextScenario()).getStartState();
+        } else {
+            return nextActualState.getScenarioState();
         }
     }
 

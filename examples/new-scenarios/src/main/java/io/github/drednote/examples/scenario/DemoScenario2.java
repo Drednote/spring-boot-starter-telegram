@@ -12,21 +12,34 @@ public class DemoScenario2 implements IAdvancedScenarioConfig {
     public AdvancedScenario<State2> getScenario() {
         return AdvancedScenario.create(State2.SCENARIO_2_START)
                 .state(State2.SCENARIO_2_START)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2_START").build())
-                .on(AdvancedScenarioState.getTelegramRequest("/hello2", null, null))
-                .transitionTo(State2.SCENARIO_2_SHOW_MENU)
-                .elseErrorTo(State2.SCENARIO_2_ERROR)
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2_START").build())
+                        .on(AdvancedScenarioState.getTelegramRequest("/hello2", null, null))
+                        .transitionTo(State2.SCENARIO_2_SHOW_MENU)
+                        .elseErrorTo(State2.SCENARIO_2_ERROR)
+
                 .state(State2.SCENARIO_2_SHOW_MENU)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("MOVED TO SCENARIO_1").build())
-                .on(AdvancedScenarioState.getTelegramRequest("/to_scenario_1", null, null))
-                .transitionToScenario("SCENARIO_1")
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2_SHOW_MENU").build())
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_scenario_1", null, null))
+                        .transitionToScenario("SCENARIO_1")
+
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_exit", null, null))
+                        .transitionTo(State2.SCENARIO_2_EXIT)
+
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_final", null, null))
+                        .transitionTo(State2.SCENARIO_2_FINAL)
+
                 .state(State2.SCENARIO_2_EXIT)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Exit!").build())
-                .asFinal()
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("EXIT STAGE!").build())
+                    .asFinal()
+
                 .state(State2.SCENARIO_2_ERROR)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Error!").build())
-                .on(null)
-                .transitionTo(State2.SCENARIO_2_START)
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Error!").build())
+                    .asFinal()
+
+                .state(State2.SCENARIO_2_FINAL)
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("FINAL STAGE!").build())
+                    .asFinal()
+
                 .build();
     }
 }

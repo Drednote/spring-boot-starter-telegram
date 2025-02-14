@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NextState<T extends Enum<T>> {
+public class NextActualState<T extends Enum<T>> {
     private T scenarioState;
     private String nextScenario;
-    private Boolean executed;
 }
