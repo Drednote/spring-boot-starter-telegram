@@ -4,32 +4,26 @@ import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionStates;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AdvancedScenarioState<E extends Enum<E>> {
     @Getter
 
-    private final List<TelegramRequest> conditiones = new ArrayList<>();
+    private Map<List<TelegramRequest>, TransitionStates<E>> conditiones = new HashMap<>();
     private E defaultTransitionState;
-    @Getter
-    @Setter
-    private E elseErrorState;
-    @Setter
-    private E exceptionTransitionState;
+
     private boolean isFinal;
     @Setter
     private Action executeAction;
 
-    private String nextScenario;
     private E currentStateName;
 
     public AdvancedScenarioState(E currentStateName) {
@@ -37,7 +31,10 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public List<TelegramRequest> getConditions() {
-        return conditiones;
+        return conditiones.keySet()
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     public boolean isFinal() {
@@ -49,19 +46,18 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public NextState<E> execute(UserScenarioContext context) {
+        TransitionStates<E> currentTransitionState = conditiones.get(context.getTelegramRequest());
         try {
             if (executeAction != null) {
                 context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
-                return new NextState<>(currentStateName, nextScenario, true);
-            }else{
-                return new NextState<>(defaultTransitionState, nextScenario, false);
+                return new NextState<>(currentTransitionState.getDefaultTransitionState(), currentTransitionState.getToAnotherScenario(), true);
+            } else {
+                return new NextState<>(defaultTransitionState, currentTransitionState.getToAnotherScenario(), false);
             }
 
         } catch (Exception e) {
-            if (elseErrorState != null) {
-                return new NextState<>(elseErrorState, nextScenario, true);
-            } else if (exceptionTransitionState != null) {
-                return new NextState<>(exceptionTransitionState, nextScenario, true);
+            if (currentTransitionState.getElseErrorState() != null) {
+                return new NextState<>(currentTransitionState.getElseErrorState(), currentTransitionState.getToAnotherScenario(), true);
             } else {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }
@@ -75,6 +71,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         private List<TelegramRequest> conditions = new ArrayList<>();
         private E transitionState;
         private final AdvancedScenario<E> advancedScenarioClass;
+        private TransitionStates<E> currentTransitionState;
 
         public AdvancedScenarioStateBuilder(E statusName, AdvancedScenario<E> advancedScenarioClass) {
             this.statusName = statusName;
@@ -85,6 +82,16 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         }
 
         public AdvancedScenarioStateBuilder<E> on(TelegramRequest condition) {
+            conditions = new ArrayList<>();
+            this.currentTransitionState = null;
+            this.conditions.add(condition);
+            return this;
+        }
+
+        public AdvancedScenarioStateBuilder<E> or(TelegramRequest condition) {
+            if (this.conditions.isEmpty()) {
+                throw new IllegalStateException("Use on before or.");
+            }
             this.conditions.add(condition);
             return this;
         }
@@ -94,9 +101,10 @@ public class AdvancedScenarioState<E extends Enum<E>> {
                 throw new IllegalStateException("Condition must be specified before transition.");
             }
             state.currentStateName = nextState;
-            state.conditiones.addAll(conditions);
             this.transitionState = nextState;
-            conditions = new ArrayList<>();
+            this.currentTransitionState = new TransitionStates<>(transitionState);
+            state.conditiones.put(conditions, currentTransitionState);
+
             return this;
         }
 
@@ -105,7 +113,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             if (transitionState == null) {
                 throw new IllegalStateException("Transition state must be specified before elseErrorTo.");
             }
-            state.setElseErrorState(errorState);
+            this.currentTransitionState.setElseErrorState(errorState);
             return this;
         }
 
@@ -120,9 +128,10 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         }
 
         public AdvancedScenarioStateBuilder<E> transitionToScenario(String scenarioName) {
-            state.nextScenario = scenarioName;
-            state.conditiones.addAll(conditions);
-            conditions = new ArrayList<>();
+            this.transitionState = null;
+            this.currentTransitionState = new TransitionStates<>(transitionState);
+            this.currentTransitionState.setToAnotherScenario(scenarioName);
+            state.conditiones.put(conditions, currentTransitionState);
             return this;
         }
 

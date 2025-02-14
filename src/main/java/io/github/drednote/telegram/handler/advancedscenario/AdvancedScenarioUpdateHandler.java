@@ -5,14 +5,12 @@ import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.*;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
-import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
-import io.github.drednote.telegram.handler.advancedscenario.core.NextState;
-import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
+import io.github.drednote.telegram.handler.advancedscenario.core.*;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioStorage;
+import io.github.drednote.telegram.handler.advancedscenario.core.models.RequestMappingPair;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.annotation.Order;
@@ -40,17 +38,18 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
         if (request.getAdvancedScenarioManager() != null && !request.getAdvancedScenarioManager().getScenarios().isEmpty()) {
             advancedScenarioManager = request.getAdvancedScenarioManager();
             Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
-            UserScenarioContext context = new UserScenarioContext(request, optionalAdvancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null));
+            UserScenarioContext context = new UserScenarioContext(request, Objects.requireNonNull(optionalAdvancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null)));
             optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity1 -> request.getAdvancedScenarioManager().setActiveScenarios(advancedScenarioEntity1.getActiveScenarios()));
 
             @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
             for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
-                List<UpdateRequestMapping> updateRequestMappings = new ArrayList<>();
+                List<RequestMappingPair> requestMappings = new ArrayList<>();
                 for (TelegramRequest telegramRequest : advancedActiveScenario.getActiveConditions()) {
-                    updateRequestMappings.add(fromTelegramRequest(telegramRequest));
+                    requestMappings.add(new RequestMappingPair(telegramRequest, fromTelegramRequest(telegramRequest)));
                 }
-                for (UpdateRequestMapping handlerMethod : updateRequestMappings) {
-                    if (handlerMethod.matches(request)) {
+                for (RequestMappingPair requestMappingPair : requestMappings) {
+                    if (requestMappingPair.getUpdateRequestMapping().matches(request)) {
+                        context.setTelegramRequest(requestMappingPair.getTelegramRequest());
                         NextState<?> nextState = advancedActiveScenario.process(context);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);
 
@@ -62,7 +61,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
                             createOrUpdateActiveScenario(activeScenarios, scenarioName, nextState);
                         } else {
-                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextState))), Optional.of(""));
+                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextState))), Optional.of(context.getData().toString()));
                         }
                         this.storage.save(advancedScenarioEntity);
                     }

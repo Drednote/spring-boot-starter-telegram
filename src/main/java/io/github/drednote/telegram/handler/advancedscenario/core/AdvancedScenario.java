@@ -58,8 +58,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         try {
             NextState<E> nextState = state.execute(context);
 
-            while (!nextState.getExecuted())
-            {
+            while (!nextState.getExecuted()) {
                 state = states.get(nextState.getScenarioState());
                 nextState = state.execute(context);
             }
@@ -69,9 +68,7 @@ public class AdvancedScenario<E extends Enum<E>> {
                 return nextState;
             }
         } catch (RuntimeException e) {
-            if (state.getElseErrorState() != null) {
-                return new NextState<>(state.getElseErrorState(), null, true);
-            } else if (globalErrorTransitionState != null) {
+            if (globalErrorTransitionState != null) {
                 return new NextState<>(globalErrorTransitionState, null, true);
             } else {
                 throw e;

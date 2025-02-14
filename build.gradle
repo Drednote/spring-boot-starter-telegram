@@ -38,6 +38,9 @@ dependencies {
     api 'com.github.ben-manes.caffeine:caffeine'
     api 'org.apache.httpcomponents.client5:httpclient5'
 
+    //json
+    implementation group: 'org.json', name: 'json', version: '20250107'
+
     // data
     compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
