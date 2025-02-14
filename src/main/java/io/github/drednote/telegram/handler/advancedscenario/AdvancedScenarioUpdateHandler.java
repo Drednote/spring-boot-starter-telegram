@@ -42,9 +42,9 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
             advancedScenarioManager = request.getAdvancedScenarioManager();
             Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
             UserScenarioContext context = new UserScenarioContext(request, optionalAdvancedScenarioEntity.flatMap(IAdvancedScenarioEntity::getData));
-            optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity1 -> request.getAdvancedScenarioManager().setActiveScenarios(advancedScenarioEntity1.getActiveScenarios()));
+            optionalAdvancedScenarioEntity.ifPresent(advancedScenarioEntity1 -> request.getAdvancedScenarioManager().setUpStatesInScenarios(advancedScenarioEntity1.getActiveScenarios()));
 
-            @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getActiveScenarios();
+            @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getScenarios();
             for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
                 List<RequestMappingPair> requestMappings = new ArrayList<>();
                 for (TelegramRequest telegramRequest : advancedActiveScenario.getActiveConditions()) {
@@ -59,19 +59,29 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                         IAdvancedScenarioEntity advancedScenarioEntity = optionalAdvancedScenarioEntity.orElse(null);
 
                         if (advancedScenarioEntity != null) {
-                            Optional<List<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
+                            // If the stage of the scenario is finished. deleting active scenario form DB
+                            if (Boolean.TRUE.equals(context.getIsFinished())) {
+                                advancedScenarioEntity.removeActiveScenarioByName(scenarioName);
+                                // If active scenarios are empty no need to store the whole entity in DB
+                                if (advancedScenarioEntity.getActiveScenarios().isEmpty()) {
+                                    this.storage.deleteById(advancedScenarioEntity.getKey());
+                                    return;
+                                }
+                            }
+                            Optional<ArrayList<IAdvancedActiveScenarioEntity>> activeScenariosOptional = advancedScenarioEntity.getActiveScenarios();
                             // Create or retrieve the list of active scenarios
                             List<IAdvancedActiveScenarioEntity> activeScenarios = activeScenariosOptional.orElseGet(ArrayList::new);
                             createOrUpdateActiveScenario(activeScenarios, scenarioName, nextActualState);
                         } else {
-                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(List.of(createNewActiveScenario(scenarioName, nextActualState))), Optional.of(context.getData().toString()));
+                            advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), Optional.of(new ArrayList<>(List.of(createNewActiveScenario(scenarioName, nextActualState)))), Optional.of(context.getData().toString()));
                         }
                         this.storage.save(advancedScenarioEntity);
+
                     }
                 }
             }
         }
-        ResponseSetter.setResponse(request, null);
+
     }
 
     /**
@@ -94,6 +104,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     /**
      * Create new active scenario entity for DB saving
+     *
      * @param scenarioName
      * @param nextActualState
      * @return
@@ -104,23 +115,25 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     /**
      * Create new or update active scenario entity for DB saving
+     *
      * @param activeScenarioEntities
      * @param scenarioName
      * @param nextActualState
      * @return
      */
-    private IAdvancedActiveScenarioEntity createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, NextActualState<?> nextActualState) {
+    private void createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, NextActualState<?> nextActualState) {
         IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
         if (existingActiveScenario != null) {
             if (nextActualState.getNextScenario() != null) {
                 existingActiveScenario.setScenarioName(nextActualState.getNextScenario());
             }
             existingActiveScenario.setStatusName(findStateFromNewScenarioIfNeeded(nextActualState).toString());
-            return existingActiveScenario;
         } else {
-            return activeScenarioFactory.createActiveScenarioEntity(nextActualState.getNextScenario() != null ? nextActualState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextActualState));
+            IAdvancedActiveScenarioEntity advancedActiveScenarioEntity = activeScenarioFactory.createActiveScenarioEntity(nextActualState.getNextScenario() != null ? nextActualState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(nextActualState));
+            activeScenarioEntities.add(advancedActiveScenarioEntity);
         }
     }
+
 
     private Enum<?> findStateFromNewScenarioIfNeeded(NextActualState<?> nextActualState) {
         if (nextActualState.getScenarioState() == null) {

@@ -3,10 +3,9 @@ package io.github.drednote.telegram.handler.advancedscenario.core.data;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
-import org.springframework.context.ApplicationContext;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveScenarioFactory {
@@ -19,7 +18,7 @@ public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveSce
     }
 
     @Override
-    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<List<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data) {
+    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<ArrayList<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data) {
         return new InMemoryAdvancedScenarioEntityDTO(userId, chatId, changeDate, activeScenarios, data);
     }
 }

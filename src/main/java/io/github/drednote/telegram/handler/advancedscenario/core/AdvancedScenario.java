@@ -74,24 +74,28 @@ public class AdvancedScenario<E extends Enum<E>> {
                 return transitionAndNextState.getNextActualState();
             }
             if (state.isFinal()) {
+                currentState = startState;
                 context.setIsFinished(true);
                 return new NextActualState<>(startState, null);
             } else {
                 return nextActualState;
             }
-        } catch (NextTransitionStateException e) {
-            if (e.getErrorState() != null) {
-                state = states.get(e.getErrorState());
-                state.justExecuteAction(context);
-                return new NextActualState<>(Enum.valueOf(enumClass, e.getErrorState().toString()), null);
-            } else {
-                throw e;
-            }
         } catch (Exception e) {
-            if (globalErrorTransitionState != null) {
-                state = states.get(globalErrorTransitionState);
+            Enum<?> errorState = globalErrorTransitionState;
+            if (e instanceof NextTransitionStateException) {
+                errorState = ((NextTransitionStateException) e).getErrorState();
+            }
+
+            if (errorState != null) {
+                state = states.get(errorState);
                 state.justExecuteAction(context);
-                return new NextActualState<>(globalErrorTransitionState, null);
+                if (state.isFinal()) {
+                    currentState = startState;
+                    context.setIsFinished(true);
+                    return new NextActualState<>(startState, null);
+                } else {
+                    return new NextActualState<>(Enum.valueOf(enumClass, errorState.toString()), null);
+                }
             } else {
                 throw e;
             }

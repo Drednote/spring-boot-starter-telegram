@@ -8,7 +8,6 @@ import java.util.*;
 @Getter
 public class AdvancedScenarioManager {
     private final Map<String, AdvancedScenario<?>> scenarios = new HashMap<>();
-    private List<String> activeScenariosNames = new ArrayList<>();
 
     public AdvancedScenarioManager() {
     }
@@ -18,7 +17,7 @@ public class AdvancedScenarioManager {
         scenarios.put(name, scenario);
     }
 
-    public AdvancedScenarioManager setActiveScenarios(Optional<List<IAdvancedActiveScenarioEntity>> optionalAdvancedScenarioEntity) {
+    public AdvancedScenarioManager setUpStatesInScenarios(Optional<ArrayList<IAdvancedActiveScenarioEntity>> optionalAdvancedScenarioEntity) {
         optionalAdvancedScenarioEntity
                 .ifPresent(advancedActiveScenarioEntities -> advancedActiveScenarioEntities
                         .forEach(advancedActiveScenarioEntity -> {
@@ -26,7 +25,7 @@ public class AdvancedScenarioManager {
                                 throw new IllegalArgumentException("Scenario not found: " + advancedActiveScenarioEntity.getScenarioName());
                             }
                             scenarios.get(advancedActiveScenarioEntity.getScenarioName()).setCurrentState(advancedActiveScenarioEntity.getStatusName());
-                            activeScenariosNames.add(advancedActiveScenarioEntity.getScenarioName());
+
                         }));
 
         return this;
@@ -44,18 +43,7 @@ public class AdvancedScenarioManager {
         return scenarios.get(name);
     }
 
-    public List<AdvancedScenario<?>> getActiveScenarios() {
-        if (!activeScenariosNames.isEmpty()) {
-            List<AdvancedScenario<?>> activeScenarios = new ArrayList<>();
-            for (String name : activeScenariosNames) {
-                AdvancedScenario<?> scenario = scenarios.get(name);
-                if (scenario != null) {
-                    activeScenarios.add(scenario);
-                }
-            }
-            return activeScenarios;
-        } else {
-            return new ArrayList<>(scenarios.values());
-        }
+    public List<AdvancedScenario<?>> getScenarios() {
+        return new ArrayList<>(scenarios.values());
     }
 }

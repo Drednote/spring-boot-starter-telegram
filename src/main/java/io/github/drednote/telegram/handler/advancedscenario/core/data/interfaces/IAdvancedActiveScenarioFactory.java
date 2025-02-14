@@ -1,11 +1,11 @@
 package io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public interface IAdvancedActiveScenarioFactory {
-    public IAdvancedActiveScenarioEntity createActiveScenarioEntity(String scenarioName, Enum<?> status);
+    IAdvancedActiveScenarioEntity createActiveScenarioEntity(String scenarioName, Enum<?> status);
 
-    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<List<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data);
+    IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<ArrayList<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data);
 }

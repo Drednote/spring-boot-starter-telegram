@@ -1,6 +1,5 @@
 package io.github.drednote.examples.scenario;
 
-import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
 import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioState;
 import io.github.drednote.telegram.handler.advancedscenario.core.annotations.AdvancedScenarioController;
@@ -30,6 +29,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 
                     .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
                     .transitionTo(State.SCENARIO_FUTURE_ERROR)
+                    .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
 
                 .state(State.SCENARIO_FUTURE_ERROR)
@@ -39,7 +39,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 
 
                 .state(State.SCENARIO_1_EXIT)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Exit!").build())
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_1 Exit!").build())
                     .asFinal()
 
                 .state(State.SCENARIO_1_GLOBAL_ERROR)
@@ -48,7 +48,8 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 
                 .state(State.SCENARIO_1_LOCAL1_ERROR)
                     .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("LOCAL1 Error!").build())
-                    .asFinal()
+                    .on(AdvancedScenarioState.getTelegramRequest("/to_start", null, null))
+                    .transitionTo(State.SCENARIO_1_START)
 
                 .build();
     }

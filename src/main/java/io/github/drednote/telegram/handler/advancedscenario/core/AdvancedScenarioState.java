@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
+import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
@@ -54,11 +55,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
     public void justExecuteAction(UserScenarioContext context) {
         if (executeAction != null) {
-            try {
-                context.getUpdateRequest().getAbsSender().execute(executeAction.execute(context));
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
-            }
+            ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
         } else {
             throw new RuntimeException("No execution action exist in " + currentStateName);
         }
@@ -68,8 +65,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
         try {
             if (executeAction != null) {
-                BotApiMethod<?> actionResult = executeAction.execute(context);
-                context.getUpdateRequest().getAbsSender().execute(actionResult);
+                ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
                 return new NextActualState<>(transitionStates.getDefaultTransitionState(), transitionStates.getToAnotherScenario());
             } else {
                 throw new RuntimeException("No execution action exist in " + currentStateName);

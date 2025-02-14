@@ -29,15 +29,15 @@ public class DemoScenario2 implements IAdvancedScenarioConfig {
                         .transitionTo(State2.SCENARIO_2_FINAL)
 
                 .state(State2.SCENARIO_2_EXIT)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("EXIT STAGE!").build())
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2 EXIT!").build())
                     .asFinal()
 
                 .state(State2.SCENARIO_2_ERROR)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Error!").build())
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2 Error!").build())
                     .asFinal()
 
                 .state(State2.SCENARIO_2_FINAL)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("FINAL STAGE!").build())
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2 FINAL STAGE!").build())
                     .asFinal()
 
                 .build();
