@@ -12,4 +12,5 @@ import java.lang.annotation.*;
 @BetaApi
 public @interface AdvancedScenarioController {
     String name();
+    boolean isSubScenario() default false;
 }

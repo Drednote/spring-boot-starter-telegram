@@ -20,7 +20,7 @@ public class AdvancedScenarioUpdateHandlerPopular implements PriorityPreUpdateFi
         if (!this.scenarios.isEmpty()) {
             AdvancedScenarioManager advancedScenarioManager = new AdvancedScenarioManager();
             for (AdvancedScenarioConfigurationBeanPostProcessor.AdvancedScenarioInfo scenarioInfo : this.scenarios) {
-                advancedScenarioManager.addScenario(scenarioInfo.name(), scenarioInfo.scenario());
+                advancedScenarioManager.addScenario(scenarioInfo.name(), scenarioInfo.isSubScenario(), scenarioInfo.scenario());
             }
             request.getAccessor().setAdvancedScenarioManager(advancedScenarioManager);
         }

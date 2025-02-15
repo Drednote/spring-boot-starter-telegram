@@ -38,9 +38,8 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                         .on(AdvancedScenarioState.getTelegramRequest("change_password", RequestType.CALLBACK_QUERY, null))
                         .transitionTo(State.SCENARIO_1_CHANGE_PASSWORD)
 
-                        .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
-                        .transitionTo(State.SCENARIO_FUTURE_ERROR)
-                        .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
+                        .on(AdvancedScenarioState.getTelegramRequest("to_sub_scenario", RequestType.CALLBACK_QUERY, null))
+                        .transitionToScenario("SCENARIO_1_PART2")
 
                         .on(AdvancedScenarioState.getTelegramRequest("/conditional", null, null))
                         .transitionTo(State.SCENARIO_1_START)

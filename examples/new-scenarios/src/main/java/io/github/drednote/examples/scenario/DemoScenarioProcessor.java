@@ -33,12 +33,13 @@ public class DemoScenarioProcessor {
         if (Objects.equals(context.getUpdateRequest().getText(), oldPass)) {
             context.getData().remove("passTimes");
             context.getData().remove("passNotWrong");
+            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Correct pass").build();
+
         } else {
             context.getData().put("passNotWrong", true);
+            context.getData().put("passTimes", (int) context.getData().get("passTimes") - 1);
+            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Wrong pass try again:").build();
         }
-
-        context.getData().put("passTimes", (int) context.getData().get("passTimes") - 1);
-        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Wrong pass try again:").build();
     }
 
     SendMessage sendFirstMenu(UserScenarioContext context) {
@@ -47,7 +48,7 @@ public class DemoScenarioProcessor {
         List<InlineKeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(createButtonRow("Weather", "weather"));
         keyboard.add(createButtonRow("Change password", "change_password"));
-        keyboard.add(createButtonRow("To submenu", "to_sub_menu"));
+        keyboard.add(createButtonRow("To sub scenario", "to_sub_scenario"));
 
         message.setReplyMarkup(InlineKeyboardMarkup.builder().keyboard(keyboard).build());
         return message;

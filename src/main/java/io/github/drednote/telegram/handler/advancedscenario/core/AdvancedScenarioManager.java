@@ -11,8 +11,9 @@ public class AdvancedScenarioManager {
     public AdvancedScenarioManager() {
     }
 
-    public void addScenario(String name, AdvancedScenario<?> scenario) {
+    public void addScenario(String name, boolean isSubScenario, AdvancedScenario<?> scenario) {
         scenario.setCurrentScenarioName(name);
+        scenario.setSubScenario(isSubScenario);
         scenarios.put(name, scenario);
     }
 

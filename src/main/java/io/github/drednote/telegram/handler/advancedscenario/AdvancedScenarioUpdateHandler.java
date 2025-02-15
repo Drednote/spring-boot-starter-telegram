@@ -36,15 +36,40 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     @Override
     public void onUpdate(UpdateRequest request) {
+        /* If Advanced Scenario Manager is not null */
         if (request.getAdvancedScenarioManager() != null && !request.getAdvancedScenarioManager().getScenarios().isEmpty()) {
+
             advancedScenarioManager = request.getAdvancedScenarioManager();
+
+            /* Get stored scenario context from DB */
             Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity = this.storage.findById(request.getUserId() + ":" + request.getChatId());
+
+            /* Set up user context for working in scenario handlers */
             UserScenarioContext context = new UserScenarioContext(request, optionalAdvancedScenarioEntity.map(IAdvancedScenarioEntity::getData).orElse(null));
 
-            @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager().getScenarios();
+            /*
+              Get active scenarios from DB
+             */
+            List<IAdvancedActiveScenarioEntity> storedActiveScenariosInDB = optionalAdvancedScenarioEntity
+                    .map(IAdvancedScenarioEntity::getActiveScenarios)
+                    .orElse(Collections.emptyList());
+
+            /*
+              Find only available scenarios. remove sub scenario if needed. but if we worked with them keep to future proceed.
+             */
+            @NotNull List<AdvancedScenario<?>> advancedActiveScenarios = request.getAdvancedScenarioManager()
+                    .getScenarios()
+                    .stream()
+                    .filter(s -> !s.isSubScenario() ||
+                            storedActiveScenariosInDB.stream()
+                                    .anyMatch(activeScenario -> activeScenario.getScenarioName().equals(s.getCurrentScenarioName())))
+                    .toList();
+
             for (AdvancedScenario<?> advancedActiveScenario : advancedActiveScenarios) {
                 List<RequestMappingPair> requestMappings = fetchRequestMappings(advancedActiveScenario, optionalAdvancedScenarioEntity);
                 for (RequestMappingPair requestMappingPair : requestMappings) {
+
+                    /* Check if the request matches the request mapping */
                     if (requestMappingPair.getUpdateRequestMapping().matches(request)) {
                         context.setTelegramRequest(requestMappingPair.getTelegramRequest());
                         ScenarioWithState<?> scenarioWithState = processOfObtainingNextActState(advancedActiveScenario, context, optionalAdvancedScenarioEntity);
@@ -81,6 +106,13 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
     }
 
+    /**
+     * Creating RequestMappingPair (pair UpdateRequestMapping with TelegramRequest) for matching requests
+     *
+     * @param advancedActiveScenario
+     * @param optionalAdvancedScenarioEntity
+     * @return List<RequestMappingPair>
+     */
     private List<RequestMappingPair> fetchRequestMappings(AdvancedScenario<?> advancedActiveScenario, Optional<IAdvancedScenarioEntity> optionalAdvancedScenarioEntity) {
         // Retrieve the optional scenario entity from storage using the composite key (userId:chatId)
         return optionalAdvancedScenarioEntity
@@ -149,7 +181,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
      *
      * @param scenarioName
      * @param scenarioWithState
-     * @return
+     * @return IAdvancedActiveScenarioEntity
      */
     private IAdvancedActiveScenarioEntity createNewActiveScenario(String scenarioName, ScenarioWithState<?> scenarioWithState) {
         return activeScenarioFactory.createActiveScenarioEntity(scenarioWithState.getNextScenario() != null ? scenarioWithState.getNextScenario() : scenarioName, findStateFromNewScenarioIfNeeded(scenarioWithState));
@@ -161,7 +193,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
      * @param activeScenarioEntities
      * @param scenarioName
      * @param scenarioWithState
-     * @return
+     * @return List<IAdvancedActiveScenarioEntity>
      */
     private List<IAdvancedActiveScenarioEntity> createOrUpdateActiveScenario(List<IAdvancedActiveScenarioEntity> activeScenarioEntities, String scenarioName, ScenarioWithState<?> scenarioWithState) {
         IAdvancedActiveScenarioEntity existingActiveScenario = activeScenarioEntities.stream().filter(activeScenarioEntitie -> activeScenarioEntitie.getScenarioName().equals(scenarioName)).findFirst().orElse(null);
@@ -194,6 +226,12 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
     }
 
 
+    /**
+     * Looking for scenario state. If it's null getting the first stage from the scenario
+     *
+     * @param scenarioWithState
+     * @return Enum<?>
+     */
     private Enum<?> findStateFromNewScenarioIfNeeded(ScenarioWithState<?> scenarioWithState) {
         if (scenarioWithState.getScenarioState() == null) {
             return advancedScenarioManager.findScenarioByName(scenarioWithState.getNextScenario()).getStartState();

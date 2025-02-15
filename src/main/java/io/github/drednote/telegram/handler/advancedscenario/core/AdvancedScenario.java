@@ -16,8 +16,17 @@ import java.util.Map;
 public class AdvancedScenario<E extends Enum<E>> {
     private static final Logger log = LoggerFactory.getLogger(AdvancedScenario.class);
 
+    /**
+     * If scenario is sub-scenario is means no access to entry point of scenario
+     */
+    @Setter
+    private boolean isSubScenario;
+
+    /**
+     * Basic default state in this scenario
+     */
     private final E startState;
-    private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
+    private final Map<E, AdvancedScenarioState<E>> states;
     @Setter
     private E globalErrorTransitionState;
 
@@ -113,7 +122,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         private final AdvancedScenario<E> scenario;
 
         public AdvancedScenarioBuilder(E startStateName) {
-            this.scenario = new AdvancedScenario<E>(startStateName, new HashMap<>());
+            this.scenario = new AdvancedScenario<>(startStateName, new HashMap<>());
         }
 
         public AdvancedScenarioState.AdvancedScenarioStateBuilder<E> state(E stateName) {

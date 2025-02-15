@@ -47,10 +47,11 @@ public class AdvancedScenarioConfigurationBeanPostProcessor implements BeanPostP
         IAdvancedScenarioConfig configBean = (IAdvancedScenarioConfig) bean;
         scenarios.add(new AdvancedScenarioInfo(
                 annotation.name(),
-                configBean.getScenario()
+                configBean.getScenario(),
+                annotation.isSubScenario()
         ));
     }
 
-    public record AdvancedScenarioInfo(String name, AdvancedScenario<?> scenario) {
+    public record AdvancedScenarioInfo(String name, AdvancedScenario<?> scenario, boolean isSubScenario) {
     }
 }

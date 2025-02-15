@@ -25,23 +25,20 @@ import java.util.stream.Collectors;
 public class AdvancedScenarioState<E extends Enum<E>> {
     private static final Logger log = LoggerFactory.getLogger(AdvancedScenarioState.class);
 
-
-    @Getter
-
-    private Map<List<TelegramRequest>, TransitionStates<E>> conditiones = new HashMap<>();
+    private final Map<List<TelegramRequest>, TransitionStates<E>> conditions = new HashMap<>();
 
     private boolean isFinal;
     @Setter
     private Action executeAction;
 
-    private E currentStateName;
+    private final E currentStateName;
 
     public AdvancedScenarioState(E currentStateName) {
         this.currentStateName = currentStateName;
     }
 
     public List<TelegramRequest> getConditions() {
-        return conditiones.keySet()
+        return conditions.keySet()
                 .stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
@@ -88,7 +85,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     private TransitionStates<E> findTransitionStatesByRequest(TelegramRequest request) {
-        for (Map.Entry<List<TelegramRequest>, TransitionStates<E>> entry : conditiones.entrySet()) {
+        for (Map.Entry<List<TelegramRequest>, TransitionStates<E>> entry : conditions.entrySet()) {
             List<TelegramRequest> keyList = entry.getKey();
             if (keyList.contains(request)) {
                 return entry.getValue();
@@ -98,7 +95,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public static class AdvancedScenarioStateBuilder<E extends Enum<E>> {
-        private final E statusName;
         private final Map<E, AdvancedScenarioState<E>> states;
         private final AdvancedScenarioState<E> state;
         private List<TelegramRequest> conditions = new ArrayList<>();
@@ -107,7 +103,6 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         private TransitionStates<E> currentTransitionState;
 
         public AdvancedScenarioStateBuilder(E statusName, AdvancedScenario<E> advancedScenarioClass) {
-            this.statusName = statusName;
             this.states = advancedScenarioClass.getStates();
             this.advancedScenarioClass = advancedScenarioClass;
             this.state = new AdvancedScenarioState<>(statusName);
@@ -135,7 +130,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             }
             this.transitionState = nextState;
             this.currentTransitionState = new TransitionStates<>(transitionState);
-            state.conditiones.put(conditions, currentTransitionState);
+            state.conditions.put(conditions, currentTransitionState);
 
             return this;
         }
@@ -169,7 +164,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             this.transitionState = null;
             this.currentTransitionState = new TransitionStates<>(transitionState);
             this.currentTransitionState.setToAnotherScenario(scenarioName);
-            state.conditiones.put(conditions, currentTransitionState);
+            state.conditions.put(conditions, currentTransitionState);
             return this;
         }
 
