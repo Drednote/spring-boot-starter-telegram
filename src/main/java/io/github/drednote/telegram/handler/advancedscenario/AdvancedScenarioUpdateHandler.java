@@ -68,6 +68,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                             List<IAdvancedActiveScenarioEntity> activeScenariosReturn =
                                     createOrUpdateActiveScenario(activeScenarios, scenarioName, scenarioWithState);
                             Optional.ofNullable(activeScenariosReturn).ifPresent(advancedScenarioEntity::setActiveScenarios);
+                            advancedScenarioEntity.setData(context.getData().isEmpty() ? null : context.getData().toString());
                         } else {
                             advancedScenarioEntity = activeScenarioFactory.createScenarioEntity(request.getUserId(), request.getChatId(), Instant.now(), List.of(createNewActiveScenario(scenarioName, scenarioWithState)), context.getData().isEmpty() ? null : context.getData().toString());
                         }
@@ -202,10 +203,10 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
     }
 
 
-    private static UpdateRequestMapping fromTelegramRequest(TelegramRequest request) {
-        String pattern = request.getPatterns().stream().findFirst().orElse(null);
-        RequestType requestType = request.getRequestTypes().stream().findFirst().orElse(RequestType.MESSAGE);
-        MessageType messageType = request.getMessageTypes().stream().findFirst().orElse(MessageType.COMMAND);
+    private static UpdateRequestMapping fromTelegramRequest(@NotNull TelegramRequest request) {
+        String pattern = request.getPatterns().stream().findFirst().orElse("**");
+        RequestType requestType = request.getRequestTypes().stream().findFirst().orElse(null);
+        MessageType messageType = request.getMessageTypes().stream().findFirst().orElse(null);
 
         // Create a Set with a single element if messageType is not null, otherwise an empty Set
         Set<MessageType> messageTypes = messageType != null ? Set.of(messageType) : Collections.emptySet();
