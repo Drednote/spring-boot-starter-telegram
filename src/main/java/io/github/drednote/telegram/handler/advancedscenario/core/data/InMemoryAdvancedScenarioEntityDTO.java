@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -19,6 +20,6 @@ public class InMemoryAdvancedScenarioEntityDTO implements IAdvancedScenarioEntit
     private Long userId;
     private Long chatId;
     private Instant changeDate = Instant.now();
-    private Optional<ArrayList<IAdvancedActiveScenarioEntity>> activeScenarios;
-    private Optional<String> data;
+    private List<IAdvancedActiveScenarioEntity> activeScenarios;
+    private String data;
 }

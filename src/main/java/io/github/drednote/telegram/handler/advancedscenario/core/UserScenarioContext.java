@@ -18,8 +18,8 @@ public class UserScenarioContext {
     private TelegramRequest telegramRequest;
     private JSONObject data;
 
-    public UserScenarioContext(UpdateRequest updateRequest, Optional<String> data) {
-        this.data = data.isPresent() ? new JSONObject(data) : new JSONObject();
+    public UserScenarioContext(UpdateRequest updateRequest, String data) {
+        this.data = data != null ? new JSONObject(data) : null;
         this.updateRequest = updateRequest;
     }
 

@@ -41,7 +41,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public synchronized NextActualState<E> process(UserScenarioContext context, String currentStateStr) {
+    public NextActualState<E> process(UserScenarioContext context, String currentStateStr) {
         E currentState = currentStateStr == null ? startState : Enum.valueOf(enumClass, currentStateStr);
         AdvancedScenarioState<E> state = states.get(currentState);
         if (state == null) {

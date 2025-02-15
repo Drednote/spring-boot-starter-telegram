@@ -6,6 +6,7 @@ import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveScenarioFactory {
@@ -18,7 +19,7 @@ public class InMemoryAdvancedActiveScenarioFactory implements IAdvancedActiveSce
     }
 
     @Override
-    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, Optional<ArrayList<IAdvancedActiveScenarioEntity>> activeScenarios, Optional<String> data) {
+    public IAdvancedScenarioEntity createScenarioEntity(Long userId, Long chatId, Instant changeDate, List<IAdvancedActiveScenarioEntity> activeScenarios, String data) {
         return new InMemoryAdvancedScenarioEntityDTO(userId, chatId, changeDate, activeScenarios, data);
     }
 }
