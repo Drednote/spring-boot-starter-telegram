@@ -72,7 +72,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
             }
         } catch (Exception e) {
             if (transitionStates.getElseErrorState() != null) {
-                throw new NextTransitionStateException(transitionStates.getElseErrorState());
+                throw new NextTransitionStateException(transitionStates.getElseErrorState(), e.getMessage(), e);
             } else {
                 throw new RuntimeException("Unhandled exception in state " + currentStateName, e);
             }

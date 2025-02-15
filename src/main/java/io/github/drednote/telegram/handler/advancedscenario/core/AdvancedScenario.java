@@ -78,6 +78,7 @@ public class AdvancedScenario<E extends Enum<E>> {
             }
 
             if (errorState != null) {
+                context.setException(e);
                 state = states.get(errorState);
                 state.justExecuteAction(context);
                 if (state.isFinal()) {

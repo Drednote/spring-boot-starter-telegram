@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONObject;
 
-import java.util.Optional;
-
 @Getter
 public class UserScenarioContext {
     private UpdateRequest updateRequest;
+
+    @Setter
+    private Exception exception; //exception that thrown during scenario processing
 
     @Setter
     private Boolean isFinished;
