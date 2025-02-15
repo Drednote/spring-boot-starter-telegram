@@ -33,7 +33,7 @@ public class DemoScenarioProcessor {
         if (Objects.equals(context.getUpdateRequest().getText(), oldPass)) {
             context.getData().remove("passTimes");
             context.getData().remove("passNotWrong");
-            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Correct pass").build();
+            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Correct pass thanks").build();
 
         } else {
             context.getData().put("passNotWrong", true);

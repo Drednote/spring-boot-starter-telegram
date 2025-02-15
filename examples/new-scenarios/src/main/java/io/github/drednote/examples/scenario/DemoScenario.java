@@ -52,27 +52,25 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .state(State.SCENARIO_1_CHANGE_PASSWORD)
                     .execute(this.processor::needToChangePassword)
                         .on(AdvancedScenarioState.getTelegramRequest(null, null, MessageType.TEXT))
-                        .transitionTo(State.SCENARIO_1_AWAIT_NEW_PASSWORD)
+                        .transitionTo(State.SCENARIO_1_PASS_WAS_CHANGED)
+                        .conditionalTransition(data -> Optional.of(data.get("passTimes")).flatMap(times -> (int) times <= 0 ? Optional.of(true) : Optional.empty()).orElse(false), State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
+                        .conditionalTransition(data -> (boolean) Optional.of(data.get("passNotWrong")).orElse(false), State.SCENARIO_1_CHANGE_PASSWORD)
 
-                .state(State.SCENARIO_1_AWAIT_NEW_PASSWORD)
+                .state(State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
+                        .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Sorry you entered your password 3 times wrong").build())
+                        .asFinal()
+
+                .state(State.SCENARIO_1_PASS_WAS_CHANGED)
                         .execute(this.processor::changePassword)
-                            .on(AdvancedScenarioState.getTelegramRequest(null, null, MessageType.TEXT))
-                            .transitionTo(State.SCENARIO_1_AWAIT_NEW_PASSWORD)
-                            .conditionalTransition(data -> Optional.of(data.get("passTimes")).flatMap(times -> (int) times <= 0 ? Optional.of(true) : Optional.empty()).orElse(false), State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
-                            .conditionalTransition(data -> (boolean) Optional.of(data.get("passNotWrong")).orElse(false), State.SCENARIO_1_AWAIT_NEW_PASSWORD)
+                        .asFinal()
+
 
                 .state(State.SCENARIO_FUTURE_ERROR)
                     .execute(context -> {
                             throw new RuntimeException("hey");
                         })
 
-                .state(State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Sorry you entered your password 3 times wrong").build())
-                       .asFinal()
 
-                .state(State.SCENARIO_1_PASS_WAS_CHANGED)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Pass successfully changed").build())
-                        .asFinal()
 
                 .state(State.SCENARIO_1_GLOBAL_ERROR)
                     .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("GLOBAL Error!").build())
