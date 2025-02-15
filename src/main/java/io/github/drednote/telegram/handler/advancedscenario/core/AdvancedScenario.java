@@ -5,6 +5,8 @@ import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.Next
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +14,9 @@ import java.util.Map;
 
 @Getter
 public class AdvancedScenario<E extends Enum<E>> {
+    private static final Logger log = LoggerFactory.getLogger(AdvancedScenario.class);
+
+
     private final E startState;
     private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
     @Setter
@@ -41,35 +46,42 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public NextActualState<E> process(UserScenarioContext context, String currentStateStr) {
+    public ScenarioWithState<E> process(UserScenarioContext context, ScenarioWithState<?> previousState, String currentStateStr) {
         E currentState = currentStateStr == null ? startState : Enum.valueOf(enumClass, currentStateStr);
+
         AdvancedScenarioState<E> state = states.get(currentState);
         if (state == null) {
             throw new RuntimeException("State not found: " + currentState);
         }
 
         try {
-
+            if (previousState != null) {
+                context.setPreviosScenarioWithState(previousState);
+                context.setNextScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
+            }
             // was transferred from another scenario need to execute current execution
             if (context.getTelegramRequest() == null) {
                 state.justExecuteAction(context);
-                return new NextActualState<>(Enum.valueOf(enumClass, currentState.toString()), currentScenarioName);
+                return new ScenarioWithState<>(Enum.valueOf(enumClass, currentState.toString()), currentScenarioName);
             }
 
             TransitionAndNextState<E> transitionAndNextState = state.getNextStatus(context);
-            NextActualState<E> nextActualState;
-            if (transitionAndNextState != null && transitionAndNextState.getNextActualState().getNextScenario() == null) {
-                state = states.get(transitionAndNextState.getNextActualState().getScenarioState());
-                nextActualState = state.executeActionAndReturnTransition(transitionAndNextState.getTransitionStates(), context);
+            ScenarioWithState<E> scenarioWithState;
+            if (transitionAndNextState != null && transitionAndNextState.getNextScenarioWithState().getNextScenario() == null) {
+                context.setPreviosScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
+                context.setNextScenarioWithState(new ScenarioWithState<>(transitionAndNextState.getNextScenarioWithState().getScenarioState(), currentScenarioName));
+
+                state = states.get(transitionAndNextState.getNextScenarioWithState().getScenarioState());
+                scenarioWithState = state.executeActionAndReturnTransition(transitionAndNextState.getTransitionStates(), context);
             } else {
                 assert transitionAndNextState != null;
-                return transitionAndNextState.getNextActualState();
+                return transitionAndNextState.getNextScenarioWithState();
             }
             if (state.isFinal()) {
                 context.setIsFinished(true);
-                return new NextActualState<>(startState, null);
+                return new ScenarioWithState<>(startState, null);
             } else {
-                return nextActualState;
+                return scenarioWithState;
             }
         } catch (Exception e) {
             Enum<?> errorState = globalErrorTransitionState;
@@ -78,18 +90,23 @@ public class AdvancedScenario<E extends Enum<E>> {
             }
 
             if (errorState != null) {
+                E errorStateEnum = Enum.valueOf(enumClass, errorState.toString());
+                context.setNextScenarioWithState(new ScenarioWithState<>(errorStateEnum, currentScenarioName));
+
                 context.setException(e);
                 state = states.get(errorState);
                 state.justExecuteAction(context);
                 if (state.isFinal()) {
                     context.setIsFinished(true);
-                    return new NextActualState<>(startState, null);
+                    return new ScenarioWithState<>(startState, null);
                 } else {
-                    return new NextActualState<>(Enum.valueOf(enumClass, errorState.toString()), null);
+                    return new ScenarioWithState<>(errorStateEnum, null);
                 }
             } else {
                 throw e;
             }
+        } finally {
+
         }
     }
 

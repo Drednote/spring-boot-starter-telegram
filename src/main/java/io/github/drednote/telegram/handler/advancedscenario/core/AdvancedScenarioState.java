@@ -6,19 +6,26 @@ import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.NextTransitionStateException;
+import io.github.drednote.telegram.handler.advancedscenario.core.models.ConditionalTransition;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionStates;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
 public class AdvancedScenarioState<E extends Enum<E>> {
+    private static final Logger log = LoggerFactory.getLogger(AdvancedScenarioState.class);
+
+
     @Getter
 
     private Map<List<TelegramRequest>, TransitionStates<E>> conditiones = new HashMap<>();
@@ -50,10 +57,11 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
     public TransitionAndNextState<E> getNextStatus(UserScenarioContext context) {
         TransitionStates<E> currentTransitionState = findTransitionStatesByRequest(context.getTelegramRequest());
-        return new TransitionAndNextState<>(currentTransitionState, new NextActualState<>(currentTransitionState.getDefaultTransitionState(), currentTransitionState.getToAnotherScenario()));
+        return new TransitionAndNextState<>(currentTransitionState, new ScenarioWithState<>(currentTransitionState.getNextTransitionState(context.getData()), currentTransitionState.getToAnotherScenario()));
     }
 
     public void justExecuteAction(UserScenarioContext context) {
+        log.info("Previous state: {}, next state: {}", context.getPreviosScenarioWithState(), context.getNextScenarioWithState());
         if (executeAction != null) {
             ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
         } else {
@@ -61,12 +69,12 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         }
     }
 
-    public NextActualState<E> executeActionAndReturnTransition(TransitionStates<E> transitionStates, UserScenarioContext context) {
-
+    public ScenarioWithState<E> executeActionAndReturnTransition(TransitionStates<E> transitionStates, UserScenarioContext context) {
+        log.info("Previous state: {}, next state: {}", context.getPreviosScenarioWithState(), context.getNextScenarioWithState());
         try {
             if (executeAction != null) {
                 ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
-                return new NextActualState<>(transitionStates.getDefaultTransitionState(), transitionStates.getToAnotherScenario());
+                return new ScenarioWithState<>(transitionStates.getNextTransitionState(context.getData()), transitionStates.getToAnotherScenario());
             } else {
                 throw new RuntimeException("No execution action exist in " + currentStateName);
             }
@@ -82,11 +90,11 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     private TransitionStates<E> findTransitionStatesByRequest(TelegramRequest request) {
         for (Map.Entry<List<TelegramRequest>, TransitionStates<E>> entry : conditiones.entrySet()) {
             List<TelegramRequest> keyList = entry.getKey();
-            if (keyList.contains(request)) { // Проверяем, содержит ли список данный TelegramRequest
-                return entry.getValue(); // Возвращаем соответствующее TransitionStates<E>
+            if (keyList.contains(request)) {
+                return entry.getValue();
             }
         }
-        return null; // Если ничего не найдено, возвращаем null
+        throw new RuntimeException("Request " + request + " not found in state " + currentStateName);
     }
 
     public static class AdvancedScenarioStateBuilder<E extends Enum<E>> {
@@ -148,6 +156,12 @@ public class AdvancedScenarioState<E extends Enum<E>> {
 
         public AdvancedScenarioStateBuilder<E> asFinal() {
             state.setFinal(true);
+            return this;
+        }
+
+        public AdvancedScenarioStateBuilder<E> conditionalTransition(Predicate<JSONObject> predicate, E nextState) {
+            ConditionalTransition<E> conditionalTransition = new ConditionalTransition<>(nextState, predicate);
+            this.currentTransitionState.addConditionalTransition(conditionalTransition);
             return this;
         }
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NextActualState<T extends Enum<T>> {
+public class ScenarioWithState<T extends Enum<T>> {
     private T scenarioState;
     private String nextScenario;
 }
