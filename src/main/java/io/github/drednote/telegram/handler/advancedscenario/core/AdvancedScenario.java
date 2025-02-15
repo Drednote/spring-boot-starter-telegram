@@ -92,6 +92,7 @@ public class AdvancedScenario<E extends Enum<E>> {
                 return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), scenarioWithState);
             }
         } catch (Exception e) {
+            log.error("Realtime AdvancedScenario error in {}", currentScenarioName, e);
             Enum<?> errorState = globalErrorTransitionState;
             if (e instanceof NextTransitionStateException) {
                 errorState = ((NextTransitionStateException) e).getErrorState();

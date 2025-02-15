@@ -24,22 +24,25 @@ public class DemoScenarioProcessor {
         this.webClient = webClient;
     }
 
-    SendMessage needToChangePassword(UserScenarioContext context) {
-        context.getData().put("passTimes", 2);
-        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Enter new password:").build();
-    }
 
-    SendMessage changePassword(UserScenarioContext context) {
-        if (Objects.equals(context.getUpdateRequest().getText(), oldPass)) {
-            context.getData().remove("passTimes");
-            context.getData().remove("passNotWrong");
-            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Correct pass thanks").build();
-
-        } else {
-            context.getData().put("passNotWrong", true);
-            context.getData().put("passTimes", (int) context.getData().get("passTimes") - 1);
-            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Wrong pass try again:").build();
+    SendMessage processChangePassword(UserScenarioContext context) {
+        // First enter
+        if(!context.getData().has("passTimes")) {
+            context.getData().put("passTimes", 2);
+            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Enter new password:").build();
+        }else{
+            if (Objects.equals(context.getUpdateRequest().getText(), oldPass)) {
+                context.getData().remove("passTimes");
+                context.getData().put("passNotWrong", true);
+                return null;
+            } else {
+                context.getData().put("passNotWrong", true);
+                context.getData().put("passTimes", (int) context.getData().get("passTimes") - 1);
+                return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Wrong pass try again:").build();
+            }
         }
+
+
     }
 
     SendMessage sendFirstMenu(UserScenarioContext context) {
