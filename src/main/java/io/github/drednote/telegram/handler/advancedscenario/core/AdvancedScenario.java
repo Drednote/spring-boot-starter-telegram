@@ -16,7 +16,6 @@ import java.util.Map;
 public class AdvancedScenario<E extends Enum<E>> {
     private static final Logger log = LoggerFactory.getLogger(AdvancedScenario.class);
 
-
     private final E startState;
     private Map<E, AdvancedScenarioState<E>> states = new HashMap<>();
     @Setter
@@ -94,7 +93,7 @@ public class AdvancedScenario<E extends Enum<E>> {
                 context.getTransitionContext().setNextScenarioWithState(new ScenarioWithState<>(errorStateEnum, currentScenarioName));
 
                 context.setException(e);
-                state = states.get(errorState);
+                state = states.get(errorStateEnum);
                 state.justExecuteAction(context);
                 if (state.isFinal()) {
                     context.setIsFinished(true);
