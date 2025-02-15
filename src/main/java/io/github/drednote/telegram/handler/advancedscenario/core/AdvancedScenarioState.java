@@ -74,7 +74,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
         try {
             if (executeAction != null) {
                 ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
-                return new ScenarioWithState<>(transitionStates.getNextTransitionState(context.getData()), transitionStates.getToAnotherScenario());
+                return new ScenarioWithState<>(transitionStates.getDefaultTransitionState(), transitionStates.getToAnotherScenario());
             } else {
                 throw new RuntimeException("No execution action exist in " + currentStateName);
             }
