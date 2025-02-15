@@ -4,10 +4,7 @@ import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.*;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenario;
-import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
-import io.github.drednote.telegram.handler.advancedscenario.core.ScenarioWithState;
-import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
+import io.github.drednote.telegram.handler.advancedscenario.core.*;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioEntity;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedActiveScenarioFactory;
 import io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces.IAdvancedScenarioEntity;
@@ -117,14 +114,14 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                     return advancedScenarioEntity.findActiveScenarioByName(advancedActiveScenario.getCurrentScenarioName())
                             .flatMap(advancedActiveScenarioEntity -> {
                                 // Process the current scenario
-                                ScenarioWithState<?> scenarioWithState = advancedActiveScenario.process(context, null, advancedActiveScenarioEntity.getStatusName());
-
+                                TransitionContext transitionContext = advancedActiveScenario.process(context, null, advancedActiveScenarioEntity.getStatusName());
+                                ScenarioWithState<?> scenarioWithState = transitionContext.getNextScenarioWithState();
                                 // Check if the next scenario differs from the current one
                                 if (scenarioWithState.getNextScenario() != null && !Objects.equals(scenarioWithState.getNextScenario(), advancedActiveScenario.getCurrentScenarioName())) {
                                     // Load the next scenario and process it
                                     AdvancedScenario<?> nextAdvancedActiveScenario = advancedScenarioManager.findScenarioByName(scenarioWithState.getNextScenario());
                                     context.setTelegramRequest(null);
-                                    return Optional.of(nextAdvancedActiveScenario.process(context, scenarioWithState, null));
+                                    return Optional.of(nextAdvancedActiveScenario.process(context, transitionContext.getPreviosScenarioWithState(), null).getNextScenarioWithState());
                                 } else {
                                     // Return the current next state
                                     return Optional.of(scenarioWithState);
@@ -134,11 +131,12 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
                 // Handle the case where optionalAdvancedScenarioEntity is empty
                 .orElseGet(() -> {
                     // Simulate processing with null as the scenario name
-                    ScenarioWithState<?> fallbackScenarioWithState = advancedActiveScenario.process(context, null, null);
+                    TransitionContext transitionContext = advancedActiveScenario.process(context, null, null);
+                    ScenarioWithState<?> fallbackScenarioWithState = transitionContext.getNextScenarioWithState();
                     if (fallbackScenarioWithState.getNextScenario() != null && !Objects.equals(fallbackScenarioWithState.getNextScenario(), advancedActiveScenario.getCurrentScenarioName())) {
                         AdvancedScenario<?> nextAdvancedActiveScenario = advancedScenarioManager.findScenarioByName(fallbackScenarioWithState.getNextScenario());
                         context.setTelegramRequest(null);
-                        return nextAdvancedActiveScenario.process(context, fallbackScenarioWithState, null);
+                        return nextAdvancedActiveScenario.process(context, transitionContext.getPreviosScenarioWithState(), null).getNextScenarioWithState();
                     } else {
                         return fallbackScenarioWithState;
                     }

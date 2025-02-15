@@ -61,7 +61,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public void justExecuteAction(UserScenarioContext context) {
-        log.info("Previous state: {}, next state: {}", context.getPreviosScenarioWithState(), context.getNextScenarioWithState());
+        log.info("Previous state: {}, next state: {}", context.getTransitionContext().getPreviosScenarioWithState(), context.getTransitionContext().getNextScenarioWithState());
         if (executeAction != null) {
             ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));
         } else {
@@ -70,7 +70,7 @@ public class AdvancedScenarioState<E extends Enum<E>> {
     }
 
     public ScenarioWithState<E> executeActionAndReturnTransition(TransitionStates<E> transitionStates, UserScenarioContext context) {
-        log.info("Previous state: {}, next state: {}", context.getPreviosScenarioWithState(), context.getNextScenarioWithState());
+        log.info("Previous state: {}, next state: {}", context.getTransitionContext().getPreviosScenarioWithState(), context.getTransitionContext().getNextScenarioWithState());
         try {
             if (executeAction != null) {
                 ResponseSetter.setResponse(context.getUpdateRequest(), executeAction.execute(context));

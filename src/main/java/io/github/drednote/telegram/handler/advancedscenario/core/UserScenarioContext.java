@@ -8,13 +8,12 @@ import lombok.Setter;
 import org.json.JSONObject;
 
 @Getter
-public class UserScenarioContext{
+public class UserScenarioContext {
     private final UpdateRequest updateRequest;
 
     @Setter
-    ScenarioWithState<?> previosScenarioWithState;
-    @Setter
-    ScenarioWithState<?> nextScenarioWithState;
+    @NonNull
+    private TransitionContext transitionContext = new TransitionContext();
 
     @Setter
     private Exception exception; //exception that thrown during scenario processing

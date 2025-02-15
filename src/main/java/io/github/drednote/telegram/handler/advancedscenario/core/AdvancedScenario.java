@@ -46,7 +46,7 @@ public class AdvancedScenario<E extends Enum<E>> {
         return currentStateObj.getConditions();
     }
 
-    public ScenarioWithState<E> process(UserScenarioContext context, ScenarioWithState<?> previousState, String currentStateStr) {
+    public TransitionContext process(UserScenarioContext context, ScenarioWithState<?> previousState, String currentStateStr) {
         E currentState = currentStateStr == null ? startState : Enum.valueOf(enumClass, currentStateStr);
 
         AdvancedScenarioState<E> state = states.get(currentState);
@@ -56,32 +56,32 @@ public class AdvancedScenario<E extends Enum<E>> {
 
         try {
             if (previousState != null) {
-                context.setPreviosScenarioWithState(previousState);
-                context.setNextScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
+                context.getTransitionContext().setPreviosScenarioWithState(previousState);
+                context.getTransitionContext().setNextScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
             }
             // was transferred from another scenario need to execute current execution
             if (context.getTelegramRequest() == null) {
                 state.justExecuteAction(context);
-                return new ScenarioWithState<>(Enum.valueOf(enumClass, currentState.toString()), currentScenarioName);
+                return new TransitionContext(null, new ScenarioWithState<>(Enum.valueOf(enumClass, currentState.toString()), currentScenarioName));
             }
 
             TransitionAndNextState<E> transitionAndNextState = state.getNextStatus(context);
             ScenarioWithState<E> scenarioWithState;
             if (transitionAndNextState != null && transitionAndNextState.getNextScenarioWithState().getNextScenario() == null) {
-                context.setPreviosScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
-                context.setNextScenarioWithState(new ScenarioWithState<>(transitionAndNextState.getNextScenarioWithState().getScenarioState(), currentScenarioName));
+                context.getTransitionContext().setPreviosScenarioWithState(new ScenarioWithState<>(currentState, currentScenarioName));
+                context.getTransitionContext().setNextScenarioWithState(new ScenarioWithState<>(transitionAndNextState.getNextScenarioWithState().getScenarioState(), currentScenarioName));
 
                 state = states.get(transitionAndNextState.getNextScenarioWithState().getScenarioState());
                 scenarioWithState = state.executeActionAndReturnTransition(transitionAndNextState.getTransitionStates(), context);
             } else {
                 assert transitionAndNextState != null;
-                return transitionAndNextState.getNextScenarioWithState();
+                return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), transitionAndNextState.getNextScenarioWithState());
             }
             if (state.isFinal()) {
                 context.setIsFinished(true);
-                return new ScenarioWithState<>(startState, null);
+                return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), new ScenarioWithState<>(startState, null));
             } else {
-                return scenarioWithState;
+                return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), scenarioWithState);
             }
         } catch (Exception e) {
             Enum<?> errorState = globalErrorTransitionState;
@@ -91,22 +91,22 @@ public class AdvancedScenario<E extends Enum<E>> {
 
             if (errorState != null) {
                 E errorStateEnum = Enum.valueOf(enumClass, errorState.toString());
-                context.setNextScenarioWithState(new ScenarioWithState<>(errorStateEnum, currentScenarioName));
+                context.getTransitionContext().setNextScenarioWithState(new ScenarioWithState<>(errorStateEnum, currentScenarioName));
 
                 context.setException(e);
                 state = states.get(errorState);
                 state.justExecuteAction(context);
                 if (state.isFinal()) {
                     context.setIsFinished(true);
-                    return new ScenarioWithState<>(startState, null);
+                    return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), new ScenarioWithState<>(startState, null));
                 } else {
-                    return new ScenarioWithState<>(errorStateEnum, null);
+                    return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), new ScenarioWithState<>(errorStateEnum, null));
                 }
             } else {
                 throw e;
             }
         } finally {
-
+            context.setTransitionContext(new TransitionContext());
         }
     }
 
