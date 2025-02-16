@@ -43,7 +43,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 
                         .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
                         .transitionTo(State.SCENARIO_FUTURE_ERROR)
-                        //.elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
+                        .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
                 .state(State.SCENARIO_1_SHOW_WEATHER)
                     .execute(this.processor::showWeather)
