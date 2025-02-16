@@ -407,65 +407,149 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .globalErrorTransitionTo(State.SCENARIO_1_GLOBAL_ERROR)
 
                 .state(State.SCENARIO_1_START)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_1_START state").build())
-                .on(AdvancedScenarioState.getTelegramRequest("/menu", null, null))
-                .or(AdvancedScenarioState.getTelegramRequest("/options", null, null))
-                .transitionTo(State.SCENARIO_1_SHOW_MENU)
-                .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_1_START state").build())
+                        .on(AdvancedScenarioState.getTelegramRequest("/menu", null, null))
+                        .or(AdvancedScenarioState.getTelegramRequest("/options", null, null))
+                        .transitionTo(State.SCENARIO_1_SHOW_MENU)
+                        .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
                 .state(State.SCENARIO_1_SHOW_MENU)
-                .execute(this.processor::sendFirstMenu)
-                .on(AdvancedScenarioState.getTelegramRequest("weather", RequestType.CALLBACK_QUERY, null))
-                .transitionTo(State.SCENARIO_1_SHOW_WEATHER)
-
-                .on(AdvancedScenarioState.getTelegramRequest("change_password", RequestType.CALLBACK_QUERY, null))
-                .transitionTo(State.SCENARIO_1_CHANGE_PASSWORD)
-
-                .on(AdvancedScenarioState.getTelegramRequest("to_sub_scenario", RequestType.CALLBACK_QUERY, null))
-                .transitionToScenario("SCENARIO_1_PART2")
-
-                .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
-                .transitionTo(State.SCENARIO_FUTURE_ERROR)
-                //.elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
+                    .execute(this.processor::sendFirstMenu)
+                        .on(AdvancedScenarioState.getTelegramRequest("weather", RequestType.CALLBACK_QUERY, null))
+                        .transitionTo(State.SCENARIO_1_SHOW_WEATHER)
+    
+                        .on(AdvancedScenarioState.getTelegramRequest("change_password", RequestType.CALLBACK_QUERY, null))
+                        .transitionTo(State.SCENARIO_1_CHANGE_PASSWORD)
+    
+                        .on(AdvancedScenarioState.getTelegramRequest("to_sub_scenario", RequestType.CALLBACK_QUERY, null))
+                        .transitionToScenario("SCENARIO_1_PART2")
+    
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
+                        .transitionTo(State.SCENARIO_FUTURE_ERROR)
+                        .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
                 .state(State.SCENARIO_1_SHOW_WEATHER)
-                .execute(this.processor::showWeather)
-                .asFinal()
+                    .execute(this.processor::showWeather)
+                        .asFinal()
 
                 .state(State.SCENARIO_1_CHANGE_PASSWORD)
-                .execute(this.processor::needToChangePassword)
-                .on(AdvancedScenarioState.getTelegramRequest(null, null, MessageType.TEXT))
-                .transitionTo(State.SCENARIO_1_PASS_WAS_CHANGED)
-                .elseErrorTo(State.SCENARIO_1_CHANGE_PASSWORD)
-                .conditionalTransition(data -> Optional.of(data.get("passTimes")).flatMap(times -> (int) times <= 0 ? Optional.of(true) : Optional.empty()).orElse(false), State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
+                    .execute(this.processor::needToChangePassword)
+                        .on(AdvancedScenarioState.getTelegramRequest(null, null, MessageType.TEXT))
+                        .transitionTo(State.SCENARIO_1_PASS_WAS_CHANGED)
+                        .elseErrorTo(State.SCENARIO_1_CHANGE_PASSWORD)
+                        .conditionalTransition(data -> Optional.of(data.get("passTimes")).flatMap(times -> (int) times <= 0 ? Optional.of(true) : Optional.empty()).orElse(false), State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
 
                 .state(State.SCENARIO_1_CHANGE_PASSWORD_NO_POSSIBLE)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Sorry you entered your password 3 times wrong").build())
-                .asFinal()
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Sorry you entered your password 3 times wrong").build())
+                        .asFinal()
 
                 .state(State.SCENARIO_1_PASS_WAS_CHANGED)
-                .execute(this.processor::changePassword)
-                .asFinal()
+                    .execute(this.processor::changePassword)
+                        .asFinal()
 
                 .state(State.SCENARIO_FUTURE_ERROR)
-                .execute(context -> {
-                    throw new RuntimeException("hey");
-                })
+                    .execute(context -> {
+                        throw new RuntimeException("hey");
+                    })
 
                 .state(State.SCENARIO_1_GLOBAL_ERROR)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("GLOBAL Error! "+ context.getException().getCause().getMessage()).build())
-                .asFinal()
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("GLOBAL Error! "+ context.getException().getCause().getMessage()).build())
+                        .asFinal()
 
                 .state(State.SCENARIO_1_LOCAL1_ERROR)
-                .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("LOCAL1 Error!").build())
-                .on(AdvancedScenarioState.getTelegramRequest("/to_start", null, null))
-                .transitionTo(State.SCENARIO_1_START)
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("LOCAL1 Error!").build())
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_start", null, null))
+                        .transitionTo(State.SCENARIO_1_START)
 
                 .build();
     }
 }
 ```
 
+1. Persisting Scenario State in a Database
+
+To implement scenario state persistence in a database, you need to implement the following interfaces:
+
+    IAdvancedActiveScenarioEntity
+    
+    IAdvancedActiveScenarioFactory
+    
+    IAdvancedScenarioEntity
+    
+    IAdvancedScenarioStorage
+
+By default, the library provides an in-memory storage solution that retains the last 500 sessions. When a new session is added, the oldest one is removed. However, you are free to implement your own persistence logic according to your requirements.
+
+2. Scenario Segmentation and Transitions
+
+Advanced scenarios support segmentation into separate files with defined transitions. To define a sub-scenario, use the @AdvancedScenarioController annotation with isSubScenario = true:
+
+    @AdvancedScenarioController(name = "SCENARIO_1_PART2", isSubScenario = true)
+
+To transition to another scenario part, invoke the following method:
+
+    .transitionToScenario("SCENARIO_1_PART2")
+
+3. Custom Data Storage in Session Context
+
+You can store and access custom data within a session using the UserScenarioContext object:
+
+```java
+@Getter
+public class UserScenarioContext {
+private final UpdateRequest updateRequest;
+
+    @Setter
+    @NonNull
+    private TransitionContext transitionContext = new TransitionContext();
+
+    @Setter
+    private Exception exception; // Exception thrown during scenario processing
+
+    @Setter
+    private Boolean isFinished;
+    
+    @Setter
+    private TelegramRequest telegramRequest;
+
+    @NonNull
+    private final JSONObject data;
+
+    public UserScenarioContext(UpdateRequest updateRequest, String data) {
+        this.data = data != null ? new JSONObject(data) : new JSONObject();
+        this.updateRequest = updateRequest;
+    }
+}
+```
+
+The private final JSONObject data; field is available throughout the scenario session's lifecycle. It is stored as a JSON string in the database, ensuring persistence across interactions.
+
+```java     
+SendMessage needToChangePassword(UserScenarioContext context) {
+    if (!context.getData().has("passTimes")) {
+        context.getData().put("passTimes", 2);
+        }
+
+       return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Enter new password:").build();
+    }
+```
+
+4. Exception Handling with AdvancedScenarioLogicException
+
+If you need to handle errors within your scenario logic, you can use the AdvancedScenarioLogicException. This exception prevents excessive logging of stack traces in the console while allowing you to control your error-handling logic effectively.
+```java    
+SendMessage changePassword(UserScenarioContext context) {
+        if (Objects.equals(context.getUpdateRequest().getText(), oldPass)) {
+            context.getData().remove("passTimes");
+            context.getData().remove("passNotWrong");
+            return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Password succesfully changed!").build();
+
+        } else {
+            context.getData().put("passTimes", Integer.parseInt(context.getData().get("passTimes") + "") - 1);
+            throw new AdvancedScenarioLogicException("Password is incorrect");
+        }
+    }
+```
 ---
 
 ### Filters
