@@ -172,7 +172,7 @@ public interface UpdateRequest {
      *
      * @return the advanced scenario manager, or null if no scenario belongs to given chat
      * @see AdvancedScenarioUpdateHandler
-     * @see !!!!!!! ScenarioConfigurerAdapter TODO: FIX!!!!!!!!!!
+     * @see AdvancedScenarioManager
      */
     @Nullable
     AdvancedScenarioManager getAdvancedScenarioManager();

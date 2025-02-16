@@ -1,6 +1,7 @@
 package io.github.drednote.examples.scenario;
 
 import io.github.drednote.telegram.handler.advancedscenario.core.UserScenarioContext;
+import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.AdvancedScenarioLogicException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -40,7 +41,7 @@ public class DemoScenarioProcessor {
 
         } else {
             context.getData().put("passTimes", Integer.parseInt(context.getData().get("passTimes") + "") - 1);
-            throw new RuntimeException("Password is incorrect");
+            throw new AdvancedScenarioLogicException("Password is incorrect");
         }
     }
 

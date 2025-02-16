@@ -5,6 +5,7 @@ import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.AdvancedScenarioLogicException;
 import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.NextTransitionStateException;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.ConditionalTransition;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;

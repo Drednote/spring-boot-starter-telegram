@@ -13,7 +13,7 @@ public class DemoScenario2 implements IAdvancedScenarioConfig {
         return AdvancedScenario.create(State2.SCENARIO_2_START)
                 .state(State2.SCENARIO_2_START)
                     .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_2_START").build())
-                        .on(AdvancedScenarioState.getTelegramRequest("/hello2", null, null))
+                        .on(AdvancedScenarioState.getTelegramRequest("/menu2", null, null))
                         .transitionTo(State2.SCENARIO_2_SHOW_MENU)
                         .elseErrorTo(State2.SCENARIO_2_ERROR)
 

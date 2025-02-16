@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.handler.advancedscenario.core;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
+import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.AdvancedScenarioLogicException;
 import io.github.drednote.telegram.handler.advancedscenario.core.exceptions.NextTransitionStateException;
 import io.github.drednote.telegram.handler.advancedscenario.core.models.TransitionAndNextState;
 import lombok.Getter;
@@ -92,11 +93,17 @@ public class AdvancedScenario<E extends Enum<E>> {
                 return new TransitionContext(new ScenarioWithState<>(currentState, currentScenarioName), scenarioWithState);
             }
         } catch (Exception e) {
-            log.error("Realtime AdvancedScenario error in {}", currentScenarioName, e);
+            if (e.getCause() instanceof AdvancedScenarioLogicException) {
+                log.warn("AdvancedScenarioLogicException {}, message: {}", currentScenarioName, e.getMessage());
+            } else {
+                log.error("Realtime AdvancedScenario error in {}", currentScenarioName, e);
+            }
+
             Enum<?> errorState = globalErrorTransitionState;
             if (e instanceof NextTransitionStateException) {
                 errorState = ((NextTransitionStateException) e).getErrorState();
             }
+
 
             if (errorState != null) {
                 E errorStateEnum = Enum.valueOf(enumClass, errorState.toString());

@@ -8,7 +8,6 @@ import io.github.drednote.telegram.handler.advancedscenario.core.annotations.Adv
 import io.github.drednote.telegram.handler.advancedscenario.core.interfaces.IAdvancedScenarioConfig;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.util.Objects;
 import java.util.Optional;
 
 @AdvancedScenarioController(name = "SCENARIO_1")
@@ -27,6 +26,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                 .state(State.SCENARIO_1_START)
                     .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("SCENARIO_1_START state").build())
                         .on(AdvancedScenarioState.getTelegramRequest("/menu", null, null))
+                        .or(AdvancedScenarioState.getTelegramRequest("/options", null, null))
                         .transitionTo(State.SCENARIO_1_SHOW_MENU)
                         .elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
@@ -41,9 +41,9 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                         .on(AdvancedScenarioState.getTelegramRequest("to_sub_scenario", RequestType.CALLBACK_QUERY, null))
                         .transitionToScenario("SCENARIO_1_PART2")
 
-                        .on(AdvancedScenarioState.getTelegramRequest("/conditional", null, null))
-                        .transitionTo(State.SCENARIO_1_START)
-                        .conditionalTransition(Objects::nonNull, State.SCENARIO_1_LOCAL1_ERROR)
+                        .on(AdvancedScenarioState.getTelegramRequest("/to_error", null, null))
+                        .transitionTo(State.SCENARIO_FUTURE_ERROR)
+                        //.elseErrorTo(State.SCENARIO_1_LOCAL1_ERROR)
 
                 .state(State.SCENARIO_1_SHOW_WEATHER)
                     .execute(this.processor::showWeather)
@@ -69,9 +69,8 @@ public class DemoScenario implements IAdvancedScenarioConfig {
                             throw new RuntimeException("hey");
                         })
 
-
                 .state(State.SCENARIO_1_GLOBAL_ERROR)
-                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("GLOBAL Error!").build())
+                    .execute(context -> SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("GLOBAL Error! "+ context.getException().getCause().getMessage()).build())
                     .asFinal()
 
                 .state(State.SCENARIO_1_LOCAL1_ERROR)
