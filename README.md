@@ -466,7 +466,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 }
 ```
 
-1. Persisting Scenario State in a Database
+### 1. Persisting Scenario State in a Database
 
 To implement scenario state persistence in a database, you need to implement the following interfaces:
 
@@ -480,7 +480,7 @@ To implement scenario state persistence in a database, you need to implement the
 
 By default, the library provides an in-memory storage solution that retains the last 500 sessions. When a new session is added, the oldest one is removed. However, you are free to implement your own persistence logic according to your requirements.
 
-2. Scenario Segmentation and Transitions
+### 2. Scenario Segmentation and Transitions
 
 Advanced scenarios support segmentation into separate files with defined transitions. To define a sub-scenario, use the @AdvancedScenarioController annotation with isSubScenario = true:
 
@@ -490,7 +490,7 @@ To transition to another scenario part, invoke the following method:
 
     .transitionToScenario("SCENARIO_1_PART2")
 
-3. Custom Data Storage in Session Context
+### 3. Custom Data Storage in Session Context
 
 You can store and access custom data within a session using the UserScenarioContext object:
 
@@ -534,7 +534,7 @@ SendMessage needToChangePassword(UserScenarioContext context) {
     }
 ```
 
-4. Exception Handling with AdvancedScenarioLogicException
+### 4. Exception Handling with AdvancedScenarioLogicException
 
 If you need to handle errors within your scenario logic, you can use the AdvancedScenarioLogicException. This exception prevents excessive logging of stack traces in the console while allowing you to control your error-handling logic effectively.
 ```java    
