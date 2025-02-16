@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.handler.advancedscenario.core.data.interfaces;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
