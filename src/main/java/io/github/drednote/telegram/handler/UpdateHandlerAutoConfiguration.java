@@ -107,14 +107,14 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor() {
+        public AdvancedScenarioConfigurationBeanPostProcessor advancedScenarioFactoryBeanPostProcessor() {
             return new AdvancedScenarioConfigurationBeanPostProcessor();
         }
 
         @Bean
         @ConditionalOnMissingBean
-        public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(AdvancedScenarioConfigurationBeanPostProcessor scenarioFactoryBeanPostProcessor) {
-            return new AdvancedScenarioUpdateHandlerPopular(scenarioFactoryBeanPostProcessor.getScenarios());
+        public AdvancedScenarioUpdateHandlerPopular advancedScenarioUpdateHandlerPopular(AdvancedScenarioConfigurationBeanPostProcessor advancedScenarioFactoryBeanPostProcessor) {
+            return new AdvancedScenarioUpdateHandlerPopular(advancedScenarioFactoryBeanPostProcessor.getScenarios());
         }
 
     }

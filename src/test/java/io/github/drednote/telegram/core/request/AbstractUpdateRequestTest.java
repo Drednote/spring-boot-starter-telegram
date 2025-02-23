@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.handler.scenario.Scenario;
@@ -91,6 +92,11 @@ class AbstractUpdateRequestTest {
       return null;
     }
 
+    @Override
+    public AdvancedScenarioManager getAdvancedScenarioManager() {
+      return null;
+    }
+
     @Nullable
     @Override
     public TelegramResponse getResponse() {
@@ -128,6 +134,11 @@ class AbstractUpdateRequestTest {
 
     @Override
     public void setScenario(@Nullable Scenario<?> scenario) {
+
+    }
+
+    @Override
+    public void setAdvancedScenarioManager(AdvancedScenarioManager advancedScenarioManager) {
 
     }
 
