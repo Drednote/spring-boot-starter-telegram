@@ -34,7 +34,7 @@ public class UserScenarioContext {
      * <p>
      * Example of configuring transition if you want extract variables:
      * <pre>{@code
-     *  telegramRequest(callbackQuery("Variable={value:.*}"))
+     *  AdvancedScenarioState.getTelegramRequest(callbackQuery("Variable={value:.*}"))
      * }</pre>
      * If the message is "Variable=foo", then you will get a map {@code value=foo}
      *
