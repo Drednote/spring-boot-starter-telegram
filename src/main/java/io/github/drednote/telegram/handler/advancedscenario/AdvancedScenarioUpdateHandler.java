@@ -71,6 +71,7 @@ public class AdvancedScenarioUpdateHandler implements UpdateHandler {
 
                     /* Check if the request matches the request mapping */
                     if (requestMappingPair.getUpdateRequestMapping().matches(request)) {
+                        context.setVariables(requestMappingPair.getUpdateRequestMapping().getPathMatcher().extractUriTemplateVariables(requestMappingPair.getUpdateRequestMapping().getPattern(), Objects.requireNonNull(request.getText())));
                         context.setTelegramRequest(requestMappingPair.getTelegramRequest());
                         ScenarioWithState<?> scenarioWithState = processOfObtainingNextActState(advancedActiveScenario, context, optionalAdvancedScenarioEntity);
                         String scenarioName = request.getAdvancedScenarioManager().findScenarioName(advancedActiveScenario);

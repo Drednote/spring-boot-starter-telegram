@@ -50,7 +50,7 @@ public class DemoScenarioProcessor {
         SendMessage message = SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Choose an option:").build();
 
         List<InlineKeyboardRow> keyboard = new ArrayList<>();
-        keyboard.add(createButtonRow("Weather", "weather"));
+        keyboard.add(createButtonRow("Weather", "weather|Frankfurt"));
         keyboard.add(createButtonRow("Change password", "change_password"));
         keyboard.add(createButtonRow("To sub scenario", "to_sub_scenario"));
 
@@ -64,15 +64,15 @@ public class DemoScenarioProcessor {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Frankfurt's weather: " + Objects.requireNonNull(getWeatherInFrankfurt().block())).build();
+        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Frankfurt's weather: " + Objects.requireNonNull(getWeatherIn(context.getVariables().get("city")).block())).build();
     }
 
     private InlineKeyboardRow createButtonRow(String text, String callbackData) {
         return new InlineKeyboardRow(InlineKeyboardButton.builder().text(text).callbackData(callbackData).build());
     }
 
-    public Mono<String> getWeatherInFrankfurt() {
-        String url = "https://wttr.in/Frankfurt?format=%C+%t";
+    public Mono<String> getWeatherIn(String city) {
+        String url = "https://wttr.in/"+city+"?format=%C+%t";
 
         return webClient.get()
                 .uri(url)

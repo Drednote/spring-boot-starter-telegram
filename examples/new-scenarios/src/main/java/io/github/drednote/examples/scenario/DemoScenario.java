@@ -32,7 +32,7 @@ public class DemoScenario implements IAdvancedScenarioConfig {
 
                 .state(State.SCENARIO_1_SHOW_MENU)
                     .execute(this.processor::sendFirstMenu)
-                        .on(AdvancedScenarioState.getTelegramRequest("weather", RequestType.CALLBACK_QUERY, null))
+                        .on(AdvancedScenarioState.getTelegramRequest("weather|{city:.*}", RequestType.CALLBACK_QUERY, null))
                         .transitionTo(State.SCENARIO_1_SHOW_WEATHER)
 
                         .on(AdvancedScenarioState.getTelegramRequest("change_password", RequestType.CALLBACK_QUERY, null))
