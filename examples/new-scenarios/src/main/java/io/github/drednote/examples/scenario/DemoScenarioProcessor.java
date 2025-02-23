@@ -50,7 +50,8 @@ public class DemoScenarioProcessor {
         SendMessage message = SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Choose an option:").build();
 
         List<InlineKeyboardRow> keyboard = new ArrayList<>();
-        keyboard.add(createButtonRow("Weather", "weather|Frankfurt"));
+        keyboard.add(createButtonRow("Weather Frankfurt", "weather|Frankfurt"));
+        keyboard.add(createButtonRow("Weather Moscow", "weather|Moscow"));
         keyboard.add(createButtonRow("Change password", "change_password"));
         keyboard.add(createButtonRow("To sub scenario", "to_sub_scenario"));
 
@@ -64,7 +65,7 @@ public class DemoScenarioProcessor {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text("Frankfurt's weather: " + Objects.requireNonNull(getWeatherIn(context.getVariables().get("city")).block())).build();
+        return SendMessage.builder().chatId(context.getUpdateRequest().getChatId()).text(context.getVariables().get("city")+"'s weather: " + Objects.requireNonNull(getWeatherIn(context.getVariables().get("city")).block())).build();
     }
 
     private InlineKeyboardRow createButtonRow(String text, String callbackData) {
