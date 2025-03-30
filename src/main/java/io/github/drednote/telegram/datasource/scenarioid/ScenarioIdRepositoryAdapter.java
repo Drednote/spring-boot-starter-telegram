@@ -16,7 +16,7 @@ public interface ScenarioIdRepositoryAdapter extends DataSourceAdapter {
      * @param id the numeric identifier of the scenario ID to find
      * @return an Optional containing the found ScenarioId, or empty if not found
      */
-    Optional<? extends ScenarioId> findById(Long id);
+    Optional<? extends ScenarioId> findById(String id);
 
     /**
      * Saves the specified scenario ID with userID.
@@ -24,5 +24,5 @@ public interface ScenarioIdRepositoryAdapter extends DataSourceAdapter {
      * @param scenarioId the scenario ID to be saved
      * @param id the numeric identifier associated with the scenario ID
      */
-    void save(String scenarioId, Long id);
+    void save(String scenarioId, String id);
 }

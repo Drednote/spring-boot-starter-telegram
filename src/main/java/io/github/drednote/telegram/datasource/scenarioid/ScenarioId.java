@@ -2,7 +2,7 @@ package io.github.drednote.telegram.datasource.scenarioid;
 
 public interface ScenarioId {
 
-    Long getId();
+    String getId();
 
     String getScenarioId();
 

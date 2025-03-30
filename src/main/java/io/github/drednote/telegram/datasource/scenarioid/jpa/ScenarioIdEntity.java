@@ -26,8 +26,7 @@ public class ScenarioIdEntity implements ScenarioId {
 
     @Id
     @Column(name = "id", nullable = false)
-    @JdbcTypeCode(SqlTypes.BIGINT)
-    private Long id;
+    private String id;
     @Column(name = "scenario_id", nullable = false)
     private String scenarioId;
 

@@ -30,8 +30,8 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 /**
  * The {@code UpdateRequest} interface represents a request received from
  * <a href="https://core.telegram.org/bots/api">Telegram API</a> as an {@link Update}.
- * Implementations of this interface provide getters and setters to access and modify the various
- * properties of the request.
+ * Implementations of this interface provide getters and setters to access and modify the various properties of the
+ * request.
  *
  * @author Ivan Galushko
  */
@@ -65,6 +65,16 @@ public interface UpdateRequest {
     Long getUserId();
 
     /**
+     * This ID is needed to identify a unique user based on ChatId and UserId. If UserId is null, then will be returned
+     * only to ChatId.
+     *
+     * @return unique user ID
+     */
+    default String getUserAssociatedId() {
+        return getUserId() == null ? getChatId().toString() : getUserId() + "_" + getChatId();
+    }
+
+    /**
      * Returns the type of the request
      *
      * @return the type of the request
@@ -75,11 +85,11 @@ public interface UpdateRequest {
     /**
      * Returns the types of message contained in the request
      * <p>
-     * In case if a type of message cannot correctly be determined, then will be return an empty set
-     * Typically, this shows something went wrong
+     * In case if a type of message cannot correctly be determined, then will be return an empty set Typically, this
+     * shows something went wrong
      *
-     * @return the types of message, or an empty set if the request is not a message or the message
-     * types cannot be determined
+     * @return the types of message, or an empty set if the request is not a message or the message types cannot be
+     * determined
      */
     @NonNull
     Set<MessageType> getMessageTypes();
@@ -87,8 +97,8 @@ public interface UpdateRequest {
     /**
      * Returns the text of the message or of the request
      * <p>
-     * if {@link #getRequestType()} == {@link RequestType#MESSAGE} and a field 'text' is empty, than
-     * can be field 'caption' if it presents
+     * if {@link #getRequestType()} == {@link RequestType#MESSAGE} and a field 'text' is empty, than can be field
+     * 'caption' if it presents
      *
      * @return the text of the message or of the request. Return null if {@link Update} has no text
      * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
@@ -169,13 +179,19 @@ public interface UpdateRequest {
      * Returns the response that should be sent to Telegram
      *
      * @return the response, or null if no one {@link UpdateHandler} or
-     * {@link PreUpdateFilter}/{@link PostUpdateFilter}/{@link ConclusivePostUpdateFilter} set
-     * response
+     * {@link PreUpdateFilter}/{@link PostUpdateFilter}/{@link ConclusivePostUpdateFilter} set response
      * @see ResponseSetter
      */
     @Nullable
     TelegramResponse getResponse();
 
+    /**
+     * This field contains responses from the telegram. It may be empty if there was no response or the response to the
+     * telegram itself has not been sent yet.
+     *
+     * @return a list of telegram responses.
+     */
+    @NonNull
     List<Serializable> getResponseFromTelegram();
 
     /**

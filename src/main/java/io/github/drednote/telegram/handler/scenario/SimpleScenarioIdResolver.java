@@ -9,10 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 /**
  * Default implementation of {@code ScenarioIdResolver} which resolves scenario IDs using a
@@ -20,11 +17,14 @@ import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessa
  *
  * @author Ivan Galushko
  */
-@RequiredArgsConstructor
 public class SimpleScenarioIdResolver implements ScenarioIdResolver {
 
     private final FieldProvider<ScenarioIdRepositoryAdapter> adapterProvider;
-    private final Map<Long, String> inMemoryMap = new HashMap<>();
+    private final Map<String, String> inMemoryMap = new HashMap<>();
+
+    public SimpleScenarioIdResolver(FieldProvider<ScenarioIdRepositoryAdapter> adapterProvider) {
+        this.adapterProvider = adapterProvider;
+    }
 
     /**
      * Resolves the scenario ID based on the given update request.
@@ -40,8 +40,7 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
         if (request.getRequestType() == RequestType.CALLBACK_QUERY) {
             return Optional.ofNullable(request.getOrigin().getCallbackQuery())
                 .map(CallbackQuery::getMessage)
-                .map(MaybeInaccessibleMessage::getMessageId)
-                .map(Object::toString)
+                .map(message -> ScenarioIdResolver.resolveId(request, message))
                 .orElse(doResolve(request));
         }
         return doResolve(request);
@@ -54,7 +53,7 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
      * @return the resolved scenario ID as a String
      */
     private String doResolve(UpdateRequest request) {
-        Long chatId = getChatId(request);
+        String chatId = request.getUserAssociatedId();
         if (adapterProvider.isExists()) {
             return adapterProvider.toOptional()
                 .flatMap(adapter -> adapter.findById(chatId))
@@ -63,16 +62,6 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
         }
         return Optional.ofNullable(inMemoryMap.get(chatId))
             .orElseGet(() -> generateId(request));
-    }
-
-    /**
-     * Retrieves the chat ID from the update request.
-     *
-     * @param request the update request from which to get the chat ID
-     * @return the chat ID as a {@code Long}
-     */
-    private static @NotNull Long getChatId(UpdateRequest request) {
-        return request.getUser() != null ? request.getUser().getId() : request.getChatId();
     }
 
     /**
@@ -94,7 +83,7 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
      */
     @Override
     public void saveNewId(UpdateRequest request, String id) {
-        Long chatId = getChatId(request);
+        String chatId = request.getUserAssociatedId();
         adapterProvider.toOptional().ifPresentOrElse(
             adapter -> adapter.save(id, chatId),
             () -> inMemoryMap.put(chatId, id)

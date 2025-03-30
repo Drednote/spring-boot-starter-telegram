@@ -98,6 +98,7 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
+    @NonNull
     public List<Serializable> getResponseFromTelegram() {
       return List.of();
     }
