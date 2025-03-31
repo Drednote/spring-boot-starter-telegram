@@ -4,13 +4,14 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioAccessor;
+import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioResponseMessageTransitionConfigurer;
 import java.io.Serializable;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 /**
  * {@code ScenarioIdPersistFilter} is a filter that persists the scenario associated with
@@ -44,8 +45,8 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
                         + "for scenario state is enabled. Scenario Id = '{}'", scenario.getId());
                 }
                 for (Serializable response : responses) {
-                    if (response instanceof Message message) {
-                        String messageId = message.getMessageId().toString();
+                    if (response instanceof MaybeInaccessibleMessage message) {
+                        String messageId = ScenarioIdResolver.resolveId(request, message);
                         scenario.getAccessor().setId(messageId);
                         break;
                     }

@@ -2,6 +2,7 @@ package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 /**
  * Interface for resolving and managing scenario IDs based on #{@link UpdateRequest}.
@@ -34,5 +35,16 @@ public interface ScenarioIdResolver {
      * @param id      the new scenario ID to be saved
      */
     void saveNewId(UpdateRequest request, String id);
+
+    /**
+     * Resolve unique id for message.
+     *
+     * @param request request
+     * @param message message
+     * @return unique id
+     */
+    static String resolveId(UpdateRequest request, MaybeInaccessibleMessage message) {
+        return request.getUserAssociatedId() + "_" + message.getMessageId().toString();
+    }
 }
 

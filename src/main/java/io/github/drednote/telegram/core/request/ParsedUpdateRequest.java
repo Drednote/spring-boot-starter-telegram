@@ -8,6 +8,7 @@ import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
 import java.io.Serializable;
 import java.util.List;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -27,6 +28,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    @NonNull
     public TelegramClient getAbsSender() {
         return telegramClient;
     }
@@ -47,6 +49,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    @NonNull
     public List<Serializable> getResponseFromTelegram() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
@@ -57,6 +60,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    @NonNull
     public TelegramProperties getProperties() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
@@ -67,6 +71,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    @NonNull
     public ObjectMapper getObjectMapper() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }

@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.filter.pre;
 
-import static io.github.drednote.telegram.filter.FilterOrder.DEFAULT_PRECEDENCE;
-
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.Permission.DefaultPermission;
@@ -64,7 +62,7 @@ public class RoleFilter implements PriorityPreUpdateFilter {
    * @param request The incoming Telegram update request to be pre-filtered, not null
    */
   @Override
-  @SuppressWarnings({"java:S1874", "deprecation"})
+  @SuppressWarnings({"java:S1874"})
   public void preFilter(@NonNull UpdateRequest request) {
     Assert.notNull(request, "UpdateRequest");
 
