@@ -3,6 +3,7 @@ package io.github.drednote.telegram.core.request;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
+import io.github.drednote.telegram.handler.advancedscenario.core.AdvancedScenarioManager;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
@@ -21,6 +22,15 @@ public interface UpdateRequestAccessor {
      * @see ScenarioUpdateHandler
      */
     void setScenario(@Nullable Scenario<?> scenario);
+
+    /**
+     * Sets the scenario advanced manager associated with the request
+     *
+     * @param advancedScenarioManager the scenario to set
+     * @apiNote Can only be set once. If a scenario is already set, do nothing
+     * @see ScenarioUpdateHandler
+     */
+    void setAdvancedScenarioManager(@Nullable AdvancedScenarioManager advancedScenarioManager);
 
     /**
      * Sets the response that should be sent to Telegram
