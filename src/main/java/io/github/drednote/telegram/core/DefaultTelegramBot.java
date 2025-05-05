@@ -39,10 +39,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class DefaultTelegramBot implements TelegramBot {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultTelegramBot.class);
-    /**
-     * The name of the bot
-     */
-    private final String name;
+
     /**
      * The collection of update handlers for processing updates
      */
@@ -93,7 +90,6 @@ public class DefaultTelegramBot implements TelegramBot {
         Assert.required(telegramClient, "TelegramClient");
 
         this.telegramClient = telegramClient;
-        this.name = properties.getName();
         this.updateHandlers = updateHandlers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
         this.objectMapper = objectMapper;

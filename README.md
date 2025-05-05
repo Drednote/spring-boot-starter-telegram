@@ -131,14 +131,12 @@ Add to `application.yml` your bot token and specify the name of bot
 ```yaml
 drednote:
   telegram:
-    name: <Your bot name>
     token: <Your bot token>
 ```
 
 Or if you preferred properties instead of yml
 
 ```properties
-drednote.telegram.name=<Your bot name>
 drednote.telegram.token=<Your bot token>
 ```
 
@@ -667,7 +665,6 @@ All settings tables contain 4 columns:
 | Name          | Description                               | Default Value                                            | Required |
 |---------------|-------------------------------------------|----------------------------------------------------------|----------|
 | enabled       | Enable the bot.                           | true                                                     | true     |
-| name          | The name of a bot. Example: TheBestBot.   |                                                          | false    |
 | token*        | The token of a bot.                       | <b>must be set by user</b>                               | true     |
 | defaultLocale | The default locale for sending responses. | -                                                        | false    |
 | session       | Session properties.                       | [Session properties](#session-properties)                |          |

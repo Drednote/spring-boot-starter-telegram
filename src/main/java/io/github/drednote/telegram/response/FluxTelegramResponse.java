@@ -5,13 +5,14 @@ import io.github.drednote.telegram.utils.Assert;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Represents a response that processes a Flux of Telegram updates.
  * <p>
- * Note: It is recommended to avoid using this class directly. Instead, if you need to execute
- * {@code Flux} of {@code TelegramResponse} instances, you can return a {@code Flux} of
- * {@code TelegramResponse} directly from your handler method.
+ * Note: It is recommended to avoid using this class directly. Instead, if you need to execute {@code Flux} of
+ * {@code TelegramResponse} instances, you can return a {@code Flux} of {@code TelegramResponse} directly from your
+ * handler method.
  *
  * @author Ivan Galushko
  */
@@ -24,16 +25,20 @@ public class FluxTelegramResponse extends AbstractTelegramResponse {
     /**
      * Constructs a {@code FluxTelegramResponse} with the specified response object.
      *
-     * @param response the response object; must be an instance of {@code Flux}
-     * @throws IllegalArgumentException if {@code response} is null or if {@code response} is not an
-     *                                  instance of {@code Flux}
+     * @param response the response object; must be an instance of {@link Flux} or {@link Mono}
+     * @throws IllegalArgumentException if {@code response} is null or if {@code response} is not an instance of
+     *                                  {@link Flux} or {@link Mono}
      */
     public FluxTelegramResponse(Object response) {
         Assert.required(response, "response");
-        if (!(response instanceof Flux)) {
-            throw new IllegalArgumentException("This class works only with a Flux");
+
+        if (response instanceof Flux<?> flux) {
+            this.response = (Flux<Object>) flux;
+        } else if (response instanceof Mono<?> mono) {
+            this.response = ((Mono<Object>) mono).flux();
+        } else {
+            throw new IllegalArgumentException("This class works only with a Flux or Mono");
         }
-        this.response = (Flux<Object>) response;
     }
 
     /**
@@ -78,8 +83,7 @@ public class FluxTelegramResponse extends AbstractTelegramResponse {
         /**
          * Constructs a {@code FluxException} with the specified Telegram API exception.
          *
-         * @param exception the Telegram API exception that caused the Flux to fail; must not be
-         *                  null
+         * @param exception the Telegram API exception that caused the Flux to fail; must not be null
          */
         public FluxException(TelegramApiException exception) {
             this.exception = exception;
