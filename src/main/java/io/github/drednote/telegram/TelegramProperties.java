@@ -29,9 +29,10 @@ public class TelegramProperties {
   /**
    * The name of a bot. Example: TheBestBot.
    * <p>
-   * <b>Required</b>
+   * @deprecated not used since 0.3.0
    */
-  @NonNull
+  @Nullable
+  @Deprecated(since = "0.3.0")
   private String name;
   /**
    * The token of a bot.
