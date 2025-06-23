@@ -33,16 +33,16 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * Default implementation of the {@link TelegramUpdateProcessor} interface for managing consumption
  * updates.
  * <p>
- * {@code DefaultTelegramUpdateProcessor} processes updates from Telegram. It handles user requests
+ * {@code OnFlyTelegramUpdateProcessor} processes updates from Telegram. It handles user requests
  * and applies rate limiting based on the configuration provided.
  *
  * @author Ivan Galushko
  * @see TelegramBot
  * @see SessionProperties
  */
-public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProcessor {
+public class OnFlyTelegramUpdateProcessor extends AbstractTelegramUpdateProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultTelegramUpdateProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(OnFlyTelegramUpdateProcessor.class);
     private final TelegramBot telegramBot;
     private final int maxThreadsPerUser;
     private final Cache<Long, Semaphore> userProcessing;
@@ -54,7 +54,7 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
     private final TelegramMessageSource messageSource;
 
     /**
-     * Constructs a {@code DefaultTelegramUpdateProcessor} with specified properties and Telegram
+     * Constructs a {@code OnFlyTelegramUpdateProcessor} with specified properties and Telegram
      * client.
      *
      * @param properties       Configuration settings for the session.
@@ -65,7 +65,7 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
      * @throws IllegalArgumentException if {@code maxThreadsPerUser} or {@code cacheLiveDuration} is
      *                                  invalid.
      */
-    public DefaultTelegramUpdateProcessor(
+    public OnFlyTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
         TelegramClient telegramClient, ThreadFactory threadFactory,
         @Nullable TelegramMessageSource messageSource
@@ -103,14 +103,14 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
     }
 
     /**
-     * Constructs a {@code DefaultTelegramUpdateProcessor} with default thread factory.
+     * Constructs a {@code OnFlyTelegramUpdateProcessor} with default thread factory.
      *
      * @param properties       Configuration settings for the session.
      * @param filterProperties Filter properties for controlling request processing.
      * @param telegramBot      The telegram bot instance for sending messages.
      * @param telegramClient   The Telegram client instance used to interact with Telegram API.
      */
-    public DefaultTelegramUpdateProcessor(
+    public OnFlyTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
         TelegramClient telegramClient, @Nullable TelegramMessageSource messageSource
     ) {
@@ -221,8 +221,9 @@ public class DefaultTelegramUpdateProcessor extends AbstractTelegramUpdateProces
         }
         updateRequests.iterator().forEachRemaining(request -> {
             try {
-                TooManyRequestsTelegramResponse.INSTANCE.setMessageSource(messageSource);
-                TooManyRequestsTelegramResponse.INSTANCE.process(request);
+                TooManyRequestsTelegramResponse response = new TooManyRequestsTelegramResponse();
+                response.setMessageSource(messageSource);
+                response.process(request);
             } catch (Exception e) {
                 log.error("Cannot process response to telegram for request {}", request, e);
             }

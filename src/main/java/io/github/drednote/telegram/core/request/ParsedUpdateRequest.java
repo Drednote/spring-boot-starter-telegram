@@ -20,9 +20,10 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  */
 public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
+    @Nullable
     private final TelegramClient telegramClient;
 
-    public ParsedUpdateRequest(Update update, TelegramClient telegramClient) {
+    public ParsedUpdateRequest(Update update, @Nullable TelegramClient telegramClient) {
         super(update);
         this.telegramClient = telegramClient;
     }
@@ -30,6 +31,9 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     @Override
     @NonNull
     public TelegramClient getAbsSender() {
+        if (telegramClient == null) {
+            throw new IllegalStateException("TelegramClient is null");
+        }
         return telegramClient;
     }
 
@@ -50,7 +54,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     @NonNull
-    public List<Serializable> getResponseFromTelegram() {
+    public List<Object> getResponseFromTelegram() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 
@@ -97,7 +101,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public void addResponseFromTelegram(@Nullable Serializable response) {
+    public void addResponseFromTelegram(@Nullable Object response) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 }

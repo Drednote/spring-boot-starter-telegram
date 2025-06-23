@@ -10,10 +10,13 @@ public final class TooManyRequestsTelegramResponse extends SimpleMessageTelegram
 
     /**
      * The singleton instance of TooManyRequestsTelegramResponse
+     *
+     * @deprecated instead of singleton instance use constructor.
      */
+    @Deprecated(since = "v0.6.0", forRemoval = true)
     public static final TooManyRequestsTelegramResponse INSTANCE = new TooManyRequestsTelegramResponse();
 
-    private TooManyRequestsTelegramResponse() {
+    public TooManyRequestsTelegramResponse() {
         super("response.tooManyRequests", "Too many requests. Please try later");
     }
 

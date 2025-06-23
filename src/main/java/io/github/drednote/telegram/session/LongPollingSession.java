@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.session;
 
 import io.github.drednote.telegram.TelegramProperties;
+import io.github.drednote.telegram.session.scheduler.TelegramUpdateReader;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collections;
 import java.util.List;

@@ -28,9 +28,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Slf4j
-class DefaultTelegramUpdateProcessorTest {
+class ConcurrentTelegramUpdateProcessorTest {
 
-    DefaultTelegramUpdateProcessor session;
+    OnFlyTelegramUpdateProcessor session;
 
     TelegramBot telegramBot = Mockito.mock(TelegramBot.class);
     TelegramClient telegramClient;
@@ -59,7 +59,7 @@ class DefaultTelegramUpdateProcessorTest {
     @Timeout(value = 2, threadMode = ThreadMode.SEPARATE_THREAD)
     void shouldWaitIfMaxQueueSizeExceed() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(100);
-        session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
+        session = new OnFlyTelegramUpdateProcessor(sessionProperties, filterProperties,
             telegramBot, telegramClient, null);
 
         List<Update> generate = generate(50);
@@ -78,7 +78,7 @@ class DefaultTelegramUpdateProcessorTest {
     @Test
     void shouldExecuteUpdateOnlyOneOthersRejected() throws InterruptedException {
         sessionProperties.setCacheLiveDuration(1500);
-        session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
+        session = new OnFlyTelegramUpdateProcessor(sessionProperties, filterProperties,
             telegramBot, telegramClient, null);
         List<Update> generate = generate(5, 1L);
         doAnswer(answer -> {
@@ -98,7 +98,7 @@ class DefaultTelegramUpdateProcessorTest {
         sessionProperties.setCacheLiveDuration(1500);
         filterProperties.setUserRateLimit(2000);
         sessionProperties.setMaxThreadsPerUser(5);
-        session = new DefaultTelegramUpdateProcessor(sessionProperties, filterProperties,
+        session = new OnFlyTelegramUpdateProcessor(sessionProperties, filterProperties,
             telegramBot, telegramClient, null);
         List<Update> generate = generate(5, 1L);
         doAnswer(answer -> {
