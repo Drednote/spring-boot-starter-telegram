@@ -192,7 +192,7 @@ public interface UpdateRequest {
      * @return a list of telegram responses.
      */
     @NonNull
-    List<Serializable> getResponseFromTelegram();
+    List<Object> getResponseFromTelegram();
 
     /**
      * Returns the error that occurred during the processing of the request, if any

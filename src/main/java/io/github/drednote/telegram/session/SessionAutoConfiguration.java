@@ -3,9 +3,13 @@ package io.github.drednote.telegram.session;
 import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.core.TelegramMessageSource;
+import io.github.drednote.telegram.datasource.session.UpdateInboxRepositoryAdapter;
+import io.github.drednote.telegram.datasource.session.inmemory.InMemoryUpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.session.SessionProperties.ProxyType;
 import io.github.drednote.telegram.session.SessionProperties.ProxyUrl;
+import io.github.drednote.telegram.session.scheduler.SchedulerTelegramUpdateProcessor;
+import io.github.drednote.telegram.session.scheduler.TelegramUpdateReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -19,6 +23,7 @@ import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,6 +34,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.Builder;
 import org.springframework.web.client.support.RestClientAdapter;
@@ -41,8 +47,7 @@ import org.telegram.telegrambots.meta.TelegramUrl;
  * Autoconfiguration class for managing Telegram bot sessions and scopes.
  *
  * <p>This class provides automatic configuration for different types of Telegram bot sessions,
- * including long polling and webhooks, based on properties defined in the application's
- * configuration.
+ * including long polling and webhooks, based on properties defined in the application's configuration.
  */
 @AutoConfiguration
 @EnableConfigurationProperties(SessionProperties.class)
@@ -101,6 +106,10 @@ public class SessionAutoConfiguration {
     public void onStartUp(ApplicationReadyEvent event) {
         ConfigurableApplicationContext context = event.getApplicationContext();
         SessionProperties properties = context.getBean(SessionProperties.class);
+        if (properties.getSchedulerProcessor().isAutoSessionStart()) {
+            TelegramUpdateReader reader = context.getBean(TelegramUpdateReader.class);
+            reader.start();
+        }
         if (properties.isAutoSessionStart()) {
             TelegramBotSession session = context.getBean(TelegramBotSession.class);
             session.start();
@@ -110,13 +119,28 @@ public class SessionAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnSingleCandidate(TelegramBot.class)
-    public TelegramUpdateProcessor telegramUpdateProcessor(
+    public TelegramUpdateProcessor defaultTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
-        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient,
-        TelegramMessageSource messageSource
+        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient, TelegramMessageSource messageSource,
+        @Nullable @Autowired(required = false) UpdateInboxRepositoryAdapter<?> adapter
     ) {
-        return new DefaultTelegramUpdateProcessor(
-            properties, filterProperties, telegramBot, telegramClient, messageSource);
+        switch (properties.getUpdateProcessorType()) {
+            case ON_FLY -> {
+                return new OnFlyTelegramUpdateProcessor(
+                    properties, filterProperties, telegramBot, telegramClient, messageSource);
+            }
+            case SCHEDULER_WITH_CRUD -> {
+                return new SchedulerTelegramUpdateProcessor<>(
+                    telegramBot, adapter, properties, filterProperties, telegramClient, messageSource);
+            }
+            default -> {
+                if (adapter == null) {
+                    adapter = new InMemoryUpdateInboxRepositoryAdapter(properties, messageSource);
+                }
+                return new SchedulerTelegramUpdateProcessor<>(
+                    telegramBot, adapter, properties, filterProperties, telegramClient, messageSource);
+            }
+        }
     }
 
     /**

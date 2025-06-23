@@ -99,7 +99,7 @@ class AbstractUpdateRequestTest {
 
     @Override
     @NonNull
-    public List<Serializable> getResponseFromTelegram() {
+    public List<Object> getResponseFromTelegram() {
       return List.of();
     }
 
@@ -148,7 +148,7 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
-    public void addResponseFromTelegram(Serializable response) {
+    public void addResponseFromTelegram(Object response) {
 
     }
 

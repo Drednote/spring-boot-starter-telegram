@@ -674,19 +674,35 @@ All settings tables contain 4 columns:
 
 ### Session properties
 
-| Name                    | Description                                                                                                                          | Default Value                                     | Required |
-|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|----------|
-| maxUserParallelRequests | Max number of threads used for consumption messages from a telegram for concrete user. 0 - no restrictions                           | 1                                                 | true     |
-| consumeMaxThreads       | Max number of threads used for consumption messages from a telegram                                                                  | 10                                                | true     |
-| maxMessagesInQueue      | Limits the number of updates to be store in memory queue for update processing. 0 - no limit. Defaults to (consumeMaxThreads * 1.5). | 15                                                | true     |
-| updateStrategy          | The strategy to receive updates from Telegram API. Long polling or webhooks.                                                         | LONG_POLLING                                      | true     |
-| backOffStrategy         | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor                | ExponentialBackOff                                | true     |
-| proxyType               | The proxy type for executing requests to Telegram API.                                                                               | NO_PROXY                                          | true     |
-| proxyUrl                | The proxy url in format `host:port` or if auth needed `host:port:username:password`.                                                 | -                                                 | false    |
-| cacheLiveDuration       | Cache lifetime used in `DefaultTelegramBotSession`                                                                                   | 1                                                 | true     |
-| cacheLiveDurationUnit   | The `TimeUnit` which will be applied to `cacheLiveDuration`                                                                          | hours                                             | true     |
-| autoSessionStart        | Automatically start session when spring context loaded.                                                                              | true                                              | true     |
-| longPolling             | LongPolling properties.                                                                                                              | [LongPolling properties](#Longpolling-properties) | false    |
+| Name                  | Description                                                                                                                                 | Default Value                                                                               | Required |
+|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|----------|
+| maxThreadsPerUser     | Max number of threads used for consumption messages from a telegram for concrete user. 0 - no restrictions                                  | 1                                                                                           | true     |
+| consumeMaxThreads     | Max number of threads used for consumption messages from a telegram                                                                         | 10                                                                                          | true     |
+| maxMessagesInQueue    | Limits the number of updates to be store in memory queue for update processing. 0 - no restrictions. Defaults to (consumeMaxThreads * 1.5). | 15                                                                                          | true     |
+| updateStrategy        | The strategy to receive updates from Telegram API. Long polling or webhooks.                                                                | LONG_POLLING                                                                                | true     |
+| updateProcessorType   | A type of `TelegramUpdateProcessor` using                                                                                                   | DEFAULT (SCHEDULER)                                                                         | true     |
+| backOffStrategy       | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor                       | ExponentialBackOff                                                                          | true     |
+| proxyType             | The proxy type for executing requests to Telegram API.                                                                                      | NO_PROXY                                                                                    | true     |
+| proxyUrl              | The proxy url in format `host:port` or if auth needed `host:port:username:password`.                                                        | -                                                                                           | false    |
+| cacheLiveDuration     | Cache lifetime used in `DefaultTelegramBotSession`                                                                                          | 1                                                                                           | true     |
+| cacheLiveDurationUnit | The `TimeUnit` which will be applied to `cacheLiveDuration`                                                                                 | hours                                                                                       | true     |
+| autoSessionStart      | Automatically start session when spring context loaded.                                                                                     | true                                                                                        | true     |
+| schedulerProcessor    | SchedulerTelegramUpdateProcessor properties.                                                                                                | [SchedulerTelegramUpdateProcessor properties](#SchedulerTelegramUpdateProcessor-properties) | false    |
+| longPolling           | LongPolling properties.                                                                                                                     | [LongPolling properties](#Longpolling-properties)                                           | false    |
+
+#### SchedulerTelegramUpdateProcessor properties
+
+| Name                     | Description                                                                                                                                                           | Default Value | Required |
+|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|----------|
+| autoSessionStart         | Automatically start `SchedulerTelegramUpdateProcessor` when `TelegramBotSession.start()` is called.                                                                   | true          | true     |
+| maxInterval              | Maximum interval after which to check for new messages for processing (in milliseconds).                                                                              | 1000          | true     |
+| minInterval              | Minimum interval after which to check for new messages for processing (in milliseconds).                                                                              | 0             | true     |
+| reducingIntervalAmount   | How much to decrease the interval if messages are found for processing (in milliseconds).                                                                             | 500           | true     |
+| increasingIntervalAmount | How much to increase the interval if no message is found for processing (in milliseconds).                                                                            | 100           | true     |
+| waitInterval             | Interval after which to check for new messages for processing while all threads are busy (in milliseconds).                                                           | 30            | true     |
+| idleInterval             | Interval after which tasks are marked as `UpdateInboxStatus.TIMEOUT` (in milliseconds).                                                                               | 30000         | true     |
+| checkIdleInterval        | Interval to check if tasks are idle (in milliseconds).                                                                                                                | 5000          | true     |
+| maxMessageInQueuePerUser | Limits the number of updates to be stored in memory queue for update processing per user (0 means no restrictions). Applied only for `UpdateProcessorType.SCHEDULER`. | 0             | true     |
 
 #### LongPolling properties
 

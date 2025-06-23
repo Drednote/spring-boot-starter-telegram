@@ -28,6 +28,12 @@ public class UpdateBuilder {
         return new UpdateBuilder();
     }
 
+    public static UpdateBuilder create(Integer updateId) {
+        UpdateBuilder updateBuilder = new UpdateBuilder();
+        updateBuilder.updateId = updateId;
+        return updateBuilder;
+    }
+
     public static UpdateBuilder _default(String text) {
         return create().withChat(1L).withUser(2L).withText(text);
     }

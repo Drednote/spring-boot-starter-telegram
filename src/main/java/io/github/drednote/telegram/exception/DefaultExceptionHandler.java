@@ -80,7 +80,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     } else {
       if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {
-        request.getAccessor().setResponse(InternalErrorTelegramResponse.INSTANCE);
+        request.getAccessor().setResponse(new InternalErrorTelegramResponse());
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);
     }

@@ -27,7 +27,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     private final TelegramClient absSender;
     private final TelegramProperties properties;
     private final ObjectMapper objectMapper;
-    private final List<Serializable> responseFromTelegram = new ArrayList<>();
+    private final List<Object> responseFromTelegram = new ArrayList<>();
 
     @Nullable
     private Permission permission;
@@ -116,7 +116,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public void addResponseFromTelegram(Serializable response) {
+    public void addResponseFromTelegram(Object response) {
         this.responseFromTelegram.add(response);
     }
 }

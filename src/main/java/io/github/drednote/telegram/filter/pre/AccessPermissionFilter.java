@@ -66,7 +66,7 @@ public class AccessPermissionFilter implements PreUpdateFilter {
               .map(Role::isCanRead)
               .orElse(false));
       if (!canRead) {
-        request.getAccessor().setResponse(ForbiddenTelegramResponse.INSTANCE);
+        request.getAccessor().setResponse(new ForbiddenTelegramResponse());
       }
     }
   }

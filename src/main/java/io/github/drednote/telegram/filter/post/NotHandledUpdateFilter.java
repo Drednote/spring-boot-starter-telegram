@@ -32,7 +32,7 @@ public class NotHandledUpdateFilter implements PostUpdateFilter {
   public void postFilter(@NonNull UpdateRequest request) {
     Assert.notNull(request, "UpdateRequest");
     if (request.getProperties().getFilters().isSetDefaultAnswer()) {
-      request.getAccessor().setResponse(NotHandledTelegramResponse.INSTANCE);
+      request.getAccessor().setResponse(new NotHandledTelegramResponse());
     }
   }
 

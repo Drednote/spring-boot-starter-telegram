@@ -35,7 +35,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      */
     @Override
     public void postFilter(@NonNull UpdateRequest request) {
-        List<Serializable> responses = request.getResponseFromTelegram();
+        List<Object> responses = request.getResponseFromTelegram();
         Scenario<?> scenario = request.getScenario();
         if (scenario != null) {
             if (scenario.getState().isResponseMessageProcessing()) {
@@ -44,7 +44,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
                         "No response received from telegram, although response message processing "
                         + "for scenario state is enabled. Scenario Id = '{}'", scenario.getId());
                 }
-                for (Serializable response : responses) {
+                for (Object response : responses) {
                     if (response instanceof MaybeInaccessibleMessage message) {
                         String messageId = ScenarioIdResolver.resolveId(request, message);
                         scenario.getAccessor().setId(messageId);

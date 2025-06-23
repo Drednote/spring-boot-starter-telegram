@@ -7,7 +7,6 @@ import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
 import org.springframework.lang.Nullable;
 
 public interface UpdateRequestAccessor {
@@ -51,5 +50,5 @@ public interface UpdateRequestAccessor {
      *
      * @param response the response from telegram
      */
-    void addResponseFromTelegram(Serializable response);
+    void addResponseFromTelegram(Object response);
 }
