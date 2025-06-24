@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session.scheduler;
+package io.github.drednote.telegram.session.processor;
 
 import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.core.TelegramMessageSource;

@@ -37,7 +37,7 @@ public class ExceptionHandlerAutoConfiguration {
    */
   @Bean
   @ConditionalOnMissingBean
-  public DefaultExceptionHandlerResolver exceptionHandlerResolver() {
+  public static DefaultExceptionHandlerResolver exceptionHandlerResolver() {
     return new DefaultExceptionHandlerResolver();
   }
 
@@ -48,7 +48,7 @@ public class ExceptionHandlerAutoConfiguration {
    * @return The configured {@link TelegramAdviceBeanPostProcessor} bean
    */
   @Bean
-  public TelegramAdviceBeanPostProcessor telegramAdviceBeanPostProcessor(
+  public static TelegramAdviceBeanPostProcessor telegramAdviceBeanPostProcessor(
       ExceptionHandlerRegistrar registrar
   ) {
     return new TelegramAdviceBeanPostProcessor(registrar);

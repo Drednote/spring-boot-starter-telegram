@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session;
+package io.github.drednote.telegram.session.processor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -9,6 +9,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.filter.FilterProperties;
+import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.support.builder.UpdateBuilder;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Slf4j
-class ConcurrentTelegramUpdateProcessorTest {
+class OnFlyTelegramUpdateProcessorTest {
 
     OnFlyTelegramUpdateProcessor session;
 

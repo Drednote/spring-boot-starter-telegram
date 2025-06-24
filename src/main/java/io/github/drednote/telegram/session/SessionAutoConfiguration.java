@@ -8,8 +8,9 @@ import io.github.drednote.telegram.datasource.session.inmemory.InMemoryUpdateInb
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.session.SessionProperties.ProxyType;
 import io.github.drednote.telegram.session.SessionProperties.ProxyUrl;
-import io.github.drednote.telegram.session.scheduler.SchedulerTelegramUpdateProcessor;
-import io.github.drednote.telegram.session.scheduler.TelegramUpdateReader;
+import io.github.drednote.telegram.session.processor.OnFlyTelegramUpdateProcessor;
+import io.github.drednote.telegram.session.processor.SchedulerTelegramUpdateProcessor;
+import io.github.drednote.telegram.session.processor.TelegramUpdateReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;

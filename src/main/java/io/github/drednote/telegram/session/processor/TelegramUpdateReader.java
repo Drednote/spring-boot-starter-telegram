@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session.scheduler;
+package io.github.drednote.telegram.session.processor;
 
 public interface TelegramUpdateReader {
 
