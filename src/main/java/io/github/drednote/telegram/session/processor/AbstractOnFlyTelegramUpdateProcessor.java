@@ -1,5 +1,7 @@
-package io.github.drednote.telegram.session;
+package io.github.drednote.telegram.session.processor;
 
+import io.github.drednote.telegram.session.SessionProperties;
+import io.github.drednote.telegram.session.TelegramUpdateProcessor;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * {@code AbstractTelegramUpdateProcessor} is an abstract class that implements the
+ * {@code AbstractOnFlyTelegramUpdateProcessor} is an abstract class that implements the
  * {@code TelegramUpdateProcessor} interface for processing Telegram updates. It provides the
  * foundational functionalities for managing the processing of updates with a thread pool and limits
  * on the number of messages in queue.
@@ -28,10 +30,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  *
  * @author Ivan Galushko
  */
-public abstract class AbstractTelegramUpdateProcessor implements TelegramUpdateProcessor {
+public abstract class AbstractOnFlyTelegramUpdateProcessor implements TelegramUpdateProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(
-        AbstractTelegramUpdateProcessor.class);
+        AbstractOnFlyTelegramUpdateProcessor.class);
     final ThreadPoolExecutor executorService;
     private final int maxMessageInQueue;
 
@@ -39,7 +41,7 @@ public abstract class AbstractTelegramUpdateProcessor implements TelegramUpdateP
     private final Condition maxMessagesLimit = maxMessagesLock.writeLock().newCondition();
 
     /**
-     * Constructs an {@code AbstractTelegramUpdateProcessor} with specified properties and thread
+     * Constructs an {@code AbstractOnFlyTelegramUpdateProcessor} with specified properties and thread
      * factory.
      *
      * @param properties    configuration settings for the session.
@@ -47,7 +49,7 @@ public abstract class AbstractTelegramUpdateProcessor implements TelegramUpdateP
      * @throws IllegalArgumentException if {@code maxMessagesInQueue} is negative or
      *                                  {@code consumeMaxThreads} is not positive.
      */
-    protected AbstractTelegramUpdateProcessor(
+    protected AbstractOnFlyTelegramUpdateProcessor(
         SessionProperties properties, ThreadFactory threadFactory
     ) {
         Assert.required(properties, "SessionProperties");
@@ -74,11 +76,11 @@ public abstract class AbstractTelegramUpdateProcessor implements TelegramUpdateP
     }
 
     /**
-     * Constructs an {@code AbstractTelegramUpdateProcessor} with default thread factory.
+     * Constructs an {@code AbstractOnFlyTelegramUpdateProcessor} with default thread factory.
      *
      * @param properties configuration settings for the session.
      */
-    protected AbstractTelegramUpdateProcessor(SessionProperties properties) {
+    protected AbstractOnFlyTelegramUpdateProcessor(SessionProperties properties) {
         this(properties, Executors.defaultThreadFactory());
     }
 

@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.session;
+package io.github.drednote.telegram.session.processor;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -9,6 +9,9 @@ import io.github.drednote.telegram.core.request.ParsedUpdateRequest;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterProperties;
 import io.github.drednote.telegram.response.TooManyRequestsTelegramResponse;
+import io.github.drednote.telegram.session.SessionProperties;
+import io.github.drednote.telegram.session.TelegramUpdateProcessor;
+import io.github.drednote.telegram.session.UserRateLimitRequestFilter;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.HashSet;
 import java.util.Optional;
@@ -40,7 +43,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * @see TelegramBot
  * @see SessionProperties
  */
-public class OnFlyTelegramUpdateProcessor extends AbstractTelegramUpdateProcessor {
+public class OnFlyTelegramUpdateProcessor extends AbstractOnFlyTelegramUpdateProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(OnFlyTelegramUpdateProcessor.class);
     private final TelegramBot telegramBot;

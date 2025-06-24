@@ -154,12 +154,12 @@ public class UpdateHandlerAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean({ControllerRegistrar.class, HandlerMethodPopular.class})
-        public TelegramControllerContainer handlerMethodContainer() {
+        public static TelegramControllerContainer handlerMethodContainer() {
             return new TelegramControllerContainer();
         }
 
         @Bean
-        public TelegramControllerBeanPostProcessor botControllerBeanPostProcessor(
+        public static TelegramControllerBeanPostProcessor botControllerBeanPostProcessor(
             ControllerRegistrar registrar
         ) {
             return new TelegramControllerBeanPostProcessor(registrar);
