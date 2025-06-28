@@ -1,14 +1,14 @@
 package io.github.drednote.telegram.handler.scenario.persist;
 
 import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
-import io.github.drednote.telegram.handler.scenario.data.State;
+import io.github.drednote.telegram.handler.scenario.data.ScenarioState;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Interface representing the context of a state.
  *
- * @see State
+ * @see ScenarioState
  * @param <S> the type of the state identifier
  * @author Ivan Galushko
  */

@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class SimpleTransition<S> implements Transition<S> {
 
-    private final State<S> source;
-    private final State<S> target;
+    private final ScenarioState<S> source;
+    private final ScenarioState<S> target;
 
-    public SimpleTransition(State<S> source, State<S> target) {
+    public SimpleTransition(ScenarioState<S> source, ScenarioState<S> target) {
         Assert.required(source, "source");
         Assert.required(target, "target");
 
@@ -17,12 +17,12 @@ public class SimpleTransition<S> implements Transition<S> {
     }
 
     @Override
-    public State<S> getSource() {
+    public ScenarioState<S> getSource() {
         return source;
     }
 
     @Override
-    public State<S> getTarget() {
+    public ScenarioState<S> getTarget() {
         return target;
     }
 

@@ -35,8 +35,8 @@ public class JpaScenarioRepositoryAdapter<S> extends AbstractScenarioRepositoryA
 
     private JpaScenarioEntity convert(ScenarioContext<S> persistContext, byte[] context) {
         JpaScenarioEntity transitionContext = new JpaScenarioEntity();
-        transitionContext.setId(persistContext.id());
-        transitionContext.setState(persistContext.state().id().toString());
+        transitionContext.setId(persistContext.getId());
+        transitionContext.setState(persistContext.getMachine().getState().toString());
         transitionContext.setContext(context);
         return transitionContext;
     }

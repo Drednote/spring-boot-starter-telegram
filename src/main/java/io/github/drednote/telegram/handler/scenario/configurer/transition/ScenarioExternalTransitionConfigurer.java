@@ -12,4 +12,11 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 public interface ScenarioExternalTransitionConfigurer<S> extends
     ScenarioBaseTransitionConfigurer<ScenarioExternalTransitionConfigurer<S>, S> {
 
+    /**
+     * Sets the target state for the transition.
+     *
+     * @param target the target getMachine for the transition
+     * @return the current instance of the configurer
+     */
+    ScenarioExternalTransitionConfigurer<S> target(S target);
 }

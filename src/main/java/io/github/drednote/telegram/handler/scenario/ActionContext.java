@@ -1,8 +1,9 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.handler.scenario.data.Transition;
+import io.github.drednote.telegram.handler.scenario.machine.ScenarioEvent;
 import java.util.Map;
+import org.springframework.statemachine.StateContext;
 import org.springframework.util.PathMatcher;
 
 /**
@@ -21,11 +22,11 @@ public interface ActionContext<S> {
     UpdateRequest getUpdateRequest();
 
     /**
-     * Retrieves the transition associated with the action context.
+     * Retrieves the context associated with the action context.
      *
-     * @return the {@code Transition<S>} for the action context
+     * @return the {@code StateContext} for the action context
      */
-    Transition<S> getTransition();
+    StateContext<S, ScenarioEvent> getMachineContext();
 
     /**
      * Retrieves the template variables associated with the action context.

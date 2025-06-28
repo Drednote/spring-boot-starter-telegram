@@ -13,9 +13,9 @@ public interface ScenarioPersister<S> {
     /**
      * Persists the provided scenario context.
      *
-     * @param context the scenario context to be persisted
+     * @param scenario the scenario context to be persisted
      */
-    void persist(Scenario<S> context);
+    void persist(Scenario<S> scenario) throws Exception;
 
     /**
      * Restores a scenario from a persisted state using the provided scenario ID.

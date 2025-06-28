@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.handler.scenario;
 
+import io.github.drednote.telegram.handler.scenario.machine.ScenarioProperties;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 
@@ -24,6 +25,8 @@ public interface ScenarioAccessor<S> {
      * @param id the unique identifier as a String
      */
     void setId(String id);
+
+    void addProperties(ScenarioProperties properties);
 
     /**
      * Retrieves the scenario ID resolver.

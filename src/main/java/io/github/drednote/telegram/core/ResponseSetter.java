@@ -45,18 +45,18 @@ public abstract class ResponseSetter {
     ) {
         Assert.notNull(request, "UpdateRequest");
         if (invoked == null || parameterType == null || Void.TYPE.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(EmptyTelegramResponse.INSTANCE);
+            request.getAccessor().addResponse(EmptyTelegramResponse.INSTANCE);
         } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse((TelegramResponse) invoked);
+            request.getAccessor().addResponse((TelegramResponse) invoked);
         } else if (Collection.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(new CompositeTelegramResponse((Collection<?>) invoked));
+            request.getAccessor().addResponse(new CompositeTelegramResponse((Collection<?>) invoked));
         } else if (parameterType.getName().equals("reactor.core.publisher.Flux")
                    || parameterType.getName().equals("reactor.core.publisher.Mono")) {
-            request.getAccessor().setResponse(new FluxTelegramResponse(invoked));
+            request.getAccessor().addResponse(new FluxTelegramResponse(invoked));
         } else if (Stream.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(new StreamTelegramResponse((Stream<?>) invoked));
+            request.getAccessor().addResponse(new StreamTelegramResponse((Stream<?>) invoked));
         } else {
-            request.getAccessor().setResponse(new GenericTelegramResponse(invoked));
+            request.getAccessor().addResponse(new GenericTelegramResponse(invoked));
         }
     }
 

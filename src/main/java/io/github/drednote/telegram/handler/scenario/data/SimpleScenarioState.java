@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 
 @Slf4j
-public class SimpleState<S> extends AbstractState<S> {
+public class SimpleScenarioState<S> extends AbstractScenarioState<S> {
 
     @Nullable
     private List<Action<S>> actions;
@@ -26,12 +26,12 @@ public class SimpleState<S> extends AbstractState<S> {
     @Setter
     private boolean responseMessageProcessing = false;
 
-    public SimpleState(S id) {
+    public SimpleScenarioState(S id) {
         super(id, null);
         this.props = new HashMap<>();
     }
 
-    public SimpleState(S id, Set<UpdateRequestMapping> mappings, Map<String, Object> props) {
+    public SimpleScenarioState(S id, Set<UpdateRequestMapping> mappings, Map<String, Object> props) {
         super(id, mappings);
         this.props = props;
     }

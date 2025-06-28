@@ -1,23 +1,30 @@
 package io.github.drednote.telegram.datasource;
 
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.datasource.permission.DefaultPermissionRepositoryAdapter;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.PermissionRepository;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenario.InMemoryScenarioRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenarioid.InMemoryScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.UpdateInboxRepositoryAdapter;
+import io.github.drednote.telegram.datasource.session.inmemory.InMemoryUpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepository;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.jpa.PostgresUpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.session.SessionProperties;
 import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -39,15 +46,6 @@ public class DataSourceAutoConfiguration {
             PermissionRepository<? extends Permission> permissionRepository
         ) {
             return new DefaultPermissionRepositoryAdapter(permissionRepository);
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(ScenarioIdRepositoryAdapter.class)
-        @ConditionalOnBean(JpaScenarioIdRepository.class)
-        public ScenarioIdRepositoryAdapter scenarioIdRepositoryAdapter(
-            JpaScenarioIdRepository scenarioIdRepository
-        ) {
-            return new JpaScenarioIdRepositoryAdapter(scenarioIdRepository);
         }
 
         @AutoConfiguration
@@ -96,6 +94,19 @@ public class DataSourceAutoConfiguration {
                     return "postgresql".equalsIgnoreCase(dbType);
                 }
             }
+        }
+    }
+
+    @AutoConfiguration
+    @AutoConfigureAfter({JpaAutoConfiguration.class})
+    public static class FallbackAutoConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean({UpdateInboxRepositoryAdapter.class})
+        public UpdateInboxRepositoryAdapter<?> inMemoryUpdateInboxRepositoryAdapter(
+            SessionProperties sessionProperties, TelegramMessageSource messageSource
+        ) {
+            return new InMemoryUpdateInboxRepositoryAdapter(sessionProperties, messageSource);
         }
     }
 }

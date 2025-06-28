@@ -13,7 +13,7 @@ import java.util.Set;
  * @param <S> the type of the state identifier
  * @author Ivan Galushko
  */
-public interface State<S> extends RequestMatcher, Action<S> {
+public interface ScenarioState<S> extends RequestMatcher, Action<S> {
 
     /**
      * Retrieves the unique identifier of the state.

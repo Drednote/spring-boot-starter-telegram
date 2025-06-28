@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.filter.post;
 
+import static io.github.drednote.telegram.handler.scenario.machine.ScenarioProperties.RESPONSE_PROCESSING_KEY;
+
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.scenario.Scenario;
@@ -34,15 +36,15 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      *                responses.
      */
     @Override
-    public void postFilter(@NonNull UpdateRequest request) {
+    public void postFilter(@NonNull UpdateRequest request) throws Exception {
         List<Object> responses = request.getResponseFromTelegram();
         Scenario<?> scenario = request.getScenario();
         if (scenario != null) {
-            if (scenario.getState().isResponseMessageProcessing()) {
+            if (Boolean.TRUE.equals(scenario.getProperty(RESPONSE_PROCESSING_KEY))) {
                 if (!responses.isEmpty()) {
                     log.warn(
                         "No response received from telegram, although response message processing "
-                        + "for scenario state is enabled. Scenario Id = '{}'", scenario.getId());
+                        + "for scenario getMachine is enabled. Scenario Id = '{}'", scenario.getId());
                 }
                 for (Object response : responses) {
                     if (response instanceof MaybeInaccessibleMessage message) {
@@ -62,7 +64,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      * @param scenario the {@code Scenario} object that needs to be persisted.
      * @param <T>      the type parameter for the scenario.
      */
-    private <T> void persist(Scenario<T> scenario) {
+    private <T> void persist(Scenario<T> scenario) throws Exception {
         ScenarioAccessor<T> accessor = scenario.getAccessor();
         accessor.getPersister().persist(scenario);
     }

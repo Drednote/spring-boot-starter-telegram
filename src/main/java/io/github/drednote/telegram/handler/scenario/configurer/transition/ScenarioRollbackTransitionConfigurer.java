@@ -3,6 +3,7 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.Action;
 import io.github.drednote.telegram.handler.scenario.ActionContext;
+import io.github.drednote.telegram.handler.scenario.machine.Guard;
 import java.util.Map;
 
 /**
@@ -19,6 +20,14 @@ public interface ScenarioRollbackTransitionConfigurer<S> extends
     ScenarioBaseTransitionConfigurer<ScenarioRollbackTransitionConfigurer<S>, S> {
 
     /**
+     * Sets the target state for the transition.
+     *
+     * @param target the target getMachine for the transition
+     * @return the current instance of the configurer
+     */
+    ScenarioRollbackTransitionConfigurer<S> target(S target);
+
+    /**
      * Sets the action to be performed during the rollback.
      *
      * @param action the action to execute during the rollback
@@ -26,14 +35,17 @@ public interface ScenarioRollbackTransitionConfigurer<S> extends
      */
     ScenarioRollbackTransitionConfigurer<S> rollbackAction(Action<S> action);
 
+    ScenarioRollbackTransitionConfigurer<S> rollbackAction(Action<S> action, Action<S> error);
+
     /**
      * Sets the Telegram request to be used during the rollback.
      *
      * @param telegramRequest the Telegram request to be sent during the rollback
      * @return the current instance of {@link ScenarioRollbackTransitionConfigurer}
      */
-    ScenarioRollbackTransitionConfigurer<S> rollbackTelegramRequest(
-        TelegramRequest telegramRequest);
+    ScenarioRollbackTransitionConfigurer<S> rollbackTelegramRequest(TelegramRequest telegramRequest);
+
+    ScenarioRollbackTransitionConfigurer<S> rollbackGuard(Guard<S> guard);
 
     /**
      * Sets the additional props to be used during the rollback.

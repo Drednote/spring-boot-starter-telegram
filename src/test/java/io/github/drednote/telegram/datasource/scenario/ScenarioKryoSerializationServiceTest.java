@@ -1,9 +1,10 @@
 package io.github.drednote.telegram.datasource.scenario;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.SimpleScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,16 +24,17 @@ class ScenarioKryoSerializationServiceTest {
 
     @Test
     void shouldCorrectSerializeAndDeserialize() throws IOException {
-        SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
-            Set.of(), false, new HashMap<>());
-        SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
-            Set.of(), false, Map.of("1", BigDecimal.ONE));
-        ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
-
-        byte[] bytes = serializationService.serialize(scenario);
-        ScenarioContext<AbstractStateClass<?>> deserialize = serializationService.deserialize(bytes);
-
-        assertThat(deserialize).isEqualTo(scenario);
+//        SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
+//            Set.of(), false, new HashMap<>());
+//        SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
+//            Set.of(), false, Map.of("1", BigDecimal.ONE));
+//        ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
+//
+//        byte[] bytes = serializationService.serialize(scenario);
+//        ScenarioContext<AbstractStateClass<?>> deserialize = serializationService.deserialize(bytes);
+//
+//        assertThat(deserialize).isEqualTo(scenario);
+        fail("Not realized");
     }
 
     @Data

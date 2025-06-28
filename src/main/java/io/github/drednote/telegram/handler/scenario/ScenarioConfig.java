@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.handler.scenario;
 
-import io.github.drednote.telegram.handler.scenario.data.State;
+import io.github.drednote.telegram.handler.scenario.data.ScenarioState;
 import io.github.drednote.telegram.handler.scenario.data.Transition;
 import java.util.List;
 import java.util.Set;
@@ -18,14 +18,14 @@ public interface ScenarioConfig<S> {
      *
      * @return the initial state as a {@code State<S>} object
      */
-    State<S> getInitial();
+    ScenarioState<S> getInitial();
 
     /**
      * Retrieves the set of termination states for the scenario.
      *
      * @return a {@code Set<State<S>>} containing the termination states
      */
-    Set<State<S>> getTerminateStates();
+    Set<S> getTerminateStates();
 
     /**
      * Retrieves the list of transitions available from the specified state.
@@ -33,7 +33,7 @@ public interface ScenarioConfig<S> {
      * @param state the state for which to retrieve transitions
      * @return a {@code List<Transition<S>>} containing the transitions from the given state
      */
-    List<Transition<S>> getTransitions(State<S> state);
+    List<Transition<S>> getTransitions(ScenarioState<S> state);
 
     /**
      * Retrieves the scenario ID resolver.

@@ -4,25 +4,21 @@ import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioId;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
-import io.github.drednote.telegram.utils.FieldProvider;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 /**
- * Default implementation of {@code ScenarioIdResolver} which resolves scenario IDs using a
- * combination of in-memory storage and an optional persistence layer.
+ * Default implementation of {@code ScenarioIdResolver} which resolves scenario IDs using a combination of in-memory
+ * storage and an optional persistence layer.
  *
  * @author Ivan Galushko
  */
 public class SimpleScenarioIdResolver implements ScenarioIdResolver {
 
-    private final FieldProvider<ScenarioIdRepositoryAdapter> adapterProvider;
-    private final Map<String, String> inMemoryMap = new HashMap<>();
+    private final ScenarioIdRepositoryAdapter adapterProvider;
 
-    public SimpleScenarioIdResolver(FieldProvider<ScenarioIdRepositoryAdapter> adapterProvider) {
+    public SimpleScenarioIdResolver(ScenarioIdRepositoryAdapter adapterProvider) {
         this.adapterProvider = adapterProvider;
     }
 
@@ -54,13 +50,8 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
      */
     private String doResolve(UpdateRequest request) {
         String chatId = request.getUserAssociatedId();
-        if (adapterProvider.isExists()) {
-            return adapterProvider.toOptional()
-                .flatMap(adapter -> adapter.findById(chatId))
-                .map(ScenarioId::getScenarioId)
-                .orElseGet(() -> generateId(request));
-        }
-        return Optional.ofNullable(inMemoryMap.get(chatId))
+        return adapterProvider.findById(chatId)
+            .map(ScenarioId::getScenarioId)
             .orElseGet(() -> generateId(request));
     }
 
@@ -84,9 +75,6 @@ public class SimpleScenarioIdResolver implements ScenarioIdResolver {
     @Override
     public void saveNewId(UpdateRequest request, String id) {
         String chatId = request.getUserAssociatedId();
-        adapterProvider.toOptional().ifPresentOrElse(
-            adapter -> adapter.save(id, chatId),
-            () -> inMemoryMap.put(chatId, id)
-        );
+        adapterProvider.save(id, chatId);
     }
 }

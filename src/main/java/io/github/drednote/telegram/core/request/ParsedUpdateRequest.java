@@ -91,6 +91,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
+    public void addResponse(TelegramResponse response) {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
     public void setRequestHandler(@Nullable RequestHandler requestHandler) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
@@ -102,6 +107,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     public void addResponseFromTelegram(@Nullable Object response) {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
+    public void setError(Throwable error) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 }

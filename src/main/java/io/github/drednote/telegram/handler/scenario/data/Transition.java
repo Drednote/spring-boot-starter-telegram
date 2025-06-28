@@ -11,14 +11,14 @@ public interface Transition<S> {
     /**
      * Retrieves the source state of the transition.
      *
-     * @return the source {@link State} of the transition
+     * @return the source {@link ScenarioState} of the transition
      */
-    State<S> getSource();
+    ScenarioState<S> getSource();
 
     /**
      * Retrieves the target state of the transition.
      *
-     * @return the target {@link State} of the transition
+     * @return the target {@link ScenarioState} of the transition
      */
-    State<S> getTarget();
+    ScenarioState<S> getTarget();
 }

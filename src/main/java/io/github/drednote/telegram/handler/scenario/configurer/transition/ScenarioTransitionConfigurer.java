@@ -16,7 +16,7 @@ public interface ScenarioTransitionConfigurer<S> {
      *
      * @return a {@link ScenarioExternalTransitionConfigurer} instance for further configuration
      */
-    ScenarioExternalTransitionConfigurer<S> withExternal();
+    ScenarioExternalTransitionConfigurer<S> withExternal() throws Exception;
 
     /**
      * Configures a transition with response message processing.
@@ -30,7 +30,7 @@ public interface ScenarioTransitionConfigurer<S> {
      * @return a {@link ScenarioResponseMessageTransitionConfigurer} instance for further
      * configuration
      */
-    ScenarioResponseMessageTransitionConfigurer<S> withResponseMessageProcessing();
+    ScenarioResponseMessageTransitionConfigurer<S> withResponseMessageProcessing() throws Exception;
 
     /**
      * Configures a rollback transition.
@@ -41,5 +41,5 @@ public interface ScenarioTransitionConfigurer<S> {
      *
      * @return a {@link ScenarioRollbackTransitionConfigurer} instance for further configuration
      */
-    ScenarioRollbackTransitionConfigurer<S> withRollback();
+    ScenarioRollbackTransitionConfigurer<S> withRollback() throws Exception;
 }

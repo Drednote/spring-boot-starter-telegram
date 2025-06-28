@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
-import org.springframework.lang.Nullable;
-
 /**
  * Interface for configuring scenario states.
  *
@@ -11,19 +9,10 @@ import org.springframework.lang.Nullable;
 public interface ScenarioStateConfigurer<S> {
 
     /**
-     * Sets the initial state for the scenario.
+     * Gets a configurer for states.
      *
-     * @param state the initial state to set
-     * @return the current instance of ScenarioStateConfigurer
+     * @return {@link StateConfigurer} for chaining
+     * @throws Exception if configuration error happens
      */
-    ScenarioStateConfigurer<S> withInitialState(S state);
-
-    /**
-     * Sets the terminal states for the scenario.
-     *
-     * @param state the terminal state to set
-     * @param states others terminal states to set
-     * @return the current instance of ScenarioStateConfigurer
-     */
-    ScenarioStateConfigurer<S> withTerminalState(S state, @Nullable S... states);
+    StateConfigurer<S> withStates() throws Exception;
 }

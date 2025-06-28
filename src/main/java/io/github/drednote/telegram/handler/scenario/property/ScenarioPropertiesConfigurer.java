@@ -7,38 +7,49 @@ import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.scenario.Action;
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
+import io.github.drednote.telegram.handler.scenario.configurer.StateConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Node;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Request;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Rollback;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Scenario;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Scenario.TransitionType;
-import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
-import io.github.drednote.telegram.handler.scenario.configurer.transition.SimpleScenarioTransitionConfigurer.TransitionData;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
-public class ScenarioPropertiesConfigurer {
+public class ScenarioPropertiesConfigurer<S> {
 
     private final ScenarioProperties scenarioProperties;
     private final ScenarioFactoryResolver scenarioFactoryResolver;
+    private final ScenarioBuilder scenarioBuilder;
+    private ScenarioTransitionConfigurer<Object> transitionConfigurer;
+    private final Set<Object> states = new HashSet<>();
 
     public ScenarioPropertiesConfigurer(
+        ScenarioBuilder scenarioBuilder,
         ScenarioProperties scenarioProperties,
         ScenarioFactoryResolver scenarioFactoryResolver
     ) {
         Assert.required(scenarioProperties, "ScenarioProperties");
         Assert.required(scenarioFactoryResolver, "ScenarioFactoryResolver");
+        this.scenarioBuilder = scenarioBuilder;
         this.scenarioProperties = scenarioProperties;
         this.scenarioFactoryResolver = scenarioFactoryResolver;
+        this.transitionConfigurer = new SimpleScenarioTransitionConfigurer<>(scenarioBuilder);
     }
 
-    public <S> void configure(ScenarioBuilder<S> scenarioBuilder) {
+    public <T> void configure(StateConfigurer<T> stateConfigurer) throws Exception {
         Map<String, Scenario> values = scenarioProperties.getValues();
         if (values != null) {
             values.forEach((key, scenario) -> {
@@ -52,9 +63,10 @@ public class ScenarioPropertiesConfigurer {
                 });
             });
         }
+        stateConfigurer.states((Set<T>) states);
     }
 
-    private <S> void doConfigure(
+    private void doConfigure(
         ScenarioBuilder<S> scenarioBuilder, TransitionData<S> parent, Scenario scenario, Node node
     ) {
         Scenario child = scenario.getSteps().get(node.getId());
@@ -67,19 +79,23 @@ public class ScenarioPropertiesConfigurer {
         });
     }
 
+    @SneakyThrows
     @NotNull
-    private <S> TransitionData<S> configureTransition(
+    private TransitionData<S> configureTransition(
         ScenarioBuilder<S> scenarioBuilder, Scenario scenario, @Nullable TransitionData<S> parent
     ) {
         Request request = scenario.getRequest();
         Set<String> actionClassName = scenario.getActionReferences();
-        String target = scenario.getTarget();
-        Object source = parent != null ? scenario.getSource() : scenarioBuilder.getInitial();
+        Object target = scenario.getTarget();
+        Object source = parent != null ? scenario.getSource() : scenarioBuilder.getInitialState();
 
         Assert.required(target, "Target state");
         Assert.required(source, "Source state");
         Assert.required(scenario, "Scenario");
         Assert.required(request, "Request");
+
+        states.add(source);
+        states.add(target);
 
         List<Action<Object>> action = createAction(actionClassName);
         TelegramRequest telegramRequest = createTelegramRequest(request);
@@ -89,20 +105,40 @@ public class ScenarioPropertiesConfigurer {
         );
 
         if (scenario.getType() == TransitionType.RESPONSE_MESSAGE_PROCESSING) {
-            transitionData.setResponseMessageProcessing(true);
+            var external = transitionConfigurer.withResponseMessageProcessing();
+            external.source(source).target(target).telegramRequest(telegramRequest).props(scenario.getProps());
+            for (Action<Object> objectAction : action) {
+                external.action(objectAction);
+            }
+            transitionConfigurer = external.and();
         } else if (scenario.getType() == TransitionType.ROLLBACK) {
             Rollback rollback = firstNonNull(scenario.getRollback(), scenarioProperties.getDefaultRollback());
             if (parent == null || rollback == null) {
                 throw new IllegalArgumentException(
                     "Parent transition or rollback section cannot be null if transition type is Rollback");
             }
-            TransitionData<Object> rollbackTransitionData = new TransitionData<>(
-                target, source, createAction(rollback.getActionReferences()),
-                createTelegramRequest(rollback.getRequest()), parent.getProps());
-            scenarioBuilder.addTransition((TransitionData<S>) rollbackTransitionData);
-        }
+            var external = transitionConfigurer.withRollback();
+            external.source(source).target(target).telegramRequest(telegramRequest).props(scenario.getProps());
+            for (Action<Object> objectAction : action) {
+                external.action(objectAction);
+            }
 
-        scenarioBuilder.addTransition((TransitionData<S>) transitionData);
+            external.rollbackProps(parent.getProps()).rollbackTelegramRequest(createTelegramRequest(rollback.getRequest()));
+            List<Action<Object>> actions = createAction(rollback.getActionReferences());
+            for (Action<Object> objectAction : actions) {
+                external.rollbackAction(objectAction);
+            }
+
+            transitionConfigurer = external.and();
+        } else {
+            var external = transitionConfigurer.withExternal();
+            external.source(source).target(target).telegramRequest(telegramRequest).props(scenario.getProps());
+            for (Action<Object> objectAction : action) {
+                external.action(objectAction);
+            }
+            transitionConfigurer = external.and();
+        }
+//        scenarioBuilder.addTransition((TransitionData<S>) transitionData);
         return (TransitionData<S>) transitionData;
     }
 

@@ -28,11 +28,11 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
     @Override
     public void onConfigure(ScenarioConfigConfigurer<State> configurer) {
         configurer
-            .withPersister(new JpaScenarioRepositoryAdapter<>(scenarioRepository));
+            .withAdapter(new JpaScenarioRepositoryAdapter<>(scenarioRepository));
     }
 
     @Override
-    public void onConfigure(ScenarioStateConfigurer<State> configurer) {
-        configurer.withInitialState(State.INITIAL);
+    public void onConfigure(ScenarioStateConfigurer<State> configurer) throws Exception {
+        configurer.withStates().initial(State.INITIAL);
     }
 }

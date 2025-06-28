@@ -10,12 +10,12 @@ import java.util.Set;
 import org.springframework.lang.Nullable;
 
 /**
- * An abstract implementation of the {@link State} interface.
+ * An abstract implementation of the {@link ScenarioState} interface.
  *
  * @param <S> the type of the state identifier
  * @author Ivan Galushko
  */
-public abstract class AbstractState<S> implements State<S> {
+public abstract class AbstractScenarioState<S> implements ScenarioState<S> {
 
     protected final S id;
     @Nullable
@@ -29,7 +29,7 @@ public abstract class AbstractState<S> implements State<S> {
      *                 null
      * @throws IllegalArgumentException if id is null
      */
-    protected AbstractState(S id, @Nullable Set<UpdateRequestMapping> mappings) {
+    protected AbstractScenarioState(S id, @Nullable Set<UpdateRequestMapping> mappings) {
         Assert.required(id, "id");
         this.mappings = mappings;
         this.id = id;
@@ -62,10 +62,10 @@ public abstract class AbstractState<S> implements State<S> {
         if (this == o) {
             return true;
         }
-        if (o == null || !AbstractState.class.isAssignableFrom(o.getClass())) {
+        if (o == null || !AbstractScenarioState.class.isAssignableFrom(o.getClass())) {
             return false;
         }
-        AbstractState<?> that = (AbstractState<?>) o;
+        AbstractScenarioState<?> that = (AbstractScenarioState<?>) o;
         return Objects.equals(id, that.id) && Objects.equals(mappings, that.mappings);
     }
 

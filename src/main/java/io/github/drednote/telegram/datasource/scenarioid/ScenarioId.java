@@ -6,5 +6,18 @@ public interface ScenarioId {
 
     String getScenarioId();
 
-    void setScenarioId(String scenarioId);
+//    void setScenarioId(String scenarioId);
+
+    record DefaultScenarioId(String id, String scenarioId) implements ScenarioId {
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getScenarioId() {
+            return scenarioId;
+        }
+    }
 }

@@ -138,6 +138,11 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
+    public void addResponse(TelegramResponse response) {
+
+    }
+
+    @Override
     public void setRequestHandler(@Nullable RequestHandler requestHandler) {
 
     }
@@ -149,6 +154,11 @@ class AbstractUpdateRequestTest {
 
     @Override
     public void addResponseFromTelegram(Object response) {
+
+    }
+
+    @Override
+    public void setError(Throwable error) {
 
     }
 

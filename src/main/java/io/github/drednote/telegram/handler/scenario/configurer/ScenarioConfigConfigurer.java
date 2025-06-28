@@ -4,6 +4,7 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.SimpleScenarioIdResolver;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 
 /**
  * Interface for configuring general scenario settings.
@@ -14,12 +15,20 @@ import io.github.drednote.telegram.handler.scenario.SimpleScenarioIdResolver;
 public interface ScenarioConfigConfigurer<S> {
 
     /**
-     * Sets the persister for the scenario configuration.
+     * Sets the adapter for the persister for the scenario configuration.
      *
      * @param adapter the ScenarioRepositoryAdapter to use for persisting scenarios
      * @return the current instance of ScenarioConfigConfigurer
      */
-    ScenarioConfigConfigurer<S> withPersister(ScenarioRepositoryAdapter<S> adapter);
+    ScenarioConfigConfigurer<S> withAdapter(ScenarioRepositoryAdapter<S> adapter);
+
+    /**
+     * Sets the persister for the scenario configuration.
+     *
+     * @param persister the ScenarioPersister to use for persisting scenarios
+     * @return the current instance of ScenarioConfigConfigurer
+     */
+    ScenarioConfigConfigurer<S> withPersister(ScenarioPersister<S> persister);
 
     /**
      * Sets the id resolver for the scenario configuration.
