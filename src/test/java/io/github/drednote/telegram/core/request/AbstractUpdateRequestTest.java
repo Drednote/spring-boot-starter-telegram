@@ -105,7 +105,7 @@ class AbstractUpdateRequestTest {
 
     @Nullable
     @Override
-    public Throwable getError() {
+    public Exception getError() {
       return null;
     }
 
@@ -158,7 +158,7 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
-    public void setError(Throwable error) {
+    public void setError(Exception error) {
 
     }
 

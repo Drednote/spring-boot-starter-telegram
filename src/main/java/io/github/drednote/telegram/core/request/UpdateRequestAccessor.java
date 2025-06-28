@@ -65,5 +65,5 @@ public interface UpdateRequestAccessor {
      *
      * @param error error
      */
-    void setError(Throwable error);
+    void setError(Exception error);
 }

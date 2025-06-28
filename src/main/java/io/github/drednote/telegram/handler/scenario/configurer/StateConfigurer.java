@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
-import io.github.drednote.telegram.handler.scenario.Action;
+import io.github.drednote.telegram.handler.scenario.action.Action;
 import java.util.Collection;
 import java.util.Set;
 import org.springframework.statemachine.config.configurers.StateConfigurer.History;

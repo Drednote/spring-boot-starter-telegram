@@ -1,22 +1,27 @@
 package io.github.drednote.telegram.datasource.scenario;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
+import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.core.request.TelegramRequests;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.SimpleScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.DefaultScenarioContext;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.UpdateUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.statemachine.support.DefaultExtendedState;
+import org.springframework.statemachine.support.DefaultStateMachineContext;
 
 class ScenarioKryoSerializationServiceTest {
 
@@ -24,17 +29,17 @@ class ScenarioKryoSerializationServiceTest {
 
     @Test
     void shouldCorrectSerializeAndDeserialize() throws IOException {
-//        SimpleStateContext<AbstractStateClass<?>> source = new SimpleStateContext<>(new StateClass(State.SOURCE),
-//            Set.of(), false, new HashMap<>());
-//        SimpleStateContext<AbstractStateClass<?>> target = new SimpleStateContext<>(new StateClass(State.TARGET),
-//            Set.of(), false, Map.of("1", BigDecimal.ONE));
-//        ScenarioContext<AbstractStateClass<?>> scenario = new SimpleScenarioContext<>("id", target);
-//
-//        byte[] bytes = serializationService.serialize(scenario);
-//        ScenarioContext<AbstractStateClass<?>> deserialize = serializationService.deserialize(bytes);
-//
-//        assertThat(deserialize).isEqualTo(scenario);
-        fail("Not realized");
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", BigDecimal.ONE);
+        DefaultStateMachineContext<AbstractStateClass<?>, ScenarioEvent> target = new DefaultStateMachineContext<>(
+            new StateClass(State.SOURCE), new ScenarioEvent(TelegramRequests.text("1")), map,
+            new DefaultExtendedState());
+        ScenarioContext<AbstractStateClass<?>> scenario = new DefaultScenarioContext<>("id", target);
+
+        byte[] bytes = serializationService.serialize(scenario);
+        ScenarioContext<AbstractStateClass<?>> deserialize = serializationService.deserialize(bytes);
+
+        assertThat(deserialize).isEqualTo(scenario);
     }
 
     @Data

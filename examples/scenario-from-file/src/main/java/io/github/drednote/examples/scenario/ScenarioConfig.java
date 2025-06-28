@@ -6,6 +6,7 @@ import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigCon
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
+import io.github.drednote.telegram.handler.scenario.persist.DefaultScenarioPersister;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
     @Override
     public void onConfigure(ScenarioConfigConfigurer<State> configurer) {
         configurer
-            .withAdapter(new JpaScenarioRepositoryAdapter<>(scenarioRepository));
+            .withPersister(new DefaultScenarioPersister<>(new JpaScenarioRepositoryAdapter<>(scenarioRepository)));
     }
 
     @Override

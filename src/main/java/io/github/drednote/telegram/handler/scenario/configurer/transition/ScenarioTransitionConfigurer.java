@@ -19,20 +19,6 @@ public interface ScenarioTransitionConfigurer<S> {
     ScenarioExternalTransitionConfigurer<S> withExternal() throws Exception;
 
     /**
-     * Configures a transition with response message processing.
-     * <p>
-     * After execution of this transition and processing response message to user, id of the current
-     * scenario will be changed to messageId of a response message from a telegram.
-     * <p>
-     * Use this type if you during transition creating a message with inline keyboard, and want to
-     * interact with this message independently of other scenarios.
-     *
-     * @return a {@link ScenarioResponseMessageTransitionConfigurer} instance for further
-     * configuration
-     */
-    ScenarioResponseMessageTransitionConfigurer<S> withResponseMessageProcessing() throws Exception;
-
-    /**
      * Configures a rollback transition.
      * <p>
      * During this configurer will be created a new one transition with a reverse direction. For

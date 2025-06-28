@@ -1,7 +1,8 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult;
 import org.springframework.lang.Nullable;
 import org.springframework.statemachine.StateMachine;
 
@@ -24,13 +25,6 @@ public interface Scenario<S> {
     <T> T getProperty(String key);
 
     StateMachine<S, ScenarioEvent> getStateMachine();
-
-//    /**
-//     * Retrieves the current getMachine of the scenario.
-//     *
-//     * @return the current getMachine as a {@code State<S>} object
-//     */
-//    ScenarioState<S> getState();
 
     /**
      * Sends an event to the scenario.

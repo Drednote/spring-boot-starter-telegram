@@ -13,8 +13,8 @@
 //import io.github.drednote.telegram.handler.scenario.data.ScenarioState;
 //import io.github.drednote.telegram.handler.scenario.data.Transition;
 //import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-//import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.SimpleScenarioContext;
-//import io.github.drednote.telegram.handler.scenario.persist.MachineScenarioFactory;
+//import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.DefaultScenarioContext;
+//import io.github.drednote.telegram.handler.scenario.factory.MachineScenarioFactory;
 //import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioPersister;
 //import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
 //import io.github.drednote.telegram.utils.FieldProvider;
@@ -57,7 +57,7 @@
 //        states.put(nextState2, List.of(new SimpleTransition<>(nextState2, nextState4)));
 //
 //        factory = new MachineScenarioFactory<>(
-//            new SimpleScenarioConfig<>(initialState, states, new SimpleScenarioIdResolver(FieldProvider.empty())),
+//            new SimpleScenarioConfig<>(initialState, states, new DefaultScenarioIdResolver(FieldProvider.empty())),
 //            persister);
 //
 //        when(updateRequest.getRequestType()).thenReturn(RequestType.MESSAGE);
@@ -78,7 +78,7 @@
 //    @Test
 //    void shouldCorrectChooseNextStateIfPersisterNotEmpty() throws IOException {
 //        String id = "2";
-//        adapter.save(new SimpleScenarioContext<>(id,
+//        adapter.save(new DefaultScenarioContext<>(id,
 //            new SimpleStateContext<>(nextState2.getId(),
 //                Set.of(new UpdateRequestMapping("**", RequestType.POLL, Set.of())), false, new HashMap<>())));
 //

@@ -1,14 +1,14 @@
 package io.github.drednote.telegram.handler.scenario;
 
-import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.exception.type.ScenarioException;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 
-@BetaApi
 @Slf4j
 @Order(FilterOrder.HIGHEST_PRECEDENCE)
 public class ScenarioUpdateHandler implements UpdateHandler {
@@ -23,9 +23,9 @@ public class ScenarioUpdateHandler implements UpdateHandler {
                 ScenarioIdResolver idResolver = scenario.getAccessor().getIdResolver();
                 idResolver.saveNewId(request, id);
             } else {
-                Throwable exception = eventResult.exception();
+                Exception exception = eventResult.exception();
                 if (exception != null) {
-                    throw new ScenarioException(exception);
+                    throw exception;
                 }
             }
         }

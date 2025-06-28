@@ -14,4 +14,9 @@ import io.github.drednote.telegram.handler.scenario.configurer.transition.Scenar
  * @see ScenarioConfigConfigurer
  */
 public abstract class ScenarioConfigurerAdapter<S> implements ScenarioConfigurer<S> {
+
+    @Override
+    public void onConfigure(ScenarioConfigConfigurer<S> configurer) throws Exception {
+        // nothing
+    }
 }

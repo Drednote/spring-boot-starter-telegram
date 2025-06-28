@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.handler.scenario.persist;
 
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import org.springframework.statemachine.StateMachineContext;
 
 /**
@@ -25,7 +25,7 @@ public interface ScenarioContext<S> {
      */
     StateMachineContext<S, ScenarioEvent> getMachine();
 
-    record SimpleScenarioContext<S>(
+    record DefaultScenarioContext<S>(
         String id, StateMachineContext<S, ScenarioEvent> machine
     ) implements ScenarioContext<S> {
 

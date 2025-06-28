@@ -48,7 +48,7 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
      */
     @Setter
     @Nullable
-    private Throwable error;
+    private Exception error;
 
     /**
      * Creates a new instance of the DefaultUpdateRequest class with the given parameters.

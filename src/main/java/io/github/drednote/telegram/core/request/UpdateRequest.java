@@ -199,7 +199,7 @@ public interface UpdateRequest {
      * @return the error, or null if no error occurred
      */
     @Nullable
-    Throwable getError();
+    Exception getError();
 
     /**
      * Returns the properties specific to the Telegram configuration

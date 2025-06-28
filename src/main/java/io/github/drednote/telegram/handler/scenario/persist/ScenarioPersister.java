@@ -23,6 +23,6 @@ public interface ScenarioPersister<S> {
      * @param scenario  the scenario to restore data into
      * @param scenarioId the ID of the scenario to restore
      */
-    void restore(Scenario<S> scenario, String scenarioId);
+    Scenario<S> restore(Scenario<S> scenario, String scenarioId);
 }
 

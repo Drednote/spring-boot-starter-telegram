@@ -6,7 +6,6 @@ import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
 import java.util.List;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -59,7 +58,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public Throwable getError() {
+    public Exception getError() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 
@@ -111,7 +110,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public void setError(Throwable error) {
+    public void setError(Exception error) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 }

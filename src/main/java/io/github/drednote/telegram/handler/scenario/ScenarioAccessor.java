@@ -1,8 +1,9 @@
 package io.github.drednote.telegram.handler.scenario;
 
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioProperties;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
+import org.springframework.lang.Nullable;
 
 /**
  * Provides access to manipulate and retrieve details of a scenario.
@@ -26,7 +27,7 @@ public interface ScenarioAccessor<S> {
      */
     void setId(String id);
 
-    void addProperties(ScenarioProperties properties);
+    void addProperty(String key, @Nullable Object value);
 
     /**
      * Retrieves the scenario ID resolver.

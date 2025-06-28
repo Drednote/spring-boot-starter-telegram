@@ -2,10 +2,9 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
-import io.github.drednote.telegram.handler.scenario.Action;
-import io.github.drednote.telegram.handler.scenario.ActionContext;
-import io.github.drednote.telegram.handler.scenario.machine.Guard;
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioState;
+import io.github.drednote.telegram.handler.scenario.action.Action;
+import io.github.drednote.telegram.handler.scenario.action.ActionContext;
+import io.github.drednote.telegram.handler.scenario.guard.Guard;
 import java.util.Map;
 import org.springframework.statemachine.security.SecurityRule.ComparisonType;
 import org.springframework.statemachine.transition.Transition;

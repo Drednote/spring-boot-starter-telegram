@@ -3,8 +3,8 @@ package io.github.drednote.telegram.filter.pre;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.scenario.Scenario;
-import io.github.drednote.telegram.handler.scenario.ScenarioIdResolver;
-import io.github.drednote.telegram.handler.scenario.persist.ScenarioFactory;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.utils.Assert;
 
@@ -50,8 +50,7 @@ public class ScenarioUpdateHandlerPopular<S> implements PriorityPreUpdateFilter 
     @Override
     public void preFilter(UpdateRequest request) {
         String id = scenarioIdResolver.resolveId(request);
-        Scenario<S> scenario = scenarioFactory.create(id);
-        persister.restore(scenario, id);
+        Scenario<S> scenario = persister.restore(scenarioFactory.create(id), id);
         if (scenario.matches(request)) {
             request.getAccessor().setScenario(scenario);
         } else {

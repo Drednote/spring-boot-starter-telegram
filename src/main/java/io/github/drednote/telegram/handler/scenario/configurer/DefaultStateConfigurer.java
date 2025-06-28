@@ -1,9 +1,9 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
-import io.github.drednote.telegram.handler.scenario.Action;
-import io.github.drednote.telegram.handler.scenario.machine.DelegateAction;
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.action.Action;
+import io.github.drednote.telegram.handler.scenario.action.DelegateAction;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -184,7 +184,7 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
 
 //    @Override
 //    public ScenarioStateConfigurer<S> and() {
-//        return new SimpleScenarioStateConfigurer<>(builder, configurer.and());
+//        return new DefaultScenarioStateConfigurer<>(builder, configurer.and());
 //    }
 
     private org.springframework.statemachine.action.Action<S, ScenarioEvent> makeAction(

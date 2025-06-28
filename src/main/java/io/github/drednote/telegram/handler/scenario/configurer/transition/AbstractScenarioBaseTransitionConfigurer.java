@@ -1,12 +1,12 @@
 package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
-import io.github.drednote.telegram.handler.scenario.Action;
+import io.github.drednote.telegram.handler.scenario.action.Action;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
-import io.github.drednote.telegram.handler.scenario.machine.DelegateAction;
-import io.github.drednote.telegram.handler.scenario.machine.DelegateGuard;
-import io.github.drednote.telegram.handler.scenario.machine.Guard;
-import io.github.drednote.telegram.handler.scenario.machine.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.action.DelegateAction;
+import io.github.drednote.telegram.handler.scenario.guard.DelegateGuard;
+import io.github.drednote.telegram.handler.scenario.guard.Guard;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,12 +138,10 @@ public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends Scen
         Assert.required(source, "Source");
         Assert.required(request, "TelegramRequest");
 
-        return new SimpleScenarioTransitionConfigurer<>(builder, build());
+        return new DefaultScenarioTransitionConfigurer<>(builder, build());
     }
 
     protected void preBuild(TransitionConfigurer<T, S, ScenarioEvent> configurer) {
-//        ScenarioBuilder.buildTransition(configurer, source, state, request, name, timer, timerOnce, expression,
-//            attributes, match, guard, actions, props);
         if (source != null) {
             configurer.source(source);
         }
