@@ -16,7 +16,6 @@ import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import org.springframework.lang.NonNull;
@@ -200,7 +199,7 @@ public interface UpdateRequest {
      * @return the error, or null if no error occurred
      */
     @Nullable
-    Throwable getError();
+    Exception getError();
 
     /**
      * Returns the properties specific to the Telegram configuration
@@ -228,6 +227,9 @@ public interface UpdateRequest {
     ObjectMapper getObjectMapper();
 
     /**
+     * <b>Normally you should not use this method, all methods in {@code UpdateRequestAccessor} are internal. If you
+     * will use them, unexpected behavior can happen.</b>
+     *
      * @return accessor
      */
     UpdateRequestAccessor getAccessor();

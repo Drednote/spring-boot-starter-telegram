@@ -343,7 +343,7 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<Enum<?>> {
 
     @Override
     public void onConfigure(@NonNull ScenarioTransitionConfigurer<Enum<?>> configurer) {
-        configurer.withCreateInlineMessage()
+        configurer.withExternal().inlineKeyboard()
             .source(State.INITIAL).target(ASSISTANT_CHOICE)
             .telegramRequest(command(ASSISTANT_SETTINGS))
             .action(settingsActionsFactory::returnSettingsMenu)

@@ -15,19 +15,19 @@ public interface ScenarioConfigurer<S> {
      *
      * @param configurer interface that used to configure
      */
-    void onConfigure(ScenarioTransitionConfigurer<S> configurer);
+    void onConfigure(ScenarioTransitionConfigurer<S> configurer) throws Exception;
 
     /**
      * Configure general setup of a scenario. Implement this method is not required.
      *
      * @param configurer interface that used to configure
      */
-    void onConfigure(ScenarioConfigConfigurer<S> configurer);
+    void onConfigure(ScenarioConfigConfigurer<S> configurer) throws Exception;
 
     /**
-     * Configure state setup. Implement this method is required.
+     * Configure scenario setup. Implement this method is required.
      *
      * @param configurer interface that used to configure
      */
-    void onConfigure(ScenarioStateConfigurer<S> configurer);
+    void onConfigure(ScenarioStateConfigurer<S> configurer) throws Exception;
 }

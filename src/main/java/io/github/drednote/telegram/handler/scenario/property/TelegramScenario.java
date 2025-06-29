@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.handler.scenario.property;
 
 import io.github.drednote.telegram.core.annotation.BetaApi;
-import io.github.drednote.telegram.core.annotation.TelegramAdvice;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -13,6 +13,7 @@ import io.github.drednote.telegram.filter.UpdateFilterProvider;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.handler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.menu.MenuAutoConfiguration;
+import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
 import io.github.drednote.telegram.session.SessionAutoConfiguration;
 import io.github.drednote.telegram.session.SessionProperties.UpdateStrategy;
 import java.util.Collection;
@@ -86,7 +87,7 @@ public class TelegramAutoConfiguration {
             TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
             ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
             UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource,
-            TelegramClient telegramClient
+            TelegramClient telegramClient, Collection<TelegramResponseTypesResolver> resolvers
         ) {
             if (StringUtils.isBlank(properties.getToken())) {
                 throw new BeanCreationException(TELEGRAM_BOT,
@@ -94,7 +95,7 @@ public class TelegramAutoConfiguration {
             }
             if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
                 return new DefaultTelegramBot(properties, updateHandlers, objectMapper,
-                    exceptionHandler, updateFilterProvider, messageSource, telegramClient);
+                    exceptionHandler, updateFilterProvider, messageSource, telegramClient, resolvers);
             } else {
                 throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
             }

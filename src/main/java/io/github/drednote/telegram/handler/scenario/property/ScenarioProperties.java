@@ -4,9 +4,8 @@ import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.handler.scenario.ActionContext;
+import io.github.drednote.telegram.handler.scenario.action.ActionContext;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioExternalTransitionConfigurer;
-import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioResponseMessageTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioRollbackTransitionConfigurer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,7 +108,8 @@ public class ScenarioProperties {
              */
             ROLLBACK,
             /**
-             * The type associated with a {@link ScenarioResponseMessageTransitionConfigurer}
+             * The type associated with a {@link ScenarioExternalTransitionConfigurer} with parameter
+             * {@link ScenarioExternalTransitionConfigurer#inlineKeyboardCreation()} set to true
              */
             RESPONSE_MESSAGE_PROCESSING,
             /**

@@ -5,7 +5,6 @@ import io.github.drednote.telegram.utils.Assert;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * Represents a response that processes a Flux of Telegram updates.
@@ -18,27 +17,20 @@ import reactor.core.publisher.Mono;
  */
 public class FluxTelegramResponse extends AbstractTelegramResponse {
 
-    private final Flux<Object> response;
+    private final Flux<?> response;
     @Nullable
     private TelegramApiException exception = null;
 
     /**
      * Constructs a {@code FluxTelegramResponse} with the specified response object.
      *
-     * @param response the response object; must be an instance of {@link Flux} or {@link Mono}
-     * @throws IllegalArgumentException if {@code response} is null or if {@code response} is not an instance of
-     *                                  {@link Flux} or {@link Mono}
+     * @param response the response object
+     * @throws IllegalArgumentException if {@code response} is null
      */
-    public FluxTelegramResponse(Object response) {
+    public FluxTelegramResponse(Flux<?> response) {
         Assert.required(response, "response");
 
-        if (response instanceof Flux<?> flux) {
-            this.response = (Flux<Object>) flux;
-        } else if (response instanceof Mono<?> mono) {
-            this.response = ((Mono<Object>) mono).flux();
-        } else {
-            throw new IllegalArgumentException("This class works only with a Flux or Mono");
-        }
+        this.response = response;
     }
 
     /**
@@ -53,7 +45,10 @@ public class FluxTelegramResponse extends AbstractTelegramResponse {
             response.doOnNext(o -> {
                     if (o != null) {
                         try {
-                            new GenericTelegramResponse(o).process(request);
+                            TelegramResponseHelper.create(wrapWithTelegramResponse(o))
+                                .propagateProperties(this)
+                                .process(request);
+
                             this.exception = null;
                         } catch (TelegramApiException e) {
                             if (exception == null) {

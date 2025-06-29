@@ -30,11 +30,15 @@ class ResponseSetterTest {
         .isNotNull()
         .isInstanceOf(EmptyTelegramResponse.class);
 
+    updateRequest.setResponse(null);
+
     EmptyTelegramResponse invoked = EmptyTelegramResponse.INSTANCE;
     ResponseSetter.setResponse(updateRequest, invoked);
     assertThat(updateRequest.getResponse())
         .isNotNull()
         .isEqualTo(invoked);
+
+    updateRequest.setResponse(null);
 
     ResponseSetter.setResponse(updateRequest, new Object());
     assertThat(updateRequest.getResponse())

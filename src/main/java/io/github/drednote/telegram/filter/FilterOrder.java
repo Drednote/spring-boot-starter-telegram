@@ -23,7 +23,6 @@ public final class FilterOrder {
 
     // ------- Orders for priority pre filters ------- //
     public static final Map<Class<? extends PriorityPreUpdateFilter>, Integer> PRIORITY_PRE_FILTERS = Map.of(
-//        UserRateLimitRequestFilter.class, FilterOrder.HIGHEST_PRECEDENCE,
         RoleFilter.class, FilterOrder.HIGHEST_PRECEDENCE + 100,
         ScenarioUpdateHandlerPopular.class, FilterOrder.HIGHEST_PRECEDENCE + 200,
         ControllerUpdateHandlerPopular.class, FilterOrder.HIGHEST_PRECEDENCE + 300

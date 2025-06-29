@@ -1,6 +1,5 @@
 package io.github.drednote.telegram.core.request;
 
-import io.github.drednote.telegram.core.annotation.BetaApi;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
@@ -101,7 +100,6 @@ public enum MessageType {
    * @see Message#getDeleteChatPhoto()
    * @see Message#getGroupchatCreated()
    */
-  @BetaApi
   CHAT_CHANGES,
 
   /**
@@ -173,6 +171,5 @@ public enum MessageType {
    * @see Message#getUserShared()
    * @see Message#getChatShared()
    */
-  @BetaApi
   SERVICE_MESSAGE
 }
