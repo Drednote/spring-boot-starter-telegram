@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@EnableConfigurationProperties({UpdateHandlerProperties.class, ScenarioProperties.class})
+@EnableConfigurationProperties({UpdateHandlerProperties.class})
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 @ImportAutoConfiguration(ScenarioAutoConfiguration.class)
 public class UpdateHandlerAutoConfiguration {

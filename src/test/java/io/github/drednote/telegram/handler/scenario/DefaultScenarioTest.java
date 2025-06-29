@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.handler.scenario;
 
-import static io.github.drednote.telegram.handler.scenario.DefaultScenario.RESPONSE_PROCESSING_PROPERTY;
+import static io.github.drednote.telegram.handler.scenario.DefaultScenario.INLINE_KEYBOARD_PROPERTY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
@@ -61,7 +61,7 @@ public class DefaultScenarioTest {
         }
         assertThat(result.success()).isTrue();
 
-        Boolean property = scenario.getProperty(RESPONSE_PROCESSING_PROPERTY);
+        Boolean property = scenario.getProperty(INLINE_KEYBOARD_PROPERTY);
         assertThat(property).isTrue();
     }
 

@@ -5,6 +5,7 @@ import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioFactory;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver.ScenarioIdData;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.utils.Assert;
 
@@ -49,15 +50,31 @@ public class ScenarioUpdateHandlerPopular<S> implements PriorityPreUpdateFilter 
      */
     @Override
     public void preFilter(UpdateRequest request) {
-        String id = scenarioIdResolver.resolveId(request);
-        Scenario<S> scenario = persister.restore(scenarioFactory.create(id), id);
-        if (scenario.matches(request)) {
-            request.getAccessor().setScenario(scenario);
-        } else {
+        Scenario<S> scenario = null;
+        ScenarioIdData idData = scenarioIdResolver.resolveId(request);
+        for (String id : idData.ids()) {
+            if (scenario == null) {
+                Scenario<S> possibleScenario = persister.restore(scenarioFactory.create(id), id);
+                if (possibleScenario.matches(request)) {
+                    scenario = possibleScenario;
+                }
+            }
+        }
+        if (scenario == null) {
+            String fallbackId = idData.fallbackId();
+            Scenario<S> fallbackScenario = persister.restore(scenarioFactory.create(fallbackId), fallbackId);
+            if (fallbackScenario.matches(request)) {
+                scenario = fallbackScenario;
+            }
+        }
+        if (scenario == null) {
             Scenario<S> clearScenario = scenarioFactory.create(scenarioIdResolver.generateId(request));
             if (clearScenario.matches(request)) {
-                request.getAccessor().setScenario(clearScenario);
+                scenario = clearScenario;
             }
+        }
+        if (scenario != null) {
+            request.getAccessor().setScenario(scenario);
         }
     }
 

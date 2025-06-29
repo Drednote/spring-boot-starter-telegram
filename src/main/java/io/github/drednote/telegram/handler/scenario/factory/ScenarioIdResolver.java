@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.factory;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import java.util.Set;
 import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 /**
@@ -16,7 +17,7 @@ public interface ScenarioIdResolver {
      * @param request the update request from which to resolve the ID
      * @return the resolved scenario ID as a String
      */
-    String resolveId(UpdateRequest request);
+    ScenarioIdData resolveId(UpdateRequest request);
 
     /**
      * Generates a new scenario ID based on the provided update request.
@@ -44,5 +45,11 @@ public interface ScenarioIdResolver {
     static String resolveId(UpdateRequest request, MaybeInaccessibleMessage message) {
         return request.getUserAssociatedId() + "_" + message.getMessageId().toString();
     }
+
+    /**
+     * @param ids        the list of possible ids. Can be empty.
+     * @param fallbackId the default id that stores in the database or in memory. Never null.
+     */
+    record ScenarioIdData(Set<String> ids, String fallbackId) {}
 }
 

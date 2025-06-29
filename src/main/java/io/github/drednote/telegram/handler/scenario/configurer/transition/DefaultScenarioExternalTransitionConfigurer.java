@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
-import static io.github.drednote.telegram.handler.scenario.DefaultScenario.RESPONSE_PROCESSING_PROPERTY;
+import static io.github.drednote.telegram.handler.scenario.DefaultScenario.INLINE_KEYBOARD_PROPERTY;
 
 import io.github.drednote.telegram.handler.scenario.action.ScenarioPropertiesAction;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
@@ -40,7 +40,7 @@ public class DefaultScenarioExternalTransitionConfigurer<S>
 
     protected StateMachineTransitionConfigurer<S, ScenarioEvent> build() throws Exception {
         if (inlineKeyboard) {
-            configurer.action(new ScenarioPropertiesAction<>(Map.of(RESPONSE_PROCESSING_PROPERTY, true)));
+            configurer.action(new ScenarioPropertiesAction<>(Map.of(INLINE_KEYBOARD_PROPERTY, true)));
         }
 
         preBuild(configurer);

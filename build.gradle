@@ -42,7 +42,6 @@ dependencies {
     api 'org.springframework.statemachine:spring-statemachine-data-common:4.0.0'
 
     // data
-    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-mongodb'
 

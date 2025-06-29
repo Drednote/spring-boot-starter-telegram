@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
@@ -24,14 +24,14 @@ import reactor.core.publisher.Mono;
 
 public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
-    public static final String RESPONSE_PROCESSING_PROPERTY = "responseMessageProcessing";
+    public static final String INLINE_KEYBOARD_PROPERTY = "inlineKeyboard";
     public static final String SUCCESS_EXECUTION_PROPERTY = "successExecution";
 
     private final StateMachine<S, ScenarioEvent> machine;
     private final ScenarioPersister<S> scenarioPersister;
     private final ScenarioIdResolver scenarioIdResolver;
     private final Map<String, Object> properties = new HashMap<>();
-    private final Lock lock = new ReentrantLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     private String id;
 
@@ -46,19 +46,9 @@ public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public StateMachine<S, ScenarioEvent> getStateMachine() {
-        return machine;
-    }
-
-    @Override
     public ScenarioEventResult<S, ScenarioEvent> sendEvent(UpdateRequest request) {
         try {
-            lock.lock();
+            lock.writeLock().lock();
             Message<ScenarioEvent> message = new GenericMessage<>(new ScenarioEvent(request));
 
             List<StateMachineEventResult<S, ScenarioEvent>> results = machine
@@ -80,35 +70,60 @@ public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
         } catch (Exception e) {
             return new DefaultScenarioEventResult<>(false, null, e);
         } finally {
-            lock.unlock();
+            lock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean matches(UpdateRequest request) {
-        ScenarioEvent event = new ScenarioEvent(request);
-        return machine.getTransitions().stream()
-            .filter(t -> t.getSource().getId().equals(machine.getState().getId()))
-            .anyMatch(t -> t.getTrigger().getEvent().equals(event));
+        try {
+            lock.readLock().lock();
+            ScenarioEvent event = new ScenarioEvent(request);
+            return machine.getTransitions().stream()
+                .filter(t -> t.getSource().getId().equals(machine.getState().getId()))
+                .anyMatch(t -> t.getTrigger().getEvent().equals(event));
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    @Override
+    public void resetScenario(ScenarioContext<S> context) {
+        try {
+            lock.writeLock().lock();
+            machine.stopReactively().block();
+            machine.getStateMachineAccessor()
+                .doWithAllRegions(function -> function.resetStateMachineReactively(context.getMachine()).block());
+            machine.startReactively().block();
+            this.id = context.getId();
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public StateMachine<S, ScenarioEvent> getStateMachine() {
+        return machine;
     }
 
     @Override
     public boolean isTerminated() {
-        return machine.isComplete();
+        try {
+            lock.readLock().lock();
+            return machine.isComplete();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public ScenarioAccessor<S> getAccessor() {
         return this;
-    }
-
-    @Override
-    public void resetScenario(ScenarioContext<S> context) {
-        machine.stopReactively().block();
-        machine.getStateMachineAccessor()
-            .doWithAllRegions(function -> function.resetStateMachineReactively(context.getMachine()).block());
-        machine.startReactively().block();
-        this.id = context.getId();
     }
 
     @Override

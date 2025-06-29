@@ -44,7 +44,10 @@ public class StreamTelegramResponse extends AbstractTelegramResponse {
             response.forEach(o -> {
                 if (o != null) {
                     try {
-                        new GenericTelegramResponse(o).process(request);
+                        TelegramResponseHelper.create(wrapWithTelegramResponse(o))
+                            .propagateProperties(this)
+                            .process(request);
+
                         this.exception = null;
                     } catch (TelegramApiException e) {
                         if (exception == null) {

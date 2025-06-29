@@ -9,18 +9,18 @@ import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAda
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
+import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioConfigConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder.ScenarioData;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
-import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioConfigConfigurer;
-import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.DefaultScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.factory.DefaultScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.factory.MachineScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
-import io.github.drednote.telegram.handler.scenario.persist.InMemoryScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.persist.DefaultScenarioPersister;
+import io.github.drednote.telegram.handler.scenario.persist.InMemoryScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryBeanPostProcessor;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryContainer;
@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.Nullable;
@@ -45,6 +46,7 @@ import org.springframework.statemachine.config.StateMachineBuilder;
     havingValue = "true",
     matchIfMissing = true
 )
+@EnableConfigurationProperties({ScenarioProperties.class})
 @ConditionalOnBean(ScenarioConfigurerAdapter.class)
 public class ScenarioAutoConfiguration {
 

@@ -56,11 +56,9 @@ public class CompositeTelegramResponse extends AbstractTelegramResponse {
     @Override
     public void process(UpdateRequest request) throws TelegramApiException {
         for (Object response : invoked) {
-            GenericTelegramResponse telegramResponse = new GenericTelegramResponse(response);
-            if (parseMode != null) {
-                telegramResponse.setParseMode(parseMode);
-            }
-            telegramResponse.process(request);
+            TelegramResponseHelper.create(wrapWithTelegramResponse(response))
+                .propagateProperties(this)
+                .process(request);
         }
     }
 }

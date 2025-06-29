@@ -92,7 +92,7 @@ public abstract class DefaultJpaUpdateInboxRepositoryAdapter implements UpdateIn
     @Override
     @Transactional
     public void timeoutTasks() {
-        Integer idleInterval = properties.getSchedulerProcessor().getIdleInterval();
+        int idleInterval = properties.getSchedulerProcessor().getIdleInterval();
         List<JpaUpdateInbox> idleEntities = repository.getIdleEntities(
             Instant.now().minus(idleInterval, ChronoUnit.MILLIS));
         if (!idleEntities.isEmpty()) {

@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.filter.post;
 
-import static io.github.drednote.telegram.handler.scenario.DefaultScenario.RESPONSE_PROCESSING_PROPERTY;
+import static io.github.drednote.telegram.handler.scenario.DefaultScenario.INLINE_KEYBOARD_PROPERTY;
 import static io.github.drednote.telegram.handler.scenario.DefaultScenario.SUCCESS_EXECUTION_PROPERTY;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
@@ -38,7 +38,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
         List<Object> responses = request.getResponseFromTelegram();
         Scenario<?> scenario = request.getScenario();
         if (scenario != null) {
-            if (Boolean.TRUE.equals(scenario.getProperty(RESPONSE_PROCESSING_PROPERTY))) {
+            if (Boolean.TRUE.equals(scenario.getProperty(INLINE_KEYBOARD_PROPERTY))) {
                 if (!responses.isEmpty()) {
                     log.warn(
                         "No response received from telegram, although response message processing "
