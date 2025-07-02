@@ -3,6 +3,7 @@ package io.github.drednote.telegram.response;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import reactor.core.publisher.Mono;
 
 public class TelegramResponseHelper {
 
@@ -31,5 +32,9 @@ public class TelegramResponseHelper {
 
     public void process(UpdateRequest request) throws TelegramApiException {
         telegramResponse.process(request);
+    }
+
+    public Mono<Void> processReactive(UpdateRequest request) {
+        return telegramResponse.processReactive(request);
     }
 }

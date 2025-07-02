@@ -110,7 +110,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public void setError(Exception error) {
+    public void setError(Throwable error) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 }

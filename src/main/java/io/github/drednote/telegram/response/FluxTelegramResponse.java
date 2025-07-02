@@ -2,9 +2,9 @@ package io.github.drednote.telegram.response;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.utils.Assert;
-import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Represents a response that processes a Flux of Telegram updates.
@@ -18,8 +18,6 @@ import reactor.core.publisher.Flux;
 public class FluxTelegramResponse extends AbstractTelegramResponse {
 
     private final Flux<?> response;
-    @Nullable
-    private TelegramApiException exception = null;
 
     /**
      * Constructs a {@code FluxTelegramResponse} with the specified response object.
@@ -49,23 +47,28 @@ public class FluxTelegramResponse extends AbstractTelegramResponse {
                                 .propagateProperties(this)
                                 .process(request);
 
-                            this.exception = null;
                         } catch (TelegramApiException e) {
-                            if (exception == null) {
-                                this.exception = e;
-                            } else {
-                                throw new FluxException(e);
-                            }
+                            throw new FluxException(e);
                         }
                     }
                 })
                 .blockLast();
-            if (exception != null) {
-                throw exception;
-            }
         } catch (FluxException e) {
             throw e.exception;
         }
+    }
+
+    @Override
+    public Mono<Void> processReactive(UpdateRequest request) {
+        return response.flatMap(o -> {
+            if (o == null) {
+                return Mono.empty();
+            }
+
+            return TelegramResponseHelper.create(wrapWithTelegramResponse(o))
+                .propagateProperties(this)
+                .processReactive(request);
+        }).then();
     }
 
     /**

@@ -1,6 +1,7 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.exception.type.ScenarioException;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult.DefaultScenarioEventResult;
@@ -66,7 +67,16 @@ public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
             addProperty(SUCCESS_EXECUTION_PROPERTY, accepted.get());
 
-            return new DefaultScenarioEventResult<>(accepted.get(), results, request.getError());
+            Exception exception;
+            if (request.getError() != null) {
+                exception = request.getError() instanceof Exception
+                    ? (Exception) request.getError()
+                    : new ScenarioException(request.getError());
+            } else {
+                exception = null;
+            }
+
+            return new DefaultScenarioEventResult<>(accepted.get(), results, exception);
         } catch (Exception e) {
             return new DefaultScenarioEventResult<>(false, null, e);
         } finally {

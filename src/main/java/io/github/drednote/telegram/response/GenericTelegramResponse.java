@@ -55,7 +55,36 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
     @Override
     public void process(UpdateRequest request) throws TelegramApiException {
         Assert.notNull(request, "UpdateRequest");
+
+        TelegramResponseHelper helper = getTelegramResponseHelper();
+
+        if (helper != null) {
+            helper.propagateProperties(this).process(request);
+        } else {
+            processGenericType(request);
+        }
+    }
+
+    @Override
+    public Mono<Void> processReactive(UpdateRequest request) {
+        Assert.notNull(request, "UpdateRequest");
+
+        TelegramResponseHelper helper = getTelegramResponseHelper();
+
+        if (helper != null) {
+            return helper.propagateProperties(this).processReactive(request);
+        } else {
+            return Mono.fromCallable(() -> {
+                processGenericType(request);
+                return null;
+            });
+        }
+    }
+
+    @Nullable
+    private TelegramResponseHelper getTelegramResponseHelper() {
         TelegramResponseHelper helper = null;
+
         if (resolver != null) {
             TelegramResponse resolved = resolver.resolve(response);
             if (resolved != null) {
@@ -75,12 +104,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
                 helper = TelegramResponseHelper.create(new StreamTelegramResponse(stream));
             }
         }
-
-        if (helper != null) {
-            helper.propagateProperties(this).process(request);
-        } else {
-            processGenericType(request);
-        }
+        return helper;
     }
 
     private void processGenericType(UpdateRequest request) throws TelegramApiException {

@@ -158,7 +158,7 @@ class AbstractUpdateRequestTest {
     }
 
     @Override
-    public void setError(Exception error) {
+    public void setError(Throwable error) {
 
     }
 
