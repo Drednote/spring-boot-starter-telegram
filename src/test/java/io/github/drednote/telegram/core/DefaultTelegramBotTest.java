@@ -52,7 +52,7 @@ class DefaultTelegramBotTest {
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
     when(filterProvider.getConclusivePostFilters(any())).thenReturn(List.of(conclusivePostUpdateFilter));
     this.defaultTelegramBot = new DefaultTelegramBot(new TelegramProperties(), List.of(updateHandler),
-        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource(), new OkHttpTelegramClient(""));
+        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource(), new OkHttpTelegramClient(""), List.of());
   }
 
   @Test

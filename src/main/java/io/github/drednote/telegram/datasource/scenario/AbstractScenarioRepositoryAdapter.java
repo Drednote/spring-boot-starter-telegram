@@ -4,12 +4,14 @@ import io.github.drednote.telegram.datasource.kryo.KryoSerializationService;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import java.io.IOException;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public abstract class AbstractScenarioRepositoryAdapter<S> implements ScenarioRepositoryAdapter<S> {
 
     private final KryoSerializationService<ScenarioContext<S>> serializationService;
+
+    public AbstractScenarioRepositoryAdapter(KryoSerializationService<ScenarioContext<S>> serializationService) {
+        this.serializationService = serializationService;
+    }
 
     protected abstract Optional<? extends ScenarioEntity> read(String id);
 

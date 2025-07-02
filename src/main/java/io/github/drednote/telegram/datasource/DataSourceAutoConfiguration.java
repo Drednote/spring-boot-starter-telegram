@@ -4,9 +4,6 @@ import io.github.drednote.telegram.datasource.permission.DefaultPermissionReposi
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.PermissionRepository;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
-import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
-import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
-import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.UpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepository;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepositoryAdapter;
@@ -39,15 +36,6 @@ public class DataSourceAutoConfiguration {
             PermissionRepository<? extends Permission> permissionRepository
         ) {
             return new DefaultPermissionRepositoryAdapter(permissionRepository);
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(ScenarioIdRepositoryAdapter.class)
-        @ConditionalOnBean(JpaScenarioIdRepository.class)
-        public ScenarioIdRepositoryAdapter scenarioIdRepositoryAdapter(
-            JpaScenarioIdRepository scenarioIdRepository
-        ) {
-            return new JpaScenarioIdRepositoryAdapter(scenarioIdRepository);
         }
 
         @AutoConfiguration

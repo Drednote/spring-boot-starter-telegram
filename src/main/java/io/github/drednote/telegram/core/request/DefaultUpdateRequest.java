@@ -5,9 +5,9 @@ import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
+import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -87,6 +87,16 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
         this.objectMapper = request.getObjectMapper();
         this.error = request.getError();
         this.permission = request.getPermission();
+    }
+
+    @Override
+    public void addResponse(TelegramResponse response) {
+        Assert.notNull(response, "Response");
+        if (this.response == null) {
+            this.response = response;
+        } else {
+            this.response = new CompositeTelegramResponse(this.response, response);
+        }
     }
 
     @Override

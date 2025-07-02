@@ -191,7 +191,7 @@ public class SessionProperties {
          * Using {@link SchedulerTelegramUpdateProcessor} instance with {@link InMemoryUpdateInboxRepositoryAdapter} as
          * a persisting adapter.
          * <p>
-         * This type is suitable for a small load and not production use due to the specifics of the implementation.
+         * This type is suitable for not production use due to the specifics of the implementation.
          *
          * @see InMemoryUpdateInboxRepositoryAdapter
          */
@@ -201,8 +201,8 @@ public class SessionProperties {
          * Using {@link SchedulerTelegramUpdateProcessor} instance with any {@link UpdateInboxRepositoryAdapter}, but
          * not {@link InMemoryUpdateInboxRepositoryAdapter} as a persisting adapter.
          * <p>
-         * This is the best option for high load or production use since no messages will be lost, and message
-         * processing can be parallelized by more than 1 bot if necessary.
+         * This is the best option for production use since no messages will be lost, and message processing can be
+         * parallelized by more than 1 bot if necessary.
          * <p>
          * <b>Note: if you specify this type, you should add any of {@code spring data starter} for datasource and
          * configure it.</b>
@@ -218,6 +218,8 @@ public class SessionProperties {
          * to process them. This leads to a peculiarity - if one user receives more updates than are allowed to be
          * processed in parallel by user, then all unnecessary updates are thrown out with a
          * {@link TooManyRequestsTelegramResponse}
+         * <p><b>
+         * I'm not recommend using this type, the {@link #SCHEDULER} will do the same but better.</b>
          */
         ON_FLY
     }

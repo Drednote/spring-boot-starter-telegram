@@ -12,6 +12,8 @@ import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.response.AbstractTelegramResponse;
 import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
+import io.github.drednote.telegram.response.resolver.CompositeTelegramResponseTypesResolver;
+import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -65,6 +68,7 @@ public class DefaultTelegramBot implements TelegramBot {
      */
     private final TelegramMessageSource messageSource;
     private final TelegramClient telegramClient;
+    private final TelegramResponseTypesResolver resolver;
 
     /**
      * Creates a new instance of the {@code DefaultTelegramBot} class with the provided properties and dependencies
@@ -80,7 +84,7 @@ public class DefaultTelegramBot implements TelegramBot {
         TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
         ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
         UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource,
-        TelegramClient telegramClient
+        TelegramClient telegramClient, Collection<TelegramResponseTypesResolver> resolvers
     ) {
         Assert.required(updateHandlers, "Collection of UpdateHandlers");
         Assert.required(objectMapper, "ObjectMapper");
@@ -89,6 +93,7 @@ public class DefaultTelegramBot implements TelegramBot {
         Assert.required(messageSource, "TelegramMessageSource");
         Assert.required(telegramClient, "TelegramClient");
 
+        this.resolver = new CompositeTelegramResponseTypesResolver(resolvers);
         this.telegramClient = telegramClient;
         this.updateHandlers = updateHandlers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
@@ -237,6 +242,7 @@ public class DefaultTelegramBot implements TelegramBot {
                             telegramProperties.getUpdateHandler().getParseMode()
                     );
                 }
+                abstractTelegramResponse.setResolver(resolver);
             }
             response.process(request);
         }

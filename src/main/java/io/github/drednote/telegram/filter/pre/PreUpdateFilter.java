@@ -2,10 +2,10 @@ package io.github.drednote.telegram.filter.pre;
 
 import io.github.drednote.telegram.core.annotation.TelegramScope;
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
+import reactor.core.publisher.Mono;
 
 /**
  * Represents a pre-update filter for Telegram update requests.
@@ -31,6 +31,10 @@ public interface PreUpdateFilter extends UpdateFilterMatcher {
    * @param request The incoming Telegram update request to be pre-filtered
    */
   void preFilter(@NonNull UpdateRequest request);
+
+  default Mono<Void> preFilterReactive(UpdateRequest request) {
+      return Mono.fromRunnable(() -> preFilter(request));
+  }
 
   /**
    * Gets the pre-update filter's execution order.

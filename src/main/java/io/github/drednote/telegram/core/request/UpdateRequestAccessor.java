@@ -30,6 +30,14 @@ public interface UpdateRequestAccessor {
     void setResponse(@Nullable TelegramResponse response);
 
     /**
+     * Add the response that should be sent to Telegram to the existing response or set it initial.
+     *
+     * @param response the response to add
+     * @see ResponseSetter
+     */
+    void addResponse(TelegramResponse response);
+
+    /**
      * Sets the info for invocation {@link TelegramRequest} methods
      *
      * @param requestHandler the info for invocation
@@ -51,4 +59,11 @@ public interface UpdateRequestAccessor {
      * @param response the response from telegram
      */
     void addResponseFromTelegram(Object response);
+
+    /**
+     * Set the error for this request.
+     *
+     * @param error error
+     */
+    void setError(Throwable error);
 }

@@ -6,6 +6,7 @@ import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.filter.UpdateFilterMatcher;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -32,6 +33,13 @@ public interface ConclusivePostUpdateFilter extends UpdateFilterMatcher {
      * @param request The incoming Telegram update request to be post-filtered
      */
     void postFilter(@NonNull UpdateRequest request) throws Exception;
+
+    default Mono<Void> postFilterReactive(UpdateRequest request) {
+        return Mono.fromCallable(() -> {
+            postFilter(request);
+            return null;
+        });
+    }
 
     /**
      * Gets the post-update filter's execution order

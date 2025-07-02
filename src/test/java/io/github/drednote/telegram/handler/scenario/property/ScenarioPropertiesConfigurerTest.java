@@ -1,22 +1,24 @@
 package io.github.drednote.telegram.handler.scenario.property;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 
+import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
-import io.github.drednote.telegram.handler.scenario.ActionContext;
-import io.github.drednote.telegram.handler.scenario.SimpleActionContext;
+import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
+import io.github.drednote.telegram.handler.scenario.DefaultScenario;
+import io.github.drednote.telegram.handler.scenario.action.ActionContext;
+import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder.ScenarioData;
-import io.github.drednote.telegram.handler.scenario.data.State;
-import io.github.drednote.telegram.handler.scenario.data.Transition;
+import io.github.drednote.telegram.handler.scenario.configurer.StateConfigurer;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurerTest.TestScenarioFactory;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
+import io.github.drednote.telegram.support.UpdateRequestUtils;
+import io.github.drednote.telegram.support.builder.UpdateBuilder;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineBuilder;
+import org.springframework.statemachine.state.State;
+import org.springframework.statemachine.transition.Transition;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(classes = {
@@ -42,34 +48,46 @@ class ScenarioPropertiesConfigurerTest {
     private static boolean executed = false;
 
     @Test
-    void shouldCorrectCreateTransitionsFromProperties() {
+    void shouldCorrectCreateTransitionsFromProperties() throws Throwable {
         assertThat(scenarioFactoryContainer.resolveAction(
             "io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurerTest$TestScenarioFactory#name(ActionContext)")).isNotNull();
         assertThat(scenarioFactoryContainer.resolveAction("test_name")).isNotNull();
 
-        ScenarioPropertiesConfigurer configurer = new ScenarioPropertiesConfigurer(scenarioProperties,
+        ScenarioBuilder<Object> scenarioBuilder = new ScenarioBuilder<>(StateMachineBuilder.builder());
+        DefaultScenarioStateConfigurer<Object> scenarioStateConfigurer = new DefaultScenarioStateConfigurer<>(
+            scenarioBuilder);
+        StateConfigurer<Object> stateConfigurer = scenarioStateConfigurer.withStates();
+        stateConfigurer.initial(StateEnum.INITIAL);
+
+        ScenarioPropertiesConfigurer<Object> configurer = new ScenarioPropertiesConfigurer<>(scenarioBuilder, scenarioProperties,
             scenarioFactoryContainer);
-        ScenarioBuilder<Object> scenarioBuilder = new ScenarioBuilder<>();
-        scenarioBuilder.setInitial(StateEnum.INITIAL);
-        configurer.configure(scenarioBuilder);
+        configurer.configure(scenarioStateConfigurer.withStates());
 
         ScenarioData<Object> build = scenarioBuilder.build();
         assertThat(build).isNotNull();
-        assertThat(build.states()).hasSize(4);
-        for (Entry<State<Object>, List<Transition<Object>>> entry : build.states().entrySet()) {
-            if (entry.getKey().getId().equals(StateEnum.INITIAL)) {
-                assertThat(entry.getValue()).hasSize(1);
-                Transition<Object> transition = entry.getValue().get(0);
+        StateMachine<Object, ScenarioEvent> machine = build.factory().getStateMachine();
+        DefaultScenario<Object> scenario = new DefaultScenario<>(machine, Mockito.mock(ScenarioPersister.class),
+            Mockito.mock(ScenarioIdResolver.class));
+        assertThat(machine.getStates()).hasSize(4);
+        assertThat(machine.getTransitions()).hasSize(5);
+        for (Transition<Object, ScenarioEvent> transition : machine.getTransitions()) {
+            if (transition.getSource().getId().equals(StateEnum.INITIAL)) {
                 assertThat(transition.getSource().getId()).isEqualTo(StateEnum.INITIAL);
-                State<Object> target = transition.getTarget();
+                State<Object, ScenarioEvent> target = transition.getTarget();
                 assertThat(target.getId()).isEqualTo("TELEGRAM_CHOICE");
-                assertThat(target.getMappings()).hasSize(1);
-                assertThat(target.getProps()).hasSize(2);
+                Set<UpdateRequestMappingAccessor> mappings = transition.getTrigger().getEvent().getMappings();
+                assertThat(mappings).hasSize(1);
                 assertThat(
-                    target.getMappings().contains(new UpdateRequestMapping("/telegramsettings", RequestType.MESSAGE,
+                    mappings.contains(new UpdateRequestMapping("/telegramsettings", RequestType.MESSAGE,
                         Set.of(MessageType.COMMAND), false))).isTrue();
-                assertThatNoException().isThrownBy(() -> target.execute(new SimpleActionContext<>(
-                    Mockito.mock(UpdateRequest.class), Mockito.mock(Transition.class), new HashMap<>())));
+                DefaultUpdateRequest request = UpdateRequestUtils.createMockRequest(
+                    UpdateBuilder._default("/telegramsettings").command());
+                request.setScenario(scenario);
+                var result = scenario.sendEvent(request);
+                if (result.exception() != null) {
+                    throw result.exception();
+                }
+                assertThat(result.success()).isTrue();
                 assertThat(executed).isTrue();
             }
         }

@@ -1,5 +1,8 @@
 package io.github.drednote.telegram.handler.scenario.persist;
 
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
+import org.springframework.statemachine.StateMachineContext;
+
 /**
  * Represents a context for a scenario.
  *
@@ -13,13 +16,28 @@ public interface ScenarioContext<S> {
      *
      * @return a {@code String} representing the scenario's unique identifier
      */
-    String id();
+    String getId();
 
     /**
      * Retrieves the state context associated with the scenario.
      *
-     * @return a {@code StateContext<S>} representing the current state context of the scenario
+     * @return a {@code StateContext<S>} representing the current machine context of the scenario
      */
-    StateContext<S> state();
+    StateMachineContext<S, ScenarioEvent> getMachine();
+
+    record DefaultScenarioContext<S>(
+        String id, StateMachineContext<S, ScenarioEvent> machine
+    ) implements ScenarioContext<S> {
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public StateMachineContext<S, ScenarioEvent> getMachine() {
+            return machine;
+        }
+    }
 }
 

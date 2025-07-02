@@ -41,32 +41,29 @@ public class UpdateHandlerProperties {
     @NonNull
     private boolean scenarioEnabled = true;
     /**
-     * If exception is occurred and no handler has processed it, set
-     * {@link InternalErrorTelegramResponse} as response
+     * If exception is occurred and no handler has processed it, set {@link InternalErrorTelegramResponse} as response
      *
      * @see DefaultExceptionHandler
      */
     @NonNull
     private boolean setDefaultErrorAnswer = true;
     /**
-     * By default, java pojo objects will be serialized with Jackson to json in
-     * {@link GenericTelegramResponse}. Set this parameter to false, if you want to disable this
-     * behavior
+     * By default, java pojo objects will be serialized with Jackson to json in {@link GenericTelegramResponse}. Set
+     * this parameter to false, if you want to disable this behavior
      *
      * @see GenericTelegramResponse
      */
     @NonNull
     private boolean serializeJavaObjectWithJackson = true;
     /**
-     * Default parse mode of a text message sent to telegram. Applies only if you return raw string
-     * from update processing ({@link UpdateHandler})
+     * Default parse mode of a text message sent to telegram. Applies only if you return raw string from update
+     * processing ({@link UpdateHandler})
      */
     @NonNull
     private ParseMode parseMode = ParseMode.NO;
     /**
-     * If scenario is enabled and {@link SessionProperties#getMaxThreadsPerUser} is set value other
-     * than 1, throws an error with a warning about using scenario safe only when
-     * getMaxThreadsPerUser is set to 1.
+     * If scenario is enabled and {@link SessionProperties#getMaxThreadsPerUser} is set value other than 1, throws an
+     * error with a warning about using scenario safe only when getMaxThreadsPerUser is set to 1.
      */
     @NonNull
     private boolean enabledWarningForScenario = true;

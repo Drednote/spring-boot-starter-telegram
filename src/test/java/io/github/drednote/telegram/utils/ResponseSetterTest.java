@@ -28,32 +28,22 @@ class ResponseSetterTest {
     ResponseSetter.setResponse(updateRequest, null);
     assertThat(updateRequest.getResponse())
         .isNotNull()
-        .isInstanceOf(EmptyTelegramResponse.class);
+        .isInstanceOf(GenericTelegramResponse.class);
+
+    updateRequest.setResponse(null);
 
     EmptyTelegramResponse invoked = EmptyTelegramResponse.INSTANCE;
     ResponseSetter.setResponse(updateRequest, invoked);
     assertThat(updateRequest.getResponse())
         .isNotNull()
-        .isEqualTo(invoked);
+        .isInstanceOf(GenericTelegramResponse.class);
+
+    updateRequest.setResponse(null);
 
     ResponseSetter.setResponse(updateRequest, new Object());
     assertThat(updateRequest.getResponse())
         .isNotNull()
         .isInstanceOf(GenericTelegramResponse.class);
-  }
-
-  @Test
-  void shouldCorrectHandleList() {
-    ResponseSetter.setResponse(updateRequest, List.of(EmptyTelegramResponse.INSTANCE));
-    assertThat(updateRequest.getResponse())
-        .isNotNull()
-        .isInstanceOf(CompositeTelegramResponse.class);
-
-    ResponseSetter.setResponse(updateRequest,
-        List.of(EmptyTelegramResponse.INSTANCE, new Object()));
-    assertThat(updateRequest.getResponse())
-        .isNotNull()
-        .isInstanceOf(CompositeTelegramResponse.class);
   }
 }
 
