@@ -18,7 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
     contentType = "application/json",
     accept = "application/json"
 )
-public interface TelegramClient {
+public interface TelegramConsumeClient {
 
     /**
      * Retrieves updates from the Telegram Bot API.

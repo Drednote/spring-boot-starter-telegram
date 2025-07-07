@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.filter;
 
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
 import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
@@ -57,8 +58,8 @@ public class FiltersAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public NotHandledUpdateFilter notHandledUpdateFilter() {
-        return new NotHandledUpdateFilter();
+    public NotHandledUpdateFilter notHandledUpdateFilter(TelegramProperties telegramProperties) {
+        return new NotHandledUpdateFilter(telegramProperties);
     }
 
     @Bean

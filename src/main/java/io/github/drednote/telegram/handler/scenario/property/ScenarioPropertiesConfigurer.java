@@ -2,6 +2,7 @@ package io.github.drednote.telegram.handler.scenario.property;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
+import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.invoke.InvocableHandlerMethod;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
@@ -30,6 +31,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 
+@BetaApi
 public class ScenarioPropertiesConfigurer<S> {
 
     private final ScenarioProperties scenarioProperties;
@@ -54,7 +56,7 @@ public class ScenarioPropertiesConfigurer<S> {
         this.transitionConfigurer = new DefaultScenarioTransitionConfigurer<>(scenarioBuilder);
     }
 
-    public void configure(StateConfigurer<S> stateConfigurer) throws Exception {
+    public void configure(StateConfigurer<S> stateConfigurer) {
         Map<String, Scenario> values = scenarioProperties.getValues();
         if (values != null) {
             values.forEach((key, scenario) -> {
@@ -67,8 +69,8 @@ public class ScenarioPropertiesConfigurer<S> {
                     doConfigure(scenarioBuilder, transitionData, scenario, node);
                 });
             });
+            stateConfigurer.states(states);
         }
-        stateConfigurer.states(states);
     }
 
     private void doConfigure(

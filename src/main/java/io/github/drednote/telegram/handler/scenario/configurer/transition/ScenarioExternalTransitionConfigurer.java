@@ -18,13 +18,4 @@ public interface ScenarioExternalTransitionConfigurer<S> extends
      * @return the current instance of the configurer
      */
     ScenarioExternalTransitionConfigurer<S> target(S target);
-
-    /**
-     * After execution of this transition and processing response message to user, id of the current scenario will be
-     * changed to messageId of a response message from a telegram.
-     * <p>
-     * Use this method if you during transition creating a message with inline keyboard, and want to interact with this
-     * message independently of other scenarios.
-     */
-    ScenarioExternalTransitionConfigurer<S> inlineKeyboardCreation();
 }

@@ -1,12 +1,15 @@
 package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
+import static io.github.drednote.telegram.handler.scenario.DefaultScenario.INLINE_KEYBOARD_PROPERTY;
+
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.action.Action;
-import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.action.DelegateAction;
+import io.github.drednote.telegram.handler.scenario.action.ScenarioPropertiesAction;
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.guard.DelegateGuard;
 import io.github.drednote.telegram.handler.scenario.guard.Guard;
-import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +28,7 @@ import org.springframework.statemachine.security.SecurityRule.ComparisonType;
  * @param <S> the type of the getMachine
  * @author Ivan Galushko
  */
-public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends ScenarioBaseTransitionConfigurer<C, S>, S>
+public abstract class BaseScenarioTransitionConfigurer<T, C extends ScenarioBaseTransitionConfigurer<C, S>, S>
     implements ScenarioBaseTransitionConfigurer<C, S> {
 
     protected final ScenarioBuilder<S> builder;
@@ -37,8 +40,6 @@ public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends Scen
     protected Guard<S> guard;
     @Nullable
     protected S source;
-    @Nullable
-    protected S target;
     @Nullable
     protected S state;
     @Nullable
@@ -55,8 +56,9 @@ public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends Scen
     protected String expression;
     @Nullable
     protected ComparisonType match;
+    private boolean inlineKeyboard = false;
 
-    protected AbstractScenarioBaseTransitionConfigurer(ScenarioBuilder<S> builder) {
+    protected BaseScenarioTransitionConfigurer(ScenarioBuilder<S> builder) {
         this.builder = builder;
     }
 
@@ -134,6 +136,12 @@ public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends Scen
     }
 
     @Override
+    public C inlineKeyboardCreation() {
+        this.inlineKeyboard = true;
+        return (C) this;
+    }
+
+    @Override
     public ScenarioTransitionConfigurer<S> and() throws Exception {
         Assert.required(source, "Source");
         Assert.required(request, "TelegramRequest");
@@ -168,6 +176,10 @@ public abstract class AbstractScenarioBaseTransitionConfigurer<T, C extends Scen
         }
         if (attributes != null) {
             configurer.secured(attributes, match);
+        }
+
+        if (inlineKeyboard) {
+            configurer.action(new ScenarioPropertiesAction<>(Map.of(INLINE_KEYBOARD_PROPERTY, true)));
         }
 
         buildActions(configurer, actions, props);

@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.core.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
@@ -29,7 +27,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     @NonNull
-    public TelegramClient getAbsSender() {
+    public TelegramClient getTelegramClient() {
         if (telegramClient == null) {
             throw new IllegalStateException("TelegramClient is null");
         }
@@ -63,19 +61,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    @NonNull
-    public TelegramProperties getProperties() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
-    }
-
-    @Override
     public RequestHandler getRequestHandler() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
-    }
-
-    @Override
-    @NonNull
-    public ObjectMapper getObjectMapper() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 

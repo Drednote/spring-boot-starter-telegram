@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandlerProperties.ParseMode;
 import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
@@ -20,6 +22,10 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
     protected ParseMode parseMode = null;
     @Nullable
     protected TelegramResponseTypesResolver resolver = null;
+    @Nullable
+    protected TelegramProperties telegramProperties = null;
+    @Nullable
+    protected ObjectMapper objectMapper = null;
 
     /**
      * Sends a text message to the specified chat using the provided string
@@ -31,7 +37,7 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
      */
     protected Message sendString(String string, UpdateRequest request)
         throws TelegramApiException {
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
         Long chatId = request.getChatId();
         SendMessage sendMessage = new SendMessage(chatId.toString(), string);
         if (parseMode != null) {
@@ -61,5 +67,23 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
     @Nullable
     public TelegramResponseTypesResolver getResolver() {
         return resolver;
+    }
+
+    public void setTelegramProperties(TelegramProperties telegramProperties) {
+        this.telegramProperties = telegramProperties;
+    }
+
+    @Nullable
+    public TelegramProperties getTelegramProperties() {
+        return telegramProperties;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    @Nullable
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 }

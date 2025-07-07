@@ -75,7 +75,7 @@ class AbstractUpdateRequestTest {
 
     @NonNull
     @Override
-    public TelegramClient getAbsSender() {
+    public TelegramClient getTelegramClient() {
       return null;
     }
 
@@ -109,21 +109,9 @@ class AbstractUpdateRequestTest {
       return null;
     }
 
-    @NonNull
-    @Override
-    public TelegramProperties getProperties() {
-      return null;
-    }
-
     @Nullable
     @Override
     public RequestHandler getRequestHandler() {
-      return null;
-    }
-
-    @NonNull
-    @Override
-    public ObjectMapper getObjectMapper() {
       return null;
     }
 

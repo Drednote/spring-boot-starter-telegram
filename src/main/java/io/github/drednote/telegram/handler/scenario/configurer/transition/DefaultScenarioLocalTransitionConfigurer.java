@@ -4,32 +4,31 @@ import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import org.springframework.lang.Nullable;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
-import org.springframework.statemachine.config.configurers.ExternalTransitionConfigurer;
+import org.springframework.statemachine.config.configurers.LocalTransitionConfigurer;
 
-public class DefaultScenarioExternalTransitionConfigurer<S>
-    extends
-    BaseScenarioTransitionConfigurer<ExternalTransitionConfigurer<S, ScenarioEvent>, ScenarioExternalTransitionConfigurer<S>, S>
-    implements ScenarioExternalTransitionConfigurer<S> {
+public class DefaultScenarioLocalTransitionConfigurer<S> extends
+    BaseScenarioTransitionConfigurer<LocalTransitionConfigurer<S, ScenarioEvent>, ScenarioLocalTransitionConfigurer<S>, S>
+    implements ScenarioLocalTransitionConfigurer<S> {
 
-    private final ExternalTransitionConfigurer<S, ScenarioEvent> configurer;
+    private final LocalTransitionConfigurer<S, ScenarioEvent> configurer;
 
     @Nullable
     private S target;
 
-    public DefaultScenarioExternalTransitionConfigurer(
-        ScenarioBuilder<S> builder,
-        ExternalTransitionConfigurer<S, ScenarioEvent> configurer
+    public DefaultScenarioLocalTransitionConfigurer(
+        ScenarioBuilder<S> builder, LocalTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
         super(builder);
         this.configurer = configurer;
     }
 
     @Override
-    public ScenarioExternalTransitionConfigurer<S> target(S target) {
+    public ScenarioLocalTransitionConfigurer<S> target(S target) {
         this.target = target;
         return this;
     }
 
+    @Override
     protected StateMachineTransitionConfigurer<S, ScenarioEvent> build() throws Exception {
         preBuild(configurer);
 

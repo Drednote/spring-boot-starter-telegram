@@ -114,12 +114,14 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
         } else if (response instanceof byte[] bytes) {
             responseMessage = sendString(new String(bytes, StandardCharsets.UTF_8), request);
         } else if (response instanceof BotApiMethod<?> botApiMethod) {
-            responseMessage = request.getAbsSender().execute(botApiMethod);
-        } else if (isSendBotApiMethod(request.getAbsSender())) {
-            responseMessage = tryToSendBotApiMethod(request.getAbsSender());
-        } else if (request.getProperties().getUpdateHandler().isSerializeJavaObjectWithJackson()) {
+            responseMessage = request.getTelegramClient().execute(botApiMethod);
+        } else if (isSendBotApiMethod(request.getTelegramClient())) {
+            responseMessage = tryToSendBotApiMethod(request.getTelegramClient());
+        } else if (telegramProperties != null
+                   && objectMapper != null
+                   && telegramProperties.getUpdateHandler().isSerializeJavaObjectWithJackson()) {
             try {
-                String stringResponse = request.getObjectMapper().writeValueAsString(response);
+                String stringResponse = objectMapper.writeValueAsString(response);
                 String truncated = truncateQuotes(stringResponse);
                 responseMessage = sendString(truncated, request);
             } catch (JsonProcessingException e) {

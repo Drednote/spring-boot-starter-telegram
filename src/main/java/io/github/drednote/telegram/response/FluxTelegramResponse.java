@@ -46,7 +46,6 @@ public class FluxTelegramResponse extends AbstractTelegramResponse {
                             TelegramResponseHelper.create(wrapWithTelegramResponse(o))
                                 .propagateProperties(this)
                                 .process(request);
-
                         } catch (TelegramApiException e) {
                             throw new FluxException(e);
                         }

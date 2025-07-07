@@ -23,7 +23,7 @@ class FluxTelegramResponseTest {
     void shouldCorrectProcess3Entities() throws TelegramApiException {
         UpdateRequest request = Mockito.mock(UpdateRequest.class);
         TelegramClient telegramClient = Mockito.mock(TelegramClient.class);
-        when(request.getAbsSender()).thenReturn(telegramClient);
+        when(request.getTelegramClient()).thenReturn(telegramClient);
         ArgumentCaptor<SendMessage> messageCaptor = ArgumentCaptor.forClass(SendMessage.class);
 
         FluxTelegramResponse response2 = new FluxTelegramResponse(generate(null));
@@ -35,7 +35,7 @@ class FluxTelegramResponseTest {
     void shouldCorrectProcess1EntityAndThrowException() throws TelegramApiException {
         UpdateRequest request = Mockito.mock(UpdateRequest.class);
         TelegramClient telegramClient = Mockito.mock(TelegramClient.class);
-        when(request.getAbsSender()).thenReturn(telegramClient);
+        when(request.getTelegramClient()).thenReturn(telegramClient);
         ArgumentCaptor<SendMessage> messageCaptor = ArgumentCaptor.forClass(SendMessage.class);
 
         FluxTelegramResponse response2 = new FluxTelegramResponse(generate(new TelegramApiException()));

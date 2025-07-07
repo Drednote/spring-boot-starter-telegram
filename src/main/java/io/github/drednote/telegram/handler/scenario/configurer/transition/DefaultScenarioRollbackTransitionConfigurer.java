@@ -18,17 +18,19 @@ import org.springframework.statemachine.config.configurers.ExternalTransitionCon
 
 public class DefaultScenarioRollbackTransitionConfigurer<S>
     extends
-    AbstractScenarioBaseTransitionConfigurer<ExternalTransitionConfigurer<S, ScenarioEvent>, ScenarioRollbackTransitionConfigurer<S>, S>
+    BaseScenarioTransitionConfigurer<ExternalTransitionConfigurer<S, ScenarioEvent>, ScenarioRollbackTransitionConfigurer<S>, S>
     implements ScenarioRollbackTransitionConfigurer<S> {
 
     private final ExternalTransitionConfigurer<S, ScenarioEvent> configurer;
 
     private final List<Pair<Action<S>, Action<S>>> rollbackActions = new ArrayList<>();
+    private final Map<String, Object> rollbackProps = new HashMap<>();
     @Nullable
     private Guard<S> rollbackGuard;
     @Nullable
     private TelegramRequest rollbackRequest;
-    private Map<String, Object> rollbackProps = new HashMap<>();
+    @Nullable
+    private S target;
 
     public DefaultScenarioRollbackTransitionConfigurer(
         ScenarioBuilder<S> builder,
@@ -70,7 +72,7 @@ public class DefaultScenarioRollbackTransitionConfigurer<S>
 
     @Override
     public ScenarioRollbackTransitionConfigurer<S> rollbackProps(Map<String, Object> rollbackProps) {
-        this.rollbackProps = rollbackProps;
+        this.rollbackProps.putAll(rollbackProps);
         return this;
     }
 

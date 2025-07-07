@@ -2,7 +2,7 @@ package io.github.drednote.telegram;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.core.CoreAutoConfiguration;
-import io.github.drednote.telegram.core.ReactiveTelegramBot;
+import io.github.drednote.telegram.core.DefaultTelegramBot;
 import io.github.drednote.telegram.core.TelegramBot;
 import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.datasource.DataSourceAutoConfiguration;
@@ -94,7 +94,7 @@ public class TelegramAutoConfiguration {
                     "Consider specify drednote.telegram.token");
             }
             if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
-                return new ReactiveTelegramBot(properties, updateHandlers, objectMapper,
+                return new DefaultTelegramBot(properties, updateHandlers, objectMapper,
                     exceptionHandler, updateFilterProvider, messageSource, telegramClient, resolvers);
             } else {
                 throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");

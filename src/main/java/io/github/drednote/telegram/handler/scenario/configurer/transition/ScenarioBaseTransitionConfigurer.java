@@ -3,9 +3,7 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition;
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.handler.scenario.action.Action;
-import io.github.drednote.telegram.handler.scenario.action.ActionContext;
 import io.github.drednote.telegram.handler.scenario.guard.Guard;
-import java.util.Map;
 import org.springframework.statemachine.security.SecurityRule.ComparisonType;
 import org.springframework.statemachine.transition.Transition;
 
@@ -16,7 +14,8 @@ import org.springframework.statemachine.transition.Transition;
  * @param <S> the type of the state
  * @author Ivan Galushko
  */
-public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransitionConfigurer<C, S>, S> {
+public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransitionConfigurer<C, S>, S>
+    extends ScenarioTransitionConfigurerBuilder<S>, AdditionalScenarioConfigs<S, C> {
 
     /**
      * Sets the source state for the transition.
@@ -46,7 +45,7 @@ public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransiti
      * Specify {@link org.springframework.statemachine.action.Action} for this {@link Transition}.
      *
      * @param action the action
-     * @param error action that will be called if any unexpected exception is thrown by the action.
+     * @param error  action that will be called if any unexpected exception is thrown by the action.
      * @return configurer for chaining
      */
     C action(Action<S> action, Action<S> error);
@@ -62,14 +61,6 @@ public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransiti
     C telegramRequest(TelegramRequest telegramRequest);
 
     /**
-     * Sets the additional props to be used during the transition.
-     *
-     * @param props additional props to pass to {@link Action} in {@link ActionContext}
-     * @return the current instance of the configurer
-     */
-    C props(Map<String, Object> props);
-
-    /**
      * Specify a {@link Guard} for this {@link Transition}.
      *
      * @param guard the guard
@@ -81,7 +72,7 @@ public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransiti
      * Specify a security attributes for this {@link Transition}.
      *
      * @param attributes the security attributes
-     * @param match the match type
+     * @param match      the match type
      * @return configurer for chaining
      */
     C secured(String attributes, ComparisonType match);
@@ -117,14 +108,4 @@ public interface ScenarioBaseTransitionConfigurer<C extends ScenarioBaseTransiti
      * @return configurer for chaining
      */
     C timerOnce(long period);
-
-    /**
-     * Finalizes the transition configuration and returns a ScenarioTransitionConfigurer.
-     * <p>
-     * <b>You should always call this method after finishing configuring transition, even if
-     * configured transition is last</b>
-     *
-     * @return a ScenarioTransitionConfigurer to continue the configuration
-     */
-    ScenarioTransitionConfigurer<S> and() throws Exception;
 }
