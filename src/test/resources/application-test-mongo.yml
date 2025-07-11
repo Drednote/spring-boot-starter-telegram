@@ -3,4 +3,4 @@ drednote:
     session:
       update-processor-type: scheduler_with_crud
 
-de.flapdoodle.mongodb.embedded.version: 7.1.0
+de.flapdoodle.mongodb.embedded.version: 8.0.5
