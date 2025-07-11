@@ -1,8 +1,11 @@
 package io.github.drednote.telegram.support.builder;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.ChatJoinRequest;
+import org.telegram.telegrambots.meta.api.objects.EntityType;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chat.Chat;
@@ -44,7 +47,7 @@ public class UpdateBuilder {
     }
 
     public UpdateBuilder withUser(Long id) {
-        User user = new User(id, "", false);
+        User user = new User(id, "first_name", false);
         return withUser(user);
     }
 
@@ -160,6 +163,18 @@ public class UpdateBuilder {
         chatJoinRequest.setUser(user);
         chatJoinRequest.setChat(chat);
         update.setChatJoinRequest(chatJoinRequest);
+        return update;
+    }
+
+    public Update command() {
+        buildDefault();
+
+        Message message = new Message();
+        message.setChat(chat);
+        message.setFrom(user);
+        message.setText(text);
+        message.setEntities(List.of(new MessageEntity(EntityType.BOTCOMMAND, 0, text.length())));
+        update.setMessage(message);
         return update;
     }
 

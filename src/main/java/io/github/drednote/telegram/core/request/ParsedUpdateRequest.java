@@ -1,12 +1,9 @@
 package io.github.drednote.telegram.core.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
 import java.util.List;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -30,7 +27,7 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     @NonNull
-    public TelegramClient getAbsSender() {
+    public TelegramClient getTelegramClient() {
         if (telegramClient == null) {
             throw new IllegalStateException("TelegramClient is null");
         }
@@ -59,24 +56,12 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
     }
 
     @Override
-    public Throwable getError() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
-    }
-
-    @Override
-    @NonNull
-    public TelegramProperties getProperties() {
+    public Exception getError() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 
     @Override
     public RequestHandler getRequestHandler() {
-        throw new UnsupportedOperationException("Not supported in this implementation");
-    }
-
-    @Override
-    @NonNull
-    public ObjectMapper getObjectMapper() {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 
@@ -87,6 +72,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     public void setResponse(@Nullable TelegramResponse response) {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
+    public void addResponse(TelegramResponse response) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 
@@ -102,6 +92,11 @@ public class ParsedUpdateRequest extends AbstractUpdateRequest {
 
     @Override
     public void addResponseFromTelegram(@Nullable Object response) {
+        throw new UnsupportedOperationException("Not supported in this implementation");
+    }
+
+    @Override
+    public void setError(Throwable error) {
         throw new UnsupportedOperationException("Not supported in this implementation");
     }
 }

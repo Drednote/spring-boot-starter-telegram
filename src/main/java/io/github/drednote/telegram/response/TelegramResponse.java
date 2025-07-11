@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import reactor.core.publisher.Mono;
 
 /**
  * This functional interface represents a Telegram response action that can be performed. It defines a method for
@@ -56,6 +57,13 @@ public interface TelegramResponse {
      * @throws TelegramApiException if the response processing fails
      */
     void process(@NonNull UpdateRequest request) throws TelegramApiException;
+
+    default Mono<Void> processReactive(UpdateRequest request) {
+        return Mono.fromCallable(() -> {
+            process(request);
+            return null;
+        });
+    }
 
     default boolean isExecutePostFilters() {
         return true;

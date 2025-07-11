@@ -1,6 +1,6 @@
 package io.github.drednote.telegram.handler.scenario.property;
 
-import io.github.drednote.telegram.handler.scenario.ActionContext;
+import io.github.drednote.telegram.handler.scenario.action.ActionContext;
 import io.github.drednote.telegram.utils.Assert;
 import java.lang.reflect.Method;
 import java.util.Map;

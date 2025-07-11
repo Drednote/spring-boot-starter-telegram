@@ -1,16 +1,17 @@
 package io.github.drednote.telegram.response;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
 import org.telegram.telegrambots.meta.api.methods.send.SendContact;
@@ -30,12 +31,12 @@ class GenericTelegramResponseTest {
         Update update = UpdateUtils.createMessage("2");
 
         var request = UpdateRequestUtils.createMockRequest(update);
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
 
         response.process(request);
         SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(), text);
         sendMessage.setParseMode(null);
-        Mockito.verify(absSender).execute(sendMessage);
+        verify(absSender).execute(sendMessage);
     }
 
     @Test
@@ -45,13 +46,13 @@ class GenericTelegramResponseTest {
         Update update = UpdateUtils.createMessage("2");
 
         var request = UpdateRequestUtils.createMockRequest(update);
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
 
         response.process(request);
         SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(),
             new String(text, StandardCharsets.UTF_8));
         sendMessage.setParseMode(null);
-        Mockito.verify(absSender).execute(sendMessage);
+        verify(absSender).execute(sendMessage);
     }
 
     @Test
@@ -61,10 +62,10 @@ class GenericTelegramResponseTest {
         GenericTelegramResponse response = new GenericTelegramResponse(sendContact);
 
         var request = UpdateRequestUtils.createMockRequest(update);
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
 
         response.process(request);
-        Mockito.verify(absSender).execute(sendContact);
+        verify(absSender).execute(sendContact);
     }
 
     @Test
@@ -74,10 +75,10 @@ class GenericTelegramResponseTest {
             new InputFile("1"));
         GenericTelegramResponse response = new GenericTelegramResponse(animation);
         var request = UpdateRequestUtils.createMockRequest(update);
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
 
         response.process(request);
-        Mockito.verify(absSender).execute(animation);
+        verify(absSender).execute(animation);
     }
 
     @Test
@@ -85,14 +86,16 @@ class GenericTelegramResponseTest {
         Update update = UpdateUtils.createMessage("2");
         DataClass object = new DataClass("1");
         GenericTelegramResponse response = new GenericTelegramResponse(object);
+        response.setObjectMapper(new ObjectMapper());
+        response.setTelegramProperties(new TelegramProperties());
 
         var request = UpdateRequestUtils.createMockRequest(update);
-        TelegramClient absSender = request.getAbsSender();
+        TelegramClient absSender = request.getTelegramClient();
 
         response.process(request);
         SendMessage sendMessage = new SendMessage(update.getMessage().getChatId().toString(), "text = 1");
         sendMessage.setParseMode(null);
-        Mockito.verify(absSender).execute(sendMessage);
+        verify(absSender).execute(sendMessage);
     }
 
     @Test

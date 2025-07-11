@@ -1,13 +1,11 @@
 package io.github.drednote.telegram.core.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.handler.controller.RequestHandler;
 import io.github.drednote.telegram.handler.scenario.Scenario;
+import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -24,9 +22,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Getter
 public class DefaultUpdateRequest extends AbstractUpdateRequest {
 
-    private final TelegramClient absSender;
-    private final TelegramProperties properties;
-    private final ObjectMapper objectMapper;
+    private final TelegramClient telegramClient;
     private final List<Object> responseFromTelegram = new ArrayList<>();
 
     @Nullable
@@ -42,7 +38,6 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
     @Nullable
     private TelegramResponse response;
 
-
     /**
      * If error occurred during update handling
      */
@@ -54,20 +49,15 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
      * Creates a new instance of the DefaultUpdateRequest class with the given parameters.
      *
      * @param update     the update received from Telegram.
-     * @param absSender  the abstract sender used to send responses.
-     * @param properties the Telegram properties.
+     * @param telegramClient  the abstract sender used to send responses.
      */
     public DefaultUpdateRequest(
-        Update update, TelegramClient absSender, TelegramProperties properties, ObjectMapper objectMapper
+        Update update, TelegramClient telegramClient
     ) {
         super(update);
-        Assert.required(absSender, "AbsSender");
-        Assert.required(properties, "TelegramProperties");
-        Assert.required(objectMapper, "ObjectMapper");
+        Assert.required(telegramClient, "TelegramClient");
 
-        this.absSender = absSender;
-        this.properties = properties;
-        this.objectMapper = objectMapper;
+        this.telegramClient = telegramClient;
     }
 
     /**
@@ -79,14 +69,22 @@ public class DefaultUpdateRequest extends AbstractUpdateRequest {
         super(request);
         Assert.required(request, "UpdateRequest");
 
-        this.properties = request.getProperties();
-        this.absSender = request.getAbsSender();
+        this.telegramClient = request.getTelegramClient();
         this.requestHandler = request.getRequestHandler();
         this.scenario = request.getScenario();
         this.response = request.getResponse();
-        this.objectMapper = request.getObjectMapper();
         this.error = request.getError();
         this.permission = request.getPermission();
+    }
+
+    @Override
+    public void addResponse(TelegramResponse response) {
+        Assert.notNull(response, "Response");
+        if (this.response == null) {
+            this.response = response;
+        } else {
+            this.response = new CompositeTelegramResponse(this.response, response);
+        }
     }
 
     @Override

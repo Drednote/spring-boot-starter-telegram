@@ -20,7 +20,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *
  * <p>This class implements the {@link TelegramBotSession} interface to provide methods for
  * starting and stopping a long polling session with the Telegram Bot API. It utilizes a
- * {@link TelegramClient} to fetch updates from the Telegram server and processes them using a
+ * {@link TelegramConsumeClient} to fetch updates from the Telegram server and processes them using a
  * {@link TelegramUpdateProcessor}.
  *
  * <p>The class is responsible for scheduling and executing the polling loop, processing updates,
@@ -28,7 +28,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * strategy.
  *
  * @author Ivan Galushko
- * @see TelegramClient
+ * @see TelegramConsumeClient
  * @see TelegramUpdateProcessor
  * @see SessionProperties
  */
@@ -37,7 +37,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
     private static final Logger log = LoggerFactory.getLogger(LongPollingSession.class);
 
     private final ScheduledExecutorService readerService;
-    private final TelegramClient telegramClient;
+    private final TelegramConsumeClient telegramClient;
     private final AtomicBoolean running = new AtomicBoolean(false);
     protected final SessionProperties sessionProperties;
     protected final TelegramProperties telegramProperties;
@@ -54,18 +54,18 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
      * session properties define bot configuration. The callback represents the long polling bot
      * that will handle received updates.
      *
-     * @param telegramClient The Telegram client for fetching updates
+     * @param telegramConsumeClient The Telegram client for fetching updates
      * @param properties     The session properties containing bot configuration
      * @throws UnsupportedOperationException If the callback is not an instance of
      *                                       {@code DefaultTelegramBot} or if the options of the
      *                                       callback are not {@code DefaultBotOptions}
      */
     public LongPollingSession(
-        TelegramClient telegramClient, SessionProperties properties,
+        TelegramConsumeClient telegramConsumeClient, SessionProperties properties,
         TelegramProperties telegramProperties, BackOff backOff,
         TelegramUpdateProcessor processor
     ) {
-        Assert.required(telegramClient, "TelegramClient");
+        Assert.required(telegramConsumeClient, "TelegramClient");
         Assert.required(properties, "SessionProperties");
         Assert.required(telegramProperties, "TelegramProperties");
         Assert.required(backOff, "BackOff");
@@ -76,7 +76,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
         this.telegramProperties = telegramProperties;
         this.sessionProperties = properties;
         this.readerService = Executors.newSingleThreadScheduledExecutor();
-        this.telegramClient = telegramClient;
+        this.telegramClient = telegramConsumeClient;
     }
 
     /**

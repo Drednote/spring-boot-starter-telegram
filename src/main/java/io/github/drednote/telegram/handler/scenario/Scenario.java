@@ -1,7 +1,10 @@
 package io.github.drednote.telegram.handler.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.handler.scenario.data.State;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult;
+import org.springframework.lang.Nullable;
+import org.springframework.statemachine.StateMachine;
 
 /**
  * Represents a scenario that can manage its state and handle events.
@@ -19,11 +22,18 @@ public interface Scenario<S> {
     String getId();
 
     /**
-     * Retrieves the current state of the scenario.
+     * Get the property associated with the current scenario. During scenario processing, some algorithms can add any
+     * property to the scenario instance.
      *
-     * @return the current state as a {@code State<S>} object
+     * @param key string key, not null
+     * @param <T> type of property
+     * @return value of property, nullable
+     * @throws ClassCastException if the type of property isn't matched with generic type.
      */
-    State<S> getState();
+    @Nullable
+    <T> T getProperty(String key);
+
+    StateMachine<S, ScenarioEvent> getStateMachine();
 
     /**
      * Sends an event to the scenario.
@@ -31,7 +41,7 @@ public interface Scenario<S> {
      * @param request the update request to be processed
      * @return the result of event handling.
      */
-    ScenarioEventResult sendEvent(UpdateRequest request);
+    ScenarioEventResult<S, ScenarioEvent> sendEvent(UpdateRequest request);
 
     /**
      * Checks if the scenario matches the specified update request.
@@ -55,8 +65,8 @@ public interface Scenario<S> {
      * <p>
      * Usually you don't have to use this method. It is for internal purpose.
      *
-     * @return an instance of {@code ScenarioAccessor<S>} that provides access to scenario details and
-     * setting opportunity
+     * @return an instance of {@code ScenarioAccessor<S>} that provides access to scenario details and setting
+     * opportunity
      */
     ScenarioAccessor<S> getAccessor();
 }

@@ -43,6 +43,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.BackOff;
 import org.telegram.telegrambots.meta.TelegramUrl;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * Autoconfiguration class for managing Telegram bot sessions and scopes.
@@ -57,7 +58,7 @@ public class SessionAutoConfiguration {
     /**
      * Configures a bean for the Telegram bot session using long polling. And starts session
      *
-     * @param telegramClient The Telegram client used to interact with the Telegram API
+     * @param telegramConsumeClient The Telegram client used to interact with the Telegram API
      * @param properties     Configuration properties for the session
      * @return The configured Telegram bot session
      */
@@ -70,14 +71,14 @@ public class SessionAutoConfiguration {
     )
     @ConditionalOnMissingBean
     public TelegramBotSession longPollingTelegramBotSession(
-        TelegramClient telegramClient, SessionProperties properties,
+        TelegramConsumeClient telegramConsumeClient, SessionProperties properties,
         TelegramProperties telegramProperties, TelegramUpdateProcessor processor
     ) {
         try {
             Class<? extends BackOff> backOffClazz = properties.getBackOffStrategy();
             BackOff backOff = backOffClazz.getDeclaredConstructor().newInstance();
             return new LongPollingSession(
-                telegramClient, properties, telegramProperties, backOff, processor);
+                telegramConsumeClient, properties, telegramProperties, backOff, processor);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new BeanCreationException("Cannot initiate BackOff", e);
@@ -122,7 +123,7 @@ public class SessionAutoConfiguration {
     @ConditionalOnSingleCandidate(TelegramBot.class)
     public TelegramUpdateProcessor defaultTelegramUpdateProcessor(
         SessionProperties properties, FilterProperties filterProperties, TelegramBot telegramBot,
-        org.telegram.telegrambots.meta.generics.TelegramClient telegramClient, TelegramMessageSource messageSource,
+        TelegramClient telegramClient, TelegramMessageSource messageSource,
         @Nullable @Autowired(required = false) UpdateInboxRepositoryAdapter<?> adapter
     ) {
         switch (properties.getUpdateProcessorType()) {
@@ -151,13 +152,13 @@ public class SessionAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public TelegramClient telegramClient(SessionProperties properties) {
+    public TelegramConsumeClient telegramClient(SessionProperties properties) {
         return getFactory(builder -> {
             if (properties.getProxyType() == ProxyType.HTTP) {
                 throwIfProxyNull(properties);
                 builder.requestFactory(configureProxy(properties.getProxyUrl()));
             }
-        }).createClient(TelegramClient.class);
+        }).createClient(TelegramConsumeClient.class);
     }
 
     private static HttpServiceProxyFactory getFactory(Consumer<Builder> additionalSettings) {
@@ -197,7 +198,7 @@ public class SessionAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public org.telegram.telegrambots.meta.generics.TelegramClient absSender(
+    public TelegramClient absSender(
         SessionProperties properties, TelegramProperties telegramProperties) {
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
         if (properties.getProxyType() == ProxyType.HTTP) {

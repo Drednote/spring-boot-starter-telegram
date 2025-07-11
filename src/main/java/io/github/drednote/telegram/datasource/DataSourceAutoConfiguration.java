@@ -1,18 +1,23 @@
 package io.github.drednote.telegram.datasource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.datasource.permission.DefaultPermissionRepositoryAdapter;
 import io.github.drednote.telegram.datasource.permission.Permission;
 import io.github.drednote.telegram.datasource.permission.PermissionRepository;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
-import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
-import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
-import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.UpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepository;
 import io.github.drednote.telegram.datasource.session.jpa.JpaUpdateInboxRepositoryAdapter;
 import io.github.drednote.telegram.datasource.session.jpa.PostgresUpdateInboxRepositoryAdapter;
+import io.github.drednote.telegram.datasource.session.mongo.DocumentToUpdateConverter;
+import io.github.drednote.telegram.datasource.session.mongo.MongoUpdateInboxRepository;
+import io.github.drednote.telegram.datasource.session.mongo.MongoUpdateInboxRepositoryAdapter;
+import io.github.drednote.telegram.datasource.session.mongo.UpdateToDocumentConverter;
 import io.github.drednote.telegram.session.SessionProperties;
 import jakarta.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -22,15 +27,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
+import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
+import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.lang.Nullable;
 
 @AutoConfiguration
 public class DataSourceAutoConfiguration {
 
     @AutoConfiguration
-    @ConditionalOnClass(JpaRepository.class)
-    public static class JpaAutoConfiguration {
+    @ConditionalOnClass(CrudRepository.class)
+    public static class CrudAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(PermissionRepositoryAdapter.class)
@@ -40,15 +56,42 @@ public class DataSourceAutoConfiguration {
         ) {
             return new DefaultPermissionRepositoryAdapter(permissionRepository);
         }
+    }
 
-        @Bean
-        @ConditionalOnMissingBean(ScenarioIdRepositoryAdapter.class)
-        @ConditionalOnBean(JpaScenarioIdRepository.class)
-        public ScenarioIdRepositoryAdapter scenarioIdRepositoryAdapter(
-            JpaScenarioIdRepository scenarioIdRepository
-        ) {
-            return new JpaScenarioIdRepositoryAdapter(scenarioIdRepository);
+    @AutoConfiguration
+    @ConditionalOnClass(MongoRepository.class)
+    public static class MongoAutoConfiguration {
+
+        @AutoConfiguration
+        @ConditionalOnExpression(
+            value = "#{environment.getProperty('drednote.telegram.session.update-processor-type')?.equalsIgnoreCase('SCHEDULER_WITH_CRUD')}"
+        )
+        public static class MongoUpdateInboxAutoConfiguration {
+
+            @Bean
+            @ConditionalOnBean(MongoUpdateInboxRepository.class)
+            @ConditionalOnMissingBean({UpdateInboxRepositoryAdapter.class})
+            public UpdateInboxRepositoryAdapter<?> mongoUpdateInboxRepositoryAdapter(
+                MongoUpdateInboxRepository repository, SessionProperties sessionProperties, MongoTemplate mongoTemplate
+            ) {
+                return new MongoUpdateInboxRepositoryAdapter(sessionProperties, repository, mongoTemplate);
+            }
+
+            @Bean
+            public MongoCustomConversions mongoCustomConversions(
+                @Autowired(required = false) @Nullable ObjectMapper objectMapper
+            ) {
+                List<Converter<?, ?>> converters = new ArrayList<>();
+                converters.add(new DocumentToUpdateConverter(objectMapper));
+                converters.add(new UpdateToDocumentConverter(objectMapper));
+                return new MongoCustomConversions(converters);
+            }
         }
+    }
+
+    @AutoConfiguration
+    @ConditionalOnClass(JpaRepository.class)
+    public static class JpaAutoConfiguration {
 
         @AutoConfiguration
         @ConditionalOnExpression(

@@ -9,6 +9,7 @@ import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigCon
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
+import io.github.drednote.telegram.handler.scenario.persist.DefaultScenarioPersister;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +29,8 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
     private final ScenarioFactory scenarioFactory;
 
     @Override
-    public void onConfigure(@NonNull ScenarioTransitionConfigurer<State> configurer) {
-        configurer.withResponseMessageProcessing()
+    public void onConfigure(@NonNull ScenarioTransitionConfigurer<State> configurer) throws Exception {
+        configurer.withExternal().inlineKeyboardCreation()
             .source(State.INITIAL).target(State.TEST)
             .action(scenarioFactory::initialTest)
             .telegramRequest(getTelegramRequest("/test", RequestType.MESSAGE, MessageType.COMMAND))
@@ -60,11 +61,11 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
     @Override
     public void onConfigure(ScenarioConfigConfigurer<State> configurer) {
         configurer
-            .withPersister(new JpaScenarioRepositoryAdapter<>(scenarioRepository));
+            .withPersister(new DefaultScenarioPersister<>(new JpaScenarioRepositoryAdapter<>(scenarioRepository)));
     }
 
     @Override
-    public void onConfigure(ScenarioStateConfigurer<State> configurer) {
-        configurer.withInitialState(State.INITIAL);
+    public void onConfigure(ScenarioStateConfigurer<State> configurer) throws Exception {
+        configurer.withStates().initial(State.INITIAL);
     }
 }

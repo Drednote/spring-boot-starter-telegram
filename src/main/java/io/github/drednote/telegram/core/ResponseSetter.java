@@ -3,13 +3,9 @@ package io.github.drednote.telegram.core;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.response.CompositeTelegramResponse;
 import io.github.drednote.telegram.response.EmptyTelegramResponse;
-import io.github.drednote.telegram.response.FluxTelegramResponse;
 import io.github.drednote.telegram.response.GenericTelegramResponse;
-import io.github.drednote.telegram.response.StreamTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
 import io.github.drednote.telegram.utils.Assert;
-import java.util.Collection;
-import java.util.stream.Stream;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -44,20 +40,8 @@ public abstract class ResponseSetter {
         @Nullable Class<?> parameterType
     ) {
         Assert.notNull(request, "UpdateRequest");
-        if (invoked == null || parameterType == null || Void.TYPE.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(EmptyTelegramResponse.INSTANCE);
-        } else if (TelegramResponse.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse((TelegramResponse) invoked);
-        } else if (Collection.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(new CompositeTelegramResponse((Collection<?>) invoked));
-        } else if (parameterType.getName().equals("reactor.core.publisher.Flux")
-                   || parameterType.getName().equals("reactor.core.publisher.Mono")) {
-            request.getAccessor().setResponse(new FluxTelegramResponse(invoked));
-        } else if (Stream.class.isAssignableFrom(parameterType)) {
-            request.getAccessor().setResponse(new StreamTelegramResponse((Stream<?>) invoked));
-        } else {
-            request.getAccessor().setResponse(new GenericTelegramResponse(invoked));
-        }
+
+        request.getAccessor().addResponse(new GenericTelegramResponse(invoked));
     }
 
     /**

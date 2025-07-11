@@ -16,7 +16,6 @@ import io.github.drednote.telegram.handler.scenario.Scenario;
 import io.github.drednote.telegram.handler.scenario.ScenarioUpdateHandler;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.response.TelegramResponse;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import org.springframework.lang.NonNull;
@@ -149,12 +148,12 @@ public interface UpdateRequest {
     //-----------other getters-----------
 
     /**
-     * Returns the abstract sender used to send responses
+     * Returns the telegram client used to send responses
      *
      * @return the abstract sender
      */
     @NonNull
-    TelegramClient getAbsSender();
+    TelegramClient getTelegramClient();
 
     /**
      * Returns the permission of the user executing the request
@@ -203,14 +202,6 @@ public interface UpdateRequest {
     Throwable getError();
 
     /**
-     * Returns the properties specific to the Telegram configuration
-     *
-     * @return the Telegram properties
-     */
-    @NonNull
-    TelegramProperties getProperties();
-
-    /**
      * Returns the info for invocation {@link TelegramRequest} methods
      *
      * @return the info for invocation, or null if not found methods
@@ -220,14 +211,9 @@ public interface UpdateRequest {
     RequestHandler getRequestHandler();
 
     /**
-     * Returns the object mapper used for JSON serialization and deserialization
+     * <b>Normally you should not use this method, all methods in {@code UpdateRequestAccessor} are internal. If you
+     * will use them, unexpected behavior can happen.</b>
      *
-     * @return the object mapper
-     */
-    @NonNull
-    ObjectMapper getObjectMapper();
-
-    /**
      * @return accessor
      */
     UpdateRequestAccessor getAccessor();

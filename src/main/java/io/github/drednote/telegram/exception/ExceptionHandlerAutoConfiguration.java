@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.exception;
 
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,9 +26,10 @@ public class ExceptionHandlerAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ExceptionHandler exceptionHandler(
-      ExceptionHandlerResolver exceptionHandlerResolver, HandlerMethodInvoker handlerMethodInvoker
+      ExceptionHandlerResolver exceptionHandlerResolver, HandlerMethodInvoker handlerMethodInvoker,
+      TelegramProperties telegramProperties
   ) {
-    return new DefaultExceptionHandler(exceptionHandlerResolver, handlerMethodInvoker);
+    return new DefaultExceptionHandler(exceptionHandlerResolver, handlerMethodInvoker, telegramProperties);
   }
 
   /**

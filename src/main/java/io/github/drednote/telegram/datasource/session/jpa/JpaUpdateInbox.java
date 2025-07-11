@@ -28,7 +28,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
     @Index(name = "idx_update_inbox_entity_id", columnList = "entity_id"),
     @Index(name = "idx_update_inbox_status", columnList = "status"),
 })
-public class JpaUpdateInbox implements UpdateInbox {
+public class JpaUpdateInbox extends UpdateInbox {
 
     @Id
     @Column(name = "update_id", nullable = false)
