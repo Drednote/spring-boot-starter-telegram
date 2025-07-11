@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.configurer;
 
+import io.github.drednote.telegram.handler.scenario.configurer.config.ScenarioConfigConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.state.ScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
 
 /**

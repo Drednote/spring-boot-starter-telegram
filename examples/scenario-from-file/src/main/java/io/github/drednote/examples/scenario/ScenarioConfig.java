@@ -2,9 +2,9 @@ package io.github.drednote.examples.scenario;
 
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.scenario.jpa.JpaScenarioRepositoryAdapter;
-import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.config.ScenarioConfigConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
-import io.github.drednote.telegram.handler.scenario.configurer.ScenarioStateConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.state.ScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.persist.DefaultScenarioPersister;
 import lombok.RequiredArgsConstructor;

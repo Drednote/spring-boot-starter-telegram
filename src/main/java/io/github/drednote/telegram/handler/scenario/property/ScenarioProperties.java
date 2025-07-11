@@ -66,10 +66,12 @@ public class ScenarioProperties {
         /**
          * The source state identifier for this scenario.
          */
+        @Nullable
         private String source;
         /**
          * The target state identifier for this scenario.
          */
+        @Nullable
         private String target;
         /**
          * A list of nodes representing the graph of this scenario. The graph is explaining the connections between
@@ -97,6 +99,7 @@ public class ScenarioProperties {
          * A map of steps associated with this scenario, where each step is another scenario. The keys are the same as
          * {@link Node#id} in {@link #graph}.
          */
+        @Nullable
         private Map<String, Scenario> steps = new HashMap<>();
 
         /**

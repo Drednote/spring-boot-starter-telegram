@@ -1,8 +1,9 @@
-package io.github.drednote.telegram.handler.scenario.configurer;
+package io.github.drednote.telegram.handler.scenario.configurer.state;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.action.Action;
 import io.github.drednote.telegram.handler.scenario.action.DelegateAction;
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,20 +14,26 @@ import org.springframework.statemachine.config.configurers.StateConfigurer.Histo
 public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
 
     private final org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer;
+    private final Set<S> states;
     private final ScenarioBuilder<S> builder;
 
     public DefaultStateConfigurer(
         ScenarioBuilder<S> builder,
-        org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer
+        org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer, Set<S> states
     ) {
         this.builder = builder;
         this.configurer = configurer;
+        this.states = states;
     }
 
     @Override
     public StateConfigurer<S> initial(S initial) {
         configurer.initial(makeState(initial));
         builder.setInitialState(makeState(initial));
+
+        configurer.states(states);
+        states.clear();
+
         return this;
     }
 
@@ -34,6 +41,10 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
     public StateConfigurer<S> initial(S initial, Action<S> action) {
         configurer.initial(makeState(initial), makeAction(action));
         builder.setInitialState(makeState(initial));
+
+        configurer.states(states);
+        states.clear();
+
         return this;
     }
 
@@ -182,10 +193,10 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
         return this;
     }
 
-//    @Override
-//    public ScenarioStateConfigurer<S> and() {
-//        return new DefaultScenarioStateConfigurer<>(builder, configurer.and());
-//    }
+    @Override
+    public ScenarioStateConfigurer<S> and() throws Exception {
+        return new DefaultScenarioStateConfigurer<>(builder, configurer.and(), states);
+    }
 
     private org.springframework.statemachine.action.Action<S, ScenarioEvent> makeAction(
         Action<S> action

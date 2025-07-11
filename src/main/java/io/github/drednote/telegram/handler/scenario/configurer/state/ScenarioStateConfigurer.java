@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.handler.scenario.configurer;
+package io.github.drednote.telegram.handler.scenario.configurer.state;
 
 /**
  * Interface for configuring scenario states.

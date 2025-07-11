@@ -1,5 +1,6 @@
-package io.github.drednote.telegram.handler.scenario.configurer;
+package io.github.drednote.telegram.handler.scenario.configurer.config;
 
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
@@ -34,4 +35,24 @@ public class DefaultScenarioConfigConfigurer<S> implements ScenarioConfigConfigu
         builder.setResolver(resolver);
         return this;
     }
+
+    @Override
+    public ScenarioConfigurationConfigurer<S> withConfiguration() throws Exception {
+        return new DefaultScenarioConfigurationConfigurer<>(builder, configurer.withConfiguration());
+    }
+
+    @Override
+    public ScenarioDistributedConfigurer<S> withDistributed() throws Exception {
+        return new DefaultScenarioDistributedConfigurer<>(builder, configurer.withDistributed());
+    }
+
+    @Override
+    public ScenarioVerifierConfigurer<S> withVerifier() throws Exception {
+        return new DefaultScenarioVerifierConfigurer<>(builder, configurer.withVerifier());
+    }
+
+//    @Override
+//    public ScenarioMonitoringConfigurer<S> withMonitoring() throws Exception {
+//        return new DefaultScenarioMonitoringConfigurer<>(builder, configurer.withMonitoring());
+//    }
 }

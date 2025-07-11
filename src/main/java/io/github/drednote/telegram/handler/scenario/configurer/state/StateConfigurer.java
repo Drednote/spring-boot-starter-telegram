@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.handler.scenario.configurer;
+package io.github.drednote.telegram.handler.scenario.configurer.state;
 
 import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.handler.scenario.action.Action;
@@ -12,7 +12,7 @@ import org.springframework.statemachine.state.State;
  *
  * @param <S> the type of state
  */
-public interface StateConfigurer<S> {
+public interface StateConfigurer<S> extends ScenarioStateConfigurerBuilder<S> {
 
 	/**
 	 * Specify a initial state {@code S}.
@@ -272,6 +272,4 @@ public interface StateConfigurer<S> {
 	 * @return configurer for chaining
 	 */
 	StateConfigurer<S> exit(S exit);
-
-//	ScenarioStateConfigurer<S> and();
 }
