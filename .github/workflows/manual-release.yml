@@ -33,8 +33,8 @@ jobs:
 
       - name: Publish to Maven Central
         env:
-          OSSRH_USERNAME: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
-          OSSRH_PASSWORD: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           GRADLE_VARS: |
             -Psigning.gnupg.keyName=${{ secrets.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}

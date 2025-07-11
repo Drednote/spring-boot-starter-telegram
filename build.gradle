@@ -86,8 +86,8 @@ publishing {
                 url = MAVEN_RELEASE_REPO
             }
             credentials {
-                username = System.getenv("OSSRH_USERNAME") ?: System.getProperty("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD") ?: System.getProperty("OSSRH_PASSWORD")
+                username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: System.getProperty("CENTRAL_PORTAL_USERNAME")
+                password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: System.getProperty("CENTRAL_PORTAL_PASSWORD")
             }
         }
     }
