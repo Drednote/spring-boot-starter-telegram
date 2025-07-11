@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import lombok.experimental.UtilityClass;
 import org.mockito.Mockito;
@@ -17,7 +15,6 @@ public class UpdateRequestUtils {
   public DefaultUpdateRequest createMockRequest(Update update) {
     TelegramClient absSender = Mockito.mock(TelegramClient.class);
 
-    return new DefaultUpdateRequest(update, absSender, new TelegramProperties(),
-        new ObjectMapper());
+    return new DefaultUpdateRequest(update, absSender);
   }
 }

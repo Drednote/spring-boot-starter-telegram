@@ -1,7 +1,7 @@
 package io.github.drednote.examples.scenario;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.handler.scenario.ActionContext;
+import io.github.drednote.telegram.handler.scenario.action.ActionContext;
 import io.github.drednote.telegram.handler.scenario.property.TelegramScenario;
 import io.github.drednote.telegram.handler.scenario.property.TelegramScenarioAction;
 import java.util.Optional;

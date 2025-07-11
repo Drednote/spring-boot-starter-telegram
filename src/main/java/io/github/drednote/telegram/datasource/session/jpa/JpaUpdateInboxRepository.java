@@ -3,9 +3,11 @@ package io.github.drednote.telegram.datasource.session.jpa;
 import io.github.drednote.telegram.datasource.session.UpdateInboxRepository;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -13,7 +15,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @NoRepositoryBean
-public interface JpaUpdateInboxRepository extends UpdateInboxRepository<JpaUpdateInbox> {
+public interface JpaUpdateInboxRepository
+    extends UpdateInboxRepository<JpaUpdateInbox>, JpaRepository<JpaUpdateInbox, Integer> {
 
     @Query(value = """
             SELECT m FROM JpaUpdateInbox m
@@ -30,7 +33,7 @@ public interface JpaUpdateInboxRepository extends UpdateInboxRepository<JpaUpdat
 
     @Query(value = """
             SELECT m FROM JpaUpdateInbox m
-                WHERE m.entityId = (SELECT m.entityId FROM JpaUpdateInbox m
+                WHERE m.entityId = null or m.entityId = (SELECT m.entityId FROM JpaUpdateInbox m
                 WHERE m.status = 'NEW'
                   AND (select count(m2)
                        FROM JpaUpdateInbox m2

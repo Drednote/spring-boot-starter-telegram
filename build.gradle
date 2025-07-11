@@ -32,19 +32,18 @@ repositories {
 dependencies {
     api 'org.telegram:telegrambots-longpolling:7.10.0'
     api 'org.telegram:telegrambots-client:7.10.0'
-    api 'com.esotericsoftware:kryo:4.0.3'
+    api 'com.esotericsoftware:kryo-shaded:4.0.3'
     api 'org.springframework.boot:spring-boot-starter-web'
     api 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
     api 'com.github.ben-manes.caffeine:caffeine'
     api 'org.apache.httpcomponents.client5:httpclient5'
 
+    api 'org.springframework.statemachine:spring-statemachine-core:4.0.0'
+    api 'org.springframework.statemachine:spring-statemachine-data-common:4.0.0'
+
     // data
-    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-mongodb'
-
-    compileOnly 'org.springframework.statemachine:spring-statemachine-core:4.0.0'
-    compileOnly 'org.springframework.statemachine:spring-statemachine-data-jpa:4.0.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -54,9 +53,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'io.zonky.test:embedded-database-spring-test:2.5.1'
     testImplementation 'io.zonky.test:embedded-postgres:2.0.7'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring3x:4.20.0'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 

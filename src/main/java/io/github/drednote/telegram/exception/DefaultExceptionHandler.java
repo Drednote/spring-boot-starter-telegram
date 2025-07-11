@@ -1,5 +1,6 @@
 package io.github.drednote.telegram.exception;
 
+import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.invoke.HandlerMethodInvoker;
 import io.github.drednote.telegram.core.request.UpdateRequest;
@@ -29,13 +30,17 @@ public class DefaultExceptionHandler implements ExceptionHandler {
 
   private final ExceptionHandlerResolver exceptionHandlerResolver;
   private final HandlerMethodInvoker handlerMethodInvoker;
+  private final TelegramProperties telegramProperties;
 
   public DefaultExceptionHandler(
-      ExceptionHandlerResolver exceptionHandlerResolver, HandlerMethodInvoker handlerMethodInvoker
+      ExceptionHandlerResolver exceptionHandlerResolver, HandlerMethodInvoker handlerMethodInvoker,
+      TelegramProperties telegramProperties
   ) {
     Assert.required(exceptionHandlerResolver, "ExceptionHandlerResolver");
     Assert.required(handlerMethodInvoker, "HandlerMethodInvoker");
+    Assert.required(telegramProperties, "TelegramProperties");
 
+    this.telegramProperties = telegramProperties;
     this.exceptionHandlerResolver = exceptionHandlerResolver;
     this.handlerMethodInvoker = handlerMethodInvoker;
   }
@@ -76,11 +81,11 @@ public class DefaultExceptionHandler implements ExceptionHandler {
           request.getResponse(), request.getId(), telegramApiException);
     } else if (throwable instanceof TextReturningException textReturningException) {
       log.warn(textReturningException.getMessage());
-      request.getAccessor().setResponse(new GenericTelegramResponse(textReturningException.getMessage()));
+      request.getAccessor().addResponse(new GenericTelegramResponse(textReturningException.getMessage()));
     } else {
-      if (request.getProperties().getUpdateHandler().isSetDefaultErrorAnswer()
+      if (telegramProperties.getUpdateHandler().isSetDefaultErrorAnswer()
           && request.getResponse() == null) {
-        request.getAccessor().setResponse(new InternalErrorTelegramResponse());
+        request.getAccessor().addResponse(new InternalErrorTelegramResponse());
       }
       log.error("For UpdateRequest {} error occurred during update handling", request, throwable);
     }

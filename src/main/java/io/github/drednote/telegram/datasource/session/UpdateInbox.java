@@ -3,18 +3,26 @@ package io.github.drednote.telegram.datasource.session;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public interface UpdateInbox {
+public abstract class UpdateInbox {
 
-    Integer getUpdateId();
+    public abstract Integer getUpdateId();
 
-    Update getUpdate();
+    public abstract Update getUpdate();
 
     @Nullable
-    String getEntityId();
+    public abstract String getEntityId();
 
-    UpdateInboxStatus getStatus();
+    public abstract UpdateInboxStatus getStatus();
 
-    void setStatus(UpdateInboxStatus status);
+    public abstract String getErrorDescription();
 
-    void setErrorDescription(String errorDescription);
+    public abstract void setStatus(UpdateInboxStatus status);
+
+    public abstract void setErrorDescription(String errorDescription);
+
+    public abstract void setUpdateId(Integer updateId);
+
+    public abstract void setUpdate(Update update);
+
+    public abstract void setEntityId(@Nullable String entityId);
 }

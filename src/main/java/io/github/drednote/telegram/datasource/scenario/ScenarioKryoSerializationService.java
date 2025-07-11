@@ -7,20 +7,25 @@ import com.esotericsoftware.kryo.io.Output;
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.UpdateRequestMapping;
-import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.datasource.kryo.AbstractKryoSerializationService;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleScenarioContext;
-import io.github.drednote.telegram.handler.scenario.persist.SimpleStateContext;
-import io.github.drednote.telegram.handler.scenario.persist.StateContext;
-import java.util.HashMap;
+import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.DefaultScenarioContext;
 import java.util.HashSet;
 import java.util.Set;
-import org.springframework.lang.NonNull;
+import java.util.UUID;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.statemachine.StateMachineContext;
+import org.springframework.statemachine.kryo.MessageHeadersSerializer;
+import org.springframework.statemachine.kryo.StateMachineContextSerializer;
+import org.springframework.statemachine.kryo.UUIDSerializer;
 
 public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializationService<ScenarioContext<S>> {
 
-    private final ScenarioContextSerializer<S> contextSerializer = new ScenarioContextSerializer<>();
+    private final StateMachineContextSerializer<S, ScenarioEvent> machineContextSerializer = new StateMachineContextSerializer<>();
+    private final ScenarioContextSerializer<S> contextSerializer = new ScenarioContextSerializer<>(
+        machineContextSerializer);
+    private final ScenarioEventSerializer scenarioEventSerializer = new ScenarioEventSerializer();
 
     @Override
     protected void doEncode(Kryo kryo, ScenarioContext<S> object, Output output) {
@@ -36,51 +41,59 @@ public class ScenarioKryoSerializationService<S> extends AbstractKryoSerializati
     @Override
     protected void configureKryoInstance(Kryo kryo) {
         kryo.addDefaultSerializer(ScenarioContext.class, contextSerializer);
+        kryo.addDefaultSerializer(ScenarioEvent.class, scenarioEventSerializer);
+        kryo.addDefaultSerializer(StateMachineContext.class, machineContextSerializer);
+        kryo.addDefaultSerializer(MessageHeaders.class, new MessageHeadersSerializer());
+        kryo.addDefaultSerializer(UUID.class, new UUIDSerializer());
     }
 
     private static class ScenarioContextSerializer<S> extends Serializer<ScenarioContext<S>> {
 
-        @Override
-        public void write(Kryo kryo, Output output, ScenarioContext<S> object) {
-            StateContext<S> state = object.state();
-            kryo.writeClassAndObject(output, object.id());
-            writeState(kryo, output, state);
+        private final StateMachineContextSerializer<S, ScenarioEvent> machineContextSerializer;
+
+        public ScenarioContextSerializer(StateMachineContextSerializer<S, ScenarioEvent> machineContextSerializer) {
+            this.machineContextSerializer = machineContextSerializer;
         }
 
-        private void writeState(Kryo kryo, Output output, StateContext<S> state) {
-            kryo.writeClassAndObject(output, state.id());
-            kryo.writeClassAndObject(output, state.responseMessageProcessing());
-            var mappings = state.updateRequestMappings();
+        @Override
+        public void write(Kryo kryo, Output output, ScenarioContext<S> object) {
+            kryo.writeClassAndObject(output, object.getId());
+            machineContextSerializer.write(kryo, output, object.getMachine());
+        }
+
+        @Override
+        public ScenarioContext<S> read(Kryo kryo, Input input, Class<ScenarioContext<S>> type) {
+            String id = (String) kryo.readClassAndObject(input);
+            StateMachineContext<S, ScenarioEvent> machineContext = machineContextSerializer.read(kryo, input, null);
+            return new DefaultScenarioContext<>(id, machineContext);
+        }
+    }
+
+    private static class ScenarioEventSerializer extends Serializer<ScenarioEvent> {
+
+        @Override
+        public void write(Kryo kryo, Output output, ScenarioEvent object) {
+            var mappings = object.getMappings();
             kryo.writeClassAndObject(output, mappings.size());
             mappings.forEach(mapping -> {
                 kryo.writeClassAndObject(output, mapping.getPattern());
                 kryo.writeClassAndObject(output, mapping.getRequestType());
                 kryo.writeClassAndObject(output, new HashSet<>(mapping.getMessageTypes()));
             });
-            kryo.writeClassAndObject(output, new HashMap<>(state.props()));
         }
 
         @Override
-        public ScenarioContext<S> read(Kryo kryo, Input input, Class<ScenarioContext<S>> type) {
-            String id = (String) kryo.readClassAndObject(input);
-            SimpleStateContext<S> stateContext = readState(kryo, input);
-            return new SimpleScenarioContext<>(id, stateContext);
-        }
-
         @SuppressWarnings("unchecked")
-        private @NonNull SimpleStateContext<S> readState(Kryo kryo, Input input) {
-            S state = (S) kryo.readClassAndObject(input);
-            boolean responseMessageProcessing = (boolean) kryo.readClassAndObject(input);
+        public ScenarioEvent read(Kryo kryo, Input input, Class<ScenarioEvent> type) {
             Integer size = (Integer) kryo.readClassAndObject(input);
-            Set<UpdateRequestMappingAccessor> mappings = new HashSet<>();
+            Set<UpdateRequestMapping> mappings = new HashSet<>();
             for (int i = 0; i < size; i++) {
                 String pattern = (String) kryo.readClassAndObject(input);
                 RequestType requestType = (RequestType) kryo.readClassAndObject(input);
                 Set<MessageType> messageTypes = (Set<MessageType>) kryo.readClassAndObject(input);
                 mappings.add(new UpdateRequestMapping(pattern, requestType, messageTypes));
             }
-            HashMap<String, Object> props = (HashMap<String, Object>) kryo.readClassAndObject(input);
-            return new SimpleStateContext<>(state, mappings, responseMessageProcessing, props);
+            return new ScenarioEvent(mappings);
         }
     }
 }

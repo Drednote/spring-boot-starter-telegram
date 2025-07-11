@@ -3,6 +3,7 @@ package io.github.drednote.telegram.datasource.session.jpa;
 import io.github.drednote.telegram.datasource.session.UpdateInboxStatus;
 import io.github.drednote.telegram.session.SessionProperties;
 import jakarta.persistence.EntityManager;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;

@@ -45,6 +45,13 @@ class DefaultTelegramBotTest {
     preUpdateFilter = Mockito.mock(PreUpdateFilter.class);
     postUpdateFilter = Mockito.mock(PostUpdateFilter.class);
     conclusivePostUpdateFilter = Mockito.mock(ConclusivePostUpdateFilter.class);
+
+    when(updateHandler.onUpdateReactive(any())).thenCallRealMethod();
+    when(preUpdateFilter.preFilterReactive(any())).thenCallRealMethod();
+    when(postUpdateFilter.postFilterReactive(any())).thenCallRealMethod();
+    when(conclusivePostUpdateFilter.postFilterReactive(any())).thenCallRealMethod();
+    when(exceptionHandler.handleReactive(any())).thenCallRealMethod();
+
     when(preUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
     when(postUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
     when(conclusivePostUpdateFilter.matches(any())).thenReturn(Boolean.TRUE);
@@ -52,7 +59,7 @@ class DefaultTelegramBotTest {
     when(filterProvider.getPostFilters(any())).thenReturn(List.of(postUpdateFilter));
     when(filterProvider.getConclusivePostFilters(any())).thenReturn(List.of(conclusivePostUpdateFilter));
     this.defaultTelegramBot = new DefaultTelegramBot(new TelegramProperties(), List.of(updateHandler),
-        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource(), new OkHttpTelegramClient(""));
+        new ObjectMapper(), exceptionHandler, filterProvider, new TelegramMessageSource(), new OkHttpTelegramClient(""), List.of());
   }
 
   @Test
@@ -90,7 +97,10 @@ class DefaultTelegramBotTest {
   @Test
   void shouldCallResponse() throws Throwable {
     TelegramResponse response = Mockito.mock(TelegramResponse.class);
+
     when(response.isExecutePostFilters()).thenReturn(true);
+    when(response.processReactive(any())).thenCallRealMethod();
+
     doAnswer(invocation -> {
       UpdateRequest request = invocation.getArgument(0, UpdateRequest.class);
       request.getAccessor().setResponse(response);
@@ -129,6 +139,7 @@ class DefaultTelegramBotTest {
         UpdateRequestContext.class)) {
       TelegramResponse response = Mockito.mock(TelegramResponse.class);
       when(response.isExecutePostFilters()).thenReturn(true);
+      when(response.processReactive(any())).thenCallRealMethod();
       doThrow(new IllegalStateException()).when(updateHandler).onUpdate(any());
       doThrow(new RuntimeException()).when(response).process(any());
       doAnswer(invocation -> {

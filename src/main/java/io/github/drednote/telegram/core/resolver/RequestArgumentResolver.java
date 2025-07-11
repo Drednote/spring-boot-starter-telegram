@@ -23,7 +23,7 @@ public class RequestArgumentResolver implements HandlerMethodArgumentResolver {
     if (UpdateRequest.class.isAssignableFrom(paramType)) {
       return request;
     } else if (TelegramClient.class.isAssignableFrom(paramType)) {
-      return request.getAbsSender();
+      return request.getTelegramClient();
     } else if (Throwable.class.isAssignableFrom(paramType)) {
       return request.getError();
     } else if (String.class.isAssignableFrom(paramType)) {

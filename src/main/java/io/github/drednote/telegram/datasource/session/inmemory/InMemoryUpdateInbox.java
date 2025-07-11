@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Getter
 @Setter
-public class InMemoryUpdateInbox implements UpdateInbox {
+public class InMemoryUpdateInbox extends UpdateInbox {
 
     private Integer updateId;
 
