@@ -6,18 +6,17 @@ import io.github.drednote.telegram.datasource.scenario.jpa.JpaScenarioRepository
 import io.github.drednote.telegram.datasource.scenario.mongo.MongoScenarioRepository;
 import io.github.drednote.telegram.datasource.scenario.mongo.MongoScenarioRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.InMemoryScenarioIdRepositoryAdapter;
-import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.mongo.MongoScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.mongo.MongoScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
-import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioConfigConfigurer;
-import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder.ScenarioData;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
+import io.github.drednote.telegram.handler.scenario.configurer.config.DefaultScenarioConfigConfigurer;
+import io.github.drednote.telegram.handler.scenario.configurer.state.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.DefaultScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.factory.DefaultScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.factory.MachineScenarioFactory;
@@ -31,6 +30,7 @@ import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryCont
 import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryResolver;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurer;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -57,12 +57,6 @@ public class ScenarioAutoConfiguration {
 
     @AutoConfiguration
     public static class DatasourceScenarioAutoConfiguration {
-
-        @Bean
-        @ConditionalOnMissingBean({ScenarioIdRepositoryAdapter.class, ScenarioIdRepository.class})
-        public ScenarioIdRepositoryAdapter inMemoryScenarioIdRepositoryAdapter() {
-            return new InMemoryScenarioIdRepositoryAdapter();
-        }
 
         @AutoConfiguration
         @ConditionalOnClass(MongoRepository.class)
@@ -128,23 +122,33 @@ public class ScenarioAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public <S> ScenarioUpdateHandlerPopular<S> scenarioUpdateHandlerPopular(
-        ScenarioConfigurerAdapter<S> adapter, ScenarioIdRepositoryAdapter scenarioIdAdapter,
+        ScenarioConfigurerAdapter<S> adapter, ScenarioProperties scenarioProperties,
+        @Autowired(required = false) @Nullable ScenarioIdRepositoryAdapter scenarioIdAdapter,
         @Autowired(required = false) @Nullable ScenarioRepositoryAdapter<S> scenarioRepositoryAdapter,
-        ScenarioFactoryResolver scenarioFactoryResolver, ScenarioProperties scenarioProperties
+        ScenarioFactoryResolver scenarioFactoryResolver
     ) throws Exception {
         ScenarioBuilder<S> builder = new ScenarioBuilder<>(StateMachineBuilder.builder());
 
+        ScenarioPropertiesConfigurer<S> propertiesConfigurer = new ScenarioPropertiesConfigurer<>(
+            builder, scenarioProperties, scenarioFactoryResolver);
+        Set<S> states = propertiesConfigurer.collectStates();
+
         adapter.onConfigure(new DefaultScenarioConfigConfigurer<>(builder));
-        DefaultScenarioStateConfigurer<S> stateConfigurer = new DefaultScenarioStateConfigurer<>(builder);
-        adapter.onConfigure(stateConfigurer);
+        adapter.onConfigure(new DefaultScenarioStateConfigurer<>(builder, states));
         adapter.onConfigure(new DefaultScenarioTransitionConfigurer<>(builder));
-        new ScenarioPropertiesConfigurer<>(builder, scenarioProperties, scenarioFactoryResolver)
-            .configure(stateConfigurer.withStates());
+
+        propertiesConfigurer.configure();
+
         ScenarioData<S> data = builder.build();
 
-        ScenarioIdResolver resolver = data.resolver() == null
-            ? new DefaultScenarioIdResolver(scenarioIdAdapter)
-            : data.resolver();
+        ScenarioIdResolver resolver;
+        if (data.resolver() == null) {
+            resolver = scenarioIdAdapter == null
+                ? new DefaultScenarioIdResolver(new InMemoryScenarioIdRepositoryAdapter())
+                : new DefaultScenarioIdResolver(scenarioIdAdapter);
+        } else {
+            resolver = data.resolver();
+        }
 
         ScenarioPersister<S> persist;
         if (data.persister() == null) {

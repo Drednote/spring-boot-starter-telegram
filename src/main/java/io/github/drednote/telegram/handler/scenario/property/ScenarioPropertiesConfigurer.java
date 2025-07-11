@@ -9,7 +9,6 @@ import io.github.drednote.telegram.core.request.TelegramRequest;
 import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.handler.scenario.action.Action;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
-import io.github.drednote.telegram.handler.scenario.configurer.StateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.DefaultScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties.Node;
@@ -29,6 +28,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.statemachine.config.model.TransitionData;
 import org.springframework.web.method.HandlerMethod;
 
 @BetaApi
@@ -56,7 +56,32 @@ public class ScenarioPropertiesConfigurer<S> {
         this.transitionConfigurer = new DefaultScenarioTransitionConfigurer<>(scenarioBuilder);
     }
 
-    public void configure(StateConfigurer<S> stateConfigurer) {
+    public Set<S> collectStates() {
+        Map<String, Scenario> values = scenarioProperties.getValues();
+        if (values != null) {
+            doCollectStates(values);
+        }
+        return states;
+    }
+
+    private void doCollectStates(Map<String, Scenario> values) {
+        values.forEach((key, scenario) -> {
+            if (scenario != null) {
+                if (scenario.getTarget() != null) {
+                    states.add((S) scenario.getTarget());
+                }
+                if (scenario.getSource() != null) {
+                    states.add((S) scenario.getSource());
+                }
+
+                if (scenario.getSteps() != null && !scenario.getSteps().isEmpty()) {
+                    doCollectStates(scenario.getSteps());
+                }
+            }
+        });
+    }
+
+    public void configure() {
         Map<String, Scenario> values = scenarioProperties.getValues();
         if (values != null) {
             values.forEach((key, scenario) -> {
@@ -69,7 +94,6 @@ public class ScenarioPropertiesConfigurer<S> {
                     doConfigure(scenarioBuilder, transitionData, scenario, node);
                 });
             });
-            stateConfigurer.states(states);
         }
     }
 
@@ -101,9 +125,6 @@ public class ScenarioPropertiesConfigurer<S> {
         Assert.required(scenario, "Scenario");
         Assert.required(request, "Request");
 
-        states.add(source);
-        states.add(target);
-
         List<Action<S>> action = createAction(actionClassName);
         TelegramRequest telegramRequest = createTelegramRequest(request);
 
@@ -131,7 +152,8 @@ public class ScenarioPropertiesConfigurer<S> {
                 external.action(objectAction);
             }
 
-            external.rollbackProps(parent.getProps()).rollbackTelegramRequest(createTelegramRequest(rollback.getRequest()));
+            external.rollbackProps(parent.getProps())
+                .rollbackTelegramRequest(createTelegramRequest(rollback.getRequest()));
             List<Action<S>> actions = createAction(rollback.getActionReferences());
             for (Action<S> objectAction : actions) {
                 external.rollbackAction(objectAction);

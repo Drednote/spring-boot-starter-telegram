@@ -1,7 +1,5 @@
 package io.github.drednote.telegram.core.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.annotation.TelegramRequest;
 import io.github.drednote.telegram.datasource.permission.Permission;
@@ -172,7 +170,7 @@ public interface UpdateRequest {
      * @see ScenarioConfigurerAdapter
      */
     @Nullable
-    Scenario<?> getScenario();
+    <T> Scenario<T> getScenario();
 
     /**
      * Returns the response that should be sent to Telegram
