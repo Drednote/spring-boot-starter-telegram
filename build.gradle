@@ -80,15 +80,11 @@ signing {
 publishing {
     repositories {
         maven {
-            if (version.toString().endsWith("SNAPSHOT")) {
-                allowInsecureProtocol true
-                url = NEXUS_UPLOAD_REPO
-            } else {
-                url = MAVEN_RELEASE_REPO
-            }
+            allowInsecureProtocol true
+            url = NEXUS_UPLOAD_REPO
             credentials {
-                username = System.getenv("CENTRAL_PORTAL_USERNAME") ?: System.getProperty("CENTRAL_PORTAL_USERNAME")
-                password = System.getenv("CENTRAL_PORTAL_PASSWORD") ?: System.getProperty("CENTRAL_PORTAL_PASSWORD")
+                username = LOCAL_NEXUS_USER
+                password = LOCAL_NEXUS_PASSWORD
             }
         }
     }

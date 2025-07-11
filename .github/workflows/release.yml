@@ -31,10 +31,10 @@ jobs:
 
       - name: Publish to Maven Central
         env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          CENTRAL_PORTAL_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          CENTRAL_PORTAL_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           GRADLE_VARS: |
             -Psigning.gnupg.keyName=${{ secrets.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}
             -Ptag_version=${{ steps.version.outputs.tag_version }}
-        run: ./gradlew ${GRADLE_VARS} publish --no-daemon
+        run: ./gradlew ${GRADLE_VARS} publishToSonatype closeSonatypeStagingRepository --no-daemon
