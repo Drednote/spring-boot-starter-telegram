@@ -1,4 +1,4 @@
-name: Release to Maven Central
+name: Release to Maven Central Manual
 on:
   workflow_dispatch:
     inputs:
@@ -39,4 +39,4 @@ jobs:
             -Psigning.gnupg.keyName=${{ secrets.GNUPG_KEY_ID }}
             -Psigning.gnupg.passphrase=${{ secrets.GNUPG_PASSPHRASE }}
             -Ptag_version=${{ github.event.inputs.tag_version }}
-        run: ./gradlew ${GRADLE_VARS} publish --no-daemon
+        run: ./gradlew ${GRADLE_VARS} publishToSonatype closeSonatypeStagingRepository --no-daemon
