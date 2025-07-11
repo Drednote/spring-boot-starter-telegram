@@ -2,6 +2,7 @@ package io.github.drednote.telegram.handler.scenario.factory;
 
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import java.util.Set;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
 
 /**
@@ -50,6 +51,6 @@ public interface ScenarioIdResolver {
      * @param ids        the list of possible ids. Can be empty.
      * @param fallbackId the default id that stores in the database or in memory. Never null.
      */
-    record ScenarioIdData(Set<String> ids, String fallbackId) {}
+    record ScenarioIdData(Set<String> ids, @Nullable String fallbackId) {}
 }
 

@@ -53,9 +53,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'io.zonky.test:embedded-database-spring-test:2.5.1'
     testImplementation 'io.zonky.test:embedded-postgres:2.0.7'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.11.0'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 

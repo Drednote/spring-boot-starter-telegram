@@ -3,11 +3,15 @@ package io.github.drednote.telegram.handler.scenario;
 import io.github.drednote.telegram.datasource.scenario.ScenarioRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenario.jpa.JpaScenarioRepository;
 import io.github.drednote.telegram.datasource.scenario.jpa.JpaScenarioRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenario.mongo.MongoScenarioRepository;
+import io.github.drednote.telegram.datasource.scenario.mongo.MongoScenarioRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.InMemoryScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.ScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepository;
 import io.github.drednote.telegram.datasource.scenarioid.jpa.JpaScenarioIdRepositoryAdapter;
+import io.github.drednote.telegram.datasource.scenarioid.mongo.MongoScenarioIdRepository;
+import io.github.drednote.telegram.datasource.scenarioid.mongo.MongoScenarioIdRepositoryAdapter;
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioConfigConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.DefaultScenarioStateConfigurer;
@@ -36,6 +40,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.statemachine.config.StateMachineBuilder;
 
@@ -57,6 +62,27 @@ public class ScenarioAutoConfiguration {
         @ConditionalOnMissingBean({ScenarioIdRepositoryAdapter.class, ScenarioIdRepository.class})
         public ScenarioIdRepositoryAdapter inMemoryScenarioIdRepositoryAdapter() {
             return new InMemoryScenarioIdRepositoryAdapter();
+        }
+
+        @AutoConfiguration
+        @ConditionalOnClass(MongoRepository.class)
+        public static class MongoScenarioAutoConfiguration {
+
+            @Bean
+            @ConditionalOnMissingBean(ScenarioIdRepositoryAdapter.class)
+            @ConditionalOnBean(MongoScenarioIdRepository.class)
+            public ScenarioIdRepositoryAdapter scenarioIdRepositoryAdapter(
+                MongoScenarioIdRepository scenarioIdRepository
+            ) {
+                return new MongoScenarioIdRepositoryAdapter(scenarioIdRepository);
+            }
+
+            @Bean
+            @ConditionalOnMissingBean(ScenarioRepositoryAdapter.class)
+            @ConditionalOnBean(MongoScenarioRepository.class)
+            public <S> ScenarioRepositoryAdapter<S> scenarioRepositoryAdapter(MongoScenarioRepository repository) {
+                return new MongoScenarioRepositoryAdapter<>(repository);
+            }
         }
 
         @AutoConfiguration

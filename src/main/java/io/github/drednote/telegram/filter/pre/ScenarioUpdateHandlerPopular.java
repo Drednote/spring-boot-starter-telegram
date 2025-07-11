@@ -60,7 +60,7 @@ public class ScenarioUpdateHandlerPopular<S> implements PriorityPreUpdateFilter 
                 }
             }
         }
-        if (scenario == null) {
+        if (scenario == null && idData.fallbackId() != null) {
             String fallbackId = idData.fallbackId();
             Scenario<S> fallbackScenario = persister.restore(scenarioFactory.create(fallbackId), fallbackId);
             if (fallbackScenario.matches(request)) {

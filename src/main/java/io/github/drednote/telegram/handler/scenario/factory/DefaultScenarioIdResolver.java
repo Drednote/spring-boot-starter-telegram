@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 /**
@@ -51,11 +52,12 @@ public class DefaultScenarioIdResolver implements ScenarioIdResolver {
      * @param request the update request used to resolve the ID
      * @return the resolved scenario ID as a String
      */
+    @Nullable
     protected String doResolve(UpdateRequest request) {
         String chatId = request.getUserAssociatedId();
         return adapterProvider.findById(chatId)
             .map(ScenarioId::getScenarioId)
-            .orElseGet(() -> generateId(request));
+            .orElse(null);
     }
 
     /**

@@ -37,7 +37,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
     public void postFilter(@NonNull UpdateRequest request) throws Exception {
         List<Object> responses = request.getResponseFromTelegram();
         Scenario<?> scenario = request.getScenario();
-        if (scenario != null) {
+        if (scenario != null && Boolean.TRUE.equals(scenario.getProperty(SUCCESS_EXECUTION_PROPERTY))) {
             if (Boolean.TRUE.equals(scenario.getProperty(INLINE_KEYBOARD_PROPERTY))) {
                 if (!responses.isEmpty()) {
                     log.warn(
@@ -63,10 +63,8 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      * @param <T>      the type parameter for the scenario.
      */
     private <T> void persist(Scenario<T> scenario) throws Exception {
-        if (Boolean.TRUE.equals(scenario.getProperty(SUCCESS_EXECUTION_PROPERTY))) {
-            ScenarioAccessor<T> accessor = scenario.getAccessor();
-            accessor.getPersister().persist(scenario);
-        }
+        ScenarioAccessor<T> accessor = scenario.getAccessor();
+        accessor.getPersister().persist(scenario);
     }
 
     /**

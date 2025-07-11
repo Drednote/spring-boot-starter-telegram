@@ -3,7 +3,7 @@ package io.github.drednote.telegram.datasource.session;
 import org.springframework.lang.Nullable;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public abstract class UpdateInbox {
+public abstract class UpdateInboxEntity {
 
     public abstract Integer getUpdateId();
 

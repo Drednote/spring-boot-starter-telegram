@@ -1,7 +1,7 @@
 package io.github.drednote.telegram.handler.scenario;
 
+import io.github.drednote.telegram.core.ResponseSetter;
 import io.github.drednote.telegram.core.request.UpdateRequest;
-import io.github.drednote.telegram.exception.type.ScenarioException;
 import io.github.drednote.telegram.filter.FilterOrder;
 import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEventResult;
@@ -19,6 +19,9 @@ public class ScenarioUpdateHandler implements UpdateHandler {
         if (scenario != null) {
             ScenarioEventResult<?, ?> eventResult = scenario.sendEvent(request);
             if (eventResult.success()) {
+                if (request.getResponse() == null) {
+                    ResponseSetter.setResponse(request, null);
+                }
                 String id = scenario.getId();
                 ScenarioIdResolver idResolver = scenario.getAccessor().getIdResolver();
                 idResolver.saveNewId(request, id);

@@ -1,0 +1,6 @@
+drednote:
+  telegram:
+    session:
+      update-processor-type: scheduler_with_crud
+
+de.flapdoodle.mongodb.embedded.version: 5.0.5

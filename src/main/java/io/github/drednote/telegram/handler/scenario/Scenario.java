@@ -21,6 +21,15 @@ public interface Scenario<S> {
      */
     String getId();
 
+    /**
+     * Get the property associated with the current scenario. During scenario processing, some algorithms can add any
+     * property to the scenario instance.
+     *
+     * @param key string key, not null
+     * @param <T> type of property
+     * @return value of property, nullable
+     * @throws ClassCastException if the type of property isn't matched with generic type.
+     */
     @Nullable
     <T> T getProperty(String key);
 
@@ -56,8 +65,8 @@ public interface Scenario<S> {
      * <p>
      * Usually you don't have to use this method. It is for internal purpose.
      *
-     * @return an instance of {@code ScenarioAccessor<S>} that provides access to scenario details and
-     * setting opportunity
+     * @return an instance of {@code ScenarioAccessor<S>} that provides access to scenario details and setting
+     * opportunity
      */
     ScenarioAccessor<S> getAccessor();
 }

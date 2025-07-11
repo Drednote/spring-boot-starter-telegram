@@ -47,7 +47,7 @@ public class UpdateBuilder {
     }
 
     public UpdateBuilder withUser(Long id) {
-        User user = new User(id, "", false);
+        User user = new User(id, "first_name", false);
         return withUser(user);
     }
 
