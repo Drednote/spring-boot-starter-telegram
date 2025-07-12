@@ -31,8 +31,8 @@ repositories {
 }
 
 dependencies {
-    api 'org.telegram:telegrambots-longpolling:7.10.0'
-    api 'org.telegram:telegrambots-client:7.10.0'
+    api 'org.telegram:telegrambots-longpolling:9.0.0'
+    api 'org.telegram:telegrambots-client:9.0.0'
 
     api 'com.esotericsoftware:kryo-shaded:4.0.3'
     api 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
