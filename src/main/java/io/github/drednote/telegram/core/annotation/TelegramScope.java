@@ -28,7 +28,8 @@ import org.springframework.core.annotation.AliasFor;
  * <p>Usage example:
  * <pre>
  * {@code
- * TelegramScope
+ * @TelegramScope
+ * @Component
  * public class MyRequestScopedBean {
  *     // Class definition...
  * }}

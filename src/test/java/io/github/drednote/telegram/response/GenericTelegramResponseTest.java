@@ -6,7 +6,6 @@ import static org.mockito.Mockito.verify;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.UpdateUtils;
 import java.nio.charset.StandardCharsets;
@@ -87,7 +86,7 @@ class GenericTelegramResponseTest {
         DataClass object = new DataClass("1");
         GenericTelegramResponse response = new GenericTelegramResponse(object);
         response.setObjectMapper(new ObjectMapper());
-        response.setTelegramProperties(new TelegramProperties());
+        response.setSerializeJavaObjectWithJackson(true);
 
         var request = UpdateRequestUtils.createMockRequest(update);
         TelegramClient absSender = request.getTelegramClient();

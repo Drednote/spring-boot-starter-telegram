@@ -47,5 +47,5 @@ public interface TelegramRequest {
      * @return {@code true} to enforce exclusive message type mapping, {@code false} otherwise,
      * defaults to {@code false}
      */
-    boolean exclusiveMessageType();
+    boolean isExclusiveMessageType();
 }

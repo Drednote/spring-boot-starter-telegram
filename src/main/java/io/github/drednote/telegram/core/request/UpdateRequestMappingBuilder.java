@@ -196,7 +196,7 @@ public class UpdateRequestMappingBuilder {
             this.patterns = requestMapping.getPatterns().toArray(String[]::new);
             this.requestTypes = requestMapping.getRequestTypes().toArray(RequestType[]::new);
             this.messageTypes = requestMapping.getMessageTypes().toArray(MessageType[]::new);
-            this.exclusiveMessageType = requestMapping.exclusiveMessageType();
+            this.exclusiveMessageType = requestMapping.isExclusiveMessageType();
         }
     }
 }

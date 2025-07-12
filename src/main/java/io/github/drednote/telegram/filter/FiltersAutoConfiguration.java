@@ -1,7 +1,11 @@
 package io.github.drednote.telegram.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.drednote.telegram.TelegramProperties;
+import io.github.drednote.telegram.core.TelegramMessageSource;
 import io.github.drednote.telegram.datasource.permission.PermissionRepositoryAdapter;
+import io.github.drednote.telegram.filter.internal.DefaultTelegramResponseEnricher;
+import io.github.drednote.telegram.filter.internal.TelegramResponseEnricher;
 import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.NotHandledUpdateFilter;
 import io.github.drednote.telegram.filter.post.PostUpdateFilter;
@@ -11,7 +15,8 @@ import io.github.drednote.telegram.filter.pre.HasRoleRequestFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
 import io.github.drednote.telegram.handler.UpdateHandlerAutoConfiguration;
-import io.github.drednote.telegram.utils.FieldProvider;
+import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
+import java.util.Collection;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -47,7 +52,7 @@ public class FiltersAutoConfiguration {
         @Autowired(required = false) @Nullable PermissionRepositoryAdapter permissionRepositoryAdapter,
         PermissionProperties permissionProperties
     ) {
-        return new RoleFilter(FieldProvider.create(permissionRepositoryAdapter), permissionProperties);
+        return new RoleFilter(permissionRepositoryAdapter, permissionProperties);
     }
 
     @Bean
@@ -71,6 +76,15 @@ public class FiltersAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ScenarioIdPersistFilter scenarioIdUpdater() {
-      return new ScenarioIdPersistFilter();
+        return new ScenarioIdPersistFilter();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public TelegramResponseEnricher telegramResponseEnricher(
+        ObjectMapper objectMapper, TelegramProperties telegramProperties,
+        TelegramMessageSource messageSource, Collection<TelegramResponseTypesResolver> resolvers
+    ) {
+        return new DefaultTelegramResponseEnricher(objectMapper, telegramProperties, messageSource, resolvers);
     }
 }

@@ -27,6 +27,13 @@ public interface ScenarioAccessor<S> {
      */
     void setId(String id);
 
+    /**
+     * Add property to the scenario instance. Usually properties need to mark the scenario instance with the execution
+     * result or some additional config.
+     *
+     * @param key key
+     * @param value value
+     */
     void addProperty(String key, @Nullable Object value);
 
     /**

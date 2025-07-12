@@ -11,14 +11,6 @@ import io.github.drednote.telegram.core.request.UpdateRequest;
  */
 public final class NotHandledTelegramResponse extends SimpleMessageTelegramResponse {
 
-    /**
-     * The singleton instance of NotHandledTelegramResponse
-     *
-     * @deprecated instead of singleton instance use constructor.
-     */
-    @Deprecated(since = "v0.6.0", forRemoval = true)
-    public static final NotHandledTelegramResponse INSTANCE = new NotHandledTelegramResponse();
-
     public NotHandledTelegramResponse() {
         super("response.notHandled", "Unknown command or text, try something else");
     }

@@ -4,18 +4,15 @@ import java.util.Set;
 
 public class TelegramRequests {
 
-    public static TelegramRequestImpl text(String... patterns) {
-        return new TelegramRequestImpl(
-                Set.of(patterns), Set.of(RequestType.MESSAGE), Set.of(MessageType.TEXT), false);
+    public static DefaultTelegramRequest text(String... patterns) {
+        return new DefaultTelegramRequest(Set.of(patterns), Set.of(RequestType.MESSAGE), Set.of(MessageType.TEXT));
     }
 
-    public static TelegramRequestImpl command(String... patterns) {
-        return new TelegramRequestImpl(
-            Set.of(patterns), Set.of(RequestType.MESSAGE), Set.of(MessageType.COMMAND), false);
+    public static DefaultTelegramRequest command(String... patterns) {
+        return new DefaultTelegramRequest(Set.of(patterns), Set.of(RequestType.MESSAGE), Set.of(MessageType.COMMAND));
     }
 
-    public static TelegramRequestImpl callbackQuery(String... patterns) {
-        return new TelegramRequestImpl(
-            Set.of(patterns), Set.of(RequestType.CALLBACK_QUERY), Set.of(), false);
+    public static DefaultTelegramRequest callbackQuery(String... patterns) {
+        return new DefaultTelegramRequest(Set.of(patterns), Set.of(RequestType.CALLBACK_QUERY));
     }
 }

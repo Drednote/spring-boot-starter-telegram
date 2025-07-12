@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @TelegramController
  * public class MyTelegramController {
  *
- *     @TelegramRequest("hello {userId}")
+ *     @TelegramRequest("hello {userId:.*}")
  *     public void handleUserRequest(@TelegramPatternVariable("userId") String userId) {
  *         // Handle user request using the extracted userId
  *     }
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * }
  * </pre>
  * In the above example, the {@code handleUserRequest} method will be invoked when the request URL
- * pattern matches {@code "hello {userId}"}. The value of the {@code userId} pattern variable will
+ * pattern matches {@code "hello {userId:.*}"}. The value of the {@code userId} pattern variable will
  * be extracted and bound to the method parameter.
  *
  * @author Ivan Galushko

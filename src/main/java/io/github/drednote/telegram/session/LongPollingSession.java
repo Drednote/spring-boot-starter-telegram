@@ -139,7 +139,7 @@ public class LongPollingSession implements TelegramBotSession, Runnable {
     private List<Update> getUpdatesFromServer() {
         try {
             log.trace("Started request");
-            UpdateResponse response = telegramClient.getUpdates(
+            TelegramConsumeClient.UpdateResponse response = telegramClient.getUpdates(
                 telegramProperties.getToken(),
                 lastReceivedUpdate + 1,
                 sessionProperties.getLongPolling().getUpdateLimit(),

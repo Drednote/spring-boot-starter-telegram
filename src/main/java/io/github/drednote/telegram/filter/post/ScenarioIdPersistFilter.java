@@ -34,7 +34,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      * @param request the {@code UpdateRequest} containing the details of the update along with the responses.
      */
     @Override
-    public void postFilter(@NonNull UpdateRequest request) throws Exception {
+    public void conclusivePostFilter(@NonNull UpdateRequest request) throws Exception {
         List<Object> responses = request.getResponseFromTelegram();
         Scenario<?> scenario = request.getScenario();
         if (scenario != null && Boolean.TRUE.equals(scenario.getProperty(SUCCESS_EXECUTION_PROPERTY))) {
@@ -73,7 +73,7 @@ public class ScenarioIdPersistFilter implements ConclusivePostUpdateFilter {
      * @return the integer value representing the post-order of this filter in the filter chain.
      */
     @Override
-    public int getPostOrder() {
+    public int getConclusivePostOrder() {
         return FilterOrder.CONCLUSIVE_POST_FILTERS.get(this.getClass());
     }
 }

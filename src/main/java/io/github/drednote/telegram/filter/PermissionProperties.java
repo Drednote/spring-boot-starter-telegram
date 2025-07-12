@@ -68,5 +68,10 @@ public class PermissionProperties {
          * Indicates whether the role has read privileges
          */
         private boolean canRead;
+
+        /**
+         * The map of additional permissions.
+         */
+        private Map<String, Object> permissions = Map.of();
     }
 }

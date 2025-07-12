@@ -2,16 +2,12 @@ package io.github.drednote.telegram.datasource.scenario;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.github.drednote.telegram.core.request.TelegramRequestImpl;
 import io.github.drednote.telegram.core.request.TelegramRequests;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioContext.DefaultScenarioContext;
-import io.github.drednote.telegram.support.UpdateRequestUtils;
-import io.github.drednote.telegram.support.UpdateUtils;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

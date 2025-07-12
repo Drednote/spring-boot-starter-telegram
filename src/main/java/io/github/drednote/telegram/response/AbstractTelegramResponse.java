@@ -1,7 +1,6 @@
 package io.github.drednote.telegram.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.UpdateRequest;
 import io.github.drednote.telegram.handler.UpdateHandlerProperties.ParseMode;
 import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
@@ -23,7 +22,7 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
     @Nullable
     protected TelegramResponseTypesResolver resolver = null;
     @Nullable
-    protected TelegramProperties telegramProperties = null;
+    protected Boolean serializeJavaObjectWithJackson = null;
     @Nullable
     protected ObjectMapper objectMapper = null;
 
@@ -59,7 +58,6 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         return parseMode;
     }
 
-
     public void setResolver(TelegramResponseTypesResolver resolver) {
         this.resolver = resolver;
     }
@@ -69,13 +67,13 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         return resolver;
     }
 
-    public void setTelegramProperties(TelegramProperties telegramProperties) {
-        this.telegramProperties = telegramProperties;
+    public void setSerializeJavaObjectWithJackson(Boolean serializeJavaObjectWithJackson) {
+        this.serializeJavaObjectWithJackson = serializeJavaObjectWithJackson;
     }
 
     @Nullable
-    public TelegramProperties getTelegramProperties() {
-        return telegramProperties;
+    public Boolean getSerializeJavaObjectWithJackson() {
+        return serializeJavaObjectWithJackson;
     }
 
     public void setObjectMapper(ObjectMapper objectMapper) {

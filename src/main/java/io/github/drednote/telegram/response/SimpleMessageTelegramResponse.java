@@ -15,7 +15,6 @@ public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResp
 
     private final String defaultMessage;
     private final String code;
-    @Setter
     @Nullable
     private TelegramMessageSource messageSource;
 
@@ -57,5 +56,14 @@ public abstract class SimpleMessageTelegramResponse extends AbstractTelegramResp
         if (text != null) {
             sendString(text, request);
         }
+    }
+
+    @Nullable
+    public TelegramMessageSource getMessageSource() {
+        return messageSource;
+    }
+
+    public void setMessageSource(TelegramMessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 }

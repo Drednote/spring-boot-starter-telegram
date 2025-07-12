@@ -1,6 +1,8 @@
 package io.github.drednote.telegram.session;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,4 +47,12 @@ public interface TelegramConsumeClient {
         @RequestParam(value = "timeout", required = false) @Nullable Integer timeout,
         @RequestParam(value = "allowed_updates", required = false) @Nullable List<String> allowedUpdates
     );
+
+    @Getter
+    @Setter
+    class UpdateResponse {
+
+        private boolean ok;
+        private List<Update> result;
+    }
 }

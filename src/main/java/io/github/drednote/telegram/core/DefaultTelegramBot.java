@@ -1,16 +1,11 @@
 package io.github.drednote.telegram.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.drednote.telegram.TelegramProperties;
 import io.github.drednote.telegram.core.request.DefaultUpdateRequest;
 import io.github.drednote.telegram.exception.ExceptionHandler;
 import io.github.drednote.telegram.filter.UpdateFilterProvider;
+import io.github.drednote.telegram.filter.internal.TelegramResponseEnricher;
 import io.github.drednote.telegram.handler.UpdateHandler;
-import io.github.drednote.telegram.response.AbstractTelegramResponse;
-import io.github.drednote.telegram.response.SimpleMessageTelegramResponse;
 import io.github.drednote.telegram.response.TelegramResponse;
-import io.github.drednote.telegram.response.resolver.CompositeTelegramResponseTypesResolver;
-import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -43,60 +38,41 @@ public class DefaultTelegramBot implements TelegramBot {
      */
     private final Collection<UpdateHandler> updateHandlers;
     /**
-     * The object mapper for serializing and deserializing JSON
-     */
-    private final ObjectMapper objectMapper;
-    /**
      * The exception handler for handling exceptions during update processing
      */
     private final ExceptionHandler exceptionHandler;
-    /**
-     * The Telegram properties
-     */
-    private final TelegramProperties telegramProperties;
+
     /**
      * The update filter provider for managing pre-update handlers and post-update handlers filters
      */
     private final UpdateFilterProvider updateFilterProvider;
-    /**
-     * The message source for retrieving localized messages
-     */
-    private final TelegramMessageSource messageSource;
     private final TelegramClient telegramClient;
-    private final TelegramResponseTypesResolver resolver;
+    private final TelegramResponseEnricher telegramResponseEnricher;
 
     /**
      * Creates a new instance of the {@code DefaultTelegramBot} class with the provided properties and dependencies
      *
-     * @param properties           the Telegram properties, not null
      * @param updateHandlers       the collection of update handlers, not null
-     * @param objectMapper         the object mapper, not null
      * @param exceptionHandler     the exception handler, not null
      * @param updateFilterProvider the update filter provider, not null
-     * @param messageSource        the message source, not null
      */
     public DefaultTelegramBot(
-        TelegramProperties properties, Collection<UpdateHandler> updateHandlers,
-        ObjectMapper objectMapper, ExceptionHandler exceptionHandler,
-        UpdateFilterProvider updateFilterProvider, TelegramMessageSource messageSource,
-        TelegramClient telegramClient, Collection<TelegramResponseTypesResolver> resolvers
+        Collection<UpdateHandler> updateHandlers, ExceptionHandler exceptionHandler,
+        UpdateFilterProvider updateFilterProvider, TelegramClient telegramClient,
+        TelegramResponseEnricher telegramResponseEnricher
     ) {
         Assert.required(updateHandlers, "Collection of UpdateHandlers");
-        Assert.required(objectMapper, "ObjectMapper");
         Assert.required(exceptionHandler, "ExceptionHandler");
         Assert.required(updateFilterProvider, "UpdateFilterProvider");
-        Assert.required(messageSource, "TelegramMessageSource");
         Assert.required(telegramClient, "TelegramClient");
+        Assert.required(telegramResponseEnricher, "TelegramResponseEnricher");
 
-        this.resolver = new CompositeTelegramResponseTypesResolver(resolvers);
+        this.telegramResponseEnricher = telegramResponseEnricher;
         this.telegramClient = telegramClient;
         this.updateHandlers = updateHandlers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
-        this.objectMapper = objectMapper;
         this.exceptionHandler = exceptionHandler;
-        this.telegramProperties = properties;
         this.updateFilterProvider = updateFilterProvider;
-        this.messageSource = messageSource;
     }
 
     /**
@@ -126,7 +102,7 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private void doReceive(DefaultUpdateRequest request) {
+    protected void doReceive(DefaultUpdateRequest request) {
         Mono.empty()
             .then(Mono.defer(() -> doPreFilter(request)))
             .then(Mono.defer(() -> doHandle(request)))
@@ -149,7 +125,7 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private Mono<Void> doPreFilter(DefaultUpdateRequest request) {
+    protected Mono<Void> doPreFilter(DefaultUpdateRequest request) {
         return Flux.fromIterable(updateFilterProvider.getPreFilters(request))
             .takeWhile(filter -> request.getResponse() == null)
             .filter(filter -> filter.matches(request))
@@ -165,7 +141,7 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private Mono<Void> doPostFilter(DefaultUpdateRequest request) {
+    protected Mono<Void> doPostFilter(DefaultUpdateRequest request) {
         return Flux.fromIterable(updateFilterProvider.getPostFilters(request))
             .filter(filter -> filter.matches(request))
             .concatMap(filter -> {
@@ -180,12 +156,12 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private Mono<Void> doConclusivePostFilter(DefaultUpdateRequest request) {
+    protected Mono<Void> doConclusivePostFilter(DefaultUpdateRequest request) {
         return Flux.fromIterable(updateFilterProvider.getConclusivePostFilters(request))
             .filter(filter -> filter.matches(request))
             .concatMap(filter -> {
                 log.trace("Executing conclusive post filter -> {}", filter);
-                return filter.postFilterReactive(request);
+                return filter.conclusivePostFilterReactive(request);
             })
             .then();
     }
@@ -196,7 +172,7 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private Mono<Void> doHandle(DefaultUpdateRequest request) {
+    protected Mono<Void> doHandle(DefaultUpdateRequest request) {
         return Flux.fromIterable(updateHandlers)
             .takeWhile(h -> request.getResponse() == null)
             .concatMap(handler -> handler.onUpdateReactive(request))
@@ -209,24 +185,10 @@ public class DefaultTelegramBot implements TelegramBot {
      *
      * @param request the update request
      */
-    private Mono<Void> doAnswer(DefaultUpdateRequest request) {
+    protected Mono<Void> doAnswer(DefaultUpdateRequest request) {
         TelegramResponse response = request.getResponse();
         if (response != null) {
-            if (response instanceof SimpleMessageTelegramResponse simpleMessageTelegramResponse) {
-                simpleMessageTelegramResponse.setMessageSource(messageSource);
-            }
-            if (response instanceof AbstractTelegramResponse abstractTelegramResponse) {
-                if (abstractTelegramResponse.getParseMode() == null) {
-                    abstractTelegramResponse.setParseMode(telegramProperties.getUpdateHandler().getParseMode());
-                }
-                abstractTelegramResponse.setResolver(resolver);
-                if (abstractTelegramResponse.getTelegramProperties() == null) {
-                    abstractTelegramResponse.setTelegramProperties(telegramProperties);
-                }
-                if (abstractTelegramResponse.getObjectMapper() == null) {
-                    abstractTelegramResponse.setObjectMapper(objectMapper);
-                }
-            }
+            telegramResponseEnricher.enrich(response);
             return response.processReactive(request);
         } else {
             return Mono.empty();
@@ -239,7 +201,7 @@ public class DefaultTelegramBot implements TelegramBot {
      * @param request the update request
      * @param e       the exception thrown
      */
-    private Mono<Void> handleException(DefaultUpdateRequest request, Throwable e) {
+    protected Mono<Void> handleException(DefaultUpdateRequest request, Throwable e) {
         request.setError(e);
         if (!(e instanceof TelegramApiException)) {
             request.setResponse(null);

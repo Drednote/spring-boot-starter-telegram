@@ -1,4 +1,4 @@
-package io.github.drednote.telegram.handler.controller.annotation;
+package io.github.drednote.telegram.core.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

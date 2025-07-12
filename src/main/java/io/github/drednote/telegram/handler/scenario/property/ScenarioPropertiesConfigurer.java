@@ -6,7 +6,7 @@ import io.github.drednote.telegram.core.annotation.BetaApi;
 import io.github.drednote.telegram.core.invoke.InvocableHandlerMethod;
 import io.github.drednote.telegram.core.request.RequestType;
 import io.github.drednote.telegram.core.request.TelegramRequest;
-import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.core.request.DefaultTelegramRequest;
 import io.github.drednote.telegram.handler.scenario.action.Action;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.DefaultScenarioTransitionConfigurer;
@@ -28,7 +28,6 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.statemachine.config.model.TransitionData;
 import org.springframework.web.method.HandlerMethod;
 
 @BetaApi
@@ -196,7 +195,7 @@ public class ScenarioPropertiesConfigurer<S> {
         Assert.required(pattern, "At least one pattern");
         Assert.required(requestType, "At least one request type");
 
-        return new TelegramRequestImpl(
+        return new DefaultTelegramRequest(
             pattern, requestType, request.getMessageTypes(), request.isExclusiveMessageType()
         );
     }

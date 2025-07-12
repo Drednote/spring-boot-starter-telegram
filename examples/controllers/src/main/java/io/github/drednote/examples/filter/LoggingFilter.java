@@ -35,7 +35,7 @@ public class LoggingFilter implements PriorityPreUpdateFilter, ConclusivePostUpd
 
     @SneakyThrows
     @Override
-    public void postFilter(@NonNull UpdateRequest request) {
+    public void conclusivePostFilter(@NonNull UpdateRequest request) {
         if (startTime != null) {
             User user = request.getUser();
             log.info(

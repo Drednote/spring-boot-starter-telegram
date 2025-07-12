@@ -39,7 +39,7 @@ public class PostFilterOrderComparator extends FilterOrderComparator {
         if (obj instanceof PostUpdateFilter filter) {
             return filter.getPostOrder();
         } else if (obj instanceof ConclusivePostUpdateFilter filter) {
-            return filter.getPostOrder();
+            return filter.getConclusivePostOrder();
         }
         return null;
     }

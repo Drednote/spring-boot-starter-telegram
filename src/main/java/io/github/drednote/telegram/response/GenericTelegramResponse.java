@@ -117,9 +117,7 @@ public class GenericTelegramResponse extends AbstractTelegramResponse {
             responseMessage = request.getTelegramClient().execute(botApiMethod);
         } else if (isSendBotApiMethod(request.getTelegramClient())) {
             responseMessage = tryToSendBotApiMethod(request.getTelegramClient());
-        } else if (telegramProperties != null
-                   && objectMapper != null
-                   && telegramProperties.getUpdateHandler().isSerializeJavaObjectWithJackson()) {
+        } else if (objectMapper != null && Boolean.TRUE.equals(serializeJavaObjectWithJackson)) {
             try {
                 String stringResponse = objectMapper.writeValueAsString(response);
                 String truncated = truncateQuotes(stringResponse);

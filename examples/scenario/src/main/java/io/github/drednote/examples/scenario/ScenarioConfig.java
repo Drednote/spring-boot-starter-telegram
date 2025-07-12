@@ -2,7 +2,7 @@ package io.github.drednote.examples.scenario;
 
 import io.github.drednote.telegram.core.request.MessageType;
 import io.github.drednote.telegram.core.request.RequestType;
-import io.github.drednote.telegram.core.request.TelegramRequestImpl;
+import io.github.drednote.telegram.core.request.DefaultTelegramRequest;
 import io.github.drednote.telegram.datasource.DataSourceAdapter;
 import io.github.drednote.telegram.datasource.scenario.jpa.JpaScenarioRepositoryAdapter;
 import io.github.drednote.telegram.handler.scenario.configurer.config.ScenarioConfigConfigurer;
@@ -51,10 +51,10 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
     }
 
     @NotNull
-    private static TelegramRequestImpl getTelegramRequest(
+    private static DefaultTelegramRequest getTelegramRequest(
         String pattern, RequestType requestType, @Nullable MessageType messageType
     ) {
-        return new TelegramRequestImpl(Set.of(pattern), Set.of(requestType),
+        return new DefaultTelegramRequest(Set.of(pattern), Set.of(requestType),
             messageType != null ? Set.of(messageType) : Set.of(), false);
     }
 

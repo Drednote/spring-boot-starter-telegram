@@ -33,6 +33,11 @@ public interface Scenario<S> {
     @Nullable
     <T> T getProperty(String key);
 
+    /**
+     * Get the instance of the statemachine on which scenario is based.
+     *
+     * @return the instance of the statemachine
+     */
     StateMachine<S, ScenarioEvent> getStateMachine();
 
     /**
