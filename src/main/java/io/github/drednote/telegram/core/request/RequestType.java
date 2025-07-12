@@ -125,8 +125,8 @@ public enum RequestType {
      */
     CHAT_BOOST_REMOVED,
     /**
-     * The bot was connected to or disconnected from a business account, or a user edited an
-     * existing connection with the bot.
+     * The bot was connected to or disconnected from a business account, or a user edited an existing connection with
+     * the bot.
      *
      * @see Update#getBusinessConnection()
      */
@@ -145,6 +145,8 @@ public enum RequestType {
     PAID_MEDIA_PURCHASED,
     /**
      * Represents me a chat member updated update
+     *
+     * @see Update#getMyChatMember()
      */
     MY_CHAT_MEMBER_UPDATED
 }

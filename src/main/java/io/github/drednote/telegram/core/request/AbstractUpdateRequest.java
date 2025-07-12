@@ -246,8 +246,11 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
         if (message.hasVoice()) {
             types.add(MessageType.VOICE);
         }
-        if (message.getGame() != null) {
+        if (message.hasGame()) {
             types.add(MessageType.GAME);
+        }
+        if (message.hasInvoice()) {
+            types.add(MessageType.INVOICE);
         }
         if (message.hasSuccessfulPayment()) {
             types.add(MessageType.SUCCESSFUL_PAYMENT);
@@ -261,8 +264,41 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
         if (message.hasDice()) {
             types.add(MessageType.DICE);
         }
+        if (message.hasStory()) {
+            types.add(MessageType.STORY);
+        }
+        if (message.getExternalReplyInfo() != null) {
+            types.add(MessageType.EXTERNAL_REPLY_INFO);
+        }
+        if (message.getForwardOrigin() != null) {
+            types.add(MessageType.FORWARD_ORIGIN);
+        }
+        if (message.getQuote() != null) {
+            types.add(MessageType.QUOTE);
+        }
+        if (message.getGiveaway() != null) {
+            types.add(MessageType.GIVEAWAY);
+        }
+        if (message.getGiveawayWinners() != null) {
+            types.add(MessageType.GIVEAWAY_WINNERS);
+        }
+        if (message.hasReplyToStory()) {
+            types.add(MessageType.REPLY_TO_STORY);
+        }
+        if (message.hasBoostAdded()) {
+            types.add(MessageType.BOOST_ADDED);
+        }
+        if (message.hasPaidMedia()) {
+            types.add(MessageType.PAID_MEDIA);
+        }
+
         parseChatChanges(types);
         parseServiceMessage(types);
+
+        if (types.isEmpty()) {
+            types.add(MessageType.UNKNOWN);
+        }
+
         return types;
     }
 
@@ -274,7 +310,11 @@ public abstract class AbstractUpdateRequest implements UpdateRequest, UpdateRequ
             message.getForumTopicCreated(), message.getForumTopicClosed(),
             message.getForumTopicReopened(), message.getForumTopicEdited(),
             message.getGeneralForumTopicHidden(), message.getGeneralForumTopicUnhidden(),
-            message.getWriteAccessAllowed(), message.getUserShared(), message.getChatShared()
+            message.getWriteAccessAllowed(), message.getUserShared(), message.getChatShared(),
+            message.getGiveawayCreated(), message.getGiveawayCompleted(), message.getBoostAdded(),
+            message.getChatBackgroundSet(), message.getRefundedPayment(), message.getGift(),
+            message.getUniqueGift(), message.getPaidMessagePriceChanged()
+
         ) != null) {
             types.add(MessageType.SERVICE_MESSAGE);
         }
