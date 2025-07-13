@@ -51,8 +51,8 @@ public class DefaultScenarioConfigConfigurer<S> implements ScenarioConfigConfigu
         return new DefaultScenarioVerifierConfigurer<>(builder, configurer.withVerifier());
     }
 
-//    @Override
-//    public ScenarioMonitoringConfigurer<S> withMonitoring() throws Exception {
-//        return new DefaultScenarioMonitoringConfigurer<>(builder, configurer.withMonitoring());
-//    }
+    @Override
+    public ScenarioMonitoringConfigurer<S> withMonitoring() throws Exception {
+        return new DefaultScenarioMonitoringConfigurer<>(builder, configurer.withMonitoring());
+    }
 }

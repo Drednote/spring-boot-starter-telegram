@@ -30,7 +30,7 @@ import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryCont
 import io.github.drednote.telegram.handler.scenario.property.ScenarioFactoryResolver;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurer;
-import java.util.Set;
+import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -42,7 +42,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.lang.Nullable;
-import org.springframework.statemachine.config.StateMachineBuilder;
 
 @AutoConfiguration
 @ConditionalOnProperty(
@@ -109,7 +108,7 @@ public class ScenarioAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ScenarioFactoryBeanPostProcessor scenarioFactoryBeanPostProcessor(ScenarioFactoryContainer container) {
+    public static ScenarioFactoryBeanPostProcessor scenarioFactoryBeanPostProcessor(ScenarioFactoryContainer container) {
         return new ScenarioFactoryBeanPostProcessor(container);
     }
 
@@ -127,15 +126,15 @@ public class ScenarioAutoConfiguration {
         @Autowired(required = false) @Nullable ScenarioRepositoryAdapter<S> scenarioRepositoryAdapter,
         ScenarioFactoryResolver scenarioFactoryResolver
     ) throws Exception {
-        ScenarioBuilder<S> builder = new ScenarioBuilder<>(StateMachineBuilder.builder());
+        ScenarioBuilder<S> builder = new ScenarioBuilder<>(ScenarioStateMachineBuilder.builder());
 
         ScenarioPropertiesConfigurer<S> propertiesConfigurer = new ScenarioPropertiesConfigurer<>(
             builder, scenarioProperties, scenarioFactoryResolver);
-        Set<S> states = propertiesConfigurer.collectStates();
+        propertiesConfigurer.collectStates();
 
         adapter.onConfigure(new DefaultScenarioConfigConfigurer<>(builder));
-        adapter.onConfigure(new DefaultScenarioStateConfigurer<>(builder, states));
         adapter.onConfigure(new DefaultScenarioTransitionConfigurer<>(builder));
+        adapter.onConfigure(new DefaultScenarioStateConfigurer<>(builder));
 
         propertiesConfigurer.configure();
 

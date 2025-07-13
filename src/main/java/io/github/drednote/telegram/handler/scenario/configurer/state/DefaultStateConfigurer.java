@@ -14,16 +14,14 @@ import org.springframework.statemachine.config.configurers.StateConfigurer.Histo
 public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
 
     private final org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer;
-    private final Set<S> states;
     private final ScenarioBuilder<S> builder;
 
     public DefaultStateConfigurer(
         ScenarioBuilder<S> builder,
-        org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer, Set<S> states
+        org.springframework.statemachine.config.configurers.StateConfigurer<S, ScenarioEvent> configurer
     ) {
         this.builder = builder;
         this.configurer = configurer;
-        this.states = states;
     }
 
     @Override
@@ -31,8 +29,8 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
         configurer.initial(makeState(initial));
         builder.setInitialState(makeState(initial));
 
-        configurer.states(states);
-        states.clear();
+        configurer.states(builder.getStates());
+        builder.getStates().clear();
 
         return this;
     }
@@ -42,8 +40,8 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
         configurer.initial(makeState(initial), makeAction(action));
         builder.setInitialState(makeState(initial));
 
-        configurer.states(states);
-        states.clear();
+        configurer.states(builder.getStates());
+        builder.getStates().clear();
 
         return this;
     }
@@ -195,7 +193,7 @@ public class DefaultStateConfigurer<S> implements StateConfigurer<S> {
 
     @Override
     public ScenarioStateConfigurer<S> and() throws Exception {
-        return new DefaultScenarioStateConfigurer<>(builder, configurer.and(), states);
+        return new DefaultScenarioStateConfigurer<>(builder, configurer.and());
     }
 
     private org.springframework.statemachine.action.Action<S, ScenarioEvent> makeAction(

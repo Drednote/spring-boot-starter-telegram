@@ -21,6 +21,7 @@ public class DefaultScenarioForkTransitionConfigurer<S>
         ScenarioBuilder<S> builder,
         ForkTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
+        super(builder);
         this.builder = builder;
         this.configurer = configurer;
     }

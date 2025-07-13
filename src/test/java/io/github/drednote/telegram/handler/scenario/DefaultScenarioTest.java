@@ -24,30 +24,35 @@ import io.github.drednote.telegram.handler.scenario.factory.ScenarioFactory;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.persist.InMemoryScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
+import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineBuilder;
+import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineBuilder.ScenarioMachineBuilder;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.builder.UpdateBuilder;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.statemachine.config.StateMachineBuilder;
+import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
+import org.springframework.statemachine.monitor.AbstractStateMachineMonitor;
+import org.springframework.statemachine.transition.Transition;
 
 @Slf4j
 public class DefaultScenarioTest {
 
     AtomicReference<Scenario<?>> atomicScenario = new AtomicReference<>();
+    AtomicReference<StateMachine<?, ?>> atomicStateMachine = new AtomicReference<>();
 
     @Test
     void shouldCorrectConfigureScenario() throws Throwable {
         TestScenarioAdapter adapter = new TestScenarioAdapter();
-        ScenarioBuilder<State> builder = new ScenarioBuilder<>(StateMachineBuilder.builder());
-        adapter.onConfigure(new DefaultScenarioStateConfigurer<>(builder, new HashSet<>()));
-        adapter.onConfigure(new DefaultScenarioTransitionConfigurer<>(builder));
+        ScenarioMachineBuilder<State> machineBuilder = ScenarioStateMachineBuilder.builder();
+        ScenarioBuilder<State> builder = new ScenarioBuilder<>(machineBuilder);
         adapter.onConfigure(new DefaultScenarioConfigConfigurer<>(builder));
+        adapter.onConfigure(new DefaultScenarioTransitionConfigurer<>(builder));
+        adapter.onConfigure(new DefaultScenarioStateConfigurer<>(builder));
         ScenarioData<State> data = builder.build();
 
         ScenarioUpdateHandlerPopular<State> handlerPopular = getPopular(data.factory());
@@ -56,8 +61,10 @@ public class DefaultScenarioTest {
             UpdateBuilder._default("hello Ivan").message());
         handlerPopular.preFilter(request);
         Scenario<?> scenario = request.getScenario();
-        atomicScenario.compareAndSet(null, scenario);
         assertThat(scenario).isNotNull();
+
+        atomicScenario.compareAndSet(null, scenario);
+        atomicStateMachine.set(scenario.getStateMachine());
 
         ScenarioEventResult<?, ScenarioEvent> result = scenario.sendEvent(request);
         assertThat(result).isNotNull();
@@ -98,9 +105,18 @@ public class DefaultScenarioTest {
 
         @Override
         public void onConfigure(ScenarioConfigConfigurer<State> configurer) throws Exception {
-//            configurer.withMonitoring().monitor((scenario, transition, duration) -> {
-//                assertThat(atomicScenario.get()).isEqualTo(scenario);
-//            });
+            configurer.withMonitoring().monitor((scenario, transition) -> {
+                assertThat(atomicScenario.get()).isEqualTo(scenario);
+            });
+            configurer.withMonitoring().monitor(new AbstractStateMachineMonitor<>() {
+                @Override
+                public void transition(StateMachine<State, ScenarioEvent> stateMachine,
+                    Transition<State, ScenarioEvent> transition, long duration) {
+                    if (transition.getSource() != null) {
+                        assertThat(atomicStateMachine.get()).isEqualTo(stateMachine);
+                    }
+                }
+            });
         }
 
         @Override

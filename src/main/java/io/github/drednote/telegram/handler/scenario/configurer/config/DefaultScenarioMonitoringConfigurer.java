@@ -2,9 +2,9 @@ package io.github.drednote.telegram.handler.scenario.configurer.config;
 
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
-import io.github.drednote.telegram.handler.scenario.spy.DelegateStateMachineMonitor;
 import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineMonitor;
 import org.springframework.statemachine.config.configurers.MonitoringConfigurer;
+import org.springframework.statemachine.monitor.StateMachineMonitor;
 
 public class DefaultScenarioMonitoringConfigurer<S> implements ScenarioMonitoringConfigurer<S> {
 
@@ -12,7 +12,7 @@ public class DefaultScenarioMonitoringConfigurer<S> implements ScenarioMonitorin
     private final MonitoringConfigurer<S, ScenarioEvent> configurer;
 
     public DefaultScenarioMonitoringConfigurer(
-         ScenarioBuilder<S> builder, MonitoringConfigurer<S, ScenarioEvent> configurer
+        ScenarioBuilder<S> builder, MonitoringConfigurer<S, ScenarioEvent> configurer
     ) {
         this.configurer = configurer;
         this.builder = builder;
@@ -20,7 +20,13 @@ public class DefaultScenarioMonitoringConfigurer<S> implements ScenarioMonitorin
 
     @Override
     public ScenarioMonitoringConfigurer<S> monitor(ScenarioStateMachineMonitor<S> monitor) {
-        configurer.monitor(new DelegateStateMachineMonitor<>(monitor));
+        builder.addMonitor(monitor);
+        return this;
+    }
+
+    @Override
+    public ScenarioMonitoringConfigurer<S> monitor(StateMachineMonitor<S, ScenarioEvent> monitor) {
+        configurer.monitor(monitor);
         return this;
     }
 

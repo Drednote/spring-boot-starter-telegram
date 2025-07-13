@@ -9,14 +9,15 @@ import io.github.drednote.telegram.core.request.UpdateRequestMapping;
 import io.github.drednote.telegram.core.request.UpdateRequestMappingAccessor;
 import io.github.drednote.telegram.handler.scenario.DefaultScenario;
 import io.github.drednote.telegram.handler.scenario.action.ActionContext;
-import io.github.drednote.telegram.handler.scenario.configurer.state.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder.ScenarioData;
+import io.github.drednote.telegram.handler.scenario.configurer.state.DefaultScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.state.StateConfigurer;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.factory.ScenarioIdResolver;
 import io.github.drednote.telegram.handler.scenario.persist.ScenarioPersister;
 import io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurerTest.TestScenarioFactory;
+import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineBuilder;
 import io.github.drednote.telegram.support.UpdateRequestUtils;
 import io.github.drednote.telegram.support.builder.UpdateBuilder;
 import java.util.Set;
@@ -28,7 +29,6 @@ import org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAut
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.statemachine.StateMachine;
-import org.springframework.statemachine.config.StateMachineBuilder;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
 import org.springframework.test.context.ActiveProfiles;
@@ -53,15 +53,15 @@ class ScenarioPropertiesConfigurerTest {
             "io.github.drednote.telegram.handler.scenario.property.ScenarioPropertiesConfigurerTest$TestScenarioFactory#name(ActionContext)")).isNotNull();
         assertThat(scenarioFactoryContainer.resolveAction("test_name")).isNotNull();
 
-        ScenarioBuilder<Object> scenarioBuilder = new ScenarioBuilder<>(StateMachineBuilder.builder());
+        ScenarioBuilder<Object> scenarioBuilder = new ScenarioBuilder<>(ScenarioStateMachineBuilder.builder());
 
         ScenarioPropertiesConfigurer<Object> configurer = new ScenarioPropertiesConfigurer<>(scenarioBuilder,
             scenarioProperties,
             scenarioFactoryContainer);
-        Set<Object> states = configurer.collectStates();
+        configurer.collectStates();
 
         DefaultScenarioStateConfigurer<Object> scenarioStateConfigurer = new DefaultScenarioStateConfigurer<>(
-            scenarioBuilder, states);
+            scenarioBuilder);
         StateConfigurer<Object> stateConfigurer = scenarioStateConfigurer.withStates();
         stateConfigurer.initial(StateEnum.INITIAL);
         configurer.configure();

@@ -1,5 +1,7 @@
 package io.github.drednote.telegram.handler.scenario.spy;
 
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import java.util.Collection;
 import java.util.UUID;
 import org.springframework.beans.factory.BeanFactory;
@@ -15,7 +17,9 @@ import org.springframework.statemachine.state.PseudoState;
 import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.transition.Transition;
 
-public class ScenarioStateMachineFactory<S, E> extends ObjectStateMachineFactory<S, E> {
+public class ScenarioStateMachineFactory<S> extends ObjectStateMachineFactory<S, ScenarioEvent> {
+
+    private final ScenarioBuilder<S> scenarioBuilder;
 
     /**
      * Instantiates a new abstract state machine factory.
@@ -23,20 +27,26 @@ public class ScenarioStateMachineFactory<S, E> extends ObjectStateMachineFactory
      * @param defaultStateMachineModel the default state machine model
      * @param stateMachineModelFactory the state machine model factory
      */
-    public ScenarioStateMachineFactory(StateMachineModel<S, E> defaultStateMachineModel,
-        StateMachineModelFactory<S, E> stateMachineModelFactory) {
+    public ScenarioStateMachineFactory(
+        StateMachineModel<S, ScenarioEvent> defaultStateMachineModel,
+        StateMachineModelFactory<S, ScenarioEvent> stateMachineModelFactory, ScenarioBuilder<S> scenarioBuilder
+    ) {
         super(defaultStateMachineModel, stateMachineModelFactory);
+        this.scenarioBuilder = scenarioBuilder;
     }
 
     @Override
-    protected StateMachine<S, E> buildStateMachineInternal(Collection<State<S, E>> states,
-        Collection<Transition<S, E>> transitions, State<S, E> initialState, Transition<S, E> initialTransition,
-        Message<E> initialEvent, ExtendedState extendedState, PseudoState<S, E> historyState,
+    protected StateMachine<S, ScenarioEvent> buildStateMachineInternal(
+        Collection<State<S, ScenarioEvent>> states, Collection<Transition<S, ScenarioEvent>> transitions,
+        State<S, ScenarioEvent> initialState, Transition<S, ScenarioEvent> initialTransition,
+        Message<ScenarioEvent> initialEvent, ExtendedState extendedState, PseudoState<S, ScenarioEvent> historyState,
         Boolean contextEventsEnabled, BeanFactory beanFactory, String beanName, String machineId, UUID uuid,
-        StateMachineModel<S, E> stateMachineModel) {
-        ScenarioStateMachine<S, E> machine = new ScenarioStateMachine<>(states, transitions, initialState,
-            initialTransition, initialEvent,
-            extendedState, uuid);
+        StateMachineModel<S, ScenarioEvent> stateMachineModel
+    ) {
+        ScenarioStateMachine<S> machine = new ScenarioStateMachine<>(
+            states, transitions, initialState, initialTransition, initialEvent,
+            extendedState, uuid, scenarioBuilder.getMonitor()
+        );
         machine.setId(machineId);
         machine.setHistoryState(historyState);
         machine.setTransitionConflightPolicy(stateMachineModel.getConfigurationData().getTransitionConflictPolicy());

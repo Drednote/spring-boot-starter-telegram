@@ -59,11 +59,11 @@ public interface ScenarioConfigConfigurer<S> {
      */
     ScenarioVerifierConfigurer<S> withVerifier() throws Exception;
 
-//    /**
-//     * Gets a configurer for state machine monitoring.
-//     *
-//     * @return {@link ScenarioMonitoringConfigurer} for chaining
-//     * @throws Exception if configuration error happens
-//     */
-//    ScenarioMonitoringConfigurer<S> withMonitoring() throws Exception;
+    /**
+     * Gets a configurer for state machine monitoring.
+     *
+     * @return {@link ScenarioMonitoringConfigurer} for chaining
+     * @throws Exception if configuration error happens
+     */
+    ScenarioMonitoringConfigurer<S> withMonitoring() throws Exception;
 }

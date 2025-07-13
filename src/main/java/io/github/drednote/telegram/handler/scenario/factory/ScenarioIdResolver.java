@@ -49,7 +49,7 @@ public interface ScenarioIdResolver {
 
     /**
      * @param ids        the list of possible ids. Can be empty.
-     * @param fallbackId the default id that stores in the database or in memory. Never null.
+     * @param fallbackId the default id that stores in the database or in memory. Can be null if nothing is found.
      */
     record ScenarioIdData(Set<String> ids, @Nullable String fallbackId) {}
 }
