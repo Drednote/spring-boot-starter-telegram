@@ -9,6 +9,18 @@ import java.util.Map;
 import org.springframework.lang.Nullable;
 import org.springframework.statemachine.StateContext;
 
+/**
+ * A delegate implementation of the {@link org.springframework.statemachine.action.Action} interface, allowing the
+ * wrapping of any {@link Action} with customizable properties and error handling.
+ * <p>
+ * The {@code DelegateAction} executes a wrapped action while managing associated properties and handling errors
+ * according to the specified execution context.
+ * <p>
+ * The {@code props} map allows passing additional context or parameters to the delegated action.
+ *
+ * @param <S> the type of state in the state machine
+ * @author Ivan Galushko
+ */
 public class DelegatePropertiesAction<S> implements
     org.springframework.statemachine.action.Action<S, ScenarioEvent> {
 
@@ -16,6 +28,14 @@ public class DelegatePropertiesAction<S> implements
     private final Map<String, Object> props;
     private final Map<String, Object> properties;
 
+    /**
+     * Constructs a new {@code DelegatePropertiesAction} with the specified delegate action and optional properties.
+     *
+     * @param delegate   the action to delegate to; must not be null
+     * @param props      optional properties to pass to the delegate action; can be null
+     * @param properties optional properties to pass to the scenario instance; can be null
+     * @throws IllegalArgumentException if {@code delegate} is null
+     */
     public DelegatePropertiesAction(
         Action<S> delegate, @Nullable Map<String, Object> props, @Nullable Map<String, Object> properties
     ) {
@@ -26,6 +46,15 @@ public class DelegatePropertiesAction<S> implements
         this.props = props == null ? new HashMap<>() : props;
     }
 
+    /**
+     * Executes the delegate action within an error-handling context.
+     * <p>
+     * Wraps the execution in a lambda passed to the {@link Actions#withErrorHandling} utility, which ensures exceptions
+     * are properly managed and the response is set accordingly.
+     * </p>
+     *
+     * @param context the state context providing the current state and event
+     */
     @Override
     public void execute(StateContext<S, ScenarioEvent> context) {
         ScenarioEvent event = context.getEvent();

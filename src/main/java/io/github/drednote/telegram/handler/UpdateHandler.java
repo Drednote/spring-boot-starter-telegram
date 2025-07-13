@@ -48,6 +48,17 @@ public interface UpdateHandler {
      */
     void onUpdate(@NonNull UpdateRequest request) throws Exception;
 
+    /**
+     * Default method to handle an update request reactively.
+     * <p>
+     * Wraps the synchronous {@link #onUpdate(UpdateRequest)} method into a reactive {@link Mono<Void>}. This
+     * implementation allows non-blocking processing of update requests within reactive streams.
+     * <p>
+     * Note: Any exceptions thrown by {@code onUpdate} will propagate downstream as error signals.
+     *
+     * @param request the update request to process
+     * @return a Mono representing the completion of the update operation
+     */
     default Mono<Void> onUpdateReactive(UpdateRequest request) {
         return Mono.fromCallable(() -> {
             onUpdate(request);

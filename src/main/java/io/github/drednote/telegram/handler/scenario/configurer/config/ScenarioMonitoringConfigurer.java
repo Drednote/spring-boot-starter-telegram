@@ -4,6 +4,12 @@ import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import io.github.drednote.telegram.handler.scenario.spy.ScenarioStateMachineMonitor;
 import org.springframework.statemachine.monitor.StateMachineMonitor;
 
+/**
+ * Base {@code ScenarioMonitoringConfigurer} interface for configuring scenario monitors.
+ *
+ * @param <S> the type of state
+ * @author Ivan Galushko
+ */
 public interface ScenarioMonitoringConfigurer<S> extends ScenarioConfigConfigurerBuilder<S> {
 
     /**

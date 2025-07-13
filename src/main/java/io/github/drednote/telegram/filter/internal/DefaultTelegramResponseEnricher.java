@@ -12,6 +12,26 @@ import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolv
 import io.github.drednote.telegram.utils.Assert;
 import java.util.Collection;
 
+/**
+ * Default implementation of {@link TelegramResponseEnricher} that enriches {@link TelegramResponse} instances with
+ * values derived from application configuration and dependencies.
+ * <p>
+ * This implementation handles multiple response types and injects:
+ * <ul>
+ *   <li>{@link TelegramMessageSource} — for localizable messages (used in {@link SimpleMessageTelegramResponse})</li>
+ *   <li>{@code parseMode} — from {@link TelegramProperties}</li>
+ *   <li>{@link ObjectMapper} — for object serialization in responses</li>
+ *   <li>{@link TelegramResponseTypesResolver} — to resolve response types</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * This class is typically used before dispatching a response back to Telegram,
+ * ensuring that all dynamic or required fields are filled automatically.
+ *
+ * @author Ivan Galushko
+ * @implNote If you modify the enrichment logic, make sure to reflect changes in {@link TelegramResponseHelper}.
+ */
 public class DefaultTelegramResponseEnricher implements TelegramResponseEnricher {
 
     /**
@@ -29,17 +49,21 @@ public class DefaultTelegramResponseEnricher implements TelegramResponseEnricher
     private final TelegramResponseTypesResolver resolver;
 
     /**
-     * @param objectMapper       the object mapper, not null
-     * @param telegramProperties the Telegram properties, not null
-     * @param messageSource      The TelegramMessageSource instance for retrieving localized messages
-     * @param resolvers          resolvers
+     * Constructs a new instance of {@link DefaultTelegramResponseEnricher}.
+     *
+     * @param objectMapper       the Jackson {@link ObjectMapper} for serializing objects
+     * @param telegramProperties configuration properties for Telegram
+     * @param messageSource      source for localized message resolution
+     * @param resolvers          collection of {@link TelegramResponseTypesResolver} implementations, maybe empty
      */
     public DefaultTelegramResponseEnricher(
         ObjectMapper objectMapper, TelegramProperties telegramProperties,
         TelegramMessageSource messageSource, Collection<TelegramResponseTypesResolver> resolvers
     ) {
         Assert.required(objectMapper, "ObjectMapper");
+        Assert.required(telegramProperties, "TelegramProperties");
         Assert.required(messageSource, "TelegramMessageSource");
+        Assert.required(resolvers, "Collection of TelegramResponseTypesResolver");
 
         this.objectMapper = objectMapper;
         this.telegramProperties = telegramProperties;
@@ -48,8 +72,11 @@ public class DefaultTelegramResponseEnricher implements TelegramResponseEnricher
     }
 
     /**
-     * @param telegramResponse response to Telegram
-     * @implNote When change the algorithm, remember to change {@link TelegramResponseHelper}.
+     * Enriches a {@link TelegramResponse} instance by populating required dependencies and default values.
+     * <p>
+     * Handles both {@link SimpleMessageTelegramResponse} and {@link AbstractTelegramResponse} hierarchies.
+     *
+     * @param telegramResponse the response to be enriched
      */
     @Override
     public void enrich(TelegramResponse telegramResponse) {

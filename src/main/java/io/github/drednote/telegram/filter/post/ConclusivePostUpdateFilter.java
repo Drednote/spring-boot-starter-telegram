@@ -33,6 +33,17 @@ public interface ConclusivePostUpdateFilter extends UpdateFilterMatcher {
      */
     void conclusivePostFilter(@NonNull UpdateRequest request) throws Exception;
 
+    /**
+     * Executes a conclusive post-processing filter in a reactive (non-blocking) manner.
+     * <p>
+     * This method wraps the synchronous {@link #conclusivePostFilter(UpdateRequest)} call inside a {@link Mono} using
+     * {@code Mono.fromRunnable}, enabling integration into reactive pipelines. Subclasses can override this method to
+     * implement custom reactive post-processing logic.
+     * </p>
+     *
+     * @param request the {@link UpdateRequest} associated with the current Telegram update, must not be {@code null}
+     * @return a {@link Mono} that completes when conclusive post-filtering is done
+     */
     default Mono<Void> conclusivePostFilterReactive(UpdateRequest request) {
         return Mono.fromCallable(() -> {
             conclusivePostFilter(request);

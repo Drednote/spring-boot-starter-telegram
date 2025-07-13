@@ -1,5 +1,11 @@
 package io.github.drednote.telegram.handler.scenario.configurer.transition;
 
+/**
+ * Interface for configuring a local transition.
+ *
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
 public interface ScenarioLocalTransitionConfigurer<S> extends
     ScenarioBaseTransitionConfigurer<ScenarioLocalTransitionConfigurer<S>, S> {
 

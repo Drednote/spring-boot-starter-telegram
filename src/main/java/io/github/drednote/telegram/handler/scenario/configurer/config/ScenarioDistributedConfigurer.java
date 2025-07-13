@@ -3,6 +3,12 @@ package io.github.drednote.telegram.handler.scenario.configurer.config;
 import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
 import org.springframework.statemachine.ensemble.StateMachineEnsemble;
 
+/**
+ * Base {@code ScenarioDistributedConfigurer} interface for configuring distributed state machine.
+ *
+ * @param <S> the type of state
+ * @author Ivan Galushko
+ */
 public interface ScenarioDistributedConfigurer<S> extends ScenarioConfigConfigurerBuilder<S> {
 
     /**

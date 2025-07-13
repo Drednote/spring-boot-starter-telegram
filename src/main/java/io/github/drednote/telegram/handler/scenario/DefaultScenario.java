@@ -23,9 +23,32 @@ import org.springframework.statemachine.StateMachineEventResult.ResultType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Default implementation of the {@link Scenario} interface, providing mechanisms for state management, event handling,
+ * property storage, and scenario lifecycle control.
+ * <p>
+ * The class employs concurrency control via read-write locks to ensure thread safety during operations that modify or
+ * inspect internal state, such as handling events or resetting the scenario.
+ * </p>
+ * <p>
+ * It integrates with a state machine, manages properties in a thread-safe manner, and supports scenario identification
+ * and persistence mechanisms.
+ * </p>
+ * <p>
+ *
+ * @param <S> the type of the state managed by the scenario
+ * @author Ivan Galushko
+ */
 public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
+    /**
+     * A key indicating the inline keyboard property for the scenario, typically used to manage inline keyboard
+     * configurations in Telegram bot interactions.
+     */
     public static final String INLINE_KEYBOARD_PROPERTY = "inlineKeyboard";
+    /**
+     * A key indicating whether the scenario execution was successful.
+     */
     public static final String SUCCESS_EXECUTION_PROPERTY = "successExecution";
 
     private final StateMachine<S, ScenarioEvent> machine;
@@ -36,6 +59,13 @@ public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
 
     private String id;
 
+    /**
+     * Constructs a new {@code DefaultScenario} instance with specified components.
+     *
+     * @param machine            the state machine controlling scenario states
+     * @param scenarioPersister  component responsible for persisting scenario data
+     * @param scenarioIdResolver component to resolve or generate scenario identifiers
+     */
     public DefaultScenario(
         StateMachine<S, ScenarioEvent> machine, ScenarioPersister<S> scenarioPersister,
         ScenarioIdResolver scenarioIdResolver
@@ -46,6 +76,16 @@ public class DefaultScenario<S> implements Scenario<S>, ScenarioAccessor<S> {
         this.id = machine.getId();
     }
 
+    /**
+     * Sends an event encapsulated in an {@link UpdateRequest} to the scenario's state machine.
+     * <p>
+     * Synchronizes access to ensure thread safety. Processes the event and updates properties indicating success or
+     * denial. Handles exceptions that may occur during event processing.
+     * </p>
+     *
+     * @param request the update request containing the event data
+     * @return a {@link ScenarioEventResult} reflecting acceptance, results, and exceptions
+     */
     @Override
     public ScenarioEventResult<S, ScenarioEvent> sendEvent(UpdateRequest request) {
         try {

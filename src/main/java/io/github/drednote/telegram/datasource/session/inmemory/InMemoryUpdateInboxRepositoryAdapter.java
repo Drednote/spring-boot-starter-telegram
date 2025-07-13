@@ -21,10 +21,11 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * This implementation uses {@link LinkedBlockingQueue} as a place to save incoming messages. This approach is safe in terms of
- * multithreading, but it has a number of disadvantages. If the service crashes while processing messages, then the
- * messages will be lost. Also, if some user decides to spam a huge number of messages, there may be a situation where
- * the entire queue will be clogged with his messages, and they will block the processing of messages from other users.
+ * This implementation uses {@link LinkedBlockingQueue} as a place to save incoming messages. This approach is safe in
+ * terms of multithreading, but it has a number of disadvantages. If the service crashes while processing messages, then
+ * the messages will be lost. Also, if some user decides to spam a huge number of messages, there may be a situation
+ * where the entire queue will be clogged with his messages, and they will block the processing of messages from other
+ * users.
  * <p>
  * If this happens, you might want to adjust the {@code drednote.telegram.session.maxMessageInQueuePerUser} parameter.
  * But this will slow down the writing of messages to the queue.
@@ -42,7 +43,8 @@ public class InMemoryUpdateInboxRepositoryAdapter implements UpdateInboxReposito
     private final int maxMessageInQueuePerUser;
     private final TelegramMessageSource messageSource;
 
-    public InMemoryUpdateInboxRepositoryAdapter(SessionProperties sessionProperties, TelegramMessageSource messageSource) {
+    public InMemoryUpdateInboxRepositoryAdapter(SessionProperties sessionProperties,
+        TelegramMessageSource messageSource) {
         Assert.required(sessionProperties, "SessionProperties");
         Assert.required(messageSource, "TelegramMessageSource");
 
@@ -87,9 +89,9 @@ public class InMemoryUpdateInboxRepositoryAdapter implements UpdateInboxReposito
                 queue.put(inMemoryUpdateInbox);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new SessionTelegramException("Error while persisting update inbox", e);
+                log.error("Error while persisting update inbox", e);
             } catch (Exception e) {
-                throw new SessionTelegramException("Error while persisting update inbox", e);
+                log.error("Error while persisting update inbox", e);
             }
         }
     }
