@@ -17,6 +17,7 @@ public class DefaultScenarioHistoryTransitionConfigurer<S>
         ScenarioBuilder<S> builder,
         HistoryTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
+        super(builder);
         this.builder = builder;
         this.configurer = configurer;
     }

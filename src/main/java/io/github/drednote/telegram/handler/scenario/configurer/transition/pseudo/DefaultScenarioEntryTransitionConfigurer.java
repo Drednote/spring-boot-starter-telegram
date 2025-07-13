@@ -17,6 +17,7 @@ public class DefaultScenarioEntryTransitionConfigurer<S>
         ScenarioBuilder<S> builder,
         EntryTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
+        super(builder);
         this.builder = builder;
         this.configurer = configurer;
     }

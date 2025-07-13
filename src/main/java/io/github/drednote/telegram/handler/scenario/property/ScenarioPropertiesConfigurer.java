@@ -36,7 +36,6 @@ public class ScenarioPropertiesConfigurer<S> {
     private final ScenarioProperties scenarioProperties;
     private final ScenarioFactoryResolver scenarioFactoryResolver;
     private final ScenarioBuilder<S> scenarioBuilder;
-    private final Set<S> states = new HashSet<>();
 
     private ScenarioTransitionConfigurer<S> transitionConfigurer;
 
@@ -55,22 +54,21 @@ public class ScenarioPropertiesConfigurer<S> {
         this.transitionConfigurer = new DefaultScenarioTransitionConfigurer<>(scenarioBuilder);
     }
 
-    public Set<S> collectStates() {
+    public void collectStates() {
         Map<String, Scenario> values = scenarioProperties.getValues();
         if (values != null) {
             doCollectStates(values);
         }
-        return states;
     }
 
     private void doCollectStates(Map<String, Scenario> values) {
         values.forEach((key, scenario) -> {
             if (scenario != null) {
                 if (scenario.getTarget() != null) {
-                    states.add((S) scenario.getTarget());
+                    scenarioBuilder.addState((S) scenario.getTarget());
                 }
                 if (scenario.getSource() != null) {
-                    states.add((S) scenario.getSource());
+                    scenarioBuilder.addState((S) scenario.getSource());
                 }
 
                 if (scenario.getSteps() != null && !scenario.getSteps().isEmpty()) {

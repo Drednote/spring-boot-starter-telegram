@@ -1,22 +1,15 @@
 package io.github.drednote.telegram.handler.scenario.spy;
 
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
+import io.github.drednote.telegram.handler.scenario.event.ScenarioEvent;
+import java.lang.reflect.Field;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.statemachine.StateMachineException;
 import org.springframework.statemachine.config.StateMachineBuilder.Builder;
 import org.springframework.statemachine.config.StateMachineConfig;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.config.builders.StateMachineConfigBuilder;
-import org.springframework.statemachine.config.builders.StateMachineConfigurationBuilder;
-import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineConfigurer;
-import org.springframework.statemachine.config.builders.StateMachineModelBuilder;
-import org.springframework.statemachine.config.builders.StateMachineModelConfigurer;
-import org.springframework.statemachine.config.builders.StateMachineStateBuilder;
-import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
-import org.springframework.statemachine.config.builders.StateMachineTransitionBuilder;
-import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
-import org.springframework.statemachine.config.common.annotation.AnnotationBuilder;
-import org.springframework.statemachine.config.common.annotation.ObjectPostProcessor;
 import org.springframework.statemachine.config.model.ConfigurationData;
 import org.springframework.statemachine.config.model.DefaultStateMachineModel;
 import org.springframework.statemachine.config.model.StatesData;
@@ -24,66 +17,25 @@ import org.springframework.statemachine.config.model.TransitionsData;
 
 public class ScenarioStateMachineBuilder {
 
-    public static <S, E> Builder<S, E> builder() {
-        return new InternalBuilder<>();
+    public static <S> ScenarioMachineBuilder<S> builder() {
+        return new ScenarioMachineBuilder<>();
     }
 
-    public static class InternalBuilder<S, E> extends Builder<S, E> {
-
-        private final StateMachineConfigBuilder<S, E> builder;
-        private final BuilderStateMachineConfigurerAdapter<S, E> adapter;
-
-        /**
-         * Instantiates a new builder.
-         */
-        public InternalBuilder() {
-            adapter = new ScenarioStateMachineBuilder.BuilderStateMachineConfigurerAdapter<>();
-            builder = new StateMachineConfigBuilder<>();
-        }
-
-        /**
-         * Configure model.
-         *
-         * @return the state machine model configurer
-         */
-        public StateMachineModelConfigurer<S, E> configureModel() {
-            return adapter.modelBuilder;
-        }
-
-        /**
-         * Configure configuration.
-         *
-         * @return the state machine configuration configurer
-         */
-        public StateMachineConfigurationConfigurer<S, E> configureConfiguration() {
-            return adapter.configurationBuilder;
-        }
-
-        /**
-         * Configure states.
-         *
-         * @return the state machine state configurer
-         */
-        public StateMachineStateConfigurer<S, E> configureStates() {
-            return adapter.stateBuilder;
-        }
-
-        /**
-         * Configure transitions.
-         *
-         * @return the state machine transition configurer
-         */
-        public StateMachineTransitionConfigurer<S, E> configureTransitions() {
-            return adapter.transitionBuilder;
-        }
+    public static class ScenarioMachineBuilder<S> extends Builder<S, ScenarioEvent> {
 
         @Override
-        public StateMachineFactory<S, E> createFactory() {
+        public StateMachineFactory<S, ScenarioEvent> createFactory() {
+            throw new UnsupportedOperationException("Call createFactory(ScenarioBuilder<S>) instead of this method");
+        }
+
+        public StateMachineFactory<S, ScenarioEvent> createFactory(ScenarioBuilder<S> scenarioBuilder) {
             try {
+                StateMachineConfigBuilder<S, ScenarioEvent> builder = getField("builder");
+                StateMachineConfigurer<S, ScenarioEvent> adapter = getField("adapter");
                 builder.apply(adapter);
 
-                ScenarioStateMachineFactory<S, E> stateMachineFactory = getFactory();
-                ConfigurationData<S, E> stateMachineConfigurationConfig = builder.getOrBuild().stateMachineConfigurationConfig;
+                ScenarioStateMachineFactory<S> stateMachineFactory = getFactory(builder, scenarioBuilder);
+                ConfigurationData<S, ScenarioEvent> stateMachineConfigurationConfig = builder.getOrBuild().stateMachineConfigurationConfig;
 
                 stateMachineFactory.setHandleAutostartup(stateMachineConfigurationConfig.isAutoStart());
 
@@ -91,115 +43,38 @@ public class ScenarioStateMachineBuilder {
                     stateMachineFactory.setBeanFactory(stateMachineConfigurationConfig.getBeanFactory());
                 }
                 return stateMachineFactory;
-            } catch (Exception e) {
-                throw new StateMachineException("Error creating state machine factory", e);
+            } catch (Exception ScenarioEvent) {
+                throw new StateMachineException("Error creating state machine factory", ScenarioEvent);
             }
         }
 
         @NotNull
-        private ScenarioStateMachineFactory<S, E> getFactory() {
-            StateMachineConfig<S, E> stateMachineConfig = builder.getOrBuild();
+        private ScenarioStateMachineFactory<S> getFactory(
+            StateMachineConfigBuilder<S, ScenarioEvent> builder, ScenarioBuilder<S> scenarioBuilder
+        ) {
+            StateMachineConfig<S, ScenarioEvent> stateMachineConfig = builder.getOrBuild();
 
-            TransitionsData<S, E> stateMachineTransitions = stateMachineConfig.getTransitions();
-            StatesData<S, E> stateMachineStates = stateMachineConfig.getStates();
-            ConfigurationData<S, E> stateMachineConfigurationConfig = stateMachineConfig.getStateMachineConfigurationConfig();
+            TransitionsData<S, ScenarioEvent> stateMachineTransitions = stateMachineConfig.getTransitions();
+            StatesData<S, ScenarioEvent> stateMachineStates = stateMachineConfig.getStates();
+            ConfigurationData<S, ScenarioEvent> stateMachineConfigurationConfig = stateMachineConfig.getStateMachineConfigurationConfig();
 
-            ScenarioStateMachineFactory<S, E> stateMachineFactory;
+            ScenarioStateMachineFactory<S> stateMachineFactory;
             if (stateMachineConfig.getModel() != null && stateMachineConfig.getModel().getFactory() != null) {
                 stateMachineFactory = new ScenarioStateMachineFactory<>(
                     new DefaultStateMachineModel<>(stateMachineConfigurationConfig, null, null),
-                    stateMachineConfig.getModel().getFactory());
+                    stateMachineConfig.getModel().getFactory(), scenarioBuilder);
             } else {
                 stateMachineFactory = new ScenarioStateMachineFactory<>(new DefaultStateMachineModel<>(
-                    stateMachineConfigurationConfig, stateMachineStates, stateMachineTransitions), null);
+                    stateMachineConfigurationConfig, stateMachineStates, stateMachineTransitions), null,
+                    scenarioBuilder);
             }
             return stateMachineFactory;
         }
-    }
 
-    private static class BuilderStateMachineConfigurerAdapter<S, E>
-        implements StateMachineConfigurer<S, E> {
-
-        private StateMachineModelBuilder<S, E> modelBuilder;
-        private StateMachineTransitionBuilder<S, E> transitionBuilder;
-        private StateMachineStateBuilder<S, E> stateBuilder;
-        private StateMachineConfigurationBuilder<S, E> configurationBuilder;
-
-        BuilderStateMachineConfigurerAdapter() {
-            try {
-                getStateMachineModelBuilder();
-                getStateMachineTransitionBuilder();
-                getStateMachineStateBuilder();
-                getStateMachineConfigurationBuilder();
-            } catch (Exception e) {
-                throw new StateMachineException("Error instantiating builder adapter", e);
-            }
-        }
-
-        @Override
-        public void init(StateMachineConfigBuilder<S, E> config) throws Exception {
-            config.setSharedObject(StateMachineModelBuilder.class, getStateMachineModelBuilder());
-            config.setSharedObject(StateMachineTransitionBuilder.class, getStateMachineTransitionBuilder());
-            config.setSharedObject(StateMachineStateBuilder.class, getStateMachineStateBuilder());
-            config.setSharedObject(StateMachineConfigurationBuilder.class, getStateMachineConfigurationBuilder());
-        }
-
-        @Override
-        public void configure(StateMachineConfigBuilder<S, E> builder) throws Exception {
-        }
-
-        @Override
-        public boolean isAssignable(AnnotationBuilder<StateMachineConfig<S, E>> builder) {
-            return false;
-        }
-
-        @Override
-        public void configure(StateMachineModelConfigurer<S, E> model) throws Exception {
-        }
-
-        @Override
-        public void configure(StateMachineConfigurationConfigurer<S, E> config) throws Exception {
-        }
-
-        @Override
-        public void configure(StateMachineStateConfigurer<S, E> states) throws Exception {
-        }
-
-        @Override
-        public void configure(StateMachineTransitionConfigurer<S, E> transitions) throws Exception {
-        }
-
-        protected final StateMachineModelBuilder<S, E> getStateMachineModelBuilder() throws Exception {
-            if (modelBuilder != null) {
-                return modelBuilder;
-            }
-            modelBuilder = new StateMachineModelBuilder<S, E>(ObjectPostProcessor.QUIESCENT_POSTPROCESSOR, true);
-            configure(modelBuilder);
-            return modelBuilder;
-        }
-
-        protected final StateMachineTransitionBuilder<S, E> getStateMachineTransitionBuilder() throws Exception {
-            if (transitionBuilder != null) {
-                return transitionBuilder;
-            }
-            transitionBuilder = new StateMachineTransitionBuilder<S, E>(ObjectPostProcessor.QUIESCENT_POSTPROCESSOR, true);
-            return transitionBuilder;
-        }
-
-        protected final StateMachineStateBuilder<S, E> getStateMachineStateBuilder() throws Exception {
-            if (stateBuilder != null) {
-                return stateBuilder;
-            }
-            stateBuilder = new StateMachineStateBuilder<S, E>(ObjectPostProcessor.QUIESCENT_POSTPROCESSOR, true);
-            return stateBuilder;
-        }
-
-        protected final StateMachineConfigurationBuilder<S, E> getStateMachineConfigurationBuilder() throws Exception {
-            if (configurationBuilder != null) {
-                return configurationBuilder;
-            }
-            configurationBuilder = new StateMachineConfigurationBuilder<S, E>(ObjectPostProcessor.QUIESCENT_POSTPROCESSOR, true);
-            return configurationBuilder;
+        private <T> T getField(String name) throws NoSuchFieldException, IllegalAccessException {
+            Field declaredBuilder = Builder.class.getDeclaredField(name);
+            declaredBuilder.setAccessible(true);
+            return (T) declaredBuilder.get(this);
         }
     }
 }

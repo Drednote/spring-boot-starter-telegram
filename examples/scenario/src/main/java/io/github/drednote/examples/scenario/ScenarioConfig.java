@@ -10,6 +10,7 @@ import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigure
 import io.github.drednote.telegram.handler.scenario.configurer.state.ScenarioStateConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurer;
 import io.github.drednote.telegram.handler.scenario.persist.DefaultScenarioPersister;
+import java.util.EnumSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,6 @@ public class ScenarioConfig extends ScenarioConfigurerAdapter<State> {
 
     @Override
     public void onConfigure(ScenarioStateConfigurer<State> configurer) throws Exception {
-        configurer.withStates().initial(State.INITIAL);
+        configurer.withStates().initial(State.INITIAL).states(EnumSet.allOf(State.class));
     }
 }

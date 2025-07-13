@@ -21,6 +21,7 @@ public class DefaultScenarioJoinTransitionConfigurer<S>
         ScenarioBuilder<S> builder,
         JoinTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
+        super(builder);
         this.builder = builder;
         this.configurer = configurer;
     }

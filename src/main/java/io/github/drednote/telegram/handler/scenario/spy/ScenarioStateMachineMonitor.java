@@ -7,11 +7,10 @@ import org.springframework.statemachine.transition.Transition;
 public interface ScenarioStateMachineMonitor<S> {
 
     /**
-     * Notified duration of a particular transition.
+     * Notified when a transition is occurred.
      *
      * @param scenario   the scenario
      * @param transition the transition
-     * @param duration   the transition duration
      */
-    void transition(Scenario<S> scenario, Transition<S, ScenarioEvent> transition, long duration);
+    void transition(Scenario<S> scenario, Transition<S, ScenarioEvent> transition);
 }

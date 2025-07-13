@@ -17,6 +17,7 @@ public class DefaultScenarioExitTransitionConfigurer<S>
         ScenarioBuilder<S> builder,
         ExitTransitionConfigurer<S, ScenarioEvent> configurer
     ) {
+        super(builder);
         this.builder = builder;
         this.configurer = configurer;
     }
