@@ -14,6 +14,7 @@ import io.github.drednote.telegram.datasource.scenarioid.mongo.MongoScenarioIdRe
 import io.github.drednote.telegram.filter.pre.ScenarioUpdateHandlerPopular;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioBuilder.ScenarioData;
+import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.ScenarioConfigurerAdapter;
 import io.github.drednote.telegram.handler.scenario.configurer.config.DefaultScenarioConfigConfigurer;
 import io.github.drednote.telegram.handler.scenario.configurer.state.DefaultScenarioStateConfigurer;
@@ -51,7 +52,7 @@ import org.springframework.lang.Nullable;
     matchIfMissing = true
 )
 @EnableConfigurationProperties({ScenarioProperties.class})
-@ConditionalOnBean(ScenarioConfigurerAdapter.class)
+@ConditionalOnBean(ScenarioConfigurer.class)
 public class ScenarioAutoConfiguration {
 
     @AutoConfiguration
@@ -121,7 +122,7 @@ public class ScenarioAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public <S> ScenarioUpdateHandlerPopular<S> scenarioUpdateHandlerPopular(
-        ScenarioConfigurerAdapter<S> adapter, ScenarioProperties scenarioProperties,
+        ScenarioConfigurer<S> adapter, ScenarioProperties scenarioProperties,
         @Autowired(required = false) @Nullable ScenarioIdRepositoryAdapter scenarioIdAdapter,
         @Autowired(required = false) @Nullable ScenarioRepositoryAdapter<S> scenarioRepositoryAdapter,
         ScenarioFactoryResolver scenarioFactoryResolver

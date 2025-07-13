@@ -9,7 +9,6 @@ import io.github.drednote.telegram.handler.controller.HandlerMethodPopular;
 import io.github.drednote.telegram.handler.controller.TelegramControllerBeanPostProcessor;
 import io.github.drednote.telegram.handler.controller.TelegramControllerContainer;
 import io.github.drednote.telegram.handler.scenario.ScenarioAutoConfiguration;
-import io.github.drednote.telegram.handler.scenario.property.ScenarioProperties;
 import io.github.drednote.telegram.session.SessionProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.AutoConfiguration;

@@ -4,6 +4,7 @@ import io.github.drednote.telegram.filter.post.ConclusivePostUpdateFilter;
 import io.github.drednote.telegram.filter.post.ScenarioIdPersistFilter;
 import io.github.drednote.telegram.filter.pre.AccessPermissionFilter;
 import io.github.drednote.telegram.filter.pre.ControllerUpdateHandlerPopular;
+import io.github.drednote.telegram.filter.pre.HasRoleRequestFilter;
 import io.github.drednote.telegram.filter.pre.PreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.PriorityPreUpdateFilter;
 import io.github.drednote.telegram.filter.pre.RoleFilter;
@@ -30,7 +31,8 @@ public final class FilterOrder {
 
     // ------- Orders for pre filters ------- //
     public static final Map<Class<? extends PreUpdateFilter>, Integer> PRE_FILTERS = Map.of(
-        AccessPermissionFilter.class, FilterOrder.HIGHEST_PRECEDENCE
+        AccessPermissionFilter.class, FilterOrder.HIGHEST_PRECEDENCE,
+        HasRoleRequestFilter.class, FilterOrder.HIGHEST_PRECEDENCE + 100
     );
 
 

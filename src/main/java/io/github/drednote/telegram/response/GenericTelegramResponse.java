@@ -2,6 +2,7 @@ package io.github.drednote.telegram.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.drednote.telegram.core.request.UpdateRequest;
+import io.github.drednote.telegram.response.resolver.TelegramResponseTypesResolver;
 import io.github.drednote.telegram.utils.Assert;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,14 +18,27 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * This class represents a generic Telegram response handler that can process various types of responses and messages.
- * It extends the {@code AbstractTelegramResponse} class and implements the {@link TelegramResponse} interface. The
- * response can be a String, byte array, BotApiMethod, SendMediaBotMethod, TelegramResponse, or any serializable object.
- * Depending on the type of response, it will be processed accordingly.
+ * A general-purpose implementation of {@link TelegramResponse} capable of handling and processing a wide variety of
+ * response types returned by update handlers.
  * <p>
- * It is the main {@code TelegramResponse} implementation that should be used manually in code
+ * Supported response types include:
+ * <ul>
+ *     <li>{@link TelegramResponse} (returned as-is)</li>
+ *     <li>{@link Collection} of responses (wrapped in {@link CompositeTelegramResponse})</li>
+ *     <li>{@link Flux} (wrapped in {@link FluxTelegramResponse})</li>
+ *     <li>{@link Mono} (wrapped in {@link FluxTelegramResponse})</li>
+ *     <li>{@link Stream} (wrapped in {@link StreamTelegramResponse})</li>
+ *     <li>{@link BotApiMethod} (send to telegram)</li>
+ *     <li>{@link String} and {@code byte[]} (sent as messages)</li>
+ *     <li>Any POJO (if {@code serializeJavaObjectWithJackson} is enabled)</li>
+ * </ul>
+ * <p>
+ * This class is designed to be a fallback/default implementation when a response type
+ * is not a known concrete {@code TelegramResponse}.
  *
  * @author Ivan Galushko
+ * @see TelegramResponseHelper
+ * @see TelegramResponseTypesResolver
  */
 public class GenericTelegramResponse extends AbstractTelegramResponse {
 

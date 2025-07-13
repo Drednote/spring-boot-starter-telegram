@@ -6,7 +6,13 @@ import io.github.drednote.telegram.handler.scenario.configurer.transition.Scenar
 import io.github.drednote.telegram.handler.scenario.guard.Guard;
 import org.springframework.statemachine.transition.Transition;
 
-public interface BaseScenarioTransitionConfigurer<S, C extends ScenarioTransitionConfigurerBuilder<S>>
+/**
+ * Base interface for configuring any choice transition.
+ *
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
+public interface BaseChoiceScenarioTransitionConfigurer<S, C extends ScenarioTransitionConfigurerBuilder<S>>
     extends ScenarioTransitionConfigurerBuilder<S>, AdditionalScenarioConfigs<S, C> {
 
     /**

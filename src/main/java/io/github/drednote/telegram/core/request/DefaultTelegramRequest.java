@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Default implementation.
+ */
 @Data
 public class DefaultTelegramRequest implements TelegramRequest {
 

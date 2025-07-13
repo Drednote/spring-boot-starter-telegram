@@ -3,6 +3,12 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition.pseud
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurerBuilder;
 import org.springframework.statemachine.transition.Transition;
 
+/**
+ * Base interface for configuring any pseudo transition.
+ *
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
 public interface ScenarioPseudoTransitionConfigurer<S> extends ScenarioTransitionConfigurerBuilder<S> {
 
     /**

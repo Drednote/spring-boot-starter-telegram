@@ -3,7 +3,6 @@ package io.github.drednote.telegram.datasource.session;
 import io.github.drednote.telegram.core.request.ParsedUpdateRequest;
 import io.github.drednote.telegram.session.SessionProperties;
 import io.github.drednote.telegram.utils.Assert;
-import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -13,6 +12,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Abstract base class for implementing {@link UpdateInboxRepositoryAdapter} backed by a repository.
+ * <p>
+ * Handles core logic for persisting, retrieving, and updating {@link UpdateInbox} entities. The strategy for selecting
+ * and managing inbox records is delegated to abstract methods.
+ * </p>
+ *
+ * <p>This class expects subclasses to define how to:
+ * <ul>
+ *   <li>Find idle entities for timeout processing</li>
+ *   <li>Retrieve the next update based on concurrency limits</li>
+ *   <li>Persist a single entity to the underlying storage</li>
+ * </ul>
+ * </p>
+ *
+ * <p>Entity creation is handled reflectively via {@link Class#getDeclaredConstructor(Class[])}}.</p>
+ *
+ * @param <T> the inbox entity type
+ * @author Ivan Galushko
+ */
 public abstract class AbstractUpdateInboxRepositoryAdapter<T extends UpdateInbox>
     implements UpdateInboxRepositoryAdapter<T> {
 
@@ -22,6 +41,13 @@ public abstract class AbstractUpdateInboxRepositoryAdapter<T extends UpdateInbox
     private final UpdateInboxRepository<T> repository;
     private final Class<T> clazz;
 
+    /**
+     * Constructs the adapter with required dependencies.
+     *
+     * @param properties configuration for session control and threading
+     * @param repository the inbox repository implementation
+     * @param clazz      the class type of the inbox entity
+     */
     protected AbstractUpdateInboxRepositoryAdapter(
         SessionProperties properties, UpdateInboxRepository<T> repository, Class<T> clazz
     ) {
@@ -34,12 +60,35 @@ public abstract class AbstractUpdateInboxRepositoryAdapter<T extends UpdateInbox
         this.properties = properties;
     }
 
+    /**
+     * Must return a list of entities that have been in {@link UpdateInboxStatus#IN_PROGRESS} state longer than the
+     * configured threshold.
+     *
+     * @param date cutoff instant for detecting idle entries
+     * @return list of idle entities
+     */
     protected abstract List<T> getIdleEntities(Instant date);
 
+    /**
+     * Retrieves the next update respecting the max threads per user limit.
+     *
+     * @param maxThreadsPerUser maximum number of simultaneous updates per user
+     * @return optional inbox entity to process
+     */
     protected abstract Optional<T> findWithMaxThreadsPerUser(int maxThreadsPerUser);
 
+    /**
+     * Retrieves the next available update without thread restrictions.
+     *
+     * @return optional inbox entity
+     */
     protected abstract Optional<T> findNextWithoutLimit();
 
+    /**
+     * Persists the given inbox entity to the repository.
+     *
+     * @param entity the inbox entity to save
+     */
     protected abstract void persist(T entity);
 
     @Override
@@ -57,8 +106,7 @@ public abstract class AbstractUpdateInboxRepositoryAdapter<T extends UpdateInbox
                 log.warn("Cannot persist update inbox with id '{}'. Cause: {}",
                     update.getUpdateId(), e.getMessage());
                 log.debug(e.getMessage(), e);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                     NoSuchMethodException e) {
+            } catch (Exception e) {
                 log.error("Cannot persist update inbox with id '{}'. Cause: ", update.getUpdateId(), e);
             }
         }

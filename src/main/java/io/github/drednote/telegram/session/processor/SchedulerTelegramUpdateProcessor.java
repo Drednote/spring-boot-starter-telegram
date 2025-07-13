@@ -25,6 +25,19 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+/**
+ * Processor and reader for Telegram updates that schedules update processing tasks.
+ * <p>
+ * This class implements both {@link TelegramUpdateProcessor} and {@link TelegramUpdateReader}, managing the scheduled
+ * reading and processing of Telegram updates from a persistent inbox. It uses a thread pool for concurrent processing
+ * and dynamically adjusts the delay between update polls based on system load and availability of updates.
+ * <p>
+ * The processor persists incoming updates, checks for idle tasks to timeout, applies user rate limiting, and handles
+ * error states for each update processed.
+ *
+ * @param <T> the type of update inbox entity extending {@link UpdateInbox}
+ * @author Ivan Galushko
+ */
 public class SchedulerTelegramUpdateProcessor<T extends UpdateInbox>
     implements TelegramUpdateReader, TelegramUpdateProcessor {
 
@@ -44,6 +57,19 @@ public class SchedulerTelegramUpdateProcessor<T extends UpdateInbox>
     private int delay;
     private boolean running = false;
 
+    /**
+     * Constructs a new SchedulerTelegramUpdateProcessor.
+     * <p>
+     * Starts an internal scheduled executor to check for idle updates at configured intervals.
+     *
+     * @param telegramBot      the Telegram bot instance to process updates
+     * @param adapter          adapter for save inbox entities
+     * @param properties       session-level configuration properties
+     * @param filterProperties user rate limiting filter configuration
+     * @param telegramClient   telegram client for API communication
+     * @param messageSource    source of localized messages for telegram responses
+     * @throws IllegalArgumentException if any required arguments are null
+     */
     public SchedulerTelegramUpdateProcessor(
         TelegramBot telegramBot, UpdateInboxRepositoryAdapter<T> adapter, SessionProperties properties,
         FilterProperties filterProperties, TelegramClient telegramClient, TelegramMessageSource messageSource

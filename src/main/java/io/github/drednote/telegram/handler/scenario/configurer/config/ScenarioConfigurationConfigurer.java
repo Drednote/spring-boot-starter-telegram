@@ -8,6 +8,12 @@ import org.springframework.statemachine.listener.StateMachineListener;
 import org.springframework.statemachine.region.RegionExecutionPolicy;
 import org.springframework.statemachine.transition.TransitionConflictPolicy;
 
+/**
+ * Base {@code ScenarioMonitoringConfigurer} interface for configuring state machine.
+ *
+ * @param <S> the type of state
+ * @author Ivan Galushko
+ */
 public interface ScenarioConfigurationConfigurer<S> extends ScenarioConfigConfigurerBuilder<S> {
 
     /**

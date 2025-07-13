@@ -45,6 +45,15 @@ public abstract class AbstractTelegramResponse implements TelegramResponse {
         return absSender.execute(sendMessage);
     }
 
+    /**
+     * Wraps the given object into a {@link TelegramResponse} if it is not already an instance of it.
+     * <p>
+     * If the input object is already a {@code TelegramResponse}, it is returned as-is. Otherwise, the object is wrapped
+     * in a {@link GenericTelegramResponse}.
+     *
+     * @param response the response object to wrap, must not be {@code null}
+     * @return a {@link TelegramResponse} representing the input
+     */
     protected TelegramResponse wrapWithTelegramResponse(Object response) {
         return response instanceof TelegramResponse res ? res : new GenericTelegramResponse(response);
     }

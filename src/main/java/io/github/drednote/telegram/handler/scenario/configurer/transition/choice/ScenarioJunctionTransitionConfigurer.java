@@ -2,7 +2,13 @@ package io.github.drednote.telegram.handler.scenario.configurer.transition.choic
 
 import io.github.drednote.telegram.handler.scenario.configurer.transition.ScenarioTransitionConfigurerBuilder;
 
+/**
+ * Interface for configuring a junction transition.
+ *
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
 public interface ScenarioJunctionTransitionConfigurer<S>
     extends ScenarioTransitionConfigurerBuilder<S>,
-    BaseScenarioTransitionConfigurer<S, ScenarioJunctionTransitionConfigurer<S>> {
+    BaseChoiceScenarioTransitionConfigurer<S, ScenarioJunctionTransitionConfigurer<S>> {
 }

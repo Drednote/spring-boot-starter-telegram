@@ -21,4 +21,9 @@ public abstract class ScenarioConfigurerAdapter<S> implements ScenarioConfigurer
     public void onConfigure(ScenarioConfigConfigurer<S> configurer) throws Exception {
         // nothing
     }
+
+    @Override
+    public void onConfigure(ScenarioTransitionConfigurer<S> configurer) throws Exception {
+        // nothing
+    }
 }

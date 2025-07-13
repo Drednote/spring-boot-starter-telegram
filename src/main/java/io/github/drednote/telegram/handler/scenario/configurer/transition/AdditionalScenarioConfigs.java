@@ -4,6 +4,12 @@ import io.github.drednote.telegram.handler.scenario.action.Action;
 import io.github.drednote.telegram.handler.scenario.action.ActionContext;
 import java.util.Map;
 
+/**
+ * Interface which declared additional configs for the scenario.
+ *
+ * @param <S> the type of the state
+ * @author Ivan Galushko
+ */
 public interface AdditionalScenarioConfigs<S, C extends ScenarioTransitionConfigurerBuilder<S>> {
 
     /**
