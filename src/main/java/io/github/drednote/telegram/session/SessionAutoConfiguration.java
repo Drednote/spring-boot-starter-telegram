@@ -26,8 +26,8 @@ import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -59,15 +59,12 @@ public class SessionAutoConfiguration {
      * Configures a bean for the Telegram bot session using long polling. And starts session
      *
      * @param telegramConsumeClient The Telegram client used to interact with the Telegram API
-     * @param properties     Configuration properties for the session
+     * @param properties            Configuration properties for the session
      * @return The configured Telegram bot session
      */
     @Bean(destroyMethod = "stop")
-    @ConditionalOnProperty(
-        prefix = "drednote.telegram.session",
-        name = "type",
-        havingValue = "LONG_POLLING",
-        matchIfMissing = true
+    @ConditionalOnExpression(
+        value = "#{environment.getProperty('drednote.telegram.session.type')?.equalsIgnoreCase('LONG_POLLING') || environment.getProperty('drednote.telegram.session.type') == null}"
     )
     @ConditionalOnMissingBean
     public TelegramBotSession longPollingTelegramBotSession(
@@ -94,10 +91,8 @@ public class SessionAutoConfiguration {
      * @return The configured Telegram bot session
      */
     @Bean(destroyMethod = "stop")
-    @ConditionalOnProperty(
-        prefix = "drednote.telegram.session",
-        name = "type",
-        havingValue = "WEBHOOKS"
+    @ConditionalOnExpression(
+        value = "#{environment.getProperty('drednote.telegram.session.type')?.equalsIgnoreCase('WEBHOOKS')}"
     )
     @ConditionalOnMissingBean
     public TelegramBotSession webhooksTelegramBotSession() {

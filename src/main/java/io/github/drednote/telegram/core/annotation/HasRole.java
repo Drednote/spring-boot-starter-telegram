@@ -17,8 +17,8 @@ import java.lang.annotation.Target;
  *
  * <p>Supported matching strategies:
  * <ul>
- *   <li>{@link StrategyMatching#INTERSECTION} – at least one required role must be present.</li>
- *   <li>{@link StrategyMatching#COMPLETE_MATCH} – all specified roles must be present.</li>
+ *   <li>{@link StrategyMatching#ANY} – at least one required role must be present.</li>
+ *   <li>{@link StrategyMatching#ALL} – all specified roles must be present.</li>
  * </ul>
  * </p>
  * <p>
@@ -48,11 +48,11 @@ public @interface HasRole {
 
     /**
      * Strategy used to match the user's roles against the required ones. Defaults to
-     * {@link StrategyMatching#INTERSECTION}.
+     * {@link StrategyMatching#ANY}.
      *
      * @return the matching strategy
      */
-    StrategyMatching strategyMatching() default StrategyMatching.INTERSECTION;
+    StrategyMatching strategyMatching() default StrategyMatching.ANY;
 
     /**
      * Role matching strategy for evaluating the user's permissions.
@@ -61,11 +61,11 @@ public @interface HasRole {
         /**
          * Requires at least one of the specified roles to be present.
          */
-        INTERSECTION,
+        ANY,
 
         /**
          * Requires all specified roles to be present.
          */
-        COMPLETE_MATCH
+        ALL
     }
 }

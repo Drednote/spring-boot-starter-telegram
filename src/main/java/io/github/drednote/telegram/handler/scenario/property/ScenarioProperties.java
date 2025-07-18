@@ -16,6 +16,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 /**
@@ -34,8 +35,8 @@ public class ScenarioProperties {
     /**
      * A map of scenario names to their corresponding {@link Scenario} objects.
      */
-    @Nullable
-    private Map<String, Scenario> values;
+    @NonNull
+    private Map<String, Scenario> values = new HashMap<>();
 
     /**
      * The default rollback configuration, which applies if no another set in scenario object.

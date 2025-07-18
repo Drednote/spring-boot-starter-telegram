@@ -14,7 +14,6 @@ import io.github.drednote.telegram.handler.UpdateHandler;
 import io.github.drednote.telegram.handler.UpdateHandlerAutoConfiguration;
 import io.github.drednote.telegram.menu.MenuAutoConfiguration;
 import io.github.drednote.telegram.session.SessionAutoConfiguration;
-import io.github.drednote.telegram.session.SessionProperties.UpdateStrategy;
 import java.util.Collection;
 import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
@@ -32,10 +31,9 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
  * Autoconfiguration class for configuring various aspects of a Telegram bot application.
  *
  * <p>This class provides automatic configuration for different components and features of a
- * Telegram bot application, including bot configuration, message source configuration, and more.
- * You can disable the Autoconfiguration with the property {@code dreadnote.telegram.enabled}.
- * It utilizes properties defined in the application's configuration to customize the behavior of the
- * bot.
+ * Telegram bot application, including bot configuration, message source configuration, and more. You can disable the
+ * Autoconfiguration with the property {@code drednote.telegram.enabled}. It utilizes properties defined in the
+ * application's configuration to customize the behavior of the bot.
  */
 @ConditionalOnProperty(prefix = "drednote.telegram", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ImportAutoConfiguration({
@@ -67,8 +65,7 @@ public class TelegramAutoConfiguration {
          * Configures a bean for the Telegram bot instance.
          *
          * @param properties           Configuration properties for the Telegram bot
-         * @param updateHandlers       Collection of update handlers for processing incoming
-         *                             updates
+         * @param updateHandlers       Collection of update handlers for processing incoming updates
          * @param exceptionHandler     The ExceptionHandler instance for handling exceptions
          * @param updateFilterProvider The UpdateFilterProvider instance for filtering updates
          * @return The configured Telegram bot instance
@@ -86,12 +83,8 @@ public class TelegramAutoConfiguration {
                 throw new BeanCreationException(TELEGRAM_BOT,
                     "Consider specify drednote.telegram.token");
             }
-            if (properties.getSession().getUpdateStrategy() == UpdateStrategy.LONG_POLLING) {
-                return new DefaultTelegramBot(updateHandlers,
-                    exceptionHandler, updateFilterProvider, telegramClient, enricher);
-            } else {
-                throw new BeanCreationException(TELEGRAM_BOT, "Webhooks not implemented yet");
-            }
+            return new DefaultTelegramBot(updateHandlers,
+                exceptionHandler, updateFilterProvider, telegramClient, enricher);
         }
     }
 
