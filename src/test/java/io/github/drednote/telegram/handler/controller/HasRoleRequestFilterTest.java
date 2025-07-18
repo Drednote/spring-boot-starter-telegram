@@ -74,7 +74,7 @@ class HasRoleRequestFilterTest {
     public void hasRole() {
     }
 
-    @HasRole(value = {TEST_ROLE, SECOND_ROLE}, strategyMatching = StrategyMatching.COMPLETE_MATCH)
+    @HasRole(value = {TEST_ROLE, SECOND_ROLE}, strategyMatching = StrategyMatching.ALL)
     public void completeMatch() {
     }
 

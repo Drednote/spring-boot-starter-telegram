@@ -6,14 +6,11 @@
 [![Codecov](https://codecov.io/gh/Drednote/spring-boot-starter-telegram/graph/badge.svg?token=4GGKDCSXH2)](https://codecov.io/gh/Drednote/spring-boot-starter-telegram)
 
 **Spring Boot Starter Telegram** is a library designed to simplify the setup of Telegram bots using
-`Spring Boot` and `org.telegram:telegrambots` as the core dependency. It provides several key
-features to facilitate the bot development process
+`Spring Boot` and `org.telegram:telegrambots` as the core dependency. Using this library allows you to easily create your first bot with zero configuration. At the same time, it provides a highly modular architecture, enabling you to customize almost any functionality by creating your own Spring beans. Nearly every class used by this library can be replaced. You are free to implement any custom logic within the library's workflow. To help you navigate the wide range of settings and classes, a detailed description of all key features and classes is provided below, along with usage examples.
 
 ## Main Features
 
-1. **Controller Update Handling**: Allows receiving updates from the bot via `TelegramController`
-   similar
-   to
+1. **Controller Update Handling**: Allows receiving updates from the bot via `TelegramController` similar to
    `RestController` in Spring. This enables seamless integration of Telegram bot functionality with
    the existing Spring ecosystem.
 
@@ -21,7 +18,7 @@ features to facilitate the bot development process
    configured via Java configuration. These scenarios allow the bot to process user interactions in
    a more organized and structured manner.
 
-3. **Flexible Update Filters**: The library provides the capability to set up custom filters for
+3. **Flexible Update Filters**: The library provides the ability to set up custom filters for
    individual bot updates. These filters are executed before and after the user-defined code,
    allowing for pre-processing and post-processing of updates.
 
@@ -29,34 +26,14 @@ features to facilitate the bot development process
    `TelegramExceptionHandler`, the library offers a centralized approach for handling errors,
    similar to `ControllerAdvice` and `ExceptionHandler` in Spring.
 
-## Getting started
+## Navigation
 
 - [Requirements](#requirements)
 - [Installation](#installation)
+- [Quick Start](#quick-start)
 - [Usage](#usage)
-    - [Quick Start](#quick-start)
-    - [Overall Information](#overall-information)
-    - [Update Handling](#update-handling)
-        - [Controllers](#controllers)
-        - [Scenario](#scenario)
-    - [Filters](#filters)
-    - [Response Processing](#response-processing)
-    - [Exception Handling](#exception-handling)
-    - [Argument Resolving](#argument-resolving)
-        - [Java types](#java-types)
-        - [TelegramPatternVariable](#telegrampatternvariable)
-    - [Telegram Scope](#telegram-scope)
-    - [Data Source](#data-source)
-    - [Primary Entities](#primary-entities)
-        - [Update](#update)
-        - [UpdateRequest](#updaterequest)
-        - [UpdateHandler](#updatehandler)
-        - [UpdateFilter](#updatefilter)
-        - [TelegramResponse](#telegramresponse)
-        - [TelegramScope](#telegramscope)
-- [Additional Info](#additional-info)
-- [Configuration](#configuration)
-- [Dependencies](#dependencies)
+    - [Summary](#summary)
+    - [Details](#details)
 - [Contributing](#contributing)
 - [License](#license)
 - [Authors](#authors)
@@ -118,13 +95,7 @@ dependencies {
 }
 ```
 
-## Usage
-
-### Examples
-
-Code examples you can find in the example's folder.
-
-### Quick Start
+## Quick Start
 
 Add to `application.yml` your bot token and specify the name of bot
 
@@ -188,623 +159,71 @@ public class Application {
 
 That's all! Enjoy your bot
 
-### Overall information
+## Usage
 
-This library's implementation closely resembles the familiar structure of `Java HTTP servlets`.
+This section describes the capabilities of the library for creating Telegram bots. We will start with a general overview of how messages from Telegram are processed and sent back. Below you will find a textual description of the process, as well as a diagram.
+
+### Summary
 
 - Upon application startup, a session is established to connect with the Telegram API, initiating
   the reception of updates. These updates are obtained either through a **long polling strategy** or
   by setting up a **webhook** that prompts Telegram to directly transmit updates to the application.
 
-- Upon receiving an [Update](#update), a [UpdateRequest](#updaterequest) object is
-  generated. This object serves as the central entity throughout the subsequent update processing
-  pipeline. Initially, it contains only the information extracted from the [Update](#update) object.
-  As the processing continued, the [UpdateRequest](#updaterequest)
-  accumulates additional data, enriching its content.
+- Upon receiving an `Update`, a `UpdateRequest` object is
+  generated. This object serves as the central entity throughout the further update processing
+  pipeline. Initially, it contains only the information extracted from the `Update` object.
+  As the processing continued, the `UpdateRequest` accumulates additional data, enriching its content.
 
-- At the very beginning of the update processing chain,
-  the [UpdateRequest](#updaterequest) is stored in the context of the current
-  thread. This is done to create a [Telegram Scope](#telegram-scope).
+- At the very beginning of the update processing chain, the `UpdateRequest` is stored in the context of the current
+  thread. This is done to create a `Telegram Scope`.
 
-- After that, the main update processing starts with calls to [Filters](#filters). These filters
-  help in determining which updates should be processed further. Or you can put logic in the filter
-  that will be executed for each update, for example, log something
+- After that, the main update processing starts with calls to Filters. These filters
+  help in determining which updates should be processed further, and at this stage it is determined what kind of request has arrived and how it needs to be processed. You can put any logic in the filter that will be executed for each update, for example, log something.
 
 - Once the updates are filtered, the available `UpdateHandler` are called in a specific order based
-  on their priority. There are different mechanisms available for handling updates, and you can find
-  more information about them in the [Update Handling](#update-handling) section
+  on their priority. There are different mechanisms available for handling updates such as controllers or scenario.
 
-- After the successful processing of updates, the [Filters](#filters) are called again as part of
+- After the successful processing of updates, the `Filters` are called again as part of
   the post-processing stage. This gives an opportunity for any additional filtering or actions to be
   applied.
 
 - Once all the processing and filtering are done, the response is processed using a specialized
-  mechanism called [Response Processing](#response-processing). This mechanism takes the defined
+  mechanism called `Response Processing`. This mechanism takes the defined
   response and performs necessary actions, such as sending it back to the user or performing any
   other desired logic.
 
+- After sending a response to Telegram, `Filters` are called again, but now these are a special type of filters - conclusive filters. They are specially designed to process either responses from Telegram, or as the final stage of `Update` processing.
+
 - Throughout the entire processing chain, there is a dedicated mechanism for handling errors called
-  [Exception Handling](#exception-handling). This ensures that any errors or exceptions that occur
+  `Exception Handling`. This ensures that any errors or exceptions that occur
   during the processing are properly handled and don't disrupt the flow of the program.
 
 - Additionally, some filters and handlers defined by this library require access to a database. For
-  this purpose, they can make use of the [Data Source](#data-source) functionality. This allows them
+  this purpose, they can make use of the `Data Source` functionality. This allows them
   to interact with the database and retrieve or store data as needed.
 
-### Update Handling
-
-This library offers users two primary approaches for handling updates: [controllers](#controllers)
-and [scenarios](#scenario). Both controllers and scenarios offer their own benefits, so you can
-choose the one that suits your bot's requirements and your preferred coding style.
-**But I recommend using both**
-
-> If you need to make your own handler, all you have to do is create a **spring bean** that will
-> implement the `UpdateHandler` interface and set its execution priority using a spring
-> annotations `@Order` if needed. Also, after successful processing of the message, it is necessary
-> put in the object `UpdateRequest` response with type `TelegramResponse`, so that update
-> processing can be considered successful. If this is not done, further update handlers will be
-> called
-
----
-
-#### Controllers
-
----
-
-In order to begin receiving updates from **Telegram**, you will first need to create a controller
-and specify the criteria for which updates you want to receive.
-
-To assist with the analysis, let's utilize the controller provided in
-the [Quick Start](#quick-start) section:
-
-```java
-
-@TelegramController
-public class MainController {
-
-    @TelegramCommand("/start")
-    public String onStart(User user) {
-        return "Hello " + user.getFirstName();
-    }
-
-    @TelegramMessage
-    public String onMessage(UpdateRequest request) {
-        return "You sent message with types %s".formatted(request.getMessageTypes());
-    }
-
-    @TelegramMessage("My name is {name:.*}")
-    public String onPattern(@TelegramPatternVariable("name") String name) {
-        return "Hello " + name;
-    }
-
-    @TelegramRequest
-    public TelegramResponse onAll(UpdateRequest request) {
-        return new GenericTelegramResponse("Unsupported command");
-    }
-
-}
-```
-
-- In order for an application to register a class as a controller, it must be marked
-  annotation `@TelegramController`
-- To receive updates, there is an annotation `@TelegramRequest`. Also, to make it easier to work
-  with [updates](#update), created several derived annotations. The main ones are `@TelegramCommand`
-  and `@TelegramMessage`. As the names imply, with the help of the first one you can only receive
-  commands **(Message#isCommand)**, and from the second any messages **(Update#getMessage)**
-- The `@TelegramRequest` annotation's **pattern()** parameter takes a string that serves as a
-  matching condition for the text in the incoming message, whether it's just a message text or a
-  photo caption. For matcher uses `AntPathMatcher`, so you can specify
-  any [condition](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/AntPathMatcher.html)
-  in the string valid for `AntPathMatcher`. For example: `Hello*`, will match any string that starts
-  with `Hello`. If you do not specify **pattern()** it will be replaced with the `**` pattern and
-  matched with any text.
-- If the [update](#update) matches with several patterns that you specified in different methods
-  marked with `@TelegramRequest`, than sorted will be applied:
-    - `TelegramRequest` without **requestType** has the lowest priority
-    - `TelegramRequest` without **messageType** has the lowest priority among the **requestType**
-      equal to `RequestType.MESSAGE`
-    - `TelegramRequest` with **exclusiveMessageType** set to true and with more elements specified
-      in **messageType** takes precedence over others
-    - If `TelegramRequest` has the same priority by the above conditions, than the `AntPathMatcher`
-      order applied
-      > This ensures that the most specific controllers are given precedence in the update
-      handling process
-- Methods marked with `@TelegramRequest` annotation can accept a specific set of inputs
-  parameters as defined in the [Argument resolving](#argument-resolving) section
-- Methods marked with `@TelegramRequest` annotation can return any object, as a result. The
-  response processing mechanism is detailed in the [Response Processing](#response-processing)
-  section
-- Also, if you need to get some data from the user's message by a specific pattern, then you can use
-  the [TelegramPatternVariable](#telegrampatternvariable)
-  annotation
-  **Essentially `TelegramPatternVariable` works the same as `PathVariable`.**
-- Any uncaught errors that occur during the execution of user code, are caught
-  by `ExceptionHandler`. More [here](#exception-handling).
-
----
-
-#### Scenario
-
----
-
-To create scenarios, you will need to implement the `ScenarioConfigurerAdapter` interface by
-creating a **Spring bean**. This interface is the main tool for creating scenarios and allows you to
-define and customize the behavior of your scenarios.
-
-Here example of a configuring scenario, for additional info you can see javadocs.
-
-```java
-
-@Configuration
-@RequiredArgsConstructor
-public class ScenarioConfig extends ScenarioConfigurerAdapter<Enum<?>> {
-
-    private final ScenarioRepository scenarioRepository;
-
-    @Override
-    public void onConfigure(@NonNull ScenarioTransitionConfigurer<Enum<?>> configurer) {
-        configurer.withExternal().inlineKeyboard()
-            .source(State.INITIAL).target(ASSISTANT_CHOICE)
-            .telegramRequest(command(ASSISTANT_SETTINGS))
-            .action(settingsActionsFactory::returnSettingsMenu)
-
-            .and().withExternal()
-            .source(State.INITIAL).target(State.TEST)
-            .telegramRequest(command("/test"))
-            .action(context -> "Test")
-
-            .and().withRollback()
-            .source(ASSISTANT_CHOICE).target(GET_SETTINGS)
-            .telegramRequest(callbackQuery(SettingsKeyboardButton.GET_CURRENT))
-            .action(settingsActionsFactory.getSettings())
-            .rollbackTelegramRequest(callbackQuery(ROLLBACK))
-            .rollbackAction(settingsActionsFactory.rollbackToSettingsMenu())
-
-            .and();
-    }
-
-    @Override
-    public void onConfigure(ScenarioConfigConfigurer<Enum<?>> configurer) {
-        configurer
-            .withPersister(new JpaScenarioRepositoryAdapter<>(scenarioRepository));
-    }
-
-    @Override
-    public void onConfigure(ScenarioStateConfigurer<Enum<?>> configurer) {
-        configurer.withInitialState(State.INITIAL);
-    }
-}
-```
-
----
-
-### Filters
-
-Filters serve as both pre-processing and post-processing mechanisms for the primary stage of update
-processing. They allow you to define specific criteria for filtering and manipulating updates before
-and after they are processed.
-
-- Filters are needed for several main purposes:
-    - To filter updates
-    - To execute the code for each update
-
-- To control update filtering, filters can set some properties
-  in [UpdateRequest](#updaterequest), such as `response`. If any filter set
-  property `response` then the update is considered successful and an attempt will be made to send a
-  response
-- Filters are called twice: before (pre-filters) the main [Update Handling](#update-handling) and
-  after (post-filters). It is important to note that, even if an error occurred during the main
-  processing of the update, post-filters will still be executed
-
-- There are two main interfaces for creating a filter:
-    - `PreUpdateFilter` - **spring beans** that implement this interface will be called **before**
-      the main [Update Handling](#update-handling)
-    - `PostUpdateFilter` - **spring beans** that implement this interface will be called **after**
-      the main [Update Handling](#update-handling)
-    - `ConclusivePostUpdateFilter` - **spring beans** that implement this interface will be called *
-      *after**
-      the response is sent to telegram. [see](#response-processing)
-
-- Also, for convenience, one interface are created. First one - `PriorityPreUpdateFilter` is
-  implemented from `PreUpdateFilter` and take precedence over `PreUpdateFilter` and is executed
-  earlier whatever returns **getPreOrder()**.
-
-- To add a filter, you need to create a **spring bean** that will implement the `PreUpdateFilter`
-  or `PostUpdateFilter` interface.
-
-- Additionally, it is possible to create a filter with [Telegram Scope](#telegram-scope). With this
-  approach, a unique filter instance is created for each update, and it remains active until the
-  processing of the update is completed. This allows for better separation and management of filters
-  for individual updates. Example:
-
-```java
-
-@Component
-@TelegramScope
-public class LoggingFilter implements PriorityPreUpdateFilter, PostUpdateFilter {
-
-    private LocalDateTime startTime;
-
-    @Override
-    public void preFilter(@NonNull UpdateRequest request) {
-        this.startTime = LocalDateTime.now();
-        log.info("Receive request with id {}", request.getId());
-    }
-
-    @Override
-    public void postFilter(@NonNull UpdateRequest request) {
-        log.info("Request with id {} processed for {} ms", request.getId(),
-            ChronoUnit.MILLIS.between(startTime, LocalDateTime.now()));
-    }
-
-    @Override
-    public int getPreOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
-    }
-}
-
-```
-
-### Response Processing
-
-After the update processing is complete, it is expected that a response will be sent to the user. To
-handle this, there is a component called **Response Processing**, which follows certain rules.
-
-- The response represents by interface `TelegramResponse`
-- **Response can only be sent if [Update](#update) has a `chatId`**. So if in update there is
-  no `chatId` than you should return `void`
-- Any response will automatically be wrapped in the `TelegramResponse` interface and execute sending
-  method. Rules of wrapping:
-    - `void` or `null` will not trigger sending the response
-    - `String` will be wrapped in `GenericTelegramResponse` and execution method will send simple
-      text response (`SendMessage`)
-    - For `byte[]` same rule like for `String` except that `String` instance will be created
-      from `byte[]` (`new String(byte[])`)
-    - `BotApiMethod` and `SendMediaBotMethod` will be executed as is.
-      > `BotApiMethod` is an abstract class that represents sending object.
-
-      > For `BotApiMethod` or `SendMediaBotMethod` the 'chatId' property will be automatically set
-      (only if it is null). If you manually set 'chatId', nothing happens
-    - A `TelegramResponse` object will be handled without wrapping.
-    - List of `TelegramResponse` will be wrapped in `CompositeTelegramResponse` and execute with
-      specified priority.
-      > Priority specified by `@Order` annotation
-    - For `java object` the `GenericTelegramResponse` will try to serialize it with `Jackson`. In
-      simple words will do `objectMapper.writeValueAsString(response)`
-    - For more information on wrapping rules, see the `ResponseSetter` and `GenericTelegramResponse`
-      classes
-
-> The exception is three types of response - `Collection<?>`, `Stream<?>`, `Flux<?>`. For handling
-> these types of response are created three additional implementations
-> of `TelegramResponse` - `CompositeTelegramResponse`, `FluxTelegramResponse`
-> and `StreamTelegramResponse`
-
-- You can create any implementation of `TelegramResponse` for sending response
-- Any custom code can be written in `TelegramResponse`, but I strongly recommend using this
-  interface only for sending a response to **Telegram**
-
-### Exception Handling
-
-The purpose of the ExceptionHandler mechanism is to provide centralized error handling. Any errors
-that occur during the processing will be caught and sent to the `ExceptionHandler` for further
-handling. Here are some important rules to keep in mind:
-
-- To initiate error handling, the class must be annotated with `@TelegramAdvice`. Additionally, you
-  need to specify at least one method and annotate it with `@TelegramExceptionHandler`.
-- If the user is not marked any method with the `@TelegramExceptionHandler` annotation, the default
-  error handling approach will be applied.
-- In situations where multiple handlers are present for a particular error, a sorting mechanism is
-  implemented to determine the priority of method calls. The higher in the hierarchy the error
-  (throwable at the very top) that the handler expects, the lower the priority of the method call
-  will be compared to others.
-  > This ensures that the most specific error handlers are given precedence in the error handling
-  process
-- Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
-  parameters as defined in the [Argument resolving](#argument-resolving) section
-- Methods marked with `@TelegramExceptionHandler` annotation can return any object, as a result. The
-  response processing mechanism is detailed in the [Response Processing](#response-processing)
-  section
-
-### Argument resolving
-
-To provide maximum flexibility when calling custom code through the reflection mechanism, the input
-parameters for any method are calculated dynamically according to the following rules:
-
-> If you need to add support for your custom argument, you need to create **spring bean** and
-> implement `io.github.drednote.telegram.core.resolver.HandlerMethodArgumentResolver` interface
-
-#### Java types
-
-You can specify arguments based on a java type:
-
-- [Update](#update) and any top-level nested objects within it. `Message`, `Poll`, `InlineQuery`,
-  etc.
-- [UpdateRequest](#updaterequest)
-- `TelegramBot` or any subclasses if you need to consume current telegram bot instance
-- `String` arguments will fill with the **text** property
-  of [UpdateRequest](#updaterequest) if it exists, or it will be `null`
-  > In almost all cases this will be the text of the `Message`
-- `Long` arguments will fill with the **chatId** property
-  of [UpdateRequest](#updaterequest)
-- `Throwable` arguments will fill with the **error** property
-  of [UpdateRequest](#updaterequest) if it exists. If no error than it will
-  be `null`
-  > This type should be only used in methods marked with `@TelegramExceptionHandler`. In other
-  > methods, it more likely will be `null`
-
-#### TelegramPatternVariable
-
-You can annotate certain arguments using `@TelegramPatternVariable`. Here are the rules to follow:
-
-- This annotation is only valid if there's text in the update (e.g., message text, photo caption).
-  Otherwise, it will be `null`
-- This annotation supports only two Java types: `String` and `Map`
-- When using `String`, the value of the template variable from the pattern is exposed
-- In the case of `Map`, all template variables are exposed
-
-### Telegram Scope
-
-The functionality of `@TelegramScope` is similar to the Spring annotation `@Scope("request")`, with
-the difference being that the context is created at the start of update processing instead of at the
-request level. By marking a **spring bean** with this annotation, a new instance of the bean will be
-created for each update processing.
-
-> It's important to note that each update handling is associated with a specific thread. In cases
-> where you create sub-threads within the main thread, you will need to manually bind
-> the `UpdateRequest` to the new thread. This can be achieved using
-> the `UpdateRequestContext`
-> class.
-
-### Data Source
-
-- For some filters and scenarios to work correctly, you need to save information to the database.
-  You can save data to the application memory, but then during the restart, all information will be
-  lost. Therefore, it is better if you configure the datasource using spring.
-
-- This library is fully based on Spring JPA in working with the database. Therefore, to support
-  different databases (postgres, mongo, etc.), using the implementations of `DataSourceAdapter`
-  interface
-- If you want to add support for a database that currently is not supported, you should to
-  create entity and create repository extending `PermissionRepository`, `ScenarioRepository`
-  or `ScenarioIdRepository`
-
-> **Currently supported `JpaRepository`**
-
-> Note: To enable auto scan for jpa entities, you should manually pick main interfaces for entities
-> and use `@EntityScan` annotation. To create spring data repository, you need to just implement one
-> of the repository interfaces
-
-```java
-
-@EntityScan(basePackageClasses = {Permission.class, PersistScenario.class})
-@Configuration
-public class JpaConfig {
-
-}
-```
-
-```java
-
-public interface PermissionRepository extends JpaPermissionRepository {}
-```
-
-### Primary Entities
-
-#### Update
-
-- `Update` is the main object that comes from the Telegram API. It contains all information about
-  the event that happened in the bot, whether it's a new message from the user, or changes in some
-  settings chat in which the bot is located.
-
-> Additional docs - <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
-
-#### UpdateRequest
-
-`UpdateRequest` is a primary object that stores all information about update. Any change
-that occurs during the processing of an update is written to it. Thus, if you get it in the user
-code, you can find out all the information about the current update. For example, in this way:
-
-```java
-
-@TelegramController
-public class Example {
-
-    @TelegramRequest
-    public void onAll(UpdateRequest request) {
-        System.out.printf("request is %s", request);
-    }
-}
-```
-
-Read more about [Telegram Controllers](#controllers).
-
-#### UpdateHandler
-
-- The `UpdateHandler` interface is the entry point for handling updates. More
-  in [Update Handling](#update-handling) section.
-
-#### UpdateFilter
-
-- `UpdateFilters` allow you to execute some code before or after the main `UpdateHandlers` call. The
-  main interfaces are `PreUpdateFilter` and `PostUpdateFilter`. More about filters [here](#filters)
-
-#### TelegramResponse
-
-- `TelegramResponse` represents the action that need to be executed to sent response to the user who
-  initiated the update processing. For this here special
-  mechanism [Response Processing](#response-processing)
-
-#### TelegramScope
-
-- `TelegramScope` is a specialization of `@Scope` for a component whose lifecycle is bound to the
-  current telegram update handling. More [here](#telegram-scope)
-
-## Additional Info
-
-- All packages are children of `io.github.drednote.telegram` marked with two annotations
-    - `@NonNullApi` and `@NonNullFields`. This means that by default all fields and APIs accept and
-      return non-null objects. If it is needed to return a nullable object, then the field or method
-      is annotated with `@Nullable`
-- You can use `HasRole` annotation to check controller access
-
-## Configuration
-
-All settings tables contain 4 columns:
-
-- `Name` - the name of the variable as it is called in the code
-- `Description` - a brief description of what this setting does
-- `Default Value` - the default value of the variable
-- `Required` - whether the variable is required
-
-> If the `Required` field is `true` and the value of the `Default Value` column is not equal to `-`,
-> it means that you don't need to manually set the value for the variable. However, if you manually
-> set it to `null` or any value that can be considered empty, the application will not start
-
-### Base properties
-
-| Name          | Description                               | Default Value                                            | Required |
-|---------------|-------------------------------------------|----------------------------------------------------------|----------|
-| enabled       | Enable the bot.                           | true                                                     | true     |
-| token*        | The token of a bot.                       | <b>must be set by user</b>                               | true     |
-| defaultLocale | The default locale for sending responses. | -                                                        | false    |
-| session       | Session properties.                       | [Session properties](#session-properties)                |          |
-| updateHandler | Properties of update handlers.            | [Update handlers properties](#update-handler-properties) |          |
-| filters       | Filters properties.                       | [Filters properties](#filters-properties)                |          |
-| menu          | Menu properties.                          | [Menu properties](#menu-properties)                      |          |
-
-### Session properties
-
-| Name                  | Description                                                                                                                                 | Default Value                                                                               | Required |
-|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|----------|
-| maxThreadsPerUser     | Max number of threads used for consumption messages from a telegram for concrete user. 0 - no restrictions                                  | 1                                                                                           | true     |
-| consumeMaxThreads     | Max number of threads used for consumption messages from a telegram                                                                         | 10                                                                                          | true     |
-| maxMessagesInQueue    | Limits the number of updates to be store in memory queue for update processing. 0 - no restrictions. Defaults to (consumeMaxThreads * 1.5). | 15                                                                                          | true     |
-| updateStrategy        | The strategy to receive updates from Telegram API. Long polling or webhooks.                                                                | LONG_POLLING                                                                                | true     |
-| updateProcessorType   | A type of `TelegramUpdateProcessor` using                                                                                                   | DEFAULT (SCHEDULER)                                                                         | true     |
-| backOffStrategy       | Backoff strategy for failed requests to Telegram API. Impl of BackOff interface must be with public empty constructor                       | ExponentialBackOff                                                                          | true     |
-| proxyType             | The proxy type for executing requests to Telegram API.                                                                                      | NO_PROXY                                                                                    | true     |
-| proxyUrl              | The proxy url in format `host:port` or if auth needed `host:port:username:password`.                                                        | -                                                                                           | false    |
-| cacheLiveDuration     | Cache lifetime used in `DefaultTelegramBotSession`                                                                                          | 1                                                                                           | true     |
-| cacheLiveDurationUnit | The `TimeUnit` which will be applied to `cacheLiveDuration`                                                                                 | hours                                                                                       | true     |
-| autoSessionStart      | Automatically start session when spring context loaded.                                                                                     | true                                                                                        | true     |
-| schedulerProcessor    | SchedulerTelegramUpdateProcessor properties.                                                                                                | [SchedulerTelegramUpdateProcessor properties](#SchedulerTelegramUpdateProcessor-properties) | false    |
-| longPolling           | LongPolling properties.                                                                                                                     | [LongPolling properties](#Longpolling-properties)                                           | false    |
-
-#### SchedulerTelegramUpdateProcessor properties
-
-| Name                     | Description                                                                                                                                                           | Default Value | Required |
-|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|----------|
-| autoSessionStart         | Automatically start `SchedulerTelegramUpdateProcessor` when `TelegramBotSession.start()` is called.                                                                   | true          | true     |
-| maxInterval              | Maximum interval after which to check for new messages for processing (in milliseconds).                                                                              | 1000          | true     |
-| minInterval              | Minimum interval after which to check for new messages for processing (in milliseconds).                                                                              | 0             | true     |
-| reducingIntervalAmount   | How much to decrease the interval if messages are found for processing (in milliseconds).                                                                             | 500           | true     |
-| increasingIntervalAmount | How much to increase the interval if no message is found for processing (in milliseconds).                                                                            | 100           | true     |
-| waitInterval             | Interval after which to check for new messages for processing while all threads are busy (in milliseconds).                                                           | 30            | true     |
-| idleInterval             | Interval after which tasks are marked as `UpdateInboxStatus.TIMEOUT` (in milliseconds).                                                                               | 30000         | true     |
-| checkIdleInterval        | Interval to check if tasks are idle (in milliseconds).                                                                                                                | 5000          | true     |
-| maxMessageInQueuePerUser | Limits the number of updates to be stored in memory queue for update processing per user (0 means no restrictions). Applied only for `UpdateProcessorType.SCHEDULER`. | 0             | true     |
-
-#### LongPolling properties
-
-| Name           | Description                                                                                          | Default Value | Required |
-|----------------|------------------------------------------------------------------------------------------------------|---------------|----------|
-| updateLimit    | Limits the number of updates to be retrieved. Values between 1-100 are accepted                      | 100           | true     |
-| updateTimeout  | Timeout in seconds for long polling. Should be positive, short polling (0) for testing purposes only | 50            | true     |
-| allowedUpdates | A JSON-serialized list of update types to receive. See RequestType for available update types.       | -             | false    |
-
-Additional docs <a href="https://core.telegram.org/bots/api">Telegram API docs</a>
-
-### Update handler properties
-
-| Name                           | Description                                                                                                                          | Default Value | Required |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|---------------|----------|
-| controllerEnabled              | Enabled controller update handling.                                                                                                  | true          | true     |
-| scenarioEnabled                | Enabled scenario update handling.                                                                                                    | true          | true     |
-| setDefaultErrorAnswer          | If an exception occurs and no handler processes it, set InternalErrorTelegramResponse as response.                                   | true          | true     |
-| scenarioLockMs                 | The time that scenario executor will wait if a concurrent interaction was performed. 0 - no limit.                                   | 0             | true     |
-| serializeJavaObjectWithJackson | Whether to serialize Java POJO objects with Jackson to JSON in GenericTelegramResponse.                                              | true          | true     |
-| enabledWarningForScenario      | Throws an error with a warning about using scenario safe only when getMaxThreadsPerUser is set to 1, if value set to different value | true          | true     |
-
-### Filters properties
-
-| Name                         | Description                                                                                                                    | Default Value                                   | Required |
-|------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|----------|
-| permission                   | Permission filter properties.                                                                                                  | [Permission properties](#permission-properties) |          |
-| userRateLimit                | How often each user can perform requests to bot. 0 = no rules.                                                                 | 0                                               | true     |
-| userRateLimitUnit            | The ChronoUnit which will be applied to userRateLimit.                                                                         | SECONDS                                         | true     |
-| userRateLimitCacheExpire     | How long cache with rate limit bucket will not expire. This parameter needed just for delete staled buckets to free up memory. | 1                                               | true     |
-| userRateLimitCacheExpireUnit | The ChronoUnit which will be applied to userRateLimitCacheExpire.                                                              | HOURS                                           | true     |
-| setDefaultAnswer             | If response is null at the end of update handling and post filtering, set NotHandledTelegramResponse as response.              | true                                            | true     |
-
-### Permission properties
-
-| Name        | Description                                                               | Default Value | Required |
-|-------------|---------------------------------------------------------------------------|---------------|----------|
-| access      | Define who has access to the bot.                                         | ALL           | true     |
-| defaultRole | If a user has no role, this role will be set by default.                  | NONE          | true     |
-| roles       | The list of roles with privileges.                                        | -             | false    |
-| assignRole  | The map of [userId:[Role](#role)]. (Deprecated: Not safe for production.) | -             | false    |
-
-#### Role
-
-```java
-public class Role {
-
-    /**
-     * Boolean indicating if the role has basic interaction permission and can send requests to bot
-     */
-    private boolean canRead;
-}
-```
-
-### Menu properties
-
-| Name       | Description                                      | Default Value | Required |
-|------------|--------------------------------------------------|---------------|----------|
-| values     | Map of [name:[CommandCls](#Command-properties)]. | -             | false    |
-| sendPolicy | Send policy.                                     | ON_STARTUP    | false    |
-
-#### Command Properties
-
-| Name         | Description                                                                   | Default Value | Required |
-|--------------|-------------------------------------------------------------------------------|---------------|----------|
-| text         | Text for the button.                                                          | -             | true     |
-| command      | Command for the button.                                                       | -             | true     |
-| scopes       | Scopes of users for which the commands are relevant.                          | [DEFAULT]     | true     |
-| languageCode | A two-letter ISO 639-1 language code.                                         | -             | false    |
-| userIds      | Unique identifier of the target users to who apply commands.                  | -             | false    |
-| chatIds      | Unique identifier for the target chats or usernames of the target supergroup. | -             | false    |
-
-## Dependencies
-
-### Require
-
-These dependencies will automatically be included in your project
-
-`org.telegram:telegrambots-longpolling`
-
-`org.telegram:telegrambots-client`
-
-`org.springframework.boot:spring-boot-starter-web`
-
-`com.esotericsoftware:kryo`
-
-`com.github.vladimir-bukhtoyarov:bucket4j-core`
-
-`com.github.ben-manes.caffeine:caffeine`
-
-`org.apache.httpcomponents.client5:httpclient5`
-
-### Optional
-
-You can manually add them if you want to configure datasource. For what you should configure
-datasource read in [Data Source](#data-source) block
-
-`org.springframework.boot:spring-boot-starter-data-jpa`
-
-or
-
-`org.springframework.boot:spring-boot-starter-data-mongo`
+### Details
+
+> All documentation is located in other files, so feel free to follow the links.
+
+Before we move on to the main features, I would like to introduce you to three basic entities that you need to know and understand. I strongly recommend reading about them, as they will be referenced later without further explanation. It will be much easier to understand the documentation if you are familiar with these core classes.
+
+- [Update🔗](docs/update-object.md#update) — is the main object that comes from the Telegram API
+- [UpdateRequest🔗](docs/update-object.md#updaterequest) - is a primary object that stores all information about update.
+- [TelegramClient🔗](docs/update-object.md#telegramclient) — a client that allows you to send anything to Telegram from your code.
+
+Next, we will take a closer look at each aspect of the library.
+
+- Controllers — To get started, I recommend familiarizing yourself with basic interaction with Telegram via controllers.
+- Error handling — No application is complete without error handling.
+- Filters — This mechanism allows you to flexibly and easily customize the processing of updates from Telegram.
+- Responses — In most cases, you won't need to manually configure the response mechanism, but this section provides a detailed explanation of how it works.
+- Database connection — Mechanisms such as scenarios, in my opinion, require working with a database. Also, the default session for receiving messages from Telegram has one limitation, which can be resolved by connecting a database.
+- Scenarios — This is a powerful mechanism built on top of the Spring State Machine. It allows you to configure entire chains of message processing rules.
+- Session — This section describes how the session for receiving messages from Telegram works, how you can configure it, and how to implement your own if needed.
+- Menu — Creating and displaying a menu in your bot.
+- Telegram scope — A bean scope specific to the Telegram session.
+- Permissions — Access settings for your bot.
 
 ## Contributing
 

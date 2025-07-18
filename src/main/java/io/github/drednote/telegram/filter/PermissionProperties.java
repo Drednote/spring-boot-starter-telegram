@@ -1,11 +1,13 @@
 package io.github.drednote.telegram.filter;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 
 /**
  * Configuration properties for defining access permissions and roles.
@@ -24,24 +26,29 @@ public class PermissionProperties {
     /**
      * The default role assigned to users with no roles.
      */
+    @NonNull
     public static final String DEFAULT_ROLE = "NONE";
 
     /**
      * Define who has access to bot
      */
+    @NonNull
     private Access access = Access.ALL;
     /**
      * If a user has no role, this role will be set by default
      */
+    @NonNull
     private String defaultRole = DEFAULT_ROLE;
     /**
      * The list of roles with privileges
      */
-    private Map<String, Role> roles = Map.of();
+    @NonNull
+    private Map<String, Role> roles = new HashMap<>(0);
     /**
      * The map of [userId:role]
      */
-    private Map<Long, Set<String>> assignRole = Map.of();
+    @NonNull
+    private Map<Long, Set<String>> assignRole = new HashMap<>(0);
 
     /**
      * Enumeration of access control modes.
@@ -72,6 +79,6 @@ public class PermissionProperties {
         /**
          * The map of additional permissions.
          */
-        private Map<String, Object> permissions = Map.of();
+        private Map<String, Object> permissions = new HashMap<>(0);
     }
 }

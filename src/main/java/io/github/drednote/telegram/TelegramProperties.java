@@ -25,6 +25,7 @@ public class TelegramProperties {
   /**
    * Enable the bot. Default: true
    */
+  @NonNull
   private boolean enabled = true;
   /**
    * The name of a bot. Example: TheBestBot.

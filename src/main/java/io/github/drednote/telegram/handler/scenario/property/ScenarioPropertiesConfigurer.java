@@ -55,10 +55,7 @@ public class ScenarioPropertiesConfigurer<S> {
     }
 
     public void collectStates() {
-        Map<String, Scenario> values = scenarioProperties.getValues();
-        if (values != null) {
-            doCollectStates(values);
-        }
+        doCollectStates(scenarioProperties.getValues());
     }
 
     private void doCollectStates(Map<String, Scenario> values) {
@@ -80,18 +77,16 @@ public class ScenarioPropertiesConfigurer<S> {
 
     public void configure() {
         Map<String, Scenario> values = scenarioProperties.getValues();
-        if (values != null) {
-            values.forEach((key, scenario) -> {
-                Assert.required(scenario, "Scenario");
-                if (scenario.getType() == TransitionType.ROLLBACK) {
-                    throw new IllegalArgumentException("First transition cannot be of 'Rollback' type");
-                }
-                TransitionData<S> transitionData = configureTransition(scenarioBuilder, scenario, null);
-                scenario.getGraph().forEach(node -> {
-                    doConfigure(scenarioBuilder, transitionData, scenario, node);
-                });
+        values.forEach((key, scenario) -> {
+            Assert.required(scenario, "Scenario");
+            if (scenario.getType() == TransitionType.ROLLBACK) {
+                throw new IllegalArgumentException("First transition cannot be of 'Rollback' type");
+            }
+            TransitionData<S> transitionData = configureTransition(scenarioBuilder, scenario, null);
+            scenario.getGraph().forEach(node -> {
+                doConfigure(scenarioBuilder, transitionData, scenario, node);
             });
-        }
+        });
     }
 
     private void doConfigure(

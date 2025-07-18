@@ -69,7 +69,7 @@ public class HasRoleRequestFilter implements PreUpdateFilter {
         Permission permission = Objects.requireNonNull(request.getPermission());
         Set<String> roles = defaultIfNull(permission.getRoles(), Set.of());
         StrategyMatching strategy = hasRole.strategyMatching();
-        if (strategy == StrategyMatching.INTERSECTION) {
+        if (strategy == StrategyMatching.ANY) {
             return Arrays.stream(hasRole.value()).anyMatch(roles::contains);
         } else {
             return Arrays.stream(hasRole.value()).allMatch(roles::contains);

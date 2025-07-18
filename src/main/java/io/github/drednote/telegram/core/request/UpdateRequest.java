@@ -107,10 +107,6 @@ public interface UpdateRequest {
      * Returns the message associated with the request
      *
      * @return the message, or null if not applicable
-     * @see Update#getMessage()
-     * @see Update#getEditedMessage()
-     * @see Update#getChannelPost()
-     * @see Update#getEditedChannelPost()
      * @see AbstractUpdateRequest#AbstractUpdateRequest(Update)
      */
     @Nullable
