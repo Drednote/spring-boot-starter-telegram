@@ -30,5 +30,3 @@ tasks.register('generatePropertiesDocs', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'io.github.drednote.support.GeneratePropertiesDocs'
 }
-
-compileJava.finalizedBy generatePropertiesDocs

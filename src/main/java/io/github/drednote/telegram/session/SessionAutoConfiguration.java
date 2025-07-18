@@ -64,7 +64,7 @@ public class SessionAutoConfiguration {
      */
     @Bean(destroyMethod = "stop")
     @ConditionalOnExpression(
-        value = "#{environment.getProperty('drednote.telegram.session.type')?.equalsIgnoreCase('LONG_POLLING') || environment.getProperty('drednote.telegram.session.type') == null}"
+        "#{environment.getProperty('drednote.telegram.session.type') == null || environment.getProperty('drednote.telegram.session.type').equalsIgnoreCase('LONG_POLLING')}"
     )
     @ConditionalOnMissingBean
     public TelegramBotSession longPollingTelegramBotSession(
