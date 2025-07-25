@@ -177,7 +177,7 @@ This section describes the capabilities of the library for creating Telegram bot
 - At the very beginning of the update processing chain, the `UpdateRequest` is stored in the context of the current
   thread. This is done to create a `Telegram Scope`.
 
-- After that, the main update processing starts with calls to Filters. These filters
+- After that, the main update processing starts with calls to `Filters`. These filters
   help in determining which updates should be processed further, and at this stage it is determined what kind of request has arrived and how it needs to be processed. You can put any logic in the filter that will be executed for each update, for example, log something.
 
 - Once the updates are filtered, the available `UpdateHandler` are called in a specific order based
@@ -208,22 +208,22 @@ This section describes the capabilities of the library for creating Telegram bot
 
 Before we move on to the main features, I would like to introduce you to three basic entities that you need to know and understand. I strongly recommend reading about them, as they will be referenced later without further explanation. It will be much easier to understand the documentation if you are familiar with these core classes.
 
-- [Update🔗](docs/update-object.md#update) — is the main object that comes from the Telegram API
-- [UpdateRequest🔗](docs/update-object.md#updaterequest) - is a primary object that stores all information about update.
-- [TelegramClient🔗](docs/update-object.md#telegramclient) — a client that allows you to send anything to Telegram from your code.
+- [Update](docs/update-object.md#update) — is the main object that comes from the Telegram API
+- [UpdateRequest](docs/update-object.md#updaterequest) - is a primary object that stores all information about update.
+- [TelegramClient](docs/update-object.md#telegramclient) — a client that allows you to send anything to Telegram from your code.
 
 Next, we will take a closer look at each aspect of the library.
 
-- Controllers — To get started, I recommend familiarizing yourself with basic interaction with Telegram via controllers.
-- Error handling — No application is complete without error handling.
-- Filters — This mechanism allows you to flexibly and easily customize the processing of updates from Telegram.
-- Responses — In most cases, you won't need to manually configure the response mechanism, but this section provides a detailed explanation of how it works.
-- Database connection — Mechanisms such as scenarios, in my opinion, require working with a database. Also, the default session for receiving messages from Telegram has one limitation, which can be resolved by connecting a database.
-- Scenarios — This is a powerful mechanism built on top of the Spring State Machine. It allows you to configure entire chains of message processing rules.
-- Session — This section describes how the session for receiving messages from Telegram works, how you can configure it, and how to implement your own if needed.
-- Menu — Creating and displaying a menu in your bot.
-- Telegram scope — A bean scope specific to the Telegram session.
-- Permissions — Access settings for your bot.
+- [Controllers](docs/controllers.md) — To get started, I recommend familiarizing yourself with basic interaction with Telegram via controllers.
+- [Exception handling](docs/exception-handling.md) — No application is complete without error handling.
+- [Filters](docs/filters.md) — This mechanism allows you to flexibly and easily customize the processing of updates from Telegram.
+- [Responses](docs/response-processing.md) — In most cases, you won't need to manually configure the response mechanism, but this section provides a detailed explanation of how it works.
+- [Database connection](docs/datasource.md) — Mechanisms such as scenarios, in my opinion, require working with a database. Also, the default session for receiving messages from Telegram has one limitation, which can be resolved by connecting a database.
+- [Scenarios](docs/scenario.md) — This is a powerful mechanism built on top of the Spring State Machine. It allows you to configure entire chains of message processing rules.
+- [Session](docs/session.md) — This section describes how the session for receiving messages from Telegram works, how you can configure it, and how to implement your own if needed.
+- [Menu](docs/menu.md) — Creating and displaying a menu in your bot.
+- [Telegram scope](docs/telegram-scope.md) — A bean scope specific to the Telegram session.
+- [Permissions](docs/permissions.md) — Access settings for your bot.
 
 ## Contributing
 

@@ -119,7 +119,7 @@ You can annotate certain arguments using `@TelegramPatternVariable`. Here are th
 
 ## Responses
 
-Вы можете возвращать любой тип из методов помеченных аннотацией `TelegramRequest`. Тип будет обернут в `TelegramResponse` и далее обработан. Подробнее о механизме отправки ответов в телеграм будет в разделе Response Processing. Здесь же я хочу показать несколько возможных вариантов ответов.
+Вы можете возвращать любой тип из методов помеченных аннотацией `TelegramRequest`. Тип будет обернут в `TelegramResponse` и далее обработан. Подробнее о механизме отправки ответов в телеграм будет в разделе [Response Processing](response-processing.md). Здесь же я хочу показать несколько возможных вариантов ответов.
 
 ### Simple
 

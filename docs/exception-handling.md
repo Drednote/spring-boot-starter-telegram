@@ -15,7 +15,7 @@ handling. Here are some important rules to keep in mind:
   > This ensures that the most specific error handlers are given precedence in the error handling
   process
 - Methods marked with `@TelegramExceptionHandler` annotation can accept a specific set of inputs
-  parameters as defined in the [Argument resolving](#argument-resolving) section
+  parameters as defined in the [Argument resolving](controllers.md#argument-resolving) section of controllers docs.
 - Methods marked with `@TelegramExceptionHandler` annotation can return any object, as a result. The
-  response processing mechanism is detailed in the [Response Processing](#response-processing)
-  section
+  response processing mechanism is detailed in the [Response Processing](response-processing.md)
+  doc.
